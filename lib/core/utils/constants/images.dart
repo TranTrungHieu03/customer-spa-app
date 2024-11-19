@@ -5,4 +5,8 @@ class TImages {
 
   //success
   static const String success = "assets/animations/success_animation.json";
+
+  //on boarding
+  static const String page1 =
+      "assets/animations/isometric-bitcoin-mining-and-crypto-investment.png";
 }

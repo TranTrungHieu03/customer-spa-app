@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -9,6 +10,7 @@ import 'package:spa_mobile/features/auth/data/repositories/auth_repository_impl.
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:spa_mobile/features/auth/presentation/bloc/on_boarding_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';

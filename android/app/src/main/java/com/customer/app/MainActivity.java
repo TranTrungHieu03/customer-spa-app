@@ -1,4 +1,4 @@
-package com.example.spa_mobile;
+package com.customer.app;
 
 import io.flutter.embedding.android.FlutterActivity;
 

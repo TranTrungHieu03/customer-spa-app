@@ -4,15 +4,16 @@ import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart'
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 
 part 'auth_event.dart';
-
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
+
   AuthBloc(this._authRepository) : super(AuthInitial()) {
     on<LoginEvent>(_onLoginEvent);
     on<SignUpEvent>(_onSignUpEvent);
+    on<GoogleLoginEvent>(_onGoogleLoginEvent);
   }
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
@@ -40,6 +41,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
       (_) => emit(AuthSuccess("SignUp Successful")),
+    );
+  }
+
+  Future<void> _onGoogleLoginEvent(
+      GoogleLoginEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+
+    final result = await _authRepository.loginWithGoogle();
+
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (token) => emit(AuthSuccess("SignUp With Google Successful")),
     );
   }
 }

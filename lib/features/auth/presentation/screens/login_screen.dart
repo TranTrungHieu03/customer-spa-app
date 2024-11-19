@@ -3,16 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/styles/spacing_styles.dart';
 import 'package:spa_mobile/core/common/widgets/form_divider.dart';
+import 'package:spa_mobile/core/common/widgets/notify.dart';
 import 'package:spa_mobile/core/common/widgets/social_btn.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/validators/validation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
-import 'package:spa_mobile/features/auth/presentation/screens/forgot_password_screen.dart';
-import 'package:spa_mobile/features/auth/presentation/screens/sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,8 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Text(
                 AppLocalizations.of(context)!.welcomeBack,
-                style: Theme
-                    .of(context)
+                style: Theme.of(context)
                     .textTheme
                     .headlineMedium!
                     .apply(color: TColors.primary),
@@ -61,10 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Text(
                 AppLocalizations.of(context)!.loginSub,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodyMedium,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(
                 height: TSizes.sm,
@@ -95,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           return TextFormField(
                             obscureText: isPasswordHidden,
+                            validator: (value) => TValidator.validatePassword(value),
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(context)!.password,
                               prefixIcon: const Icon(Iconsax.password_check),
@@ -122,30 +119,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               BlocBuilder<RememberMeCubit, RememberMeState>(
                                   builder: (context, state) {
-                                    bool isRemember = true;
-                                    if (state is RememberMeInitial) {
-                                      isRemember = state.isRemember;
-                                    } else if (state is RememberMeToggle) {
-                                      isRemember = state.isRemember;
-                                    }
-                                    return Checkbox(
-                                        value: isRemember,
-                                        onChanged: (newValue) {
-                                          context
-                                              .read<RememberMeCubit>()
-                                              .toggleRememberMe();
-                                        });
-                                  }),
+                                bool isRemember = true;
+                                if (state is RememberMeInitial) {
+                                  isRemember = state.isRemember;
+                                } else if (state is RememberMeToggle) {
+                                  isRemember = state.isRemember;
+                                }
+                                return Checkbox(
+                                    value: isRemember,
+                                    onChanged: (newValue) {
+                                      context
+                                          .read<RememberMeCubit>()
+                                          .toggleRememberMe();
+                                    });
+                              }),
                               Text(AppLocalizations.of(context)!.rememberMe),
                             ],
                           ),
                           //Forget Pass
                           TextButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (
-                                        context) => const ForgotPasswordScreen()));
-                              },
+                              onPressed: () => goForgotPassword(),
                               child: Text(
                                   AppLocalizations.of(context)!.forgetPassword))
                         ],
@@ -157,7 +150,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                              } else {
+                                return;
+                              }
+                            },
                             child: Text(AppLocalizations.of(context)!.login)),
                       ),
                       Row(
@@ -165,24 +163,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           Text(
                             AppLocalizations.of(context)!.dontHaveAccount,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .labelMedium,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           Center(
                             child: TextButton(
-                              onPressed: () =>
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (
-                                            context) => const SignUpScreen()),
-                                  ),
+                              onPressed: () => goSignUp(),
                               child: Text(
                                 AppLocalizations.of(context)!.createAccount,
-                                style: Theme
-                                    .of(context)
+                                style: Theme.of(context)
                                     .textTheme
                                     .labelMedium!
                                     .apply(color: TColors.primary),
@@ -194,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       FormDivider(
                           dividerText:
-                          AppLocalizations.of(context)!.signInWith),
+                              AppLocalizations.of(context)!.signInWith),
                       const SizedBox(
                         height: TSizes.defaultSpace,
                       ),

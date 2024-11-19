@@ -35,5 +35,14 @@
   "successSetPass": "Reset Password Success",
   "successSetPassSub": "Your new password has been updated.",
   "signUpSuccess": "Register Success",
-  "signUpSuccessSub": "Congratulations on successfully registering your new account!"
+  "signUpSuccessSub": "Congratulations on successfully registering your new account!",
+  "page1Title": "Welcome to Your Beauty Haven",
+  "page1Sub": "Discover professional skincare, relaxation, and beauty treatments at your fingertips",
+  "page2Title": "Seamless Booking & Shopping",
+  "page2Sub": "Schedule spa appointments, shop your favorite products, and pay effortlessly in just a few taps.",
+  "page3Title": "Loyalty Pays Off",
+  "page3Sub": "Earn points with every transaction and redeem exclusive rewards tailored just for you.",
+  "skip": "Skip"
+
+
 }

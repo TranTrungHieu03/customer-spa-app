@@ -2,9 +2,12 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/login_with_google.dart';
 
 abstract class AuthRemoteDataSource {
   Future<String> login(LoginParams params);
+
+  Future<String> loginWithGoogle(LoginWithGoogleParams params);
 
   Future<String> signUp(String email, String password, String role,
       String userName, String phoneNumber);
@@ -38,5 +41,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String userName, String phoneNumber) {
     // TODO: implement signUp
     throw UnimplementedError();
+  }
+
+  @override
+  Future<String> loginWithGoogle(LoginWithGoogleParams params) async {
+    try {
+      final response =
+          await _apiServices.postApi('Auth/loginWithGoogle', params.toJson());
+
+      final apiResponse = ApiResponse<String>.fromJson(response);
+
+      if (apiResponse.success && apiResponse.result?.data != null) {
+        return apiResponse.result!.data!;
+      } else {
+        throw AppException("Login Failed");
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
   }
 }

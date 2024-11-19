@@ -9,4 +9,6 @@ abstract class AuthRepository {
       String role, String userName, String phoneNumber);
 
   Future<Either<Failure, String>> login(LoginParams params);
+
+  Future<Either<Failure, String>> loginWithGoogle();
 }

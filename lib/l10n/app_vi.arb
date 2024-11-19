@@ -35,6 +35,13 @@
   "successSetPass": "Đặt lại mật khẩu thành công",
   "successSetPassSub": "Mật khẩu mới của bạn đã được cập nhật.",
   "signUpSuccess": "Đăng ký thành công",
-  "signUpSuccessSub": "Chúc mừng bạn đã đăng ký tài khoản mới!"
+  "signUpSuccessSub": "Chúc mừng bạn đã đăng ký tài khoản mới!",
+  "page1Title": "Chào Mừng Đến Với Thế Giới Làm Đẹp",
+  "page1Sub": "Khám phá liệu trình chăm sóc da, thư giãn, và làm đẹp chuyên nghiệp chỉ với vài thao tác đơn giản.",
+  "page2Title": "Đặt Lịch Nhanh - Mua Sắm Dễ Dàng",
+  "page2Sub": "Đặt lịch hẹn spa, mua sản phẩm yêu thích và thanh toán tiện lợi ngay trên ứng dụng.",
+  "page3Title": "Tích Điểm & Quà Tặng Đặc Biệt",
+  "page3Sub": "Tích lũy điểm thưởng mỗi lần giao dịch và đổi ngay những ưu đãi hấp dẫn dành riêng cho bạn.",
+  "skip": "Bỏ qua"
 
 }

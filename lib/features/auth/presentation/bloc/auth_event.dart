@@ -25,3 +25,4 @@ class SignUpEvent extends AuthEvent {
     required this.phoneNumber,
   });
 }
+class GoogleLoginEvent extends AuthEvent {}

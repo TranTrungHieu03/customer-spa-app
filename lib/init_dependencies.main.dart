@@ -3,10 +3,14 @@ part of 'init_dependencies.dart';
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
-  _initAuth();
 
-  serviceLocator
-      .registerLazySingleton<BaseApiServices>(() => NetworkApiService());
+
+  serviceLocator.registerLazySingleton<NetworkApiService>(
+      () => NetworkApiService(baseUrl: "http://localhost:8080"));
+
+  //on boarding
+  serviceLocator.registerLazySingleton(() => OnboardingBloc());
+
   //storage
 
   Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
@@ -18,16 +22,23 @@ Future<void> initDependencies() async {
   //core
   serviceLocator.registerLazySingleton<ConnectionChecker>(
       () => ConnectionCheckerImpl(serviceLocator()));
+
+  await _initAuth();
+
+  print(serviceLocator.isRegistered<NetworkApiService>());
+  print(serviceLocator.isRegistered<AuthRepository>());
 }
 
-void _initAuth() {
+Future<void> _initAuth() async {
   //datasource
   serviceLocator
     ..registerFactory<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImpl(serviceLocator()))
+        () => AuthRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repository
-    ..registerFactory<AuthRepository>(
-        () => AuthRepositoryImpl(serviceLocator(), serviceLocator()))
+    ..registerFactory<AuthRepository>(() => AuthRepositoryImpl(
+        serviceLocator<AuthRemoteDataSource>(),
+        serviceLocator<ConnectionChecker>()))
+
     //use cases
     ..registerFactory(() => Login(serviceLocator()))
     //bloc

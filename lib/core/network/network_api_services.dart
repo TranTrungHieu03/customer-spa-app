@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
@@ -11,10 +11,10 @@ class NetworkApiService implements BaseApiServices {
   final Dio _dio;
 
   // Constructor to initialize Dio and set up the interceptor
-  NetworkApiService()
+  NetworkApiService({String? baseUrl})
       : _dio = Dio(
           BaseOptions(
-            baseUrl: 'https://api.example.com',
+            baseUrl: baseUrl ?? 'https://api.example.com',
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ),
@@ -43,16 +43,20 @@ class NetworkApiService implements BaseApiServices {
     try {
       final response = await _dio.get(url);
       responseJson = returnResponse(response);
-    } on SocketException {
-      throw NoInternetException('');
-    } on TimeoutException {
-      throw FetchDataException('Network Request time out');
-    }
 
-    if (kDebugMode) {
-      print(responseJson);
+      // } on SocketException {
+      //   throw NoInternetException('');
+      // } on TimeoutException {
+      //   throw FetchDataException('Network Request time out');
+      // }
+
+      if (kDebugMode) {
+        print(responseJson);
+      }
+      return responseJson;
+    } on DioException catch (e) {
+      _handleDioException(e);
     }
-    return responseJson;
   }
 
   /// Sends a POST request to the specified [url] with the provided [data]
@@ -71,16 +75,31 @@ class NetworkApiService implements BaseApiServices {
     try {
       final Response response = await _dio.post(url, data: data);
       responseJson = returnResponse(response);
-    } on SocketException {
-      throw NoInternetException('No Internet Connection');
-    } on TimeoutException {
-      throw FetchDataException('Network Request time out');
+      if (kDebugMode) {
+        print(responseJson);
+      }
+      return responseJson;
+    } on DioException catch (e) {
+      _handleDioException(e);
     }
 
-    if (kDebugMode) {
-      print(responseJson);
+    // } on SocketException {
+    //   throw NoInternetException('No Internet Connection');
+    // } on TimeoutException {
+    //   throw FetchDataException('Network Request time out');
+    // }
+  }
+
+  void _handleDioException(DioException e) {
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      throw FetchDataException('Request timed out');
+    } else if (e.type == DioExceptionType.badResponse) {
+      throw FetchDataException('Bad response: ${e.response?.statusCode}');
+    } else if (e.type == DioExceptionType.connectionError) {
+      throw NoInternetException('No internet connection');
     }
-    return responseJson;
+    throw FetchDataException('Unexpected error occurred');
   }
 
   /// Parses the [response] and returns the corresponding JSON data.
