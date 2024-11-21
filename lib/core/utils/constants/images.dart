@@ -9,4 +9,9 @@ class TImages {
   //on boarding
   static const String page1 =
       "assets/animations/isometric-bitcoin-mining-and-crypto-investment.png";
+
+  //home
+  static const String avatar = "assets/images/avatar.png";
+  static const String product1 = "assets/images/product_1.png";
+  static const String product2 = "assets/images/product_2.png";
 }

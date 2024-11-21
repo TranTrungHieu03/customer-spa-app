@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:771780416047:android:ba0275fc03ceb16f396cda",
+        "mobilesdk_app_id": "1:771780416047:android:54781aa5aa899e90396cda",
         "android_client_info": {
-          "package_name": "com.customer.app"
+          "package_name": "hieutt.customer.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "771780416047-aaeooc9tvbbc7jb1ujc62n5s4it63jjg.apps.googleusercontent.com",
+          "client_id": "771780416047-otkb2i8fcuukah8to1kbr0p4qvoui8pr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.customer.app",
+            "package_name": "hieutt.customer.app",
             "certificate_hash": "6bfd28ccfdc3c27a7f17452b7e6d7b7835bfc72c"
           }
         },

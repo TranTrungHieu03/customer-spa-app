@@ -15,5 +15,6 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cub
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 
 part "init_dependencies.main.dart";

@@ -12,7 +12,11 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cub
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
+import 'package:spa_mobile/features/auth/presentation/screens/login_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/screens/home_screen.dart';
+import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dart';
 import 'package:spa_mobile/firebase_options.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
@@ -31,6 +35,7 @@ void main() async {
     BlocProvider(create: (_) => serviceLocator<PasswordConfirmCubit>()),
     BlocProvider(create: (_) => serviceLocator<RememberMeCubit>()),
     BlocProvider(create: (_) => serviceLocator<PolicyTermCubit>()),
+    BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),
   ], child: const MyApp()));
 }
 
@@ -64,7 +69,7 @@ class _MyAppState extends State<MyApp> {
           orElse: () => const Locale('en'),
         );
       },
-      home: const OnBoardingScreen(),
+      home: const NavigationMenu(),
     );
   }
 }

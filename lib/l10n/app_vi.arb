@@ -42,6 +42,11 @@
   "page2Sub": "Đặt lịch hẹn spa, mua sản phẩm yêu thích và thanh toán tiện lợi ngay trên ứng dụng.",
   "page3Title": "Tích Điểm & Quà Tặng Đặc Biệt",
   "page3Sub": "Tích lũy điểm thưởng mỗi lần giao dịch và đổi ngay những ưu đãi hấp dẫn dành riêng cho bạn.",
-  "skip": "Bỏ qua"
+  "skip": "Bỏ qua",
+  "helloMorning": "Chào buổi sáng!",
+  "helloAfternoon": "Chào buổi chiều!",
+  "helloEvening": "Chào buổi tối!",
+  "helloNight": "Chúc ngủ ngon!",
+  "bannerTitle": "Ưu Đãi Đặc Biệt"
 
 }

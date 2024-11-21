@@ -1,4 +1,4 @@
-package com.customer.app;
+package hieutt.customer.app;
 
 import io.flutter.embedding.android.FlutterActivity;
 

@@ -42,7 +42,10 @@
   "page2Sub": "Schedule spa appointments, shop your favorite products, and pay effortlessly in just a few taps.",
   "page3Title": "Loyalty Pays Off",
   "page3Sub": "Earn points with every transaction and redeem exclusive rewards tailored just for you.",
-  "skip": "Skip"
-
-
+  "skip": "Skip",
+  "helloMorning": "Good morning!",
+  "helloAfternoon": "Good afternoon!",
+  "helloEvening": "Good evening!",
+  "helloNight": "Good night!",
+  "bannerTitle": "Special Offers"
 }

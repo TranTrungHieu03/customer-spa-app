@@ -39,6 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, String>> loginWithGoogle() async {
     try {
+      _firebaseAuth.setLanguageCode('en');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         return left(const ApiFailure(message: "Google sign-in aborted"));
@@ -49,7 +50,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw Exception("Failed to retrieve Google tokens");
       }
-      final OAuthCredential credentials = GoogleAuthProvider.credential(
+      final AuthCredential credentials = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
@@ -57,27 +58,23 @@ class AuthRepositoryImpl implements AuthRepository {
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw Exception("Failed to retrieve Google tokens");
       }
-      try {
-        final userCredential = await _firebaseAuth.signInWithCredential(credentials);
-        // final User? user = userCredential.user;
-        // print(user);
-      } catch (e) {
-        print("Lỗi đăng nhập Firebase: $e");
-      }
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credentials);
 
-      // final User? user = userCredential.user;
+      final User? user = userCredential.user;
 
       // if (user == null) {
       //   return left(const ApiFailure(message: "Google sign-in aborted"));
       // }
 
-      // final String email = user.email ?? '';
-      // final String userName = user.displayName ?? '';
-      // final String imageUrl = user.photoURL ?? '';
-      // final String phone = user.phoneNumber ?? '';
-      //
-      print("!1111111111111111111111111");
-      //
+      final String email = user?.email ?? '';
+      final String userName = user?.displayName ?? '';
+      final String imageUrl = user?.photoURL ?? '';
+      final String phone = user?.phoneNumber ?? '';
+
+      print("$email $userName $phone");
+
+
       // String token = await _authRemoteDataSource.loginWithGoogle(
       //   LoginWithGoogleParams(
       //     email: email,

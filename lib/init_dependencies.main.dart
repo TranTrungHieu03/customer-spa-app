@@ -3,8 +3,6 @@ part of 'init_dependencies.dart';
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
-
-
   serviceLocator.registerLazySingleton<NetworkApiService>(
       () => NetworkApiService(baseUrl: "http://localhost:8080"));
 
@@ -24,9 +22,9 @@ Future<void> initDependencies() async {
       () => ConnectionCheckerImpl(serviceLocator()));
 
   await _initAuth();
+  await _initMenu();
 
   print(serviceLocator.isRegistered<NetworkApiService>());
-  print(serviceLocator.isRegistered<AuthRepository>());
 }
 
 Future<void> _initAuth() async {
@@ -48,4 +46,8 @@ Future<void> _initAuth() async {
     ..registerLazySingleton<PasswordConfirmCubit>(() => PasswordConfirmCubit())
     ..registerLazySingleton<RememberMeCubit>(() => RememberMeCubit())
     ..registerLazySingleton<PolicyTermCubit>(() => PolicyTermCubit());
+}
+
+Future<void> _initMenu() async {
+  serviceLocator.registerLazySingleton(() => NavigationBloc());
 }

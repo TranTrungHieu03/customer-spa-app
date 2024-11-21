@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCLI4tEc8YTDspPqfQksdu6vccrnulia2o',
-    appId: '1:771780416047:android:ba0275fc03ceb16f396cda',
+    appId: '1:771780416047:android:54781aa5aa899e90396cda',
     messagingSenderId: '771780416047',
     projectId: 'sep490-bf12d',
     storageBucket: 'sep490-bf12d.firebasestorage.app',
@@ -63,9 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '771780416047',
     projectId: 'sep490-bf12d',
     storageBucket: 'sep490-bf12d.firebasestorage.app',
-    androidClientId: '771780416047-aaeooc9tvbbc7jb1ujc62n5s4it63jjg.apps.googleusercontent.com',
+    androidClientId: '771780416047-52coue4efejft31304qjpbu5fa99g83d.apps.googleusercontent.com',
     iosClientId: '771780416047-0jb1ekona6i63hcade073s1277tgd4un.apps.googleusercontent.com',
     iosBundleId: 'com.example.spaMobile',
   );
-
 }
