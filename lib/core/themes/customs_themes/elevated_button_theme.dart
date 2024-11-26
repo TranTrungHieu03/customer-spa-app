@@ -17,7 +17,7 @@ class TElevatedButtonTheme {
         fontSize: 16,
         color: Colors.white,
         fontWeight: FontWeight.w600,
-        fontFamily: 'KumbhSans'),
+        fontFamily: 'IBMPlexSans'),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   ));
   static final darkTheme = ElevatedButtonThemeData(
@@ -33,7 +33,7 @@ class TElevatedButtonTheme {
         fontSize: 16,
         color: Colors.white,
         fontWeight: FontWeight.w600,
-        fontFamily: 'KumbhSans'),
+        fontFamily: 'IBMPlexSans'),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   ));
 }

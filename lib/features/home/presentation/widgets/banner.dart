@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart'; // Assuming you have a custom widget
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
-import 'package:spa_mobile/core/utils/constants/colors.dart'; // Assuming you have a color constants file
+import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/images.dart'; // Assuming you have a color constants file
 
 class TBanner extends StatefulWidget {
   const TBanner({
@@ -42,7 +43,7 @@ class _TBannerState extends State<TBanner> {
             items: banners
                 .map((banner) => TRoundedImage(
                       imageUrl:
-                          "https://img.pikbest.com/backgrounds/20210426/simple-high-end-beauty-service-beauty-salon-propaganda-banner-template_5921764.jpg!w700wp",
+                          TImages.banner1,
                       applyImageRadius: true,
                       isNetworkImage: true,
                       onPressed: () => {},

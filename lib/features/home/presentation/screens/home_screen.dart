@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppLocalizations.of(context)!.helloMorning,
+                            _getGreetingMessage(),
                             style: Theme.of(context)
                                 .textTheme
                                 .labelLarge!
@@ -112,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           )),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal:TSizes.defaultSpace),
+            padding:
+                const EdgeInsets.symmetric(horizontal: TSizes.defaultSpace),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -133,5 +134,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  String _getGreetingMessage() {
+    final now = DateTime.now();
+    final hour = now.hour;
+
+    if (hour >= 0 && hour < 12) {
+      return AppLocalizations.of(context)!.helloMorning;
+    } else if (hour >= 12 && hour < 14) {
+      return AppLocalizations.of(context)!.helloAfternoon;
+    } else if (hour >= 14 && hour < 18) {
+      return AppLocalizations.of(context)!.helloEvening;
+    } else {
+      return AppLocalizations.of(context)!.helloNight;
+    }
   }
 }

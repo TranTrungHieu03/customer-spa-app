@@ -47,5 +47,7 @@
   "helloAfternoon": "Good afternoon!",
   "helloEvening": "Good evening!",
   "helloNight": "Good night!",
-  "bannerTitle": "Special Offers"
+  "bannerTitle": "Special Offers",
+  "addToCart": "Add to cart",
+  "buyNow": "Buy Now"
 }
