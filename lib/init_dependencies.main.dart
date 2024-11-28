@@ -23,6 +23,7 @@ Future<void> initDependencies() async {
 
   await _initAuth();
   await _initMenu();
+  await _initProduct();
 
   print(serviceLocator.isRegistered<NetworkApiService>());
 }
@@ -50,4 +51,9 @@ Future<void> _initAuth() async {
 
 Future<void> _initMenu() async {
   serviceLocator.registerLazySingleton(() => NavigationBloc());
+}
+
+Future<void> _initProduct() async {
+  serviceLocator
+      .registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
 }

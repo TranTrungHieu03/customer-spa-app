@@ -5,9 +5,9 @@ class TTextTheme {
 
   static TextTheme lightTheme = TextTheme(
     headlineLarge: const TextStyle().copyWith(
-        fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.black),
+        fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.black),
     headlineMedium: const TextStyle().copyWith(
-        fontSize: 24.0, fontWeight: FontWeight.w600, color: Colors.black),
+        fontSize: 20.0, fontWeight: FontWeight.w600, color: Colors.black),
     headlineSmall: const TextStyle().copyWith(
         fontSize: 18.0, fontWeight: FontWeight.w600, color: Colors.black),
 
@@ -19,11 +19,11 @@ class TTextTheme {
         fontSize: 16.0, fontWeight: FontWeight.w400, color: Colors.black),
 
     bodyLarge: const TextStyle().copyWith(
-        fontSize: 14.0, fontWeight: FontWeight.w600, color: Colors.black),
+        fontSize: 15.0, fontWeight: FontWeight.w600, color: Colors.black),
     bodyMedium: const TextStyle().copyWith(
-        fontSize: 14.0, fontWeight: FontWeight.normal, color: Colors.black),
+        fontSize: 15.0, fontWeight: FontWeight.normal, color: Colors.black),
     bodySmall: const TextStyle().copyWith(
-        fontSize: 14.0, fontWeight: FontWeight.w400, color: Colors.black.withOpacity(0.5)),
+        fontSize: 15.0, fontWeight: FontWeight.w400, color: Colors.black.withOpacity(0.5)),
 
     labelMedium: const TextStyle().copyWith(
         fontSize: 12.0, fontWeight: FontWeight.normal, color: Colors.black),
@@ -32,9 +32,9 @@ class TTextTheme {
   );
   static TextTheme darkTheme = TextTheme(
     headlineLarge: const TextStyle().copyWith(
-        fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.white),
+        fontSize: 30.0, fontWeight: FontWeight.bold, color: Colors.white),
     headlineMedium: const TextStyle().copyWith(
-        fontSize: 24.0, fontWeight: FontWeight.w600, color: Colors.white),
+        fontSize: 20.0, fontWeight: FontWeight.w600, color: Colors.white),
     headlineSmall: const TextStyle().copyWith(
         fontSize: 18.0, fontWeight: FontWeight.w600, color: Colors.white),
 

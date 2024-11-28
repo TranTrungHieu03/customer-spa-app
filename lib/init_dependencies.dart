@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -16,5 +15,6 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart'
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cubit.dart';
 
 part "init_dependencies.main.dart";

@@ -16,6 +16,7 @@ dependencies:
 
   #icon
   iconsax: ^0.0.8
+  iconsax_flutter: ^1.0.0
   cupertino_icons: ^1.0.8
   #Utility packages
   intl: ^0.19.0

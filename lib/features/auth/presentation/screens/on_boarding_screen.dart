@@ -6,10 +6,10 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/on_boarding_bloc.dart';
-import 'package:spa_mobile/features/auth/presentation/screens/login_screen.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -23,53 +23,56 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const TAppbar(),
-      body: BlocListener<OnboardingBloc, OnboardingState>(
-        listener: (context, state) {
-          if (state is OnboardingPageChanged) {
-            _pageController.animateToPage(
-              state.pageIndex,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          }
-        },
-        child: Stack(
-          children: [
-            BlocBuilder<OnboardingBloc, OnboardingState>(
-              builder: (context, state) {
-                return PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    context
-                        .read<OnboardingBloc>()
-                        .add(OnPageChangedEvent(index));
-                  },
-                  children: [
-                    OnBoardingPage(
-                      title: AppLocalizations.of(context)!.page1Title,
-                      image: TImages.page1,
-                      subTitle: AppLocalizations.of(context)!.page1Sub,
-                    ),
-                    OnBoardingPage(
-                      title: AppLocalizations.of(context)!.page2Title,
-                      image: TImages.page1,
-                      subTitle: AppLocalizations.of(context)!.page2Sub,
-                    ),
-                    OnBoardingPage(
-                      title: AppLocalizations.of(context)!.page3Title,
-                      image: TImages.page1,
-                      subTitle: AppLocalizations.of(context)!.page3Sub,
-                    ),
-                  ],
-                );
-              },
-            ),
-            const OnboardingSkip(),
-            const OnBoardingDotNavigation(),
-            OnBoardingNextBtn(pageController: _pageController),
-          ],
+    return BlocProvider(
+      create: (_) => OnboardingBloc(),
+      child: Scaffold(
+        appBar: const TAppbar(),
+        body: BlocListener<OnboardingBloc, OnboardingState>(
+          listener: (context, state) {
+            if (state is OnboardingPageChanged) {
+              _pageController.animateToPage(
+                state.pageIndex,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          },
+          child: Stack(
+            children: [
+              BlocBuilder<OnboardingBloc, OnboardingState>(
+                builder: (context, state) {
+                  return PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      context
+                          .read<OnboardingBloc>()
+                          .add(OnPageChangedEvent(index));
+                    },
+                    children: [
+                      OnBoardingPage(
+                        title: AppLocalizations.of(context)!.page1Title,
+                        image: TImages.page1,
+                        subTitle: AppLocalizations.of(context)!.page1Sub,
+                      ),
+                      OnBoardingPage(
+                        title: AppLocalizations.of(context)!.page2Title,
+                        image: TImages.page1,
+                        subTitle: AppLocalizations.of(context)!.page2Sub,
+                      ),
+                      OnBoardingPage(
+                        title: AppLocalizations.of(context)!.page3Title,
+                        image: TImages.page1,
+                        subTitle: AppLocalizations.of(context)!.page3Sub,
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const OnboardingSkip(),
+              const OnBoardingDotNavigation(),
+              OnBoardingNextBtn(pageController: _pageController),
+            ],
+          ),
         ),
       ),
     );
@@ -143,10 +146,7 @@ class OnboardingSkip extends StatelessWidget {
     return BlocListener<OnboardingBloc, OnboardingState>(
         listener: (context, state) {
           if (state is OnboardingComplete) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginScreen()),
-            );
+            goLogin();
           }
         },
         child: Positioned(

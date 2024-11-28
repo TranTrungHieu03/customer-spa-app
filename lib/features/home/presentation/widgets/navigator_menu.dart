@@ -22,14 +22,12 @@ class NavigationMenu extends StatelessWidget {
       ),
       bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (context, state) {
-          return  Container(
+          return Container(
             height: 70,
             decoration: BoxDecoration(
               color: TColors.primary.withOpacity(0.1), // Background color
               borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
-
-
             child: BottomNavigationBar(
               currentIndex: state is NavigationIndexChangedState
                   ? state.selectedIndex
@@ -42,13 +40,9 @@ class NavigationMenu extends StatelessWidget {
               type: BottomNavigationBarType.fixed,
               selectedItemColor: TColors.primary,
               unselectedItemColor: TColors.darkerGrey.withOpacity(0.8),
-              // Color for unselected items
               backgroundColor: TColors.primary.withOpacity(0.0),
-              // Background color of the bottom navigation bar
               elevation: 0,
-              // Add elevation for shadow effect
               showSelectedLabels: true,
-              // Show labels for selected items
               items: const [
                 BottomNavigationBarItem(
                     icon: Icon(Iconsax.home_2), label: 'Home'),
@@ -56,8 +50,6 @@ class NavigationMenu extends StatelessWidget {
                     icon: Icon(Iconsax.box), label: 'Product'),
                 BottomNavigationBarItem(
                     icon: Icon(Iconsax.activity), label: 'Service'),
-                BottomNavigationBarItem(
-                    icon: Icon(Iconsax.ticket), label: 'History'),
                 BottomNavigationBarItem(
                     icon: Icon(Iconsax.setting_2), label: 'Settings'),
               ],

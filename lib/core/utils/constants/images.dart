@@ -14,6 +14,13 @@ class TImages {
   static const String avatar = "assets/images/avatar.png";
   static const String product1 = "assets/images/product_1.png";
   static const String product2 = "assets/images/product_2.png";
+  static const String hair ="assets/images/hair.png";
+  static const String sauna ="assets/images/sauna.png";
+  static const String nail ="assets/images/nail.png";
+  static const String skincare ="assets/images/skincare.png";
+  static const String massage ="assets/images/massage.png";
+  static const String thumbnailService ="https://gaspa.vn/wp-content/uploads/2022/11/Dich-vu-ngoai-vi-tb-dich-vu-03-510x340.png";
+
 
   //url
   static const String product3 = "https://www.larocheposay.vn/-/media/project/loreal/brand-sites/lrp/apac/vn/products/hyalu-b5/anti-aging-hyalu-b5-serum/la-roche-posay-productpage-anti-aging-hyalu-b5-serum-30ml-3337875583626-front.png";
