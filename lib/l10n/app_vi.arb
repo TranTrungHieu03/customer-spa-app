@@ -76,5 +76,8 @@
   "service_type": "Loại dịch vụ",
   "best_selling_product": "Sản phẩm bán chạy",
   "view_all": "Xem tất cả",
-  "search": "Tìm kiếm ..."
+  "search": "Tìm kiếm ...",
+  "paymentSuccessTitle": "Thanh toán thành công!",
+  "paymentSuccessSubTitle": "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Đơn hàng của bạn đang được xử lý.",
+  "apply": "Áp dụng"
 }

@@ -76,5 +76,8 @@
   "service_type": "Service type",
   "best_selling_product": "Best selling product",
   "view_all": "View all",
-  "search": "Search ..."
+  "search": "Search ...",
+  "paymentSuccessTitle": "Payment successful",
+  "paymentSuccessSubTitle": "Thank you for using our service. Your order is being processed.",
+  "apply": "Apply"
 }

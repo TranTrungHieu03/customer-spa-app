@@ -1,5 +1,5 @@
 name: spa_mobile
-description: "A new Flutter project."
+description: "A spa center"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -48,8 +48,9 @@ dependencies:
   #loading
   shimmer: ^3.0.0
   #storage:
-  hive: ^4.0.0-dev.2
+  shared_preferences: ^2.3.3
   path_provider: ^2.1.5
+  provider: ^6.1.2
   #device:
   device_info_plus: ^10.0.0
 
@@ -61,6 +62,7 @@ dependencies:
   firebase_core: ^3.2.0
   firebase_auth: ^5.1.2
   google_sign_in: ^6.2.1
+  flutter_facebook_auth: ^7.1.1
 
 
 dev_dependencies:

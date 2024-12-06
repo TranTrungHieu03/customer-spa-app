@@ -36,7 +36,7 @@ class SocialBtn extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
               border: Border.all(color: TColors.grey)),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () => context.read<AuthBloc>().add(FacebookLoginEvent()),
             icon: const Image(
               width: TSizes.iconLg,
               height: TSizes.iconLg,

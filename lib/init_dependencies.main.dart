@@ -4,15 +4,12 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(baseUrl: "http://localhost:8080"));
+      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api/"));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
 
   //storage
-
-  Hive.defaultDirectory = (await getApplicationDocumentsDirectory()).path;
-  serviceLocator.registerLazySingleton(() => Hive.box(name: "booking"));
 
   //internet
   serviceLocator.registerFactory(() => InternetConnection());

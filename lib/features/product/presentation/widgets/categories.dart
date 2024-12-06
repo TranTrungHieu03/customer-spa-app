@@ -29,7 +29,7 @@ class _TCategoriesState extends State<TCategories> {
             constraints: const BoxConstraints(minWidth: 80),
             padding: const EdgeInsets.symmetric(
               horizontal: TSizes.md,
-              vertical: TSizes.md,
+              vertical: TSizes.sm/2,
             ),
             decoration: BoxDecoration(
               color: isSelected ? TColors.primary : TColors.lightGrey,

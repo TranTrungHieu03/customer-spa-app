@@ -1,12 +1,40 @@
+import 'package:dartz/dartz.dart';
+import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 
-class SignUp {
+class SignUp implements UseCase<Either, SignUpParams> {
   final AuthRepository _authRepository;
 
   SignUp(this._authRepository);
 
-  Future<void> call(String email, String password, String role, String userName,
-      String phoneNumber) async {
-    await _authRepository.signUp(email, password, role, userName, phoneNumber);
+  @override
+  Future<Either<Failure, void>> call(SignUpParams params) async {
+    return await _authRepository.signUp(params);
+  }
+}
+
+class SignUpParams {
+  final String email;
+  final String password;
+  final String role;
+  final String userName;
+  final String phoneNumber;
+
+  SignUpParams(
+      {required this.email,
+      required this.password,
+      required this.role,
+      required this.userName,
+      required this.phoneNumber});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'email': email,
+      'password': password,
+      'role': role,
+      'userName': userName,
+      'phoneNumber': phoneNumber,
+    };
   }
 }

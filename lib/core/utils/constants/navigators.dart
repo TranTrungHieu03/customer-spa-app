@@ -6,7 +6,8 @@ goSignUp() async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (_) => MultiBlocProvider(
+          builder: (_) =>
+              MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (_) => serviceLocator<PasswordCubit>()),
                   BlocProvider(
@@ -35,11 +36,17 @@ goCart() async {
       MaterialPageRoute(builder: (context) => const MyCartScreen()));
 }
 
+goHome() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const NavigationMenu()));
+}
+
 goLogin() async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (_) => MultiBlocProvider(
+          builder: (_) =>
+              MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (_) => serviceLocator<PasswordCubit>()),
                   BlocProvider(
@@ -69,4 +76,40 @@ goServiceHistory() async {
 goSearch() async {
   Navigator.push(navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const SearchScreen()));
+}
+
+goHistory() async {
+  Navigator.pushAndRemoveUntil(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const HistoryScreen()),
+          (Route<dynamic> route) => false);
+}
+
+goProfile() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const ProfileScreen()));
+}
+
+goServiceDetail(String id) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) =>
+              ServiceDetailScreen(
+                serviceId: id,
+              )));
+}
+
+goSuccess(String title, String subTitle, VoidCallback onPressed,
+    String image) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) =>
+              SuccessScreen(
+                title: title,
+                subTitle: subTitle,
+                onPressed: onPressed,
+                image: image,
+              )));
 }

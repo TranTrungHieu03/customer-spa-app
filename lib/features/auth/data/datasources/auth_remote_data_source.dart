@@ -3,14 +3,14 @@ import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login_with_google.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
 
 abstract class AuthRemoteDataSource {
   Future<String> login(LoginParams params);
 
   Future<String> loginWithGoogle(LoginWithGoogleParams params);
 
-  Future<String> signUp(String email, String password, String role,
-      String userName, String phoneNumber);
+  Future<String> signUp(SignUpParams params);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -37,10 +37,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> signUp(String email, String password, String role,
-      String userName, String phoneNumber) {
-    // TODO: implement signUp
-    throw UnimplementedError();
+  Future<String> signUp(SignUpParams params) async {
+    try {
+      final response =
+          await _apiServices.postApi('Auth/first-step', params.toJson());
+
+      final apiResponse = ApiResponse<String>.fromJson(response);
+
+      if (apiResponse.success && apiResponse.result?.data != null) {
+        return apiResponse.result!.data!;
+      } else {
+        throw AppException("Register account failed");
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
   }
 
   @override

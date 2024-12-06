@@ -79,9 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {}, iconColor: TColors.white)
                   ],
                 ),
-                const SizedBox(height: TSizes.sm,),
-                const TSearchHome(),
-                const SizedBox(height: TSizes.md,)
+
+                // const TSearchHome(),
+                const SizedBox(
+                  height: TSizes.md * 2,
+                )
               ],
             )),
             Padding(

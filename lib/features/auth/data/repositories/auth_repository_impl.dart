@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
@@ -7,6 +8,7 @@ import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
@@ -30,10 +32,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> signUp(String email, String password,
-      String role, String userName, String phoneNumber) {
-    // TODO: implement signUp
-    throw UnimplementedError();
+  Future<Either<Failure, String>> signUp(SignUpParams params) async {
+    try {
+      return right("success");
+      // await _authRemoteDataSource.signUp(params);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
   }
 
   @override
@@ -63,17 +70,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final User? user = userCredential.user;
 
-      // if (user == null) {
-      //   return left(const ApiFailure(message: "Google sign-in aborted"));
-      // }
-
       final String email = user?.email ?? '';
       final String userName = user?.displayName ?? '';
       final String imageUrl = user?.photoURL ?? '';
       final String phone = user?.phoneNumber ?? '';
 
       print("$email $userName $phone");
-
 
       // String token = await _authRemoteDataSource.loginWithGoogle(
       //   LoginWithGoogleParams(
@@ -89,6 +91,51 @@ class AuthRepositoryImpl implements AuthRepository {
       return left(ApiFailure(
         message: e.toString(),
       ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> loginWithFacebook() async {
+    try {
+      print("Login with Facebook");
+
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+      final userData = await FacebookAuth.instance.getUserData();
+      print(userData["name"]);
+      print("end");
+      if (loginResult.status != LoginStatus.success) {
+        print("Facebook login failed: ${loginResult.status}");
+        return left(const ApiFailure(message: "Facebook sign-in aborted"));
+      }
+
+      final AccessToken accessToken = loginResult.accessToken!;
+
+      final OAuthCredential facebookAuthCredential =
+          FacebookAuthProvider.credential(accessToken.tokenString);
+
+      await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+
+      final String email = userData["email"] ?? '';
+      final String userName = userData["name"] ?? '';
+      final String imageUrl = userData["picture"]?['data']?["url"] ?? '';
+
+      print("$email $userName $imageUrl");
+
+      // String token = await _authRemoteDataSource.loginWithFacebook(
+      //   LoginWithFacebookParams(
+      //     email: email,
+      //     userName: userName,
+      //     imageUrl: imageUrl,
+      //     phone: phone,
+      //   ),
+      // );
+
+      return right("");
+    } on AppException catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    } catch (e) {
+      return left(
+          ApiFailure(message: "An unexpected error occurred: ${e.toString()}"));
     }
   }
 }

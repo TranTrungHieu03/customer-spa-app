@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
-import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/device/device_utility.dart';
 
 class TAppbar extends StatelessWidget implements PreferredSizeWidget {
@@ -22,26 +21,22 @@ class TAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-      child: AppBar(
-        automaticallyImplyLeading: false,
-        leading: showBackArrow
-            ? IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Iconsax.arrow_left,
-                  color: THelperFunctions.isDarkMode(context)
-                      ? Colors.white
-                      : TColors.black,
-                ))
-            : leadingIcon != null
-                ? IconButton(
-                    onPressed: leadingOnPressed, icon: Icon(leadingIcon))
-                : null,
-        title: title,
-        actions: actions,
-      ),
+    return AppBar(
+      automaticallyImplyLeading: false,
+      leading: showBackArrow
+          ? IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(
+                Iconsax.arrow_left,
+                color: THelperFunctions.isDarkMode(context)
+                    ? Colors.white
+                    : TColors.black,
+              ))
+          : leadingIcon != null
+              ? IconButton(onPressed: leadingOnPressed, icon: Icon(leadingIcon))
+              : null,
+      title: title,
+      actions: actions,
     );
   }
 

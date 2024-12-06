@@ -7,6 +7,7 @@ import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
+import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
@@ -102,7 +103,7 @@ class TProductCardVertical extends StatelessWidget {
                 //Price
                 const Padding(
                   padding: EdgeInsets.all(TSizes.sm),
-                  child: TProductPriceText(price: '35.0'),
+                  child: TProductPriceText(price: "35"),
                 ),
                 Container(
                   decoration: const BoxDecoration(

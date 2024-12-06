@@ -36,9 +36,9 @@ class TCircularImage extends StatelessWidget {
               (THelperFunctions.isDarkMode(context)
                   ? TColors.black
                   : TColors.white),
-          borderRadius: BorderRadius.circular(100)),
+          borderRadius: BorderRadius.circular(width)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(width),
         child: Center(
           child: isNetworkImage
               ? CachedNetworkImage(
@@ -47,11 +47,13 @@ class TCircularImage extends StatelessWidget {
                   imageUrl: image,
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                   progressIndicatorBuilder: (context, url, downloadProgress) =>
-                      const TShimmerEffect(width: 55, height: 55),
+                      TShimmerEffect(width: width, height: height),
                 )
               : Image(
                   fit: fit,
                   image: AssetImage(image),
+                  width: width,
+                  height: height,
                   color: overlayColor,
                 ),
         ),

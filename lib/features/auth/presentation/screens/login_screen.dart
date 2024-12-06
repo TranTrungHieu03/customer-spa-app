@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/styles/spacing_styles.dart';
 import 'package:spa_mobile/core/common/widgets/form_divider.dart';
-import 'package:spa_mobile/core/common/widgets/notify.dart';
 import 'package:spa_mobile/core/common/widgets/social_btn.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/validators/validation.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
-import 'package:spa_mobile/core/utils/constants/images.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -91,7 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           return TextFormField(
                             obscureText: isPasswordHidden,
-                            validator: (value) => TValidator.validatePassword(value),
+                            validator: (value) =>
+                                TValidator.validatePassword(value),
                             decoration: InputDecoration(
                               labelText: AppLocalizations.of(context)!.password,
                               prefixIcon: const Icon(Iconsax.password_check),
@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                               } else {
-                                return;
+                                goHome();
                               }
                             },
                             child: Text(AppLocalizations.of(context)!.login)),

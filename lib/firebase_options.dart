@@ -67,4 +67,5 @@ class DefaultFirebaseOptions {
     iosClientId: '771780416047-0jb1ekona6i63hcade073s1277tgd4un.apps.googleusercontent.com',
     iosBundleId: 'com.example.spaMobile',
   );
+
 }
