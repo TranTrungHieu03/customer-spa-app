@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
@@ -19,10 +20,11 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(context);
     return Scaffold(
       appBar: TAppbar(
         title: Text(
-          'Account',
+          AppLocalizations.of(context)!.account,
           style: Theme.of(context).textTheme.headlineMedium!,
         ),
       ),
@@ -40,8 +42,8 @@ class _SettingScreenState extends State<SettingScreen> {
               padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
               child: Column(
                 children: [
-                  const TSectionHeading(
-                    title: 'Account Settings',
+                  TSectionHeading(
+                    title: AppLocalizations.of(context)!.account_settings,
                     showActionButton: false,
                   ),
                   const SizedBox(
@@ -49,13 +51,13 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.award,
-                    title: "Rewards",
+                    title: AppLocalizations.of(context)!.rewards,
                     onTap: () {},
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.language_circle,
-                    title: "Language",
+                    title: AppLocalizations.of(context)!.language,
                     onTap: () {
                       _changeLanguagePopup(context);
                     },
@@ -63,7 +65,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "English",
+                          languageProvider.getLanguageName(
+                              languageProvider.locale.languageCode),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const SizedBox(
@@ -75,25 +78,25 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.receipt,
-                    title: "Order",
+                    title: AppLocalizations.of(context)!.order_name,
                     onTap: () => goHistory(),
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.bookmark,
-                    title: "Appointment",
-                    onTap: () => goHistory(),
+                    title: AppLocalizations.of(context)!.appointment,
+                    onTap: () => goServiceHistory(),
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   const Divider(),
                   TSettingsMenuTile(
                     icon: Iconsax.profile_remove,
-                    title: "Delete account",
+                    title: AppLocalizations.of(context)!.delete_account,
                     onTap: () => _deleteAccountWarningPopup(context),
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.logout,
-                    title: "Logout",
+                    title: AppLocalizations.of(context)!.logout,
                     onTap: () {},
                   ),
                   const SizedBox(
@@ -155,9 +158,9 @@ class _SettingScreenState extends State<SettingScreen> {
               const Text('Are you sure you want to change to Vietnamese? '),
           actions: [
             TextButton(
-              onPressed: () {
-                Provider.of<LanguageProvider>(context, listen: false)
-                    .changeLanguage(Locale('en'));
+              onPressed: () async {
+                await Provider.of<LanguageProvider>(context, listen: false)
+                    .changeLanguage(Locale('vi'));
                 Navigator.of(context).pop();
               },
               child: const Text('Cancel'),

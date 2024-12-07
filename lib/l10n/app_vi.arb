@@ -79,5 +79,14 @@
   "search": "Tìm kiếm ...",
   "paymentSuccessTitle": "Thanh toán thành công!",
   "paymentSuccessSubTitle": "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Đơn hàng của bạn đang được xử lý.",
-  "apply": "Áp dụng"
+  "apply": "Áp dụng",
+  "book_now":"Đặt lịch ngay",
+  "account": "Tài khoản",
+  "account_settings": "Cài đặt tài khoản",
+  "rewards": "Tích điểm",
+  "language": "Ngôn ngữ",
+  "order_name": "Đơn hàng",
+  "appointment": "Lịch hẹn",
+  "delete_account": "Xóa tài khoản",
+  "logout": "Đăng xuất"
 }

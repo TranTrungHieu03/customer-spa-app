@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/circular_image.dart';
@@ -67,21 +68,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: TSizes.sm,
               ),
               TProfileItem(
-                  label: "Username",
+                  label: AppLocalizations.of(context)!.username,
                   icon: Iconsax.profile_2user,
                   controller: userNameController),
               const SizedBox(
                 height: TSizes.sm,
               ),
               TProfileItem(
-                  label: "Email",
+                  label: AppLocalizations.of(context)!.email,
                   icon: Iconsax.direct_right,
                   controller: emailController),
               const SizedBox(
                 height: TSizes.sm,
               ),
               TProfileItem(
-                  label: "Phone",
+                  label: AppLocalizations.of(context)!.phone,
                   icon: Iconsax.call,
                   controller: phoneController),
               const SizedBox(

@@ -6,8 +6,7 @@ goSignUp() async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (_) =>
-              MultiBlocProvider(
+          builder: (_) => MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (_) => serviceLocator<PasswordCubit>()),
                   BlocProvider(
@@ -31,6 +30,13 @@ goProductDetail(String id) async {
           builder: (context) => ProductDetailScreen(productId: id)));
 }
 
+goBookingDetail(String id) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BookingDetailScreen(bookingId: id)));
+}
+
 goCart() async {
   Navigator.push(navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const MyCartScreen()));
@@ -45,8 +51,7 @@ goLogin() async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (_) =>
-              MultiBlocProvider(
+          builder: (_) => MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (_) => serviceLocator<PasswordCubit>()),
                   BlocProvider(
@@ -82,7 +87,7 @@ goHistory() async {
   Navigator.pushAndRemoveUntil(
       navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const HistoryScreen()),
-          (Route<dynamic> route) => false);
+      (Route<dynamic> route) => false);
 }
 
 goProfile() async {
@@ -94,22 +99,30 @@ goServiceDetail(String id) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) =>
-              ServiceDetailScreen(
+          builder: (context) => ServiceDetailScreen(
                 serviceId: id,
               )));
 }
 
-goSuccess(String title, String subTitle, VoidCallback onPressed,
-    String image) async {
+goSuccess(
+    String title, String subTitle, VoidCallback onPressed, String image) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) =>
-              SuccessScreen(
+          builder: (context) => SuccessScreen(
                 title: title,
                 subTitle: subTitle,
                 onPressed: onPressed,
                 image: image,
               )));
+}
+
+goServiceBooking() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const BookingServiceScreen()));
+}
+
+goServiceCheckout() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const CheckoutServiceScreen()));
 }

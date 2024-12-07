@@ -9,6 +9,7 @@ import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -185,7 +186,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
           Expanded(
             flex: 3,
             child: GestureDetector(
-              onTap: () {},
+              onTap: () => goServiceBooking(),
               child: Container(
                 height: 55,
                 decoration: BoxDecoration(
@@ -194,7 +195,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                 padding: EdgeInsets.all(TSizes.sm / 2),
                 alignment: Alignment.center,
                 child: Text(
-                  AppLocalizations.of(context)!.buyNow,
+                  AppLocalizations.of(context)!.book_now,
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge

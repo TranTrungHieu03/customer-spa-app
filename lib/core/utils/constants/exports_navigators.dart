@@ -15,9 +15,12 @@ import 'package:spa_mobile/features/product/presentation/screens/checkout_screen
 import 'package:spa_mobile/features/product/presentation/screens/my_cart_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/shipment_information_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/booking_detail_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/booking_service_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/checkout_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_history_screen.dart';
-import 'package:spa_mobile/features/user/presentation/screens/history_screen.dart';
+import 'package:spa_mobile/features/product/presentation/screens/history_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 

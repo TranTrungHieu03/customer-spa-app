@@ -79,5 +79,14 @@
   "search": "Search ...",
   "paymentSuccessTitle": "Payment successful",
   "paymentSuccessSubTitle": "Thank you for using our service. Your order is being processed.",
-  "apply": "Apply"
+  "apply": "Apply",
+  "book_now": "Book now",
+  "account": "Account",
+  "account_settings": "Account Settings",
+  "rewards": "Rewards",
+  "language": "Language",
+  "order_name": "Order",
+  "appointment": "Appointment",
+  "delete_account": "Delete Account",
+  "logout": "Logout"
 }
