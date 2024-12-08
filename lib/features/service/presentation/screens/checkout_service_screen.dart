@@ -12,7 +12,7 @@ import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
-
+// cho nhap dia chi xong rcm branch gan do va km
 class CheckoutServiceScreen extends StatefulWidget {
   const CheckoutServiceScreen({super.key});
 

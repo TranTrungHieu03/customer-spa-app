@@ -194,11 +194,107 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   ],
                 ),
               ),
-              TextButton(onPressed: () {}, child: Text("Cancel"))
+              TextButton(
+                  onPressed: () {
+                    _showCancelModal(context);
+                  },
+                  child: Text("Cancel"))
             ],
           ),
         ),
       ),
     );
   }
+}
+
+void _showCancelModal(BuildContext context) {
+  final List<String> reasons = [
+    "Service not needed anymore",
+    "Found a better option",
+    "Too expensive",
+    "Poor service experience",
+    "Other"
+  ];
+
+  String? selectedReason;
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (BuildContext context) {
+      return Padding(
+        padding: EdgeInsets.only(
+          left: TSizes.md,
+          right: TSizes.md,
+          top: TSizes.md,
+          bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.md,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Reason for cancellation",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: reasons.length,
+                itemBuilder: (context, index) {
+                  final reason = reasons[index];
+                  return RadioListTile<String>(
+                    title: Text(reason),
+                    value: reason,
+                    groupValue: selectedReason,
+                    onChanged: (value) {
+                      // setState(() {
+                      //   selectedReason = value;
+                      // });
+                    },
+                  );
+                },
+              ),
+            ),
+            if (selectedReason == "Other")
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: "Enter your reason description",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: TSizes.md, vertical: 10),
+                    ),
+                    child: Text(
+                      "Cancel",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontSize: TSizes.md,
+                          ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    },
+  );
 }
