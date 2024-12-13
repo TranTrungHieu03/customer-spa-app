@@ -24,6 +24,7 @@ class NetworkApiService implements BaseApiServices {
       InterceptorsWrapper(
         onRequest: (options, handler) {
           options.headers['Authorization'] = 'Bearer my_token';
+          options.headers['Content-Type'] = 'application/json';
           return handler.next(options);
         },
       ),
@@ -74,13 +75,18 @@ class NetworkApiService implements BaseApiServices {
     dynamic responseJson;
     try {
       final Response response = await _dio.post(url, data: data);
+
       responseJson = returnResponse(response);
       if (kDebugMode) {
         print(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
-      _handleDioException(e);
+      if (e.type == DioExceptionType.badResponse) {
+        return returnResponse(e.response!);
+      } else {
+        _handleDioException(e);
+      }
     }
 
     // } on SocketException {
@@ -112,11 +118,12 @@ class NetworkApiService implements BaseApiServices {
 
     switch (response.statusCode) {
       case 200:
-        dynamic responseJson = jsonDecode(response.data);
-        return responseJson;
       case 400:
-        dynamic responseJson = jsonDecode(response.data);
-        return responseJson;
+        if (response.data is String) {
+          return jsonDecode(response.data);
+        } else {
+          return response.data;
+        }
       case 401:
         throw UnauthorisedException(response.data.toString());
       case 500:

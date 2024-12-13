@@ -12,6 +12,7 @@ import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
+
 // cho nhap dia chi xong rcm branch gan do va km
 class CheckoutServiceScreen extends StatefulWidget {
   const CheckoutServiceScreen({super.key});
@@ -32,30 +33,56 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  TRoundedIcon(icon: Iconsax.location),
+                  Text(
+                    "Update my location",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
               Text(
                 "Branch Address",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              DropdownButtonFormField<String>(
-                  value: _selectedValue,
-                  isDense: true,
-                  dropdownColor: TColors.white,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Iconsax.building),
-                  ),
-                  items: [
-                    "147 Hoang Huu Nam Tan Phu Thu Duc",
-                    "123 Le Thi Rieng, District 1",
-                    "456 Nguyen Thi Minh Khai, District 3",
-                  ].map<DropdownMenuItem<String>>((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    _selectedValue = newValue;
-                  }),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: THelperFunctions.screenWidth(context),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      // Giới hạn không gian để mũi tên không tràn
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedValue,
+                        isDense: true,
+                        dropdownColor: TColors.white,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Iconsax.building),
+                        ),
+                        items: [
+                          "147 Hoang Huu Nam Tan Phu Thu Duc",
+                          "123 Le Thi Rieng, District 1",
+                          "456 Nguyen Thi Minh Khai, District 3",
+                        ].map<DropdownMenuItem<String>>((String item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          _selectedValue = newValue;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(
                 height: TSizes.md,
               ),

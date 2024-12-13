@@ -11,8 +11,9 @@ class AuthLoading extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final String token;
+  final String message;
 
-  const AuthSuccess(this.token);
+  const AuthSuccess(this.token, this.message);
 }
 
 class AuthFailure extends AuthState {
@@ -20,5 +21,3 @@ class AuthFailure extends AuthState {
 
   const AuthFailure(this.message);
 }
-
-

@@ -11,16 +11,16 @@ class AppException implements Exception {
 
   @override
   String toString() {
-    return '$_message$_prefix'; // Returns the formatted error message
+    return '${_prefix ?? ''} $_message';// Returns the formatted error message
   }
 }
 
 /// Exception class representing a fetch data error during communication.
 class FetchDataException extends AppException {
   /// Constructor for creating a [FetchDataException] instance.
-  ///
+  ///, 'Error During Communication'
   /// The [message] parameter represents the error message.
-  FetchDataException([String? message]) : super(message, 'Error During Communication');
+  FetchDataException([String? super.message]);
 }
 
 /// Exception class representing a bad request error.
@@ -52,5 +52,5 @@ class NoInternetException extends AppException {
   /// Constructor for creating a [NoInternetException] instance.
   ///
   /// The [message] parameter represents the error message.
-  NoInternetException([String? message]) : super(message, 'No Internet Connection');
+  NoInternetException([String? super.message]);
 }

@@ -26,6 +26,30 @@ class SignUpEvent extends AuthEvent {
   });
 }
 
+class VerifyEvent extends AuthEvent {
+  final VerifyOtpParams params;
+
+  VerifyEvent({required this.params});
+}
+
+class ResendOtpEvent extends AuthEvent {
+  final ResendOtpParams params;
+
+  ResendOtpEvent({required this.params});
+}
+
+class ForgetPasswordEvent extends AuthEvent {
+  final ForgetPasswordParams params;
+
+  ForgetPasswordEvent({required this.params});
+}
+
+class ResetPasswordEvent extends AuthEvent {
+  final ResetPasswordParams params;
+
+  ResetPasswordEvent({required this.params});
+}
+
 class GoogleLoginEvent extends AuthEvent {}
 
 class FacebookLoginEvent extends AuthEvent {}

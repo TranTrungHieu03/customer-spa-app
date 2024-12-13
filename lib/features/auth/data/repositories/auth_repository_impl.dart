@@ -7,8 +7,11 @@ import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/forget_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/verify_otp.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
@@ -34,8 +37,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, String>> signUp(SignUpParams params) async {
     try {
-      return right("success");
-      // await _authRemoteDataSource.signUp(params);
+      String message = await _authRemoteDataSource.signUp(params);
+      return right(message);
     } on AppException catch (e) {
       return left(ApiFailure(
         message: e.toString(),
@@ -136,6 +139,44 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       return left(
           ApiFailure(message: "An unexpected error occurred: ${e.toString()}"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyOtp(VerifyOtpParams params) async {
+    try {
+      String message = await _authRemoteDataSource.verifyOtp(params);
+      return right(message);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> forgetPassword(
+      ForgetPasswordParams params) async {
+    try {
+      String message = await _authRemoteDataSource.forgetPassword(params);
+      return right(message);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPassword(
+      ResetPasswordParams params) async {
+    try {
+      String message = await _authRemoteDataSource.resetPassword(params);
+      return right(message);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
     }
   }
 }

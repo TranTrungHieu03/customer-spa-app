@@ -14,3 +14,11 @@ final class PolicyTermToggled extends PolicyTermState {
 
   PolicyTermToggled(this.isAccept);
 }
+
+final class PolicyTermError extends PolicyTermState {
+  final String message;
+
+  PolicyTermError(this.message);
+}
+
+final class PolicyTermValid extends PolicyTermState {}

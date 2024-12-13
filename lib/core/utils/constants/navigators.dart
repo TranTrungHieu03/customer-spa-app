@@ -13,6 +13,8 @@ goSignUp() async {
                       create: (_) => serviceLocator<PasswordConfirmCubit>()),
                   BlocProvider(
                       create: (_) => serviceLocator<PolicyTermCubit>()),
+                  BlocProvider(
+                      create: (_) => serviceLocator<PasswordMatchCubit>()),
                 ],
                 child: const SignUpScreen(),
               )));
@@ -59,6 +61,17 @@ goLogin() async {
                 ],
                 child: const LoginScreen(),
               )));
+}
+
+goLoginNotBack() async {
+  Navigator.pushAndRemoveUntil(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => MultiBlocProvider(providers: [
+                BlocProvider(create: (_) => serviceLocator<PasswordCubit>()),
+                BlocProvider(create: (_) => serviceLocator<RememberMeCubit>()),
+              ], child: const LoginScreen())),
+      (Route<dynamic> route) => false);
 }
 
 goCheckout() async {
@@ -125,4 +138,9 @@ goServiceBooking() async {
 goServiceCheckout() async {
   Navigator.push(navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const CheckoutServiceScreen()));
+}
+
+goVerify(String email) async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => VerifyScreen(email: email)));
 }

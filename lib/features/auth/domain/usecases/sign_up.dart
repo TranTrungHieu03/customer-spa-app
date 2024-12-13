@@ -9,7 +9,7 @@ class SignUp implements UseCase<Either, SignUpParams> {
   SignUp(this._authRepository);
 
   @override
-  Future<Either<Failure, void>> call(SignUpParams params) async {
+  Future<Either<Failure, String>> call(SignUpParams params) async {
     return await _authRepository.signUp(params);
   }
 }
@@ -32,9 +32,9 @@ class SignUpParams {
     return {
       'email': email,
       'password': password,
-      'role': role,
+      'typeAccount': role,
       'userName': userName,
-      'phoneNumber': phoneNumber,
+      'phone': phoneNumber,
     };
   }
 }

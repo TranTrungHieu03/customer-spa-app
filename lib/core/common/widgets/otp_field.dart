@@ -19,13 +19,19 @@ class OTPFields extends StatefulWidget {
   TextEditingController pin2;
   TextEditingController pin3;
   TextEditingController pin4;
+  TextEditingController pin5;
+  GlobalKey keyForm;
+  TextEditingController pin6;
 
   OTPFields({
     super.key,
+    required this.keyForm,
     required this.pin1,
     required this.pin2,
     required this.pin3,
     required this.pin4,
+    required this.pin5,
+    required this.pin6,
   });
 
   @override
@@ -37,6 +43,8 @@ class _OTPFieldsState extends State<OTPFields> {
   late FocusNode pin2FN;
   late FocusNode pin3FN;
   late FocusNode pin4FN;
+  late FocusNode pin5FN;
+  late FocusNode pin6FN;
 
   final pinStyle = const TextStyle(fontSize: 25, fontWeight: FontWeight.bold);
 
@@ -47,6 +55,8 @@ class _OTPFieldsState extends State<OTPFields> {
     pin2FN = FocusNode();
     pin3FN = FocusNode();
     pin4FN = FocusNode();
+    pin5FN = FocusNode();
+    pin6FN = FocusNode();
   }
 
   @override
@@ -56,6 +66,8 @@ class _OTPFieldsState extends State<OTPFields> {
     pin2FN.dispose();
     pin3FN.dispose();
     pin4FN.dispose();
+    pin5FN.dispose();
+    pin6FN.dispose();
   }
 
   void nextField(String value, FocusNode focusNode) {
@@ -67,6 +79,7 @@ class _OTPFieldsState extends State<OTPFields> {
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: widget.keyForm,
       child: Column(
         children: [
           Row(
@@ -135,9 +148,41 @@ class _OTPFieldsState extends State<OTPFields> {
                   inputFormatters: [
                     UpperCaseTextFormatter(),
                   ],
+                  onChanged: (value) => nextField(value, pin5FN),
+                ),
+              ),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: TextFormField(
+                  controller: widget.pin5,
+                  focusNode: pin5FN,
+                  style: pinStyle,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  decoration: inputDecoration,
+                  inputFormatters: [
+                    UpperCaseTextFormatter(),
+                  ],
+                  onChanged: (value) => nextField(value, pin6FN),
+                ),
+              ),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: TextFormField(
+                  controller: widget.pin6,
+                  focusNode: pin6FN,
+                  style: pinStyle,
+                  keyboardType: TextInputType.number,
+                  textAlign: TextAlign.center,
+                  decoration: inputDecoration,
+                  inputFormatters: [
+                    UpperCaseTextFormatter(),
+                  ],
                   onChanged: (value) {
                     if (value.length == 1) {
-                      pin4FN.unfocus();
+                      pin6FN.unfocus();
                     }
                   },
                 ),

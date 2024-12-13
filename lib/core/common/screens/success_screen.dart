@@ -1,16 +1,16 @@
-import 'package:lottie/lottie.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lottie/lottie.dart';
 import 'package:spa_mobile/core/common/styles/spacing_styles.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen(
       {super.key,
-        required this.image,
-        required this.title,
-        required this.subTitle,
-        required this.onPressed});
+      required this.image,
+      required this.title,
+      required this.subTitle,
+      required this.onPressed});
 
   final String image, title, subTitle;
   final VoidCallback onPressed;
@@ -57,7 +57,7 @@ class SuccessScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: onPressed,
-                  child: const Text('Continue'),
+                  child: Text(AppLocalizations.of(context)!.submit),
                 ),
               ),
             ],

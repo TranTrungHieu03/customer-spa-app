@@ -4,7 +4,7 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api/"));
+      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api"));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -21,8 +21,6 @@ Future<void> initDependencies() async {
   await _initAuth();
   await _initMenu();
   await _initProduct();
-
-  print(serviceLocator.isRegistered<NetworkApiService>());
 }
 
 Future<void> _initAuth() async {
@@ -37,13 +35,17 @@ Future<void> _initAuth() async {
 
     //use cases
     ..registerFactory(() => Login(serviceLocator()))
+    ..registerFactory(() => SignUp(serviceLocator()))
+    ..registerFactory(() => VerifyOtp(serviceLocator()))
+
     //bloc
     ..registerLazySingleton(() => AuthBloc(serviceLocator()))
     //cubit
     ..registerLazySingleton<PasswordCubit>(() => PasswordCubit())
     ..registerLazySingleton<PasswordConfirmCubit>(() => PasswordConfirmCubit())
     ..registerLazySingleton<RememberMeCubit>(() => RememberMeCubit())
-    ..registerLazySingleton<PolicyTermCubit>(() => PolicyTermCubit());
+    ..registerLazySingleton<PolicyTermCubit>(() => PolicyTermCubit())
+    ..registerLazySingleton<PasswordMatchCubit>(() => PasswordMatchCubit());
 }
 
 Future<void> _initMenu() async {
