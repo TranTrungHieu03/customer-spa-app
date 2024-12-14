@@ -42,7 +42,16 @@ class TSnackBar {
             children: [
               Text(title, style: TextStyle(color: TColors.white)),
               if (message.isNotEmpty)
-                Text(message, style: TextStyle(color: TColors.white))
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                  child: Text(
+                    message,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: TColors.white),
+                    maxLines: 3,
+                  ),
+                )
             ],
           ),
         ],
@@ -64,7 +73,16 @@ class TSnackBar {
             children: [
               Text(title, style: TextStyle(color: TColors.white)),
               if (message.isNotEmpty)
-                Text(message, style: TextStyle(color: TColors.white))
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                  child: Text(
+                    message,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: TColors.white),
+                    maxLines: 3,
+                  ),
+                )
             ],
           ),
         ],
@@ -86,10 +104,15 @@ class TSnackBar {
             children: [
               Text(title, style: TextStyle(color: TColors.white)),
               if (message.isNotEmpty)
-                Text(
-                  message,
-                  style: TextStyle(color: TColors.white),
-                  maxLines: 3,
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                  child: Text(
+                    message,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: TColors.white),
+                    maxLines: 3,
+                  ),
                 )
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/screens/success_screen.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit.dart';
@@ -7,6 +8,7 @@ import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.da
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/login_screen.dart';
+import 'package:spa_mobile/features/auth/presentation/screens/set_password_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/verify_screen.dart';

@@ -2,25 +2,25 @@ import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 
-class LoginWithGoogle implements UseCase<Either, NoParams> {
+class LoginWithFacebook implements UseCase<Either, NoParams> {
   final AuthRepository _authRepository;
 
-  LoginWithGoogle(this._authRepository);
+  LoginWithFacebook(this._authRepository);
 
   @override
   Future<Either> call(NoParams params) async {
-    return await _authRepository.loginWithGoogle();
+    return await _authRepository.loginWithFacebook();
   }
 }
 
-class LoginWithGoogleParams {
+class LoginWithFacebookParams {
   final String email;
   final String userName;
   final String imageUrl;
   final String phone;
   final String role;
 
-  LoginWithGoogleParams(
+  LoginWithFacebookParams(
       {required this.email,
       required this.role,
       required this.userName,

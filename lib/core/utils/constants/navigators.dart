@@ -32,6 +32,22 @@ goProductDetail(String id) async {
           builder: (context) => ProductDetailScreen(productId: id)));
 }
 
+goSetPassword(String email) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(create: (_) => serviceLocator<PasswordCubit>()),
+                  BlocProvider(
+                      create: (_) => serviceLocator<PasswordConfirmCubit>()),
+                  BlocProvider(
+                      create: (_) => serviceLocator<PasswordMatchCubit>()),
+                ],
+                child: SetPasswordScreen(email: email),
+              )));
+}
+
 goBookingDetail(String id) async {
   Navigator.push(
       navigatorKey.currentContext!,
@@ -140,7 +156,12 @@ goServiceCheckout() async {
       MaterialPageRoute(builder: (context) => const CheckoutServiceScreen()));
 }
 
-goVerify(String email) async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => VerifyScreen(email: email)));
+goVerify(String email, int statePage) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => VerifyScreen(
+                email: email,
+                statePage: statePage,
+              )));
 }

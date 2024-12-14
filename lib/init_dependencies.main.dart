@@ -37,6 +37,9 @@ Future<void> _initAuth() async {
     ..registerFactory(() => Login(serviceLocator()))
     ..registerFactory(() => SignUp(serviceLocator()))
     ..registerFactory(() => VerifyOtp(serviceLocator()))
+    ..registerFactory(() => ForgetPassword(serviceLocator()))
+    ..registerFactory(() => ResetPassword(serviceLocator()))
+    ..registerFactory(() => ResendOtp(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => AuthBloc(serviceLocator()))

@@ -3,6 +3,7 @@ import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/forget_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/login_with_facebook.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login_with_google.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/resend_otp.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
@@ -13,6 +14,8 @@ abstract class AuthRemoteDataSource {
   Future<String> login(LoginParams params);
 
   Future<String> loginWithGoogle(LoginWithGoogleParams params);
+
+  Future<String> loginWithFacebook(LoginWithFacebookParams params);
 
   Future<String> signUp(SignUpParams params);
 
@@ -39,7 +42,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final apiResponse = ApiResponse<String>.fromJson(response);
 
       if (apiResponse.success) {
-        return apiResponse.result!.message!;
+        print(apiResponse.result!.data!);
+        return apiResponse.result!.data!;
       } else {
         throw AppException("Login Failed");
       }
@@ -69,11 +73,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> loginWithGoogle(LoginWithGoogleParams params) async {
     try {
       final response =
-          await _apiServices.postApi('Auth/loginWithGoogle', params.toJson());
+          await _apiServices.postApi('/Auth/login-google', params.toJson());
 
       final apiResponse = ApiResponse<String>.fromJson(response);
 
       if (apiResponse.success) {
+        print(apiResponse.result!.data!);
         return apiResponse.result!.data!;
       } else {
         throw AppException("Login Failed");
@@ -104,7 +109,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> forgetPassword(ForgetPasswordParams params) async {
     try {
       final response = await _apiServices
-          .getApi("/Auth/forget-password?email=${params.email}");
+          .postApi("/Auth/forget-password?email=${params.email}", {});
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -145,6 +150,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return apiResponse.result!.message!;
       } else {
         throw AppException("Verify account failed");
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> loginWithFacebook(LoginWithFacebookParams params) async {
+    try {
+      final response =
+          await _apiServices.postApi('/Auth/login-facebook', params.toJson());
+
+      final apiResponse = ApiResponse<String>.fromJson(response);
+
+      if (apiResponse.success) {
+        return apiResponse.result!.data!;
+      } else {
+        throw AppException("Login Failed");
       }
     } catch (e) {
       throw AppException(e.toString());

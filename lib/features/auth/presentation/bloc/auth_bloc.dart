@@ -20,6 +20,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<GoogleLoginEvent>(_onGoogleLoginEvent);
     on<FacebookLoginEvent>(_onFacebookLoginEvent);
     on<VerifyEvent>(_onVerifyEvent);
+    on<ForgetPasswordEvent>(_onForgetPasswordEvent);
+    on<ResetPasswordEvent>(_onResetPasswordEvent);
+    on<ResendOtpEvent>(_onResendOtpEvent);
   }
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
@@ -79,12 +82,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.verifyOtp(event.params);
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthSuccess("", "SignUp Successful")),
+      (_) => emit(AuthSuccess("", "Verify Successful")),
     );
   }
 
   Future<void> _onForgetPasswordEvent(
       ForgetPasswordEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
+    final result = await _authRepository.forgetPassword(event.params);
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (_) => emit(AuthSuccess("", "Forget password success")),
+    );
+  }
+
+  Future<void> _onResetPasswordEvent(
+      ResetPasswordEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final result = await _authRepository.resetPassword(event.params);
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (_) => emit(AuthSuccess("", "Reset password success")),
+    );
+  }
+
+  Future<void> _onResendOtpEvent(
+      ResendOtpEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final result = await _authRepository.resendOtp(event.params);
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (_) => emit(AuthSuccess("", "Resend Otp success")),
+    );
   }
 }

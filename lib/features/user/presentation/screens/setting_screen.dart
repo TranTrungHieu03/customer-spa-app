@@ -97,7 +97,9 @@ class _SettingScreenState extends State<SettingScreen> {
                   TSettingsMenuTile(
                     icon: Iconsax.logout,
                     title: AppLocalizations.of(context)!.logout,
-                    onTap: () {},
+                    onTap: () {
+                      goLoginNotBack();
+                    },
                   ),
                   const SizedBox(
                     height: TSizes.spacebtwItems,

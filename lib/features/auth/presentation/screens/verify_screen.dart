@@ -14,9 +14,11 @@ class VerifyScreen extends StatefulWidget {
   const VerifyScreen({
     super.key,
     required this.email,
+    required this.statePage,
   });
 
   final String email;
+  final int statePage;
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -42,11 +44,14 @@ class _VerifyScreenState extends State<VerifyScreen> {
       appBar: AppBar(),
       body: BlocListener<AuthBloc, AuthState>(listener: (context, state) {
         if (state is AuthSuccess) {
-          goSuccess(
-              AppLocalizations.of(context)!.signUpSuccess,
-              AppLocalizations.of(context)!.signUpSuccessSub,
-              goLoginNotBack(),
-              TImages.success);
+          if (widget.statePage == 1) {
+            goSuccess(AppLocalizations.of(context)!.signUpSuccess,
+                AppLocalizations.of(context)!.signUpSuccessSub, () {
+              goLoginNotBack();
+            }, TImages.success);
+          } else {
+            goSetPassword(widget.email);
+          }
         } else if (state is AuthFailure) {
           TSnackBar.errorSnackBar(context, message: state.message);
         }

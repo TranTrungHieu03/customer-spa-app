@@ -30,12 +30,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _emailController.dispose();
+  //   _passwordController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            goVerify(_emailController.text.toString());
+            goVerify(_emailController.text.toString(), 1);
           } else if (state is AuthFailure) {
             TSnackBar.errorSnackBar(context, message: state.message);
           }
@@ -56,8 +56,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 SingleChildScrollView(
                   child: Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: TSizes.defaultSpace),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: TSizes.defaultSpace),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
