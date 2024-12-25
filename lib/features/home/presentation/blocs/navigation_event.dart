@@ -8,3 +8,5 @@ class ChangeSelectedIndexEvent extends NavigationEvent {
 
   ChangeSelectedIndexEvent(this.index);
 }
+
+class GoToHomeEvent extends NavigationEvent {}

@@ -5,13 +5,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/network/base_api_services.dart';
+import 'package:spa_mobile/core/utils/service/auth_service.dart';
 
 /// Class for handling network API requests.
 class NetworkApiService implements BaseApiServices {
   final Dio _dio;
+  final AuthService authService;
+  String? _cachedToken;
 
   // Constructor to initialize Dio and set up the interceptor
-  NetworkApiService({String? baseUrl})
+  NetworkApiService({String? baseUrl, required this.authService})
       : _dio = Dio(
           BaseOptions(
             baseUrl: baseUrl ?? 'https://api.example.com',
@@ -22,13 +25,60 @@ class NetworkApiService implements BaseApiServices {
     // Add the interceptor after Dio is initialized
     _dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          options.headers['Authorization'] = 'Bearer my_token';
+        onRequest: (options, handler) async {
+          _cachedToken = _cachedToken ?? await authService.getToken();
+          if (kDebugMode) {
+            print("==> Request Interceptor Triggered");
+            print("Token: $_cachedToken");
+            print("URL: ${options.uri}");
+            print("Headers: ${options.headers}");
+          }
+
+          options.headers['Authorization'] = 'Bearer $_cachedToken';
           options.headers['Content-Type'] = 'application/json';
           return handler.next(options);
         },
+        onError: (DioError error, handler) async {
+          // Handle token refresh on 401 Unauthorized error
+          if (error.response?.statusCode == 401) {
+            final newToken = await _refreshToken();
+            if (newToken != null) {
+              _cachedToken = newToken;
+
+              // Retry the failed request with new token
+              final options = error.requestOptions;
+              options.headers['Authorization'] = 'Bearer $newToken';
+              final response = await _dio.request(
+                options.path,
+                options: Options(
+                  method: options.method,
+                  headers: options.headers,
+                ),
+                data: options.data,
+                queryParameters: options.queryParameters,
+              );
+              return handler.resolve(response);
+            }
+          }
+          return handler.next(error);
+        },
       ),
     );
+  }
+
+  Future<String?> _refreshToken() async {
+    try {
+      final response = await _dio.post('/Auth/refresh-token');
+      final newToken = response.data['result']['data'] as String?;
+      print('FRTK');
+      if (newToken != null) {
+        await authService.saveToken(newToken);
+      }
+      return newToken;
+    } catch (e) {
+      print('Failed to refresh token: $e');
+      return null;
+    }
   }
 
   /// Sends a GET request to the specified [url] and returns the response.
@@ -42,6 +92,7 @@ class NetworkApiService implements BaseApiServices {
     }
     dynamic responseJson;
     try {
+      print("Test url");
       final response = await _dio.get(url);
       responseJson = returnResponse(response);
 
@@ -51,12 +102,17 @@ class NetworkApiService implements BaseApiServices {
       //   throw FetchDataException('Network Request time out');
       // }
 
+      responseJson = returnResponse(response);
       if (kDebugMode) {
         print(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
-      _handleDioException(e);
+      if (e.type == DioExceptionType.badResponse) {
+        return returnResponse(e.response!);
+      } else {
+        _handleDioException(e);
+      }
     }
   }
 
@@ -101,7 +157,7 @@ class NetworkApiService implements BaseApiServices {
         e.type == DioExceptionType.receiveTimeout) {
       throw FetchDataException('Request timed out');
     } else if (e.type == DioExceptionType.badResponse) {
-      throw FetchDataException('Bad response: ${e.response?.statusCode}');
+      throw FetchDataException('Bad response: ${e.response?.statusMessage}');
     } else if (e.type == DioExceptionType.connectionError) {
       throw NoInternetException('No internet connection');
     }

@@ -98,7 +98,7 @@ class TSnackBar {
       content: Row(
         children: [
           const Icon(Iconsax.warning_2, color: TColors.white),
-          const SizedBox(width: 8),
+          const SizedBox(width: 5),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

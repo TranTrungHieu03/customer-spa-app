@@ -2,26 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class TGridLayout extends StatelessWidget {
-  const TGridLayout({
-    super.key,
-    required this.itemCount,
-    this.mainAxisExtent = 260,
-    required this.itemBuilder,
-    this.crossAxisCount = 1,
-  });
+  const TGridLayout(
+      {super.key,
+      required this.itemCount,
+      this.mainAxisExtent = 260,
+      required this.itemBuilder,
+      this.crossAxisCount = 1,
+      this.controller});
 
   final int itemCount;
   final int crossAxisCount;
+  final ScrollController? controller;
   final double? mainAxisExtent;
   final Widget? Function(BuildContext, int) itemBuilder;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      controller: controller,
       itemCount: itemCount,
       padding: EdgeInsets.zero,
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           mainAxisSpacing: TSizes.gridViewSpacing,

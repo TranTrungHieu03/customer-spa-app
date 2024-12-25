@@ -7,16 +7,20 @@ import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
+import 'package:spa_mobile/features/service/data/model/service_model.dart';
 
 class TServiceCard extends StatelessWidget {
+  final ServiceModel service;
+
   const TServiceCard({
     super.key,
+    required this.service,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => goServiceDetail("1"),
+      onTap: () => goServiceDetail(service.serviceId.toString()),
       child: TRoundedContainer(
         width: THelperFunctions.screenWidth(context) * 0.45,
         height: 200,
@@ -40,12 +44,12 @@ class TServiceCard extends StatelessWidget {
                       constraints: BoxConstraints(
                         maxWidth: THelperFunctions.screenWidth(context) * 0.45,
                       ),
-                      child: const TProductTitleText(
-                        title: "Dịch vụ thải độc da thảo dược",
+                      child: TProductTitleText(
+                        title: service.name,
                         smallSize: true,
                         maxLines: 2,
                       )),
-                  TProductPriceText(price: "299")
+                  TProductPriceText(price: service.price.toString())
                 ],
               ),
             ),

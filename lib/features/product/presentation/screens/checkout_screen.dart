@@ -298,7 +298,7 @@ class TBottomCheckout extends StatelessWidget {
               onPressed: () => goSuccess(
                   AppLocalizations.of(context)!.paymentSuccessTitle,
                   AppLocalizations.of(context)!.paymentSuccessSubTitle,
-                  () => goHistory(),
+                  () => goFeedback(),
                   TImages.success),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(

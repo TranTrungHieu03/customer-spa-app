@@ -3,6 +3,7 @@ import 'package:internet_connection_checker_plus/internet_connection_checker_plu
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/utils/constants/texts.dart';
+import 'package:spa_mobile/core/utils/service/auth_service.dart';
 import 'package:spa_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:spa_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
@@ -21,5 +22,10 @@ import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.da
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cubit.dart';
+import 'package:spa_mobile/features/service/data/datasources/service_remote_data_source.dart';
+import 'package:spa_mobile/features/service/data/repositories/service_repository_impl.dart';
+import 'package:spa_mobile/features/service/domain/repository/service_repository.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/service_bloc.dart';
 
 part "init_dependencies.main.dart";

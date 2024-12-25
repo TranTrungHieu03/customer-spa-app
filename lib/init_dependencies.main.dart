@@ -3,8 +3,11 @@ part of 'init_dependencies.dart';
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
-  serviceLocator.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api"));
+  serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
+  serviceLocator.registerLazySingleton<NetworkApiService>(() =>
+      NetworkApiService(
+          baseUrl: "https://solaceapi.ddnsking.com/api",
+          authService: serviceLocator<AuthService>()));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -21,6 +24,7 @@ Future<void> initDependencies() async {
   await _initAuth();
   await _initMenu();
   await _initProduct();
+  await _initService();
 }
 
 Future<void> _initAuth() async {
@@ -31,7 +35,8 @@ Future<void> _initAuth() async {
     //repository
     ..registerFactory<AuthRepository>(() => AuthRepositoryImpl(
         serviceLocator<AuthRemoteDataSource>(),
-        serviceLocator<ConnectionChecker>()))
+        serviceLocator<ConnectionChecker>(),
+        serviceLocator<AuthService>()))
 
     //use cases
     ..registerFactory(() => Login(serviceLocator()))
@@ -58,4 +63,20 @@ Future<void> _initMenu() async {
 Future<void> _initProduct() async {
   serviceLocator
       .registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
+}
+
+Future<void> _initService() async {
+  serviceLocator
+    //data src
+    ..registerFactory<ServiceRemoteDataSrc>(
+        () => ServiceRemoteDataSrcImpl(serviceLocator<NetworkApiService>()))
+    //repo
+    ..registerFactory<ServiceRepository>(() => ServiceRepositoryImpl(
+        serviceLocator<ServiceRemoteDataSrc>(),
+        serviceLocator<ConnectionChecker>()))
+    //use case
+    ..registerLazySingleton(() => GetListService(serviceLocator()))
+
+    //bloc
+    ..registerLazySingleton(() => ServiceBloc(serviceLocator()));
 }

@@ -1,6 +1,7 @@
-String formatMoney(String number) {
-  return number.toString().replaceAllMapped(
-        RegExp(r'(\d)(?=(\d{3})+$)'),
-        (Match match) => '${match.group(1)}.',
-      );
+
+import 'package:intl/intl.dart';
+
+String formatMoney(String amount) {
+  final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'VND');
+  return formatter.format(double.parse(amount));
 }

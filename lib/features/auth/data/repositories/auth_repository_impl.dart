@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
+import 'package:spa_mobile/core/utils/service/auth_service.dart';
 import 'package:spa_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/forget_password.dart';
@@ -21,13 +23,17 @@ class AuthRepositoryImpl implements AuthRepository {
   final ConnectionChecker _connectionChecker;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final AuthService _authService;
 
-  AuthRepositoryImpl(this._authRemoteDataSource, this._connectionChecker);
+  AuthRepositoryImpl(
+      this._authRemoteDataSource, this._connectionChecker, this._authService);
 
   @override
   Future<Either<Failure, String>> login(LoginParams params) async {
     try {
       String token = await _authRemoteDataSource.login(params);
+
+      await _authService.saveToken(token);
 
       return right(token);
     } on AppException catch (e) {
@@ -91,7 +97,7 @@ class AuthRepositoryImpl implements AuthRepository {
             phone: phone,
             role: "Customer"),
       );
-
+      await _authService.saveToken(token);
       return right(token);
     } on AppException catch (e) {
       return left(ApiFailure(
@@ -135,13 +141,17 @@ class AuthRepositoryImpl implements AuthRepository {
             phone: "",
             role: "Customer"),
       );
-
+      await _authService.saveToken(token);
       return right(token);
     } on AppException catch (e) {
       return left(ApiFailure(message: e.toString()));
     } catch (e) {
-      return left(
-          ApiFailure(message: "An unexpected error occurred: ${e.toString()}"));
+      if (e is PlatformException) {
+        if (e.code == "FAILED") {
+          return left(const ApiFailure(message: "Choose other way to login."));
+        }
+      }
+      return left(ApiFailure(message: e.toString()));
     }
   }
 

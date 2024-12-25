@@ -76,7 +76,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   actions: [
                     TNotificationIcon(
-                        onPressed: () {}, iconColor: TColors.white)
+                        onPressed: () {}, iconColor: TColors.white),
+                    const SizedBox(
+                      width: TSizes.sm,
+                    ),
+                    TRoundedIcon(
+                      icon: Iconsax.message,
+                      color: TColors.primary,
+                      onPressed: () {
+                        goChat();
+                      },
+                    ),
+                    const SizedBox(
+                      width: TSizes.sm,
+                    ),
                   ],
                 ),
 
@@ -127,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: 2,
                       crossAxisCount: 2,
                       itemBuilder: (context, index) {
-                        return const TServiceCard();
+                        // return const TServiceCard();
                       }),
                   const SizedBox(
                     height: TSizes.md,

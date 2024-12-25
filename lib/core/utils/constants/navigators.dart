@@ -61,6 +61,9 @@ goCart() async {
 }
 
 goHome() async {
+  navigatorKey.currentContext!
+      .read<NavigationBloc>()
+      .add(ChangeSelectedIndexEvent(0));
   Navigator.push(navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const NavigationMenu()));
 }
@@ -164,4 +167,27 @@ goVerify(String email, int statePage) async {
                 email: email,
                 statePage: statePage,
               )));
+}
+
+goChat() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const ChatAiScreen()));
+}
+
+goFeedback() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const FeedbackScreen()));
+}
+
+goStatusService(String title, String content, Widget value, String image,
+    Color color) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => StatusServiceScreen(
+              title: title,
+              content: content,
+              value: value,
+              image: image,
+              color: color)));
 }

@@ -4,6 +4,7 @@ import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
@@ -57,22 +58,27 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         const SizedBox(
                           width: TSizes.sm,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxWidth:
-                                      THelperFunctions.screenWidth(context) *
-                                          0.4),
-                              child: TProductTitleText(
-                                title: "Service Name 1",
-                                maxLines: 1,
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxWidth:
+                                  THelperFunctions.screenWidth(context) * 0.7),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        THelperFunctions.screenWidth(context) *
+                                            0.4),
+                                child: TProductTitleText(
+                                  title: "Service Name 1",
+                                  maxLines: 1,
+                                ),
                               ),
-                            ),
-                            Text("30 mins"),
-                            Text("6-step process. Includes 10-min massage"),
-                          ],
+                              Text("30 mins"),
+                              Text("6-step process. Includes 10-min massage"),
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -101,22 +107,27 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         const SizedBox(
                           width: TSizes.sm,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                  maxWidth:
-                                      THelperFunctions.screenWidth(context) *
-                                          0.4),
-                              child: TProductTitleText(
-                                title: "Service Name 1",
-                                maxLines: 1,
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxWidth:
+                                  THelperFunctions.screenWidth(context) * 0.7),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        THelperFunctions.screenWidth(context) *
+                                            0.4),
+                                child: TProductTitleText(
+                                  title: "Service Name 1",
+                                  maxLines: 1,
+                                ),
                               ),
-                            ),
-                            Text("30 mins"),
-                            Text("6-step process. Includes 10-min massage"),
-                          ],
+                              Text("30 mins"),
+                              Text("6-step process. Includes 10-min massage"),
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -194,11 +205,26 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   ],
                 ),
               ),
-              TextButton(
-                  onPressed: () {
-                    _showCancelModal(context);
-                  },
-                  child: Text("Cancel"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        _showCancelModal(context);
+                      },
+                      child: Text("Cancel")),
+                  TextButton(
+                      onPressed: () {
+                        goStatusService(
+                            "Reschedule Complete",
+                            "Dear John Kevin please share your avaluable feedback. This will help use improve our services.",
+                            Text(""),
+                            TImages.reBookingSuccessIcon,
+                            Colors.orange);
+                      },
+                      child: Text("Re-booking")),
+                ],
+              )
             ],
           ),
         ),
@@ -219,6 +245,7 @@ void _showCancelModal(BuildContext context) {
   String? selectedReason;
   showModalBottomSheet(
     context: context,
+    elevation: 0.5,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -276,7 +303,14 @@ void _showCancelModal(BuildContext context) {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      goStatusService(
+                          "Cancel Success",
+                          "Dear John Kevin please share your avaluable feedback. This will help use improve our services.",
+                          Text(""),
+                          TImages.deleteIcon,
+                          Colors.redAccent);
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: TSizes.md, vertical: 10),

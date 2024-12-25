@@ -1,12 +1,12 @@
-import 'dart:ffi';
-
+import 'package:spa_mobile/core/common/entities/pagination.dart';
 import 'package:spa_mobile/core/response/response.dart';
 
 class Result<T> {
   T? data;
   String? message;
+  Map<String, dynamic>? pagination;
 
-  Result({this.data, this.message});
+  Result({this.data, this.message, this.pagination});
 }
 
 class ApiResponse<T> {
@@ -36,10 +36,12 @@ class ApiResponse<T> {
   factory ApiResponse.fromJson(Map<String, dynamic> json) {
     return ApiResponse._(
       status: json['success'] ? Status.completed : Status.error,
-      result: json['result'] != null ? Result<T>(
-        data: json['result']['data'],
-        message: json['result']['message'] ?? json['message'],
-      ) : null,
+      result: json['result'] != null
+          ? Result<T>(
+              data: json['result']['data'],
+              message: json['result']['message'] ?? json['message'],
+              pagination: json['result']['pagination'])
+          : null,
       success: json['success'] ?? false,
     );
   }

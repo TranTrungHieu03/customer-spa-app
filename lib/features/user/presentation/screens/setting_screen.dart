@@ -56,7 +56,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     trailing: Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
-                    icon: Iconsax.language_circle,
+                    icon: Icons.language_outlined,
                     title: AppLocalizations.of(context)!.language,
                     onTap: () {
                       _changeLanguagePopup(context);
@@ -126,14 +126,13 @@ class _SettingScreenState extends State<SettingScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Đóng dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
-                Navigator.of(context)
-                    .pop(); // Đóng dialog sau khi xóa tài khoản
+                Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

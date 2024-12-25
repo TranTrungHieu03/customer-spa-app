@@ -62,18 +62,24 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                           prefixIcon: Icon(Iconsax.building),
                         ),
                         items: [
-                          "147 Hoang Huu Nam Tan Phu Thu Duc",
-                          "123 Le Thi Rieng, District 1",
-                          "456 Nguyen Thi Minh Khai, District 3",
+                          "147 Hoang Huu Nam Tan Phu Thu Duc (5km)",
+                          "123 Le Thi Rieng, District 1 (7km)",
+                          "456 Nguyen Thi Minh Khai, District 3 (9km)",
                         ].map<DropdownMenuItem<String>>((String item) {
                           return DropdownMenuItem<String>(
-                            value: item,
-                            child: Text(
-                              item,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          );
+                              value: item,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    maxWidth:
+                                        THelperFunctions.screenWidth(context) *
+                                            0.7),
+                                child: Text(
+                                  item,
+                                  overflow: TextOverflow.ellipsis,
+                                  softWrap: true,
+                                  maxLines: 2,
+                                ),
+                              ));
                         }).toList(),
                         onChanged: (String? newValue) {
                           _selectedValue = newValue;

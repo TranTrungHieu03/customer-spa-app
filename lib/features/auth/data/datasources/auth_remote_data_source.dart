@@ -42,10 +42,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final apiResponse = ApiResponse<String>.fromJson(response);
 
       if (apiResponse.success) {
-        print(apiResponse.result!.data!);
         return apiResponse.result!.data!;
       } else {
-        throw AppException("Login Failed");
+        throw AppException(apiResponse.result!.message);
       }
     } catch (e) {
       throw AppException(e.toString());
@@ -81,7 +80,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         print(apiResponse.result!.data!);
         return apiResponse.result!.data!;
       } else {
-        throw AppException("Login Failed");
+        throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
       throw AppException(e.toString());
@@ -98,7 +97,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (apiResponse.success) {
         return apiResponse.result!.message!;
       } else {
-        throw AppException("Verify account failed");
+        throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
       throw AppException(e.toString());
@@ -115,7 +114,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (apiResponse.success) {
         return apiResponse.result!.message!;
       } else {
-        throw AppException("Verify account failed");
+        throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
       throw AppException(e.toString());
@@ -132,7 +131,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (apiResponse.success) {
         return apiResponse.result!.message!;
       } else {
-        throw AppException("Verify account failed");
+        throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
       throw AppException(e.toString());
@@ -149,7 +148,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (apiResponse.success) {
         return apiResponse.result!.message!;
       } else {
-        throw AppException("Verify account failed");
+        throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
       throw AppException(e.toString());
@@ -167,7 +166,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (apiResponse.success) {
         return apiResponse.result!.data!;
       } else {
-        throw AppException("Login Failed");
+        throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
       throw AppException(e.toString());

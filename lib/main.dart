@@ -11,7 +11,7 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
-import 'package:spa_mobile/features/home/presentation/screens/chat_ai_screen.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/service_bloc.dart';
 import 'package:spa_mobile/firebase_options.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
@@ -33,6 +33,7 @@ void main() async {
       providers: [
         BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ServiceBloc>()),
         BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
@@ -76,8 +77,7 @@ class _MyAppState extends State<MyApp> {
           //     orElse: () => const Locale('en'),
           //   );
           // },
-          home: const ChatAiScreen(),
-
+          home: const OnBoardingScreen(),
         );
       },
     );

@@ -146,7 +146,7 @@ class OnboardingSkip extends StatelessWidget {
     return BlocListener<OnboardingBloc, OnboardingState>(
         listener: (context, state) {
           if (state is OnboardingComplete) {
-            goLogin();
+            goLoginNotBack();
           }
         },
         child: Positioned(

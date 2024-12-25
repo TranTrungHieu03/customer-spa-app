@@ -19,14 +19,14 @@ class TProductPriceText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      currencySign + formatMoney(price+"000"),
+      formatMoney(price),
       maxLines: maxLine,
       overflow: TextOverflow.ellipsis,
       style: isLarge
           ? Theme.of(context).textTheme.bodyMedium!.apply(
-          decoration: lineThrough ? TextDecoration.lineThrough : null)
+              decoration: lineThrough ? TextDecoration.lineThrough : null)
           : Theme.of(context).textTheme.titleLarge!.apply(
-          decoration: lineThrough ? TextDecoration.lineThrough : null),
+              decoration: lineThrough ? TextDecoration.lineThrough : null),
     );
   }
 }
