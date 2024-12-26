@@ -127,7 +127,7 @@ goProfile() async {
       MaterialPageRoute(builder: (context) => const ProfileScreen()));
 }
 
-goServiceDetail(String id) async {
+goServiceDetail(int id) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(

@@ -10,7 +10,7 @@ class ServiceModel extends Service {
       required super.description,
       required super.price,
       required super.duration,
-      // required super.status,
+      required super.status,
       required super.categoryId,
       required this.category});
 
@@ -22,8 +22,8 @@ class ServiceModel extends Service {
         description: json['description'] as String,
         price: (json['price'] as num).toDouble(),
         duration: json['duration'] as String,
-        // status: json['status'] as String,
-        categoryId: json['categoryId'] as int,
+        status: json['status'] as String,
+        categoryId: json['categoryId'] ?? 0 as int,
         category:
             CategoryModel.fromJson(json['category'] as Map<String, dynamic>));
   }
@@ -36,7 +36,7 @@ class ServiceModel extends Service {
       'description': description,
       'price': price,
       'duration': duration,
-      // 'status': status,
+      'status': status,
       'categoryId': categoryId,
       'category': category
     };

@@ -12,7 +12,7 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   final List<Widget> screens = [
     const HomeScreen(),
     const ProductsScreen(),
-    ServiceScreen(),
+    WrapperServiceScreen(),
     const SettingScreen(),
   ];
 

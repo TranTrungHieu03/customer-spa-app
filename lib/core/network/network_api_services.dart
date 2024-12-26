@@ -14,10 +14,10 @@ class NetworkApiService implements BaseApiServices {
   String? _cachedToken;
 
   // Constructor to initialize Dio and set up the interceptor
-  NetworkApiService({String? baseUrl, required this.authService})
+  NetworkApiService({required String baseUrl, required this.authService})
       : _dio = Dio(
           BaseOptions(
-            baseUrl: baseUrl ?? 'https://api.example.com',
+            baseUrl: baseUrl,
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ),
@@ -27,15 +27,15 @@ class NetworkApiService implements BaseApiServices {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           _cachedToken = _cachedToken ?? await authService.getToken();
+
+          options.headers['Authorization'] = 'Bearer $_cachedToken';
+          options.headers['Content-Type'] = 'application/json';
           if (kDebugMode) {
             print("==> Request Interceptor Triggered");
             print("Token: $_cachedToken");
             print("URL: ${options.uri}");
             print("Headers: ${options.headers}");
           }
-
-          options.headers['Authorization'] = 'Bearer $_cachedToken';
-          options.headers['Content-Type'] = 'application/json';
           return handler.next(options);
         },
         onError: (DioError error, handler) async {
@@ -68,9 +68,8 @@ class NetworkApiService implements BaseApiServices {
 
   Future<String?> _refreshToken() async {
     try {
-      final response = await _dio.post('/Auth/refresh-token');
+      final response = await _dio.get('/Auth/refresh-token');
       final newToken = response.data['result']['data'] as String?;
-      print('FRTK');
       if (newToken != null) {
         await authService.saveToken(newToken);
       }

@@ -11,7 +11,9 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 import 'package:spa_mobile/firebase_options.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
@@ -34,6 +36,8 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
         BlocProvider(create: (_) => serviceLocator<ServiceBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ListServiceBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ListCategoryBloc>()),
         BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(

@@ -1,0 +1,29 @@
+import 'package:flutter/material.dart';
+import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+
+class ErrorScreen extends StatelessWidget {
+  const ErrorScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: TAppbar(
+          showBackArrow: true,
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Center(
+              child: Text('Please come back later.'),
+            ),
+            TextButton(
+              onPressed: () {
+                goHome();
+              },
+              child: const Text('Back to Home'),
+            ),
+          ],
+        ));
+  }
+}

@@ -1,15 +1,20 @@
-part of 'service_bloc.dart';
+part of 'list_service_bloc.dart';
 
 @immutable
-sealed class ServiceState {
-  const ServiceState();
+sealed class ListServiceState {
+  const ListServiceState();
 }
 
-class ServiceInitial extends ServiceState {}
+final class ListServiceInitial extends ListServiceState {}
 
-class ServiceLoading extends ServiceState {}
+class ListServiceEmpty extends ListServiceState {}
 
-class ListServiceLoaded extends ServiceState {
+class ListServiceLoading extends ListServiceState {
+  final bool isLoadingMore;
+ const  ListServiceLoading({this.isLoadingMore = false});
+}
+
+class ListServiceLoaded extends ListServiceState {
   final List<ServiceModel> services;
   final PaginationModel pagination;
   final bool isLoadingMore;
@@ -33,14 +38,8 @@ class ListServiceLoaded extends ServiceState {
   }
 }
 
-class ServiceDetailSuccess extends ServiceState {
-  final ServiceModel service;
-
-  const ServiceDetailSuccess(this.service);
-}
-
-class ServiceFailure extends ServiceState {
+class ListServiceFailure extends ListServiceState {
   final String message;
 
-  const ServiceFailure(this.message);
+  const ListServiceFailure(this.message);
 }

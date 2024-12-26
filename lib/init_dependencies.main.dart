@@ -25,6 +25,7 @@ Future<void> initDependencies() async {
   await _initMenu();
   await _initProduct();
   await _initService();
+  await _initCategory();
 }
 
 Future<void> _initAuth() async {
@@ -76,7 +77,24 @@ Future<void> _initService() async {
         serviceLocator<ConnectionChecker>()))
     //use case
     ..registerLazySingleton(() => GetListService(serviceLocator()))
+    ..registerLazySingleton(() => GetServiceDetail(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(serviceLocator()));
+}
+
+Future<void> _initCategory() async {
+  serviceLocator
+    //data src
+    ..registerFactory<CategoryRemoteDataSource>(
+        () => CategoryRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    //repo
+    ..registerFactory<CategoryRepository>(() => CategoryRepositoryImpl(
+          serviceLocator<CategoryRemoteDataSource>(),
+        ))
+    //use case
+    ..registerLazySingleton(() => GetListCategories(serviceLocator()))
+
+    //bloc
+    ..registerLazySingleton(() => ListCategoryBloc(serviceLocator()));
 }

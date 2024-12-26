@@ -22,10 +22,16 @@ import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.da
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cubit.dart';
+import 'package:spa_mobile/features/service/data/datasources/category_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/datasources/service_remote_data_source.dart';
+import 'package:spa_mobile/features/service/data/repositories/category_repository_impl.dart';
 import 'package:spa_mobile/features/service/data/repositories/service_repository_impl.dart';
+import 'package:spa_mobile/features/service/domain/repository/category_repository.dart';
 import 'package:spa_mobile/features/service/domain/repository/service_repository.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_categories.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/service_bloc.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 
 part "init_dependencies.main.dart";

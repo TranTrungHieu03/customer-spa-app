@@ -60,4 +60,10 @@ class TSizes {
 
   //Grid view Spacing
   static const double gridViewSpacing = 16.0;
+
+  //Shimmer effect
+  static const double shimmerSx = 25.0;
+  static const double shimmerSm = 60.0;
+  static const double shimmerMd = 90.0;
+  static const double shimmerLg = 150.0;
 }

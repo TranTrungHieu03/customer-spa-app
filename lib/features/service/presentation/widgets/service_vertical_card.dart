@@ -20,12 +20,13 @@ class TServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => goServiceDetail(service.serviceId.toString()),
+      onTap: () => goServiceDetail(service.serviceId),
       child: TRoundedContainer(
         width: THelperFunctions.screenWidth(context) * 0.45,
         height: 200,
         radius: 10,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TRoundedImage(
               applyImageRadius: true,
@@ -37,19 +38,37 @@ class TServiceCard extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(TSizes.sm),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: THelperFunctions.screenWidth(context) * 0.45,
-                      ),
-                      child: TProductTitleText(
-                        title: service.name,
-                        smallSize: true,
-                        maxLines: 2,
-                      )),
-                  TProductPriceText(price: service.price.toString())
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  THelperFunctions.screenWidth(context) * 0.44,
+                            ),
+                            child: TProductTitleText(
+                              title: service.name,
+                              smallSize: true,
+                              maxLines: 2,
+                            )),
+                        ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  THelperFunctions.screenWidth(context) * 0.44,
+                            ),
+                            child: Text(
+                              service.description,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            )),
+                        TProductPriceText(price: service.price.toString())
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

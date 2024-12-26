@@ -4,37 +4,47 @@ import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/service_repository.dart';
 
-part 'service_event.dart';
-part 'service_state.dart';
+part 'list_service_event.dart';
+part 'list_service_state.dart';
 
-class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
+class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
   final ServiceRepository _serviceRepository;
 
-  ServiceBloc(this._serviceRepository) : super(ServiceInitial()) {
+  ListServiceBloc(this._serviceRepository) : super(ListServiceInitial()) {
     on<GetListServicesEvent>(_onGetListServices);
   }
 
   Future<void> _onGetListServices(
-      GetListServicesEvent event, Emitter<ServiceState> emit) async {
+      GetListServicesEvent event, Emitter<ListServiceState> emit) async {
     final currentState = state;
-
+    if (currentState is ListServiceLoaded && currentState.isLoadingMore) {
+      return;
+    }
     if (currentState is ListServiceLoaded) {
       emit(currentState.copyWith(isLoadingMore: true));
       final result = await _serviceRepository.getServices(event.page);
       result.fold(
-        (failure) => emit(ServiceFailure(failure.message)),
+        (failure) => emit(ListServiceFailure(failure.message)),
         (result) => emit(ListServiceLoaded(
             services: currentState.services + result.services,
             pagination: result.pagination,
             isLoadingMore: false)),
       );
     } else {
-      emit(ServiceLoading());
+      emit(const ListServiceLoading(isLoadingMore: false));
       final result = await _serviceRepository.getServices(event.page);
       result.fold(
-        (failure) => emit(ServiceFailure(failure.message)),
-        (result) => emit(ListServiceLoaded(
-            services: result.services, pagination: result.pagination)),
+        (failure) => emit(ListServiceFailure(failure.message)),
+        (result) {
+          if (result.services.isEmpty) {
+            emit(ListServiceEmpty());
+          } else {
+            emit(ListServiceLoaded(
+              services: result.services,
+              pagination: result.pagination,
+            ));
+          }
+        },
       );
     }
   }

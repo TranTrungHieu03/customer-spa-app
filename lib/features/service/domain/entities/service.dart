@@ -8,7 +8,7 @@ class Service extends Equatable {
   final double price;
   final String duration;
 
-  // final String status;
+  final String status;
   final int categoryId;
 
   // final Category category;
@@ -19,7 +19,7 @@ class Service extends Equatable {
     required this.description,
     required this.price,
     required this.duration,
-    // required this.status,
+    required this.status,
     required this.categoryId,
     // required this.category
   });
@@ -30,7 +30,7 @@ class Service extends Equatable {
           String? description,
           double? price,
           String? duration,
-          // String? status,
+          String? status,
           int? categoryId,
           Category? category}) =>
       Service(
@@ -39,7 +39,7 @@ class Service extends Equatable {
         description: description ?? this.description,
         price: price ?? this.price,
         duration: duration ?? this.duration,
-        // status: status ?? this.status,
+        status: status ?? this.status,
         categoryId: categoryId ?? this.categoryId,
         // category: category ?? this.category
       );
