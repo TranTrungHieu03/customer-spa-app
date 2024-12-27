@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 
 class Service extends Equatable {
   final int serviceId;
@@ -9,9 +8,7 @@ class Service extends Equatable {
   final String duration;
 
   final String status;
-  final int categoryId;
-
-  // final Category category;
+  final String? steps;
 
   const Service({
     required this.serviceId,
@@ -20,8 +17,7 @@ class Service extends Equatable {
     required this.price,
     required this.duration,
     required this.status,
-    required this.categoryId,
-    // required this.category
+    this.steps,
   });
 
   Service copyWith(
@@ -31,8 +27,7 @@ class Service extends Equatable {
           double? price,
           String? duration,
           String? status,
-          int? categoryId,
-          Category? category}) =>
+          String? steps}) =>
       Service(
         serviceId: serviceId ?? this.serviceId,
         name: name ?? this.name,
@@ -40,8 +35,7 @@ class Service extends Equatable {
         price: price ?? this.price,
         duration: duration ?? this.duration,
         status: status ?? this.status,
-        categoryId: categoryId ?? this.categoryId,
-        // category: category ?? this.category
+        steps: steps ?? this.steps,
       );
 
   @override

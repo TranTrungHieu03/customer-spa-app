@@ -70,6 +70,10 @@ class NetworkApiService implements BaseApiServices {
     try {
       final response = await _dio.get('/Auth/refresh-token');
       final newToken = response.data['result']['data'] as String?;
+      if (kDebugMode) {
+        print("==> Request Refresh Token");
+        print("New Token: $newToken");
+      }
       if (newToken != null) {
         await authService.saveToken(newToken);
       }

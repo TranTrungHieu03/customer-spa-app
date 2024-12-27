@@ -21,6 +21,13 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/product/data/datasources/product_remote_data_src.dart';
+import 'package:spa_mobile/features/product/data/repositories/product_repository_impl.dart';
+import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_product_detail.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cubit.dart';
 import 'package:spa_mobile/features/service/data/datasources/category_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/datasources/service_remote_data_source.dart';
@@ -32,6 +39,7 @@ import 'package:spa_mobile/features/service/domain/usecases/get_list_categories.
 import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 
 part "init_dependencies.main.dart";

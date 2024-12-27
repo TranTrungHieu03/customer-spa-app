@@ -1,18 +1,18 @@
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
-import 'package:spa_mobile/features/service/data/model/service_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_model.dart';
 
-class ListServiceModel {
-  final List<ServiceModel> services;
+class ListProductModel {
+  final List<ProductModel> products;
   final PaginationModel pagination;
 
-  ListServiceModel({required this.services, required this.pagination});
+  ListProductModel({required this.products, required this.pagination});
 
-  factory ListServiceModel.fromJson(
+  factory ListProductModel.fromJson(
       List<dynamic>? json, Map<String, dynamic>? paginationJson) {
-    return ListServiceModel(
-        services: json != null
+    return ListProductModel(
+        products: json != null
             ? json
-                .map((productJson) => ServiceModel.fromJson(productJson))
+                .map((productJson) => ProductModel.fromJson(productJson))
                 .toList()
             : [],
         pagination: paginationJson != null

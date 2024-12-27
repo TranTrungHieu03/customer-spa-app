@@ -63,7 +63,22 @@ Future<void> _initMenu() async {
 
 Future<void> _initProduct() async {
   serviceLocator
-      .registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
+
+    //data src
+    ..registerFactory<ProductRemoteDataSource>(
+        () => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    //repo
+    ..registerFactory<ProductRepository>(() => ProductRepositoryImpl(
+        serviceLocator<ProductRemoteDataSource>(),
+        serviceLocator<ConnectionChecker>()))
+    //use case
+    ..registerLazySingleton(() => GetListProducts(serviceLocator()))
+    ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
+
+    //bloc
+    ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
+    ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
+    ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
 }
 
 Future<void> _initService() async {
@@ -80,7 +95,9 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetServiceDetail(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => ServiceBloc(serviceLocator()));
+    ..registerLazySingleton(
+        () => ServiceBloc(getServiceDetail: serviceLocator()))
+    ..registerLazySingleton(() => ListServiceBloc(serviceLocator()));
 }
 
 Future<void> _initCategory() async {

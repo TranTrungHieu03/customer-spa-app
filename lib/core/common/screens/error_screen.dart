@@ -11,19 +11,32 @@ class ErrorScreen extends StatelessWidget {
         appBar: TAppbar(
           showBackArrow: true,
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Center(
-              child: Text('Please come back later.'),
-            ),
-            TextButton(
-              onPressed: () {
-                goHome();
-              },
-              child: const Text('Back to Home'),
-            ),
-          ],
-        ));
+        body: TErrorBody());
+  }
+}
+
+class TErrorBody extends StatelessWidget {
+  const TErrorBody({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Center(
+            child: Text('Please come back later.'),
+          ),
+          TextButton(
+            onPressed: () {
+              goHome();
+            },
+            child: const Text('Back to Home'),
+          ),
+        ],
+      ),
+    );
   }
 }

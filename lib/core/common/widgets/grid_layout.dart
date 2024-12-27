@@ -8,9 +8,11 @@ class TGridLayout extends StatelessWidget {
       this.mainAxisExtent = 260,
       required this.itemBuilder,
       this.crossAxisCount = 1,
+      this.isScroll = true,
       this.controller});
 
   final int itemCount;
+  final bool isScroll;
   final int crossAxisCount;
   final ScrollController? controller;
   final double? mainAxisExtent;
@@ -23,7 +25,9 @@ class TGridLayout extends StatelessWidget {
       itemCount: itemCount,
       padding: EdgeInsets.zero,
       shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
+      physics: isScroll
+          ? const AlwaysScrollableScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
           mainAxisSpacing: TSizes.gridViewSpacing,

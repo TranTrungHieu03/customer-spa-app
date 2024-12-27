@@ -7,20 +7,22 @@ import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
-import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 class TProductCardVertical extends StatelessWidget {
-  const TProductCardVertical({super.key});
+  const TProductCardVertical({super.key, required this.productModel});
+
+  final ProductModel productModel;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final width = THelperFunctions.screenWidth(context) * 0.4;
     return GestureDetector(
-      onTap: () => goProductDetail("1"),
+      onTap: () => goProductDetail(productModel.productId),
       child: Container(
         width: width,
         padding: const EdgeInsets.all(2),
@@ -32,7 +34,7 @@ class TProductCardVertical extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TRoundedContainer(
-              height: 180,
+              height: TSizes.productHeight,
               width: width + 15,
               padding: const EdgeInsets.all(TSizes.sm),
               backgroundColor: dark ? TColors.dark : TColors.light,
@@ -52,7 +54,7 @@ class TProductCardVertical extends StatelessWidget {
                   //     padding: const EdgeInsets.symmetric(
                   //         horizontal: TSizes.sm, vertical: TSizes.xs),
                   //     child: Text(
-                  //       '25%',
+                  //       productModel.discount.toString() + "%",
                   //       style: Theme.of(context)
                   //           .textTheme
                   //           .labelLarge!
@@ -81,8 +83,8 @@ class TProductCardVertical extends StatelessWidget {
                         constraints: BoxConstraints(
                           maxWidth: width,
                         ),
-                        child: const TProductTitleText(
-                          title: 'Green Nike Air Shoes Green Nike Air Shoes',
+                        child: TProductTitleText(
+                          title: productModel.productName,
                           smallSize: true,
                           maxLines: 1,
                         ),
@@ -101,9 +103,10 @@ class TProductCardVertical extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 //Price
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(TSizes.sm),
-                  child: TProductPriceText(price: "35"),
+                  child:
+                      TProductPriceText(price: productModel.price.toString()),
                 ),
                 Container(
                   decoration: const BoxDecoration(

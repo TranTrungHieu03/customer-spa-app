@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
-import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/category_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_vertical_card.dart';
 import 'package:spa_mobile/init_dependencies.dart';
@@ -50,7 +48,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
-    context.read<ListCategoryBloc>().add(GetListCategoriesEvent());
     context.read<ListServiceBloc>().add(GetListServicesEvent(1));
   }
 
@@ -118,72 +115,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                     ),
                   ),
                   const SizedBox(height: TSizes.md),
-                  BlocBuilder<ListCategoryBloc, ListCategoryState>(
-                    builder: (context, state) {
-                      if (state is ListCategoryLoading) {
-                        return const TCategoryShimmerCard();
-                      } else if (state is ListCategoryLoaded) {
-                        final categories = state.categories;
-                        return SizedBox(
-                          height: 40,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (_, index) {
-                              final category = categories[index];
-                              final bool isSelected = _selectedIndex == index;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = index;
-                                  });
-                                },
-                                child: Container(
-                                  constraints:
-                                      const BoxConstraints(minWidth: 80),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: TSizes.md,
-                                    vertical: TSizes.sm / 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? TColors.primary
-                                        : TColors.lightGrey,
-                                    borderRadius: BorderRadius.circular(70),
-                                    boxShadow: isSelected
-                                        ? [
-                                            BoxShadow(
-                                              color: TColors.primary
-                                                  .withOpacity(0.5),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 3),
-                                            ),
-                                          ]
-                                        : [],
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      category.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge!
-                                          .apply(
-                                              color: isSelected
-                                                  ? TColors.white
-                                                  : TColors.black),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(width: TSizes.spacebtwSections),
-                            itemCount: categories.length,
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ),
                 ],
               ),
             ),
@@ -235,8 +166,10 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             );
                           },
                         ));
+                  } else if (state is ListServiceFailure) {
+                    return const TErrorBody();
                   }
-                  return const Center(child: Text('Please come back later.'));
+                  return const SizedBox.shrink();
                 },
               ),
             ),

@@ -25,7 +25,7 @@ goForgotPassword() async {
       MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
 }
 
-goProductDetail(String id) async {
+goProductDetail(int id) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(

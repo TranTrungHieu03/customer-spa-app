@@ -13,4 +13,12 @@ class PaginationModel extends Pagination {
       totalCount: json['totalCount'] as int,
     );
   }
+
+  factory PaginationModel.isEmty() {
+    return const PaginationModel(
+      page: 0,
+      totalPage: 0,
+      totalCount: 0,
+    );
+  }
 }

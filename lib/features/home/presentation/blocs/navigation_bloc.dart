@@ -11,7 +11,7 @@ part 'navigation_state.dart';
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   final List<Widget> screens = [
     const HomeScreen(),
-    const ProductsScreen(),
+    WrapperProductsScreen(),
     WrapperServiceScreen(),
     const SettingScreen(),
   ];

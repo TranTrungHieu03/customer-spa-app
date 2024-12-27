@@ -161,10 +161,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ))
                     ],
                   ),
-                  TGridLayout(
-                      crossAxisCount: 2,
-                      itemCount: 2,
-                      itemBuilder: (_, index) => const TProductCardVertical()),
+                  // TGridLayout(
+                  //     crossAxisCount: 2,
+                  //     itemCount: 2,
+                  //     itemBuilder: (_, index) => const TProductCardVertical()),
                   const SizedBox(
                     height: TSizes.md,
                   ),

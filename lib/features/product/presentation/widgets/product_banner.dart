@@ -44,7 +44,7 @@ class _TProductBannerState extends State<TProductBanner> {
             .map((banner) => Container(
                   decoration: BoxDecoration(),
                   clipBehavior: Clip.hardEdge,
-                  padding: EdgeInsets.only(bottom: 20),
+                  padding: const EdgeInsets.only(bottom: 20),
                   width: width,
                   child: Container(
                     decoration: BoxDecoration(
@@ -97,12 +97,12 @@ class _TProductBannerState extends State<TProductBanner> {
                           ],
                         ),
                         const Positioned(
+                          bottom: -20,
                           child: TRoundedIcon(
                             backgroundColor: TColors.primary,
                             icon: Iconsax.add,
                             color: TColors.white,
                           ),
-                          bottom: -20,
                         )
                       ],
                     ),
