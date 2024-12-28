@@ -191,3 +191,12 @@ goStatusService(String title, String content, Widget value, String image,
               image: image,
               color: color)));
 }
+
+goImageReview(String image) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BasicScreenImage(
+                image: image,
+              )));
+}

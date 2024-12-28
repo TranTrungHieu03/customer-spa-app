@@ -99,6 +99,12 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       await _authService.saveToken(token);
       return right(token);
+    } on PlatformException catch (e) {
+      if (e.code == 'network_error') {
+        return left(
+            ApiFailure(message: "Network error occurred: ${e.message}"));
+      }
+      return left(ApiFailure(message: "PlatformException: ${e.message}"));
     } on AppException catch (e) {
       return left(ApiFailure(
         message: e.toString(),

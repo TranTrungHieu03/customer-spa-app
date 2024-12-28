@@ -88,5 +88,7 @@
   "order_name": "Đơn hàng",
   "appointment": "Lịch hẹn",
   "delete_account": "Xóa tài khoản",
-  "logout": "Đăng xuất"
+  "logout": "Đăng xuất",
+  "changeLanguageContent": "Bạn có chắc chắn muốn chuyển ngôn ngữ sang",
+  "changeLanguage": "Chuyển ngôn ngữ"
 }

@@ -28,7 +28,6 @@ class LanguageProvider with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('language_code', locale.languageCode);
-      print("change");
       _locale = locale;
       notifyListeners();
     } catch (e) {
@@ -44,5 +43,13 @@ class LanguageProvider with ChangeNotifier {
       default:
         return 'English';
     }
+  }
+
+  String getCurrentLanguageName() {
+    return getLanguageName(_locale.languageCode);
+  }
+
+  String getCurrentLanguageCode() {
+    return _locale.languageCode;
   }
 }

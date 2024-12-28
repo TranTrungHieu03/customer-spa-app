@@ -58,7 +58,9 @@ Future<void> _initAuth() async {
 }
 
 Future<void> _initMenu() async {
-  serviceLocator.registerLazySingleton(() => NavigationBloc());
+  serviceLocator
+    ..registerLazySingleton(() => NavigationBloc())
+    ..registerLazySingleton(() => ImageBloc());
 }
 
 Future<void> _initProduct() async {
@@ -76,7 +78,8 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
+    ..registerLazySingleton(
+        () => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
     ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
 }

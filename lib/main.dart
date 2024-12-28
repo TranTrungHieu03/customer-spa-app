@@ -10,6 +10,7 @@ import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
@@ -42,6 +43,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<ListCategoryBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProductBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ImageBloc>()),
         BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(

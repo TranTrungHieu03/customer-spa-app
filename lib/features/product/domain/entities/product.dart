@@ -4,6 +4,7 @@ class Product {
   final String productDescription;
   final double price;
   final int quantity;
+  final double volume;
   final String dimension;
   final double discount;
   final String status;
@@ -11,6 +12,7 @@ class Product {
   final int companyId;
 
   Product({
+    required this.volume,
     required this.dimension,
     required this.productId,
     required this.productName,

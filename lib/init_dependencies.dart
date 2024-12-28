@@ -20,6 +20,7 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart'
 import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/product/data/datasources/product_remote_data_src.dart';
 import 'package:spa_mobile/features/product/data/repositories/product_repository_impl.dart';

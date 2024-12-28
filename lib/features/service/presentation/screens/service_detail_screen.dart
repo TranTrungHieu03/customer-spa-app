@@ -201,6 +201,16 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           Text(serviceData.description,
                               style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(
+                            height: TSizes.sm,
+                          ),
+                          Text("Steps",
+                              style: Theme.of(context).textTheme.titleLarge),
+                          const SizedBox(
+                            height: TSizes.sm,
+                          ),
+                          Text(serviceData.steps ??"",
+                              style: Theme.of(context).textTheme.bodyMedium),
+                          const SizedBox(
                             height: TSizes.md,
                           ),
                           Text("Related Service",

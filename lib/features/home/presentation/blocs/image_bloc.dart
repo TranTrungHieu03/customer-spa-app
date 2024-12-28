@@ -18,9 +18,9 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   Future<void> _onPickImage(PickImageEvent event, Emitter<ImageState> emit) async {
     try {
       emit(ImageLoading());
-      final status = await Permission.photos.status;
+      final status = await Permission.camera.status;
       if (!status.isGranted) {
-        final requestStatus = await Permission.photos.request();
+        final requestStatus = await Permission.camera.request();
         if (!requestStatus.isGranted) {
           emit(ImageInvalid("Permission to access photos is denied."));
           return;
@@ -36,7 +36,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
 
       // Logic chọn ảnh
       final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+      final XFile? image = await picker.pickImage(source: ImageSource.camera, );
 
       if (image != null) {
         emit(ImagePicked(image.path));

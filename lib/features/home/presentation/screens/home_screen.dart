@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
@@ -7,15 +8,12 @@ import 'package:spa_mobile/core/common/widgets/notification.dart';
 import 'package:spa_mobile/core/common/widgets/primary_header_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
-import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
-import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_vertical_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_categories.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/service_vertical_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,8 +25,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
+    return BlocListener<ImageBloc, ImageState>(
+      listener: (context, state) {
+        if (state is ImagePicked) {
+          goImageReview(state.imagePath);
+        }
+      },
+      child: Scaffold(
+          body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -44,10 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const TRoundedImage(
-                        imageUrl: TImages.avatar,
-                        borderRadius: 20,
-                      ),
+                      // const TRoundedImage(
+                      //   imageUrl: TImages.avatar,
+                      //   borderRadius: 20,
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(
                             left: TSizes.defaultSpace / 2),
@@ -85,6 +89,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: TColors.primary,
                       onPressed: () {
                         goChat();
+                      },
+                    ),
+                    const SizedBox(
+                      width: TSizes.sm,
+                    ),
+                    BlocBuilder<ImageBloc, ImageState>(
+                      builder: (context, state) {
+                        return TRoundedIcon(
+                          icon: Iconsax.cloud,
+                          color: TColors.primary,
+                          onPressed: () {
+                            context.read<ImageBloc>().add(PickImageEvent());
+                          },
+                        );
                       },
                     ),
                     const SizedBox(
@@ -173,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-      ),
+      )),
     );
   }
 

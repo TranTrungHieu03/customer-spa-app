@@ -88,5 +88,7 @@
   "order_name": "Order",
   "appointment": "Appointment",
   "delete_account": "Delete Account",
-  "logout": "Logout"
+  "logout": "Logout",
+  "changeLanguageContent": "Are you sure you want to change to",
+  "changeLanguage": "Change language"
 }

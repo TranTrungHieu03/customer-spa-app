@@ -21,6 +21,13 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
+    final code = languageProvider.getCurrentLanguageCode();
+    String languageChange;
+    if (code == 'vi') {
+      languageChange = 'en';
+    } else {
+      languageChange = 'vi';
+    }
     return Scaffold(
       appBar: TAppbar(
         title: Text(
@@ -59,7 +66,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Icons.language_outlined,
                     title: AppLocalizations.of(context)!.language,
                     onTap: () {
-                      _changeLanguagePopup(context);
+                      print(languageChange);
+                      _changeLanguagePopup(context, languageChange);
                     },
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -118,6 +126,7 @@ class _SettingScreenState extends State<SettingScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Delete Account'),
           content: const Text(
             'Are you sure you want to delete your account permanently? '
@@ -149,25 +158,26 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  void _changeLanguagePopup(BuildContext context) {
+  void _changeLanguagePopup(BuildContext context, String languageChange) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('Change Language'),
-          content:
-              const Text('Are you sure you want to change to Vietnamese? '),
+          content: Text(
+              'Are you sure you want to change to ${Provider.of<LanguageProvider>(context, listen: false).getLanguageName(languageChange)}? '),
           actions: [
             TextButton(
               onPressed: () async {
-                await Provider.of<LanguageProvider>(context, listen: false)
-                    .changeLanguage(Locale('vi'));
                 Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
+                await Provider.of<LanguageProvider>(context, listen: false)
+                    .changeLanguage(Locale(languageChange));
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(

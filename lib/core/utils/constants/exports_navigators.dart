@@ -12,6 +12,7 @@ import 'package:spa_mobile/features/auth/presentation/screens/set_password_scree
 import 'package:spa_mobile/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/verify_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/screens/basic_screen_image.dart';
 import 'package:spa_mobile/features/home/presentation/screens/chat_ai_screen.dart';
 import 'package:spa_mobile/features/home/presentation/screens/search_screen.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dart';
