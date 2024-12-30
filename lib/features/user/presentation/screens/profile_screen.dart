@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: double.infinity,
                 child: Column(
                   children: [
-                    TCircularImage(
+                    const TCircularImage(
                       image: TImages.avatar,
                       width: 80.0,
                       height: 80.0,

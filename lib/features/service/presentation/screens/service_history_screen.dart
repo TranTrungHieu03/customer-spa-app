@@ -34,7 +34,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
         ),
         body: NestedScrollView(
           body: const Padding(
-            padding: const EdgeInsets.all(TSizes.sm / 2),
+            padding: EdgeInsets.all(TSizes.sm / 2),
             child: TabBarView(
               children: [
                 TStatusTabService(),

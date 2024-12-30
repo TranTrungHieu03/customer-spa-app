@@ -85,7 +85,7 @@ class TProductCheckout extends StatelessWidget {
                         children: [
                           TProductPriceText(
                             price: TProductDetail.price,
-                            currencySign: '\₫',
+                            currencySign: '₫',
                           ),
                           Text(
                             "x1",

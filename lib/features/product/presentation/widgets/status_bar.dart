@@ -22,7 +22,7 @@ class TStatusTab extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
         return TRoundedContainer(
-          padding: EdgeInsets.all(TSizes.sm),
+          padding: const EdgeInsets.all(TSizes.sm),
           child: Column(
             children: [
               Row(
@@ -33,7 +33,7 @@ class TStatusTab extends StatelessWidget {
                         maxWidth: THelperFunctions.screenWidth(context) * 0.6),
                     child: Row(
                       children: [
-                        Icon(Iconsax.shop),
+                        const Icon(Iconsax.shop),
                         const SizedBox(
                           width: TSizes.spacebtwItems / 2,
                         ),
@@ -89,7 +89,7 @@ class TStatusTab extends StatelessWidget {
                             children: [
                               TProductPriceText(
                                 price: TProductDetail.price,
-                                currencySign: '\₫',
+                                currencySign: '₫',
                               ),
                               Text(
                                 "x1",

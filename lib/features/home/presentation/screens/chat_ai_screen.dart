@@ -63,23 +63,23 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
               .headlineMedium!
               .apply(color: TColors.black),
         ),
-        actions: [],
+        actions: const [],
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
         child: Padding(
-          padding: EdgeInsets.all(TSizes.sm),
+          padding: const EdgeInsets.all(TSizes.sm),
           child: Column(
             children: messages.map((message) {
               return Container(
-                margin: EdgeInsets.symmetric(vertical: TSizes.xs),
+                margin: const EdgeInsets.symmetric(vertical: TSizes.xs),
                 child: Row(
                   mainAxisAlignment: message['isUser'] == 'true'
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(TSizes.sm),
+                      padding: const EdgeInsets.all(TSizes.sm),
                       decoration: BoxDecoration(
                         color: message['isUser'] == 'true'
                             ? TColors.primary
@@ -114,7 +114,7 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
           bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.sm,
         ),
         child: TRoundedContainer(
-          padding: EdgeInsets.all(TSizes.sm),
+          padding: const EdgeInsets.all(TSizes.sm),
           shadow: true,
           child: Row(
             children: [

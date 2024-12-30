@@ -10,9 +10,12 @@ import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
+import 'package:spa_mobile/features/service/data/model/service_model.dart';
 
 class BookingServiceScreen extends StatefulWidget {
-  const BookingServiceScreen({super.key});
+  const BookingServiceScreen({super.key, required this.service});
+
+  final ServiceModel service;
 
   @override
   State<BookingServiceScreen> createState() => _BookingServiceScreenState();
@@ -21,10 +24,11 @@ class BookingServiceScreen extends StatefulWidget {
 class _BookingServiceScreenState extends State<BookingServiceScreen> {
   @override
   Widget build(BuildContext context) {
+    final service = widget.service;
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: EdgeInsets.all(TSizes.sm),
+        padding: const EdgeInsets.all(TSizes.sm),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -39,7 +43,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
               ),
               TRoundedContainer(
                 shadow: true,
-                padding: EdgeInsets.all(TSizes.sm),
+                padding: const EdgeInsets.all(TSizes.sm),
                 radius: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,8 +52,10 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                       children: [
                         TRoundedImage(
                           applyImageRadius: true,
-                          imageUrl: TImages.thumbnailService,
-                          isNetworkImage: true,
+                          imageUrl: service.images.isNotEmpty
+                              ? service.images[0]
+                              : TImages.thumbnailService,
+                          isNetworkImage: service.images.isNotEmpty,
                           width: THelperFunctions.screenWidth(context) * 0.2,
                           height: THelperFunctions.screenWidth(context) * 0.2,
                           fit: BoxFit.cover,
@@ -66,20 +72,30 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                                     THelperFunctions.screenWidth(context) * 0.6,
                               ),
                               child: TProductTitleText(
-                                title: "Service Name 1",
+                                title: service.name,
                                 maxLines: 1,
                               ),
                             ),
                             TProductPriceText(
-                              price: "150",
+                              price: service.price.toString(),
                             ),
                           ],
                         )
                       ],
                     ),
-                    Text("30 mins"),
-                    Text("Relaxing full body"),
-                    Text("6-step process. Includes 10-min massage"),
+                    const SizedBox(
+                      height: TSizes.sm,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Duration: ",
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        Text(service.duration)
+                      ],
+                    ),
+                    Text(service.steps),
                   ],
                 ),
               ),
@@ -95,7 +111,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
               ),
               TRoundedContainer(
                 shadow: true,
-                padding: EdgeInsets.all(TSizes.sm),
+                padding: const EdgeInsets.all(TSizes.sm),
                 radius: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,12 +138,12 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                                 maxWidth:
                                     THelperFunctions.screenWidth(context) * 0.7,
                               ),
-                              child: TProductTitleText(
+                              child: const TProductTitleText(
                                 title: "Service Name 1",
                                 maxLines: 1,
                               ),
                             ),
-                            TProductPriceText(
+                            const TProductPriceText(
                               price: "150",
                             ),
                           ],
@@ -137,8 +153,8 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                           radius: 20,
                           backgroundColor: TColors.primary,
                           child: GestureDetector(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
                                   vertical: TSizes.sm, horizontal: TSizes.md),
                               child: Row(
                                 children: [
@@ -151,9 +167,9 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                         )
                       ],
                     ),
-                    Text("30 mins"),
-                    Text("Relaxing full body"),
-                    Text("6-step process. Includes 10-min massage"),
+                    const Text("30 mins"),
+                    const Text("Relaxing full body"),
+                    const Text("6-step process. Includes 10-min massage"),
                   ],
                 ),
               ),
@@ -162,7 +178,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
               ),
               TRoundedContainer(
                 shadow: true,
-                padding: EdgeInsets.all(TSizes.sm),
+                padding: const EdgeInsets.all(TSizes.sm),
                 radius: 10,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,12 +205,12 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                                 maxWidth:
                                     THelperFunctions.screenWidth(context) * 0.7,
                               ),
-                              child: TProductTitleText(
+                              child: const TProductTitleText(
                                 title: "Service Name 1",
                                 maxLines: 1,
                               ),
                             ),
-                            TProductPriceText(
+                            const TProductPriceText(
                               price: "150",
                             ),
                           ],
@@ -204,8 +220,8 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                           radius: 20,
                           backgroundColor: TColors.primary,
                           child: GestureDetector(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
                                   vertical: TSizes.sm, horizontal: TSizes.md),
                               child: Row(
                                 children: [
@@ -218,9 +234,9 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                         )
                       ],
                     ),
-                    Text("30 mins"),
-                    Text("Relaxing full body"),
-                    Text("6-step process. Includes 10-min massage"),
+                    const Text("30 mins"),
+                    const Text("Relaxing full body"),
+                    const Text("6-step process. Includes 10-min massage"),
                   ],
                 ),
               ),
@@ -246,11 +262,11 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                 const SizedBox(width: TSizes.md),
                 ElevatedButton(
                   onPressed: () {
-                    goServiceCheckout();
+                    goServiceCheckout(service);
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: TSizes.md, vertical: 10),
+                        horizontal: TSizes.md, vertical: TSizes.sm),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.buy,

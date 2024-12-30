@@ -7,7 +7,6 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
-import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_checkout.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
@@ -295,11 +294,25 @@ class TBottomCheckout extends StatelessWidget {
             const TProductPriceText(price: "5000"),
             const SizedBox(width: TSizes.md),
             ElevatedButton(
-              onPressed: () => goSuccess(
-                  AppLocalizations.of(context)!.paymentSuccessTitle,
-                  AppLocalizations.of(context)!.paymentSuccessSubTitle,
-                  () => goFeedback(),
-                  TImages.success),
+              onPressed: () {
+                // => goSuccess(
+                //     AppLocalizations.of(context)!.paymentSuccessTitle,
+                //     AppLocalizations.of(context)!.paymentSuccessSubTitle,
+                //         () => goFeedback(),
+                //     TImages.success)
+                // context.read<AppointmentBloc>().add(
+                //   CreateAppointmentEvent(
+                //     CreateAppointmentParams(
+                //       customerId: 1,
+                //       staffId: 1,
+                //       serviceId: service.serviceId,
+                //       branchId: 1,
+                //       appointmentsTime: DateTime.now(),
+                //       notes: "",
+                //     ),
+                //   ),
+                // );
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                     horizontal: TSizes.md, vertical: 10),

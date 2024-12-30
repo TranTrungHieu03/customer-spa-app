@@ -136,9 +136,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   } else if (state is ListProductLoaded) {
                     return TGridLayout(
                       crossAxisCount: 2,
-                      itemCount: state.products.length,
+                      itemCount: state.products.length + 2,
                       isScroll: false,
                       itemBuilder: (context, index) {
+                        if (index == state.products.length ||
+                            index == state.products.length + 1) {
+                          return state.isLoadingMore
+                              ? const TProductCardShimmer()
+                              : const SizedBox();
+                        }
                         return TProductCardVertical(
                           productModel: state.products[index],
                         );

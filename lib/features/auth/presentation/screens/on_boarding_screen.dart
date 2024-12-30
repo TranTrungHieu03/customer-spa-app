@@ -132,7 +132,7 @@ class OnBoardingNextBtn extends StatelessWidget {
       bottom: 32,
       child: ElevatedButton(
         onPressed: () => context.read<OnboardingBloc>().add(NextPageEvent()),
-        child: Icon(Iconsax.arrow_right_3),
+        child: const Icon(Iconsax.arrow_right_3),
       ),
     );
   }

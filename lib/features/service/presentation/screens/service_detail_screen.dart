@@ -13,7 +13,6 @@ import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
-import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
@@ -58,7 +57,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
           } else if (state is ServiceDetailSuccess) {
             final serviceData = state.service;
             return Scaffold(
-              appBar: TAppbar(
+              appBar: const TAppbar(
                 showBackArrow: true,
                 actions: [
                   TRoundedIcon(
@@ -88,11 +87,12 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                   });
                                 },
                                 aspectRatio: 3 / 2),
-                            items: banners
+                            items: serviceData.images
                                 .map((banner) => TRoundedImage(
-                                      imageUrl: TImages.thumbnailService,
+                                      imageUrl: banner,
                                       applyImageRadius: false,
                                       isNetworkImage: true,
+                                      fit: BoxFit.cover,
                                       onPressed: () => {},
                                       width:
                                           THelperFunctions.screenWidth(context),
@@ -123,7 +123,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.all(TSizes.sm),
+                      padding: const EdgeInsets.all(TSizes.sm),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -172,7 +172,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.alarm_on,
                                     color: TColors.primary,
                                   ),
@@ -208,14 +208,14 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           const SizedBox(
                             height: TSizes.sm,
                           ),
-                          Text(serviceData.steps ??"",
+                          Text(serviceData.steps,
                               style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(
                             height: TSizes.md,
                           ),
                           Text("Related Service",
                               style: Theme.of(context).textTheme.titleLarge),
-                          TRelatedService()
+                          const TRelatedService()
                         ],
                       ),
                     )
@@ -227,13 +227,13 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   Expanded(
                     flex: 3,
                     child: GestureDetector(
-                      onTap: () => goServiceBooking(),
+                      onTap: () => goServiceBooking(serviceData),
                       child: Container(
                         height: 55,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: TColors.primary,
                         ),
-                        padding: EdgeInsets.all(TSizes.sm / 2),
+                        padding: const EdgeInsets.all(TSizes.sm / 2),
                         alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)!.book_now,

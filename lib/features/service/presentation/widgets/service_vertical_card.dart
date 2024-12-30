@@ -30,8 +30,10 @@ class TServiceCard extends StatelessWidget {
           children: [
             TRoundedImage(
               applyImageRadius: true,
-              imageUrl: TImages.thumbnailService,
-              isNetworkImage: true,
+              imageUrl: service.images.isNotEmpty
+                  ? service.images[0]
+                  : TImages.thumbnailService,
+              isNetworkImage: service.images.isNotEmpty,
               width: THelperFunctions.screenWidth(context) * 0.45,
               height: 150,
               fit: BoxFit.cover,

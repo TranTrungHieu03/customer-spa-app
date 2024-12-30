@@ -4,7 +4,7 @@ import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 class TProductPriceText extends StatelessWidget {
   const TProductPriceText({
     super.key,
-    this.currencySign = '\₫',
+    this.currencySign = '₫',
     required this.price,
     this.maxLine = 1,
     this.isLarge = false,

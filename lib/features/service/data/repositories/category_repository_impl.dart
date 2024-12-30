@@ -6,7 +6,7 @@ import 'package:spa_mobile/features/service/data/model/category_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/category_repository.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
-  CategoryRemoteDataSource _categoryRemoteDataSource;
+ final CategoryRemoteDataSource _categoryRemoteDataSource;
 
   CategoryRepositoryImpl(this._categoryRemoteDataSource);
 

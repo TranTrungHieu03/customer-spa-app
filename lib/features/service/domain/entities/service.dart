@@ -6,9 +6,9 @@ class Service extends Equatable {
   final String description;
   final double price;
   final String duration;
-
+  final List<String> images;
   final String status;
-  final String? steps;
+  final String steps;
 
   const Service({
     required this.serviceId,
@@ -17,7 +17,8 @@ class Service extends Equatable {
     required this.price,
     required this.duration,
     required this.status,
-    this.steps,
+    required this.images,
+    required this.steps,
   });
 
   Service copyWith(
@@ -27,16 +28,17 @@ class Service extends Equatable {
           double? price,
           String? duration,
           String? status,
+          List<String>? images,
           String? steps}) =>
       Service(
-        serviceId: serviceId ?? this.serviceId,
-        name: name ?? this.name,
-        description: description ?? this.description,
-        price: price ?? this.price,
-        duration: duration ?? this.duration,
-        status: status ?? this.status,
-        steps: steps ?? this.steps,
-      );
+          serviceId: serviceId ?? this.serviceId,
+          name: name ?? this.name,
+          description: description ?? this.description,
+          price: price ?? this.price,
+          duration: duration ?? this.duration,
+          status: status ?? this.status,
+          steps: steps ?? this.steps,
+          images: images ?? List.from(this.images));
 
   @override
   // TODO: implement props

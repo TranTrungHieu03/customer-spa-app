@@ -8,7 +8,8 @@ class ServiceModel extends Service {
     required super.price,
     required super.duration,
     required super.status,
-    super.steps,
+    required super.images,
+    required super.steps,
   });
 
   // Factory method to parse JSON to Service object
@@ -20,7 +21,9 @@ class ServiceModel extends Service {
         price: (json['price'] as num).toDouble(),
         duration: json['duration'] as String,
         status: json['status'] as String,
-        steps: json['steps']);
+        images:
+            (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
+        steps: json['steps'] as String);
   }
 
   // Method to convert Service object to JSON
@@ -32,7 +35,8 @@ class ServiceModel extends Service {
       'price': price,
       'duration': duration,
       'status': status,
-      'steps': steps
+      'steps': steps,
+      'images': (images as List).map((e) => e.toString()).toList(),
     };
   }
 }

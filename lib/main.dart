@@ -9,11 +9,13 @@ import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/screens/form_collect_data_screen.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
@@ -44,7 +46,9 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<ListProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ImageBloc>()),
+        BlocProvider(create: (_) => serviceLocator<FormSkinBloc>()),
         BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),
+        BlocProvider(create: (_) => serviceLocator<AppointmentBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
         create: (_) => languageProvider,
@@ -87,7 +91,7 @@ class _MyAppState extends State<MyApp> {
           //     orElse: () => const Locale('en'),
           //   );
           // },
-          home: const OnBoardingScreen(),
+          home: const FormCollectDataScreen(),
         );
       },
     );

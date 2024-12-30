@@ -90,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   validator: (value) =>
                                       TValidator.validateEmail(value),
                                   decoration: InputDecoration(
-                                    prefixIcon: Icon(Iconsax.direct_right),
+                                    prefixIcon: const Icon(Iconsax.direct_right),
                                     labelText:
                                         AppLocalizations.of(context)!.email,
                                   ),
@@ -105,7 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               .username,
                                           value),
                                   decoration: InputDecoration(
-                                    prefixIcon: Icon(Iconsax.user_edit),
+                                    prefixIcon: const Icon(Iconsax.user_edit),
                                     labelText:
                                         AppLocalizations.of(context)!.username,
                                   ),
@@ -119,7 +119,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           AppLocalizations.of(context)!.phone,
                                           value),
                                   decoration: InputDecoration(
-                                    prefixIcon: Icon(Iconsax.call),
+                                    prefixIcon: const Icon(Iconsax.call),
                                     labelText:
                                         AppLocalizations.of(context)!.phone,
                                   ),
@@ -218,12 +218,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   builder: (context, state) {
                                     if (state is PasswordMatchUpdated &&
                                         !state.isMatch) {
-                                      return Text(
+                                      return const Text(
                                         "Passwords do not match!",
                                         style: TextStyle(color: Colors.red),
                                       );
                                     }
-                                    return SizedBox.shrink();
+                                    return const SizedBox.shrink();
                                   },
                                 ),
                                 const SizedBox(
@@ -366,10 +366,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     if (state is PolicyTermError) {
                                       return Text(
                                         state.message,
-                                        style: TextStyle(color: Colors.red),
+                                        style: const TextStyle(color: Colors.red),
                                       );
                                     }
-                                    return SizedBox.shrink();
+                                    return const SizedBox.shrink();
                                   },
                                 ),
                                 const SizedBox(

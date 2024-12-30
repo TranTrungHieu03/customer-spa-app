@@ -40,7 +40,7 @@ class TSnackBar {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(color: TColors.white)),
+              Text(title, style: const TextStyle(color: TColors.white)),
               if (message.isNotEmpty)
                 ConstrainedBox(
                   constraints: BoxConstraints(
@@ -48,7 +48,7 @@ class TSnackBar {
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: TColors.white),
+                    style: const TextStyle(color: TColors.white),
                     maxLines: 3,
                   ),
                 )
@@ -71,7 +71,7 @@ class TSnackBar {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(color: TColors.white)),
+              Text(title, style: const TextStyle(color: TColors.white)),
               if (message.isNotEmpty)
                 ConstrainedBox(
                   constraints: BoxConstraints(
@@ -79,7 +79,7 @@ class TSnackBar {
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: TColors.white),
+                    style: const TextStyle(color: TColors.white),
                     maxLines: 3,
                   ),
                 )
@@ -102,7 +102,7 @@ class TSnackBar {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(color: TColors.white)),
+              Text(title, style: const TextStyle(color: TColors.white)),
               if (message.isNotEmpty)
                 ConstrainedBox(
                   constraints: BoxConstraints(
@@ -110,7 +110,7 @@ class TSnackBar {
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: TColors.white),
+                    style: const TextStyle(color: TColors.white),
                     maxLines: 3,
                   ),
                 )

@@ -11,8 +11,8 @@ class TLoader extends StatelessWidget {
       color: TColors.white.withOpacity(0.4),
       width: THelperFunctions.screenWidth(context),
       height: THelperFunctions.screenHeight(context),
-      child: Center(
-        child: const CircularProgressIndicator(
+      child: const Center(
+        child: CircularProgressIndicator(
           color: TColors.primary,
         ),
       ),

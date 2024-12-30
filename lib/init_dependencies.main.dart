@@ -26,6 +26,7 @@ Future<void> initDependencies() async {
   await _initProduct();
   await _initService();
   await _initCategory();
+  await _initAppointment();
 }
 
 Future<void> _initAuth() async {
@@ -60,7 +61,8 @@ Future<void> _initAuth() async {
 Future<void> _initMenu() async {
   serviceLocator
     ..registerLazySingleton(() => NavigationBloc())
-    ..registerLazySingleton(() => ImageBloc());
+    ..registerLazySingleton(() => ImageBloc())
+    ..registerLazySingleton(() => FormSkinBloc());
 }
 
 Future<void> _initProduct() async {
@@ -117,4 +119,22 @@ Future<void> _initCategory() async {
 
     //bloc
     ..registerLazySingleton(() => ListCategoryBloc(serviceLocator()));
+}
+
+Future<void> _initAppointment() async {
+  serviceLocator
+    //data src
+    ..registerFactory<AppointmentRemoteDataSource>(() =>
+        AppointmentRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    //repo
+    ..registerFactory<AppointmentRepository>(() => AppointmentRepositoryImpl(
+          serviceLocator<AppointmentRemoteDataSource>(),
+        ))
+    //use case
+    ..registerLazySingleton(() => GetAppointment(serviceLocator()))
+    ..registerLazySingleton(() => CreateAppointment(serviceLocator()))
+
+    //bloc
+    ..registerLazySingleton(() => AppointmentBloc(
+        getAppointment: serviceLocator(), createAppointment: serviceLocator()));
 }

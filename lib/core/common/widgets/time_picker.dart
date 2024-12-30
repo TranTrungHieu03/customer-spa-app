@@ -5,18 +5,23 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class TimePickerWidget extends StatefulWidget {
   final Function(TimeOfDay)
-      onTimeSelected; // Hàm callback trả về thời gian được chọn
+      onTimeSelected;
+  final TimeOfDay initialTime;
 
-  const TimePickerWidget({Key? key, required this.onTimeSelected})
-      : super(key: key);
+  const TimePickerWidget({super.key, required this.onTimeSelected, required this.initialTime});
 
   @override
   _TimePickerWidgetState createState() => _TimePickerWidgetState();
 }
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
-  TimeOfDay? _selectedTime;
+  late TimeOfDay _selectedTime;
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedTime = widget.initialTime;
+  }
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -58,14 +63,14 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
           children: [
             Text(
               _selectedTime != null
-                  ? "${_selectedTime!.format(context)}"
+                  ? _selectedTime.format(context)
                   : "Select time",
-              style: Theme.of(context)!.textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(
               width: TSizes.sm,
             ),
-            Icon(Iconsax.clock, color: TColors.primary),
+            const Icon(Iconsax.clock, color: TColors.primary),
           ],
         ),
       ),

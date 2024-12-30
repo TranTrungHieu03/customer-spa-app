@@ -82,7 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.verifyOtp(event.params);
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthSuccess("", "Verify Successful")),
+      (_) => emit(const AuthSuccess("", "Verify Successful")),
     );
   }
 
@@ -92,7 +92,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.forgetPassword(event.params);
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthSuccess("", "Forget password success")),
+      (_) => emit(const AuthSuccess("", "Forget password success")),
     );
   }
 
@@ -102,7 +102,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.resetPassword(event.params);
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthSuccess("", "Reset password success")),
+      (_) => emit(const AuthSuccess("", "Reset password success")),
     );
   }
 
@@ -112,7 +112,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _authRepository.resendOtp(event.params);
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (_) => emit(AuthSuccess("", "Resend Otp success")),
+      (_) => emit(const AuthSuccess("", "Resend Otp success")),
     );
   }
 }

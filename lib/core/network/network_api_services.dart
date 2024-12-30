@@ -38,7 +38,7 @@ class NetworkApiService implements BaseApiServices {
           }
           return handler.next(options);
         },
-        onError: (DioError error, handler) async {
+        onError: (DioException error, handler) async {
           // Handle token refresh on 401 Unauthorized error
           if (error.response?.statusCode == 401) {
             final newToken = await _refreshToken();
@@ -95,7 +95,6 @@ class NetworkApiService implements BaseApiServices {
     }
     dynamic responseJson;
     try {
-      print("Test url");
       final response = await _dio.get(url);
       responseJson = returnResponse(response);
 
@@ -160,6 +159,7 @@ class NetworkApiService implements BaseApiServices {
         e.type == DioExceptionType.receiveTimeout) {
       throw FetchDataException('Request timed out');
     } else if (e.type == DioExceptionType.badResponse) {
+      print('Bad response: ${e.response?.statusMessage}');
       throw FetchDataException('Bad response: ${e.response?.statusMessage}');
     } else if (e.type == DioExceptionType.connectionError) {
       throw NoInternetException('No internet connection');

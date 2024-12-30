@@ -20,12 +20,12 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TAppbar(
+      appBar: const TAppbar(
         showBackArrow: true,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(TSizes.sm),
+          padding: const EdgeInsets.all(TSizes.sm),
           child: Column(
             children: [
               TextField(
@@ -40,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: TSizes.sm,
               ),
               SizedBox(

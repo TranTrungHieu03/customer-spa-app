@@ -1,4 +1,3 @@
-import 'package:spa_mobile/core/common/entities/pagination.dart';
 import 'package:spa_mobile/core/response/response.dart';
 
 class Result<T> {

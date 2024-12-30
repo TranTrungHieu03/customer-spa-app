@@ -53,7 +53,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                     direction: DismissDirection.endToStart,
                     onDismissed: (direction) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Item deleted')),
+                        const SnackBar(content: Text('Item deleted')),
                       );
                     },
                     background: Container(
@@ -237,7 +237,7 @@ class TProductCart extends StatelessWidget {
                                 ),
                                 TProductPriceText(
                                   price: TProductDetail.price,
-                                  currencySign: '\₫',
+                                  currencySign: '₫',
                                 ),
                                 const SizedBox(
                                   height: TSizes.spacebtwItems / 2,

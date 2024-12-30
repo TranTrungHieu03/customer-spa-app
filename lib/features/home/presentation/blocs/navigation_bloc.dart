@@ -11,12 +11,12 @@ part 'navigation_state.dart';
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   final List<Widget> screens = [
     const HomeScreen(),
-    WrapperProductsScreen(),
-    WrapperServiceScreen(),
+    const WrapperProductsScreen(),
+    const WrapperServiceScreen(),
     const SettingScreen(),
   ];
 
-  NavigationBloc() : super(NavigationInitialState(0, [])) {
+  NavigationBloc() : super(NavigationInitialState(0, const [])) {
     on<ChangeSelectedIndexEvent>((event, emit) {
       emit(NavigationIndexChangedState(event.index, screens));
     });

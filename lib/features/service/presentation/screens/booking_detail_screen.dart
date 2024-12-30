@@ -25,7 +25,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: EdgeInsets.all(TSizes.sm),
+        padding: const EdgeInsets.all(TSizes.sm),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,7 +41,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               ),
               TRoundedContainer(
                 shadow: true,
-                padding: EdgeInsets.all(TSizes.sm),
+                padding: const EdgeInsets.all(TSizes.sm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -70,13 +70,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     maxWidth:
                                         THelperFunctions.screenWidth(context) *
                                             0.4),
-                                child: TProductTitleText(
+                                child: const TProductTitleText(
                                   title: "Service Name 1",
                                   maxLines: 1,
                                 ),
                               ),
-                              Text("30 mins"),
-                              Text("6-step process. Includes 10-min massage"),
+                              const Text("30 mins"),
+                              const Text("6-step process. Includes 10-min massage"),
                             ],
                           ),
                         )
@@ -90,7 +90,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               ),
               TRoundedContainer(
                 shadow: true,
-                padding: EdgeInsets.all(TSizes.sm),
+                padding: const EdgeInsets.all(TSizes.sm),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -119,13 +119,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     maxWidth:
                                         THelperFunctions.screenWidth(context) *
                                             0.4),
-                                child: TProductTitleText(
+                                child: const TProductTitleText(
                                   title: "Service Name 1",
                                   maxLines: 1,
                                 ),
                               ),
-                              Text("30 mins"),
-                              Text("6-step process. Includes 10-min massage"),
+                              const Text("30 mins"),
+                              const Text("6-step process. Includes 10-min massage"),
                             ],
                           ),
                         )
@@ -145,7 +145,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 children: [
                   Text("Staff name",
                       style: Theme.of(context).textTheme.titleLarge),
-                  Text("Nguyễn Hiền")
+                  const Text("Nguyễn Hiền")
                 ],
               ),
               const SizedBox(
@@ -212,17 +212,17 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       onPressed: () {
                         _showCancelModal(context);
                       },
-                      child: Text("Cancel")),
+                      child: const Text("Cancel")),
                   TextButton(
                       onPressed: () {
                         goStatusService(
                             "Reschedule Complete",
                             "Dear John Kevin please share your avaluable feedback. This will help use improve our services.",
-                            Text(""),
+                            const Text(""),
                             TImages.reBookingSuccessIcon,
                             Colors.orange);
                       },
-                      child: Text("Re-booking")),
+                      child: const Text("Re-booking")),
                 ],
               )
             ],
@@ -307,7 +307,7 @@ void _showCancelModal(BuildContext context) {
                       goStatusService(
                           "Cancel Success",
                           "Dear John Kevin please share your avaluable feedback. This will help use improve our services.",
-                          Text(""),
+                          const Text(""),
                           TImages.deleteIcon,
                           Colors.redAccent);
                     },

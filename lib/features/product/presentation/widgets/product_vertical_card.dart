@@ -42,8 +42,11 @@ class TProductCardVertical extends StatelessWidget {
                 children: [
                   TRoundedImage(
                     width: width,
-                    imageUrl: TImages.product1,
+                    imageUrl: productModel.images.isNotEmpty
+                        ? productModel.images[0]
+                        : TImages.product1,
                     applyImageRadius: true,
+                    isNetworkImage: productModel.images.isNotEmpty,
                     fit: BoxFit.contain,
                   ),
                   // Positioned(
@@ -104,7 +107,7 @@ class TProductCardVertical extends StatelessWidget {
               children: [
                 //Price
                 Padding(
-                  padding: EdgeInsets.all(TSizes.sm),
+                  padding: const EdgeInsets.all(TSizes.sm),
                   child:
                       TProductPriceText(price: productModel.price.toString()),
                 ),

@@ -10,8 +10,10 @@ class Product {
   final String status;
   final int categoryId;
   final int companyId;
+  final List<String> images;
 
   Product({
+    required this.images,
     required this.volume,
     required this.dimension,
     required this.productId,
@@ -24,5 +26,4 @@ class Product {
     required this.categoryId,
     required this.companyId,
   });
-
 }

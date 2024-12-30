@@ -31,4 +31,7 @@ class TImages {
       "https://www.larocheposay.vn/-/media/project/loreal/brand-sites/lrp/apac/vn/products/hyalu-b5/anti-aging-hyalu-b5-serum/la-roche-posay-productpage-anti-aging-hyalu-b5-serum-30ml-3337875583626-front.png";
   static const String banner1 =
       "https://img.pikbest.com/backgrounds/20210426/simple-high-end-beauty-service-beauty-salon-propaganda-banner-template_5921764.jpg!w700wp";
+
+  //form
+  static const String formSkin = "assets/images/face_data.jpg";
 }

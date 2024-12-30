@@ -44,7 +44,7 @@ class _StatusServiceScreenState extends State<StatusServiceScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(TSizes.sm),
+        padding: const EdgeInsets.all(TSizes.sm),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,7 +77,7 @@ class _StatusServiceScreenState extends State<StatusServiceScreen> {
                     onPressed: () {
                       goBookingDetail("1");
                     },
-                    child: Text("View Detail")))
+                    child: const Text("View Detail")))
           ],
         ),
       ),

@@ -16,7 +16,8 @@ class ProductModel extends Product {
       required super.categoryId,
       required this.category,
       required super.companyId,
-      required super.volume});
+      required super.volume,
+      required super.images});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
@@ -32,6 +33,8 @@ class ProductModel extends Product {
       categoryId: json['categoryId'],
       companyId: json['companyId'],
       category: CategoryModel.fromJson(json['category']),
+      images:
+          (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
     );
   }
 
@@ -48,24 +51,25 @@ class ProductModel extends Product {
       'status': status,
       'categoryId': categoryId,
       'companyId': companyId,
-      'category': category,
+      'category': category.toJson(),
+      'images': (images as List).map((e) => e.toString()).toList(),
     };
   }
 
-  Product copyWith({
-    int? productId,
-    String? productName,
-    String? productDescription,
-    double? price,
-    double? volume,
-    int? quantity,
-    double? discount,
-    String? status,
-    String? dimension,
-    int? categoryId,
-    int? companyId,
-    CategoryModel? category,
-  }) =>
+  Product copyWith(
+          {int? productId,
+          String? productName,
+          String? productDescription,
+          double? price,
+          double? volume,
+          int? quantity,
+          double? discount,
+          String? status,
+          String? dimension,
+          int? categoryId,
+          int? companyId,
+          CategoryModel? category,
+          List<String>? images}) =>
       ProductModel(
         productId: productId ?? this.productId,
         productName: productName ?? this.productName,
@@ -79,5 +83,6 @@ class ProductModel extends Product {
         categoryId: categoryId ?? this.categoryId,
         companyId: companyId ?? this.companyId,
         category: category ?? this.category,
+        images: images ?? List.from(this.images),
       );
 }

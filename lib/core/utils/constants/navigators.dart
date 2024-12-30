@@ -64,8 +64,10 @@ goHome() async {
   navigatorKey.currentContext!
       .read<NavigationBloc>()
       .add(ChangeSelectedIndexEvent(0));
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => const NavigationMenu()));
+  Navigator.pushAndRemoveUntil(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const NavigationMenu()),
+      (Route<dynamic> route) => false);
 }
 
 goLogin() async {
@@ -149,14 +151,18 @@ goSuccess(
               )));
 }
 
-goServiceBooking() async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => const BookingServiceScreen()));
+goServiceBooking(ServiceModel service) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BookingServiceScreen(service: service)));
 }
 
-goServiceCheckout() async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => const CheckoutServiceScreen()));
+goServiceCheckout(ServiceModel service) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => CheckoutServiceScreen(service: service)));
 }
 
 goVerify(String email, int statePage) async {

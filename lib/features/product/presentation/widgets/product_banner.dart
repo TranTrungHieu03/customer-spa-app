@@ -42,7 +42,7 @@ class _TProductBannerState extends State<TProductBanner> {
         ),
         items: banners
             .map((banner) => Container(
-                  decoration: BoxDecoration(),
+                  decoration: const BoxDecoration(),
                   clipBehavior: Clip.hardEdge,
                   padding: const EdgeInsets.only(bottom: 20),
                   width: width,

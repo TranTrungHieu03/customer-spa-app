@@ -20,7 +20,7 @@ class TStatusTabService extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
         return TRoundedContainer(
-          padding: EdgeInsets.all(TSizes.sm),
+          padding: const EdgeInsets.all(TSizes.sm),
           child: GestureDetector(
             onTap: () => goBookingDetail("1"),
             child: Column(
@@ -52,7 +52,7 @@ class TStatusTabService extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TProductTitleText(
+                            const TProductTitleText(
                               title: "Service Name 1",
                               maxLines: 2,
                             ),

@@ -66,7 +66,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
             );
           }
 
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );

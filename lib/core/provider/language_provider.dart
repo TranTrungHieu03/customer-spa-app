@@ -12,7 +12,7 @@ class LanguageProvider with ChangeNotifier {
       String? languageCode = prefs.getString('language_code') ??
           WidgetsBinding.instance.window.locale.languageCode;
 
-      if (languageCode == null || languageCode.isEmpty) {
+      if (languageCode.isEmpty) {
         languageCode = 'en';
         await prefs.setString('language_code', languageCode);
       }

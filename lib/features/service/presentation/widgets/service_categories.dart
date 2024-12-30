@@ -20,7 +20,7 @@ class TServiceCategories extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  TRoundedImage(
+                  const TRoundedImage(
                     imageUrl: TImages.massage,
                     backgroundColor: TColors.primary,
                     borderRadius: 60,

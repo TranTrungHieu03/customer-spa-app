@@ -10,7 +10,7 @@ class TServiceDetailShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TAppbar(
+      appBar: const TAppbar(
         showBackArrow: true,
       ),
       body: Column(

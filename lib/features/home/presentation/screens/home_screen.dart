@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
-                  TServiceCategories(),
+                  const TServiceCategories(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -158,6 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: 2,
                       crossAxisCount: 2,
                       itemBuilder: (context, index) {
+                        return null;
+                      
                         // return const TServiceCard();
                       }),
                   const SizedBox(
@@ -231,7 +233,7 @@ class TSearchHome extends StatelessWidget {
                   child: Text(AppLocalizations.of(context)!.search,
                       style: Theme.of(context).textTheme.bodySmall),
                 ),
-                TRoundedIcon(icon: Iconsax.search_favorite)
+                const TRoundedIcon(icon: Iconsax.search_favorite)
               ],
             ),
           )),

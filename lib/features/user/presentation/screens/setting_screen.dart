@@ -60,7 +60,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Iconsax.award,
                     title: AppLocalizations.of(context)!.rewards,
                     onTap: () {},
-                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
                     icon: Icons.language_outlined,
@@ -88,13 +88,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Iconsax.receipt,
                     title: AppLocalizations.of(context)!.order_name,
                     onTap: () => goHistory(),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.bookmark,
                     title: AppLocalizations.of(context)!.appointment,
                     onTap: () => goServiceHistory(),
-                    trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   const Divider(),
                   TSettingsMenuTile(
