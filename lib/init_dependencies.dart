@@ -7,7 +7,10 @@ import 'package:spa_mobile/features/auth/data/datasources/auth_remote_data_sourc
 import 'package:spa_mobile/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/forget_password.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/get_user_info.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/login_with_facebook.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/login_with_google.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/resend_otp.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';

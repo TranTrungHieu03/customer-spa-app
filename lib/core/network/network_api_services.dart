@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/base_api_services.dart';
 import 'package:spa_mobile/core/utils/service/auth_service.dart';
 
@@ -31,10 +32,8 @@ class NetworkApiService implements BaseApiServices {
           options.headers['Authorization'] = 'Bearer $_cachedToken';
           options.headers['Content-Type'] = 'application/json';
           if (kDebugMode) {
-            print("==> Request Interceptor Triggered");
-            print("Token: $_cachedToken");
-            print("URL: ${options.uri}");
-            print("Headers: ${options.headers}");
+            AppLogger.info(
+                "==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
           }
           return handler.next(options);
         },
@@ -48,6 +47,10 @@ class NetworkApiService implements BaseApiServices {
               // Retry the failed request with new token
               final options = error.requestOptions;
               options.headers['Authorization'] = 'Bearer $newToken';
+              if (kDebugMode) {
+                AppLogger.warning(
+                    "==> Retry Request with new token: $newToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
+              }
               final response = await _dio.request(
                 options.path,
                 options: Options(
@@ -71,15 +74,15 @@ class NetworkApiService implements BaseApiServices {
       final response = await _dio.get('/Auth/refresh-token');
       final newToken = response.data['result']['data'] as String?;
       if (kDebugMode) {
-        print("==> Request Refresh Token");
-        print("New Token: $newToken");
+        AppLogger.info("==> Request Refresh Token");
+        AppLogger.info("New Token: $newToken");
       }
       if (newToken != null) {
         await authService.saveToken(newToken);
       }
       return newToken;
     } catch (e) {
-      print('Failed to refresh token: $e');
+      AppLogger.info('Failed to refresh token: $e');
       return null;
     }
   }
@@ -90,23 +93,13 @@ class NetworkApiService implements BaseApiServices {
   /// Throws a [FetchDataException] if the network request times out.
   @override
   Future<dynamic> getApi(String url) async {
-    if (kDebugMode) {
-      print(url);
-    }
     dynamic responseJson;
     try {
       final response = await _dio.get(url);
       responseJson = returnResponse(response);
 
-      // } on SocketException {
-      //   throw NoInternetException('');
-      // } on TimeoutException {
-      //   throw FetchDataException('Network Request time out');
-      // }
-
-      responseJson = returnResponse(response);
       if (kDebugMode) {
-        print(responseJson);
+        AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
@@ -126,8 +119,7 @@ class NetworkApiService implements BaseApiServices {
   @override
   Future<dynamic> postApi(String url, dynamic data) async {
     if (kDebugMode) {
-      print(url);
-      print(data);
+      AppLogger.debug(data);
     }
 
     dynamic responseJson;
@@ -136,35 +128,32 @@ class NetworkApiService implements BaseApiServices {
 
       responseJson = returnResponse(response);
       if (kDebugMode) {
-        print(responseJson);
+        AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
+      if (kDebugMode) {
+        AppLogger.error(e);
+      }
       if (e.type == DioExceptionType.badResponse) {
         return returnResponse(e.response!);
       } else {
         _handleDioException(e);
       }
     }
-
-    // } on SocketException {
-    //   throw NoInternetException('No Internet Connection');
-    // } on TimeoutException {
-    //   throw FetchDataException('Network Request time out');
-    // }
   }
 
   void _handleDioException(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout) {
-      throw FetchDataException('Request timed out');
+      throw FetchDataException('Network request timed out');
     } else if (e.type == DioExceptionType.badResponse) {
-      print('Bad response: ${e.response?.statusMessage}');
+      AppLogger.debug('Bad response: ${e.response?.statusMessage}');
       throw FetchDataException('Bad response: ${e.response?.statusMessage}');
     } else if (e.type == DioExceptionType.connectionError) {
       throw NoInternetException('No internet connection');
     }
-    throw FetchDataException('Unexpected error occurred');
+    throw FetchDataException('Try again later');
   }
 
   /// Parses the [response] and returns the corresponding JSON data.
@@ -172,7 +161,7 @@ class NetworkApiService implements BaseApiServices {
   /// Throws a [FetchDataException] with the appropriate error message if the response status code is not successful.
   dynamic returnResponse(Response response) {
     if (kDebugMode) {
-      print(response.statusCode);
+      AppLogger.debug(response.statusCode);
     }
 
     switch (response.statusCode) {

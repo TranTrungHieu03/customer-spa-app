@@ -9,6 +9,7 @@ import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
@@ -91,7 +92,7 @@ class _MyAppState extends State<MyApp> {
           //     orElse: () => const Locale('en'),
           //   );
           // },
-          home: const FormCollectDataScreen(),
+          home: const OnBoardingScreen(),
         );
       },
     );

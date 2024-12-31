@@ -10,6 +10,7 @@ import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/time_picker.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
@@ -198,7 +199,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                               DatePickerWidget(
                                 onDateSelected: (selectedDate) {
                                   selectedDate = selectedDate;
-                                  print(
+                                  AppLogger.info(
                                       "Ngày đã chọn: ${selectedDate.toIso8601String()}");
                                 },
                                 initialDate: selectedDate,
@@ -216,7 +217,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                 TimePickerWidget(
                                   onTimeSelected: (selectedTime) {
                                     selectedTime = selectedTime;
-                                    print(
+                                    AppLogger.info(
                                         "Ngày đã chọn:$selectedDate $selectedTime");
                                   },
                                   initialTime: selectedTime,

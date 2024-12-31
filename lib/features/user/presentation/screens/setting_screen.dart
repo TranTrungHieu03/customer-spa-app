@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/section_heading.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/setting_menu_title.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/user_profile.dart';
 
@@ -18,6 +23,30 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  UserModel? user;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser();
+  }
+
+  void _getUser() async {
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    if (jsonDecode(userJson) != null) {
+      setState(() {
+        user = UserModel.fromJson(jsonDecode(userJson));
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      goLoginNotBack();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
@@ -39,6 +68,7 @@ class _SettingScreenState extends State<SettingScreen> {
         child: Column(
           children: [
             TUserProfileTile(
+              userData: user,
               onPressed: () => goProfile(),
             ),
             const SizedBox(
@@ -66,7 +96,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Icons.language_outlined,
                     title: AppLocalizations.of(context)!.language,
                     onTap: () {
-                      print(languageChange);
+                      AppLogger.info(languageChange);
                       _changeLanguagePopup(context, languageChange);
                     },
                     trailing: Row(

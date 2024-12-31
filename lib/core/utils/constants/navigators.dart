@@ -206,3 +206,8 @@ goImageReview(String image) async {
                 image: image,
               )));
 }
+
+goFormData() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const FormCollectDataScreen()));
+}

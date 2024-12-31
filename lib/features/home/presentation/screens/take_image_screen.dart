@@ -207,7 +207,7 @@
 //                 onPressed: () async {
 //                   final image = await _cameraController.takePicture();
 //                   // Xử lý hình ảnh chụp được
-//                   print("Image saved to: ${image.path}");
+//                   AppLogger.info("Image saved to: ${image.path}");
 //                 },
 //                 child: Text("Capture"),
 //               ),

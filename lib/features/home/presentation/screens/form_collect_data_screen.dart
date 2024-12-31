@@ -265,7 +265,9 @@ class TPageIntroduction extends StatelessWidget {
         Image(
             width: THelperFunctions.screenWidth(context),
             height: THelperFunctions.screenHeight(context),
-            image: const AssetImage(TImages.formSkin)),
+            image: const NetworkImage(
+              TImages.formSkin,
+            )),
         Text(
           "Chào mừng bạn đến với Hành Trình Khám Phá Làn Da Của Bạn",
           style: Theme.of(context)

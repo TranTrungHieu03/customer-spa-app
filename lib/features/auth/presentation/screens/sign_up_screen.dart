@@ -10,6 +10,7 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/validators/validation.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
@@ -90,7 +91,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   validator: (value) =>
                                       TValidator.validateEmail(value),
                                   decoration: InputDecoration(
-                                    prefixIcon: const Icon(Iconsax.direct_right),
+                                    prefixIcon:
+                                        const Icon(Iconsax.direct_right),
                                     labelText:
                                         AppLocalizations.of(context)!.email,
                                   ),
@@ -366,7 +368,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     if (state is PolicyTermError) {
                                       return Text(
                                         state.message,
-                                        style: const TextStyle(color: Colors.red),
+                                        style:
+                                            const TextStyle(color: Colors.red),
                                       );
                                     }
                                     return const SizedBox.shrink();
@@ -386,19 +389,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               .validatePolicyTerm();
 
                                           context.read<AuthBloc>().add(
-                                              SignUpEvent(
+                                              SignUpEvent(SignUpParams(
                                                   email: _emailController.text
-                                                      .toString(),
+                                                      .toString()
+                                                      .trim(),
                                                   password: _passwordController
                                                       .text
-                                                      .toString(),
+                                                      .toString()
+                                                      .trim(),
                                                   role: "Customer",
                                                   userName: _usernameController
                                                       .text
-                                                      .toString(),
+                                                      .toString()
+                                                      .trim(),
                                                   phoneNumber: _phoneController
                                                       .text
-                                                      .toString()));
+                                                      .toString()
+                                                      .trim())));
                                         }
                                       },
                                       child: Text(AppLocalizations.of(context)!

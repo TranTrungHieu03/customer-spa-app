@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
@@ -21,20 +22,17 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
       CreateAppointmentParams params) async {
     try {
       final response =
-          await _apiService.postApi('/Appointment/create', params.toJson());
+          await _apiService.postApi('/Appointments/create', params.toJson());
 
-      print("test");
       final apiResponse = ApiResponse.fromJson(response);
 
-      print(response);
       if (apiResponse.success) {
         return AppointmentModel.fromJson(apiResponse.result!.data!);
       } else {
-        print(apiResponse.result!.message!);
         throw AppException(apiResponse.result!.message!);
       }
     } catch (e) {
-      print(e.toString());
+      AppLogger.info(e.toString());
       throw AppException(e.toString());
     }
   }

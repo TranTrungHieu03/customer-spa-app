@@ -90,5 +90,16 @@
   "delete_account": "Delete Account",
   "logout": "Logout",
   "changeLanguageContent": "Are you sure you want to change to",
-  "changeLanguage": "Change language"
+  "changeLanguage": "Change language",
+  "fullName": "Full Name",
+  "address": "Address",
+  "city": "City",
+  "yourProfile": "Your Profile",
+  "cancel": "Cancel",
+  "back": "Back",
+  "save": "Save",
+  "changeAvatar": "Change Avatar",
+  "solaceChat": "Solace Chatbox",
+  "analysisImage": "Smart Skin Scan",
+  "analysisData": "Skin Analysis via Form"
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 
 class LanguageProvider with ChangeNotifier {
   Locale _locale = const Locale('en');
@@ -20,7 +21,7 @@ class LanguageProvider with ChangeNotifier {
       _locale = Locale(languageCode);
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading language: $e');
+       AppLogger.info('Error loading language: $e');
     }
   }
 
@@ -31,7 +32,7 @@ class LanguageProvider with ChangeNotifier {
       _locale = locale;
       notifyListeners();
     } catch (e) {
-      debugPrint('Error changing language: $e');
+    AppLogger.info('Error changing language: $e');
     }
   }
 

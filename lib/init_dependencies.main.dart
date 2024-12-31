@@ -47,9 +47,22 @@ Future<void> _initAuth() async {
     ..registerFactory(() => ForgetPassword(serviceLocator()))
     ..registerFactory(() => ResetPassword(serviceLocator()))
     ..registerFactory(() => ResendOtp(serviceLocator()))
+    ..registerFactory(() => GetUserInformation(serviceLocator()))
+    ..registerFactory(() => LoginWithGoogle(serviceLocator()))
+    ..registerFactory(() => LoginWithFacebook(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => AuthBloc(serviceLocator()))
+    ..registerLazySingleton(() => AuthBloc(
+          login: serviceLocator(),
+          signUp: serviceLocator(),
+          googleLogin: serviceLocator(),
+          facebookLogin: serviceLocator(),
+          verifyEvent: serviceLocator(),
+          forgetPassword: serviceLocator(),
+          resetPassword: serviceLocator(),
+          resendOtp: serviceLocator(),
+          getUserInformation: serviceLocator(),
+        ))
     //cubit
     ..registerLazySingleton<PasswordCubit>(() => PasswordCubit())
     ..registerLazySingleton<PasswordConfirmCubit>(() => PasswordConfirmCubit())

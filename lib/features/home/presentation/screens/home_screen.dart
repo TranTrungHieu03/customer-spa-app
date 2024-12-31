@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,9 +10,13 @@ import 'package:spa_mobile/core/common/widgets/notification.dart';
 import 'package:spa_mobile/core/common/widgets/primary_header_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/shimmer.dart';
+import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_categories.dart';
@@ -23,6 +29,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  UserModel? user;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _getUser();
+  }
+
+  void _getUser() async {
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    if (jsonDecode(userJson) != null) {
+      setState(() {
+        user = UserModel.fromJson(jsonDecode(userJson));
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      goLoginNotBack();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ImageBloc, ImageState>(
@@ -48,13 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      // const TRoundedImage(
-                      //   imageUrl: TImages.avatar,
-                      //   borderRadius: 20,
-                      // ),
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: TSizes.defaultSpace / 2),
+                        padding: const EdgeInsets.only(left: TSizes.sm / 2),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,13 +91,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .labelLarge!
                                   .apply(color: TColors.white),
                             ),
-                            Text(
-                              "Tran Trung Hieu",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineSmall!
-                                  .apply(color: TColors.white),
-                            ),
+                            isLoading
+                                ? const TShimmerEffect(
+                                    width: TSizes.shimmerLg,
+                                    height: TSizes.shimmerSx)
+                                : ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                        maxWidth: THelperFunctions.screenWidth(
+                                                context) *
+                                            0.7),
+                                    child: Text(
+                                      user?.userName ?? "",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall!
+                                          .apply(color: TColors.white),
+                                    ),
+                                  ),
                           ],
                         ),
                       )
@@ -80,33 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   actions: [
                     TNotificationIcon(
-                        onPressed: () {}, iconColor: TColors.white),
+                        onPressed: () {}, iconColor: TColors.primary),
                     const SizedBox(
-                      width: TSizes.sm,
-                    ),
-                    TRoundedIcon(
-                      icon: Iconsax.message,
-                      color: TColors.primary,
-                      onPressed: () {
-                        goChat();
-                      },
-                    ),
-                    const SizedBox(
-                      width: TSizes.sm,
-                    ),
-                    BlocBuilder<ImageBloc, ImageState>(
-                      builder: (context, state) {
-                        return TRoundedIcon(
-                          icon: Iconsax.cloud,
-                          color: TColors.primary,
-                          onPressed: () {
-                            context.read<ImageBloc>().add(PickImageEvent());
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(
-                      width: TSizes.sm,
+                      width: TSizes.md,
                     ),
                   ],
                 ),
@@ -122,9 +133,46 @@ class _HomeScreenState extends State<HomeScreen> {
                   horizontal: TSizes.defaultSpace / 2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  BlocBuilder<ImageBloc, ImageState>(
+                    builder: (context, state) {
+                      return TRoundedContainer(
+                        child: Padding(
+                          padding: const EdgeInsets.all(TSizes.sm),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              TFlashAction(
+                                title: AppLocalizations.of(context)!.solaceChat,
+                                iconData: Iconsax.message,
+                                onPressed: () => goChat(),
+                              ),
+                              TFlashAction(
+                                title:
+                                    AppLocalizations.of(context)!.analysisImage,
+                                iconData: Iconsax.gallery_import,
+                                onPressed: () {
+                                  context
+                                      .read<ImageBloc>()
+                                      .add(PickImageEvent());
+                                },
+                              ),
+                              TFlashAction(
+                                title:
+                                    AppLocalizations.of(context)!.analysisData,
+                                iconData: Iconsax.document_1,
+                                onPressed: () => goFormData(),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(
-                    height: TSizes.defaultSpace,
+                    height: TSizes.sm,
                   ),
                   Text(AppLocalizations.of(context)!.bannerTitle,
                       style: Theme.of(context).textTheme.titleLarge),
@@ -159,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisCount: 2,
                       itemBuilder: (context, index) {
                         return null;
-                      
+
                         // return const TServiceCard();
                       }),
                   const SizedBox(
@@ -210,6 +258,49 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return AppLocalizations.of(context)!.helloNight;
     }
+  }
+}
+
+class TFlashAction extends StatelessWidget {
+  const TFlashAction({
+    super.key,
+    required this.title,
+    required this.iconData,
+    required this.onPressed,
+  });
+
+  final String title;
+  final IconData iconData;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: ConstrainedBox(
+          constraints: BoxConstraints(
+              maxWidth: THelperFunctions.screenWidth(context) * 0.25),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TRoundedIcon(
+                icon: iconData,
+                color: TColors.primary,
+                backgroundColor: TColors.primaryBackground,
+                borderRadius: TSizes.sm,
+              ),
+              const SizedBox(
+                height: TSizes.sm / 2,
+              ),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.labelLarge,
+                textAlign: TextAlign.center,
+              )
+            ],
+          )),
+    );
   }
 }
 

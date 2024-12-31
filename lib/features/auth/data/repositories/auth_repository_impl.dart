@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
@@ -5,9 +7,12 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/core/utils/service/auth_service.dart';
 import 'package:spa_mobile/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/auth/domain/repository/auth_repository.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/forget_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
@@ -87,7 +92,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final String imageUrl = user?.photoURL ?? '';
       final String phone = user?.phoneNumber ?? '';
 
-      print("$email $userName $phone");
+      AppLogger.info("$email $userName $phone");
 
       String token = await _authRemoteDataSource.loginWithGoogle(
         LoginWithGoogleParams(
@@ -115,14 +120,14 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, String>> loginWithFacebook() async {
     try {
-      print("Login with Facebook");
+      AppLogger.info("Login with Facebook");
 
       final LoginResult loginResult = await FacebookAuth.instance.login();
       final userData = await FacebookAuth.instance.getUserData();
-      print(userData["name"]);
-      print("end");
+      AppLogger.info(userData["name"]);
+      AppLogger.info("end");
       if (loginResult.status != LoginStatus.success) {
-        print("Facebook login failed: ${loginResult.status}");
+        AppLogger.info("Facebook login failed: ${loginResult.status}");
         return left(const ApiFailure(message: "Facebook sign-in aborted"));
       }
 
@@ -137,7 +142,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final String userName = userData["name"] ?? '';
       final String imageUrl = userData["picture"]?['data']?["url"] ?? '';
 
-      print("$email $userName $imageUrl");
+      AppLogger.info("$email $userName $imageUrl");
 
       String token = await _authRemoteDataSource.loginWithFacebook(
         LoginWithFacebookParams(
@@ -204,6 +209,20 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       String message = await _authRemoteDataSource.resendOtp(params);
       return right(message);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserModel>> getUserInfo() async {
+    try {
+      UserModel userModel = await _authRemoteDataSource.getUserInfo();
+      await LocalStorage.saveData(
+          LocalStorageKey.userKey, jsonEncode(userModel));
+      return right(userModel);
     } on AppException catch (e) {
       return left(ApiFailure(
         message: e.toString(),

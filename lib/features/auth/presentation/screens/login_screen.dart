@@ -12,6 +12,7 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/validators/validation.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthSuccess) {
+              context.read<AuthBloc>().add(GetUserInformationEvent());
               goHome();
             } else if (state is AuthFailure) {
               TSnackBar.errorSnackBar(context, message: state.message);
@@ -179,11 +181,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       onPressed: () {
                                         if (_formKey.currentState!.validate()) {
                                           context.read<AuthBloc>().add(
-                                              LoginEvent(
-                                                  _emailController.text
-                                                      .toString(),
-                                                  _passwordController.text
-                                                      .toString()));
+                                              LoginEvent(LoginParams(
+                                                  email: _emailController.text.toString().trim(),
+                                                  password: _passwordController
+                                                      .text.toString().trim())));
                                         }
                                       },
                                       child: Text(

@@ -33,5 +33,5 @@ class TImages {
       "https://img.pikbest.com/backgrounds/20210426/simple-high-end-beauty-service-beauty-salon-propaganda-banner-template_5921764.jpg!w700wp";
 
   //form
-  static const String formSkin = "assets/images/face_data.jpg";
+  static const String formSkin = "https://res.cloudinary.com/dtcaf7prf/image/upload/v1735646948/face_data_hdjvbi.jpg";
 }

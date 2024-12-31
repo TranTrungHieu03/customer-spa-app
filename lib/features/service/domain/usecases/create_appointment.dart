@@ -39,10 +39,10 @@ class CreateAppointmentParams {
       'staffId': staffId,
       'serviceId': serviceId,
       'branchId': branchId,
-      'appointmentsTime': appointmentsTime,
+      'appointmentsTime': appointmentsTime.toIso8601String(),
       'notes': notes,
-      'status':"",
-      'feedback':""
+      'status': "",
+      'feedback': ""
     };
   }
 }

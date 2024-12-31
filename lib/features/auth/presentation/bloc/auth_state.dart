@@ -21,3 +21,9 @@ class AuthFailure extends AuthState {
 
   const AuthFailure(this.message);
 }
+
+class AuthLoaded extends AuthState {
+  final UserModel user;
+
+  const AuthLoaded(this.user);
+}

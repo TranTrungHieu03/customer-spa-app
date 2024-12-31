@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/forget_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/resend_otp.dart';
@@ -25,4 +26,6 @@ abstract class AuthRepository {
   Future<Either<Failure, String>> forgetPassword(ForgetPasswordParams params);
 
   Future<Either<Failure, String>> resendOtp(ResendOtpParams params);
+
+  Future<Either<Failure, UserModel>> getUserInfo();
 }
