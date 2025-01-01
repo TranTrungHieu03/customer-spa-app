@@ -5,6 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_mobile/core/common/cubit/user/app_user_cubit.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -13,7 +15,6 @@ import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen
 import 'package:spa_mobile/features/home/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
-import 'package:spa_mobile/features/home/presentation/screens/form_collect_data_screen.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
@@ -72,7 +73,8 @@ class _MyAppState extends State<MyApp> {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         return MaterialApp(
-          title: "SPA",
+          key: ValueKey(languageProvider.locale),
+          title: "Solace Spa",
           themeMode: ThemeMode.light,
           theme: TAppTheme.lightTheme,
           darkTheme: TAppTheme.darkTheme,
@@ -85,16 +87,30 @@ class _MyAppState extends State<MyApp> {
           ],
           supportedLocales: const [Locale('en'), Locale('vi')],
           locale: languageProvider.locale,
-          // localeResolutionCallback: (locale, supportedLocales) {
-          //   return supportedLocales.firstWhere(
-          //     (supportedLocale) =>
-          //         supportedLocale.languageCode == locale?.languageCode,
-          //     orElse: () => const Locale('en'),
-          //   );
-          // },
-          home: const OnBoardingScreen(),
+          home: FutureBuilder(
+              future: _getStartScreen(context),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const TLoader();
+                } else {
+                  return const OnBoardingScreen();
+                }
+              }),
         );
       },
     );
+  }
+
+  Future<void> _getStartScreen(BuildContext context) async {
+    final isLogin = await LocalStorage.getData(LocalStorageKey.isLogin);
+    final isCompletedOnBoarding =
+        await LocalStorage.getData(LocalStorageKey.isCompletedOnBoarding);
+    if (isLogin == 'true') {
+      goHome();
+    } else if (isCompletedOnBoarding == 'true') {
+      goLoginNotBack();
+    } else {
+      goOnboarding();
+    }
   }
 }

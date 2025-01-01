@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
@@ -29,6 +30,8 @@ abstract class AuthRemoteDataSource {
   Future<String> resendOtp(ResendOtpParams params);
 
   Future<UserModel> getUserInfo();
+
+  Future<void> logout();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -166,6 +169,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final apiResponse = ApiResponse<String>.fromJson(response);
 
       if (apiResponse.success) {
+        AppLogger.info(apiResponse.result!.data);
         return apiResponse.result!.data!;
       } else {
         throw AppException(apiResponse.result!.message!);
@@ -182,11 +186,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
-
         return UserModel.fromJson(apiResponse.result!.data!);
       } else {
         throw AppException(apiResponse.result!.message!);
       }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    try {
+      _apiServices.clearTokenCache();
     } catch (e) {
       throw AppException(e.toString());
     }

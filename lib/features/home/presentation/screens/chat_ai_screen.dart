@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class ChatAiScreen extends StatefulWidget {
@@ -14,10 +17,15 @@ class ChatAiScreen extends StatefulWidget {
   State<ChatAiScreen> createState() => _ChatAiScreenState();
 }
 
-class _ChatAiScreenState extends State<ChatAiScreen> {
+class _ChatAiScreenState extends State<ChatAiScreen>
+    with WidgetsBindingObserver {
   final _messageController = TextEditingController();
   final List<Map<String, String>> messages = [
-    {"text": "Hello! How can I assist you today?", "isUser": "false"},
+    {
+      "text":
+          "Hello! How can I assist you today?Hello! How can I assist you today?Hello! How can I assist you today?",
+      "isUser": "false"
+    },
     {"text": "Hi! I need help with my booking.", "isUser": "true"},
     {"text": "Sure! What is the booking number?", "isUser": "false"},
     {"text": "It's 12345.", "isUser": "true"},
@@ -33,22 +41,49 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
     {"text": "Thank you!", "isUser": "true"},
     {"text": "You're welcome!", "isUser": "false"},
     {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
+    {"text": "Have a great day!", "isUser": "true"},
   ];
   final ScrollController _scrollController = ScrollController();
 
   final FocusNode _focusNode = FocusNode();
 
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutSine,
+        );
+      }
+    });
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    }
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    _scrollToBottom();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _scrollToBottom();
   }
 
   @override
@@ -57,7 +92,7 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
       appBar: TAppbar(
         showBackArrow: true,
         title: Text(
-          "Chat AI",
+          AppLocalizations.of(context)!.solaceChat,
           style: Theme.of(context)
               .textTheme
               .headlineMedium!
@@ -65,48 +100,59 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
         ),
         actions: const [],
       ),
-      body: SingleChildScrollView(
+      body: ListView.builder(
         controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(TSizes.sm),
-          child: Column(
-            children: messages.map((message) {
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: TSizes.xs),
-                child: Row(
-                  mainAxisAlignment: message['isUser'] == 'true'
-                      ? MainAxisAlignment.end
-                      : MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(TSizes.sm),
-                      decoration: BoxDecoration(
-                        color: message['isUser'] == 'true'
-                            ? TColors.primary
-                            : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth:
-                            THelperFunctions.screenWidth(context) * 0.85),
-                        child: Text(
-                          message['text']!,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          softWrap: true,
-                        ),
-                      ),
-                    ),
-                  ],
+        itemCount: messages.length + 1,
+        padding: const EdgeInsets.all(TSizes.sm),
+        shrinkWrap: true,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          if (index == messages.length) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Lottie.asset(
+                  TImages.chatLoading,
+                  width: THelperFunctions.screenWidth(context) * 0.1,
+                  height: 50,
+                  fit: BoxFit.cover,
                 ),
-              );
-            }).toList(),
-          ),
-        ),
+              ],
+            );
+          }
+          final message = messages[index];
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: TSizes.xs),
+            child: Row(
+              mainAxisAlignment: message['isUser'] == 'true'
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  decoration: BoxDecoration(
+                    color: message['isUser'] == 'true'
+                        ? TColors.primary
+                        : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: THelperFunctions.screenWidth(context) * 0.85,
+                    ),
+                    child: Text(
+                      message['text']!,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      softWrap: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
-      bottomNavigationBar: AnimatedPadding(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInToLinear,
+      bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
           left: TSizes.sm,
           right: TSizes.sm,
@@ -121,11 +167,6 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
               TRoundedIcon(
                 onPressed: () {
                   setState(() {
-                    messages.add({
-                      "text": _messageController.text,
-                      "isUser": "true",
-                    });
-                    _messageController.clear();
                     FocusScope.of(context).unfocus();
                     _scrollToBottom();
                   });
@@ -144,12 +185,16 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
                   decoration: InputDecoration(
                     hintText: "Enter your message ...",
                     contentPadding:
-                    const EdgeInsets.symmetric(horizontal: TSizes.sm),
+                        const EdgeInsets.symmetric(horizontal: TSizes.sm),
                     hintStyle: Theme.of(context).textTheme.bodySmall,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
+                  autofocus: true,
+                  onTap: () {
+                    _scrollToBottom();
+                  },
                   onSubmitted: (value) {
                     setState(() {
                       messages.add({
@@ -185,15 +230,5 @@ class _ChatAiScreenState extends State<ChatAiScreen> {
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        _scrollToBottom();
-      }
-    });
   }
 }

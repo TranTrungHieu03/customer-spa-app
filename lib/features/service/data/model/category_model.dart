@@ -5,7 +5,6 @@ class CategoryModel extends Category {
       {required super.categoryId,
       required super.name,
       required super.description,
-      required super.skinTypeSuitable,
       required super.status,
       required super.imageUrl});
 
@@ -14,7 +13,6 @@ class CategoryModel extends Category {
       categoryId: json['categoryId'] as int,
       name: json['name'] as String,
       description: json['description'] as String,
-      skinTypeSuitable: json['skinTypeSuitable'] as String,
       status: json['status'] as String,
       imageUrl: json['imageUrl'] as String,
     );
@@ -25,7 +23,6 @@ class CategoryModel extends Category {
       'categoryId': categoryId,
       'name': name,
       'description': description,
-      'skinTypeSuitable': skinTypeSuitable,
       'status': status,
       'imageUrl': imageUrl,
     };

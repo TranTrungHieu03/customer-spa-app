@@ -95,7 +95,16 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                         Text(service.duration)
                       ],
                     ),
-                    Text(service.steps),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Steps: ",
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                        Text(service.steps),
+                      ],
+                    ),
                   ],
                 ),
               ),

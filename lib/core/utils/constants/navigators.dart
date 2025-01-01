@@ -3,7 +3,7 @@ part of 'exports_navigators.dart';
 final navigatorKey = GlobalKey<NavigatorState>();
 
 goSignUp() async {
-  Navigator.push(
+  Navigator.pushAndRemoveUntil(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
@@ -17,7 +17,8 @@ goSignUp() async {
                       create: (_) => serviceLocator<PasswordMatchCubit>()),
                 ],
                 child: const SignUpScreen(),
-              )));
+              )),
+      (Route<dynamic> route) => false);
 }
 
 goForgotPassword() async {
@@ -210,4 +211,9 @@ goImageReview(String image) async {
 goFormData() async {
   Navigator.push(navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const FormCollectDataScreen()));
+}
+
+goOnboarding() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const OnBoardingScreen()));
 }

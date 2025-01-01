@@ -7,6 +7,7 @@ import 'package:spa_mobile/features/auth/domain/usecases/get_user_info.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login_with_facebook.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/login_with_google.dart';
+import 'package:spa_mobile/features/auth/domain/usecases/logout.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/resend_otp.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
@@ -25,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ResetPassword _resetPassword;
   final ResendOtp _resendOtp;
   final GetUserInformation _getUserInformation;
+  final Logout _logout;
 
   AuthBloc({
     required Login login,
@@ -36,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required ResetPassword resetPassword,
     required ResendOtp resendOtp,
     required GetUserInformation getUserInformation,
+    required Logout logout,
   })  : _login = login,
         _signUp = signUp,
         _googleLogin = googleLogin,
@@ -45,6 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _resetPassword = resetPassword,
         _resendOtp = resendOtp,
         _getUserInformation = getUserInformation,
+        _logout = logout,
         super(AuthInitial()) {
     on<LoginEvent>(_onLoginEvent);
     on<SignUpEvent>(_onSignUpEvent);
@@ -55,6 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ResetPasswordEvent>(_onResetPasswordEvent);
     on<ResendOtpEvent>(_onResendOtpEvent);
     on<GetUserInformationEvent>(_onGetUserInformation);
+    on<LogoutEvent>(_onLogout);
   }
 
   Future<void> _onLoginEvent(LoginEvent event, Emitter<AuthState> emit) async {
@@ -148,5 +153,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await _getUserInformation(NoParams());
     result.fold((failure) => emit(AuthFailure(failure.message)),
         (user) => emit(AuthLoaded(user)));
+  }
+
+  Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final result = await _logout(NoParams());
+    result.fold((failure) => emit(AuthFailure(failure.message)),
+        (message) => emit(AuthClear(message)));
   }
 }

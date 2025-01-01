@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
@@ -9,9 +10,11 @@ import 'package:spa_mobile/core/common/widgets/section_heading.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
+import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
+import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/setting_menu_title.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/user_profile.dart';
 
@@ -96,7 +99,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Icons.language_outlined,
                     title: AppLocalizations.of(context)!.language,
                     onTap: () {
-                      AppLogger.info(languageChange);
                       _changeLanguagePopup(context, languageChange);
                     },
                     trailing: Row(
@@ -132,11 +134,26 @@ class _SettingScreenState extends State<SettingScreen> {
                     title: AppLocalizations.of(context)!.delete_account,
                     onTap: () => _deleteAccountWarningPopup(context),
                   ),
-                  TSettingsMenuTile(
-                    icon: Iconsax.logout,
-                    title: AppLocalizations.of(context)!.logout,
-                    onTap: () {
-                      goLoginNotBack();
+                  BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthClear) {
+                        goLoginNotBack();
+                      }
+                    },
+                    builder: (context, state) {
+                      return ListTile(
+                        leading: const Icon(
+                          Iconsax.logout,
+                          size: 24,
+                          color: TColors.black,
+                        ),
+                        title: Text(AppLocalizations.of(context)!.logout,
+                            style: Theme.of(context).textTheme.titleSmall),
+                        trailing: null,
+                        onTap: () {
+                          context.read<AuthBloc>().add(LogoutEvent());
+                        },
+                      );
                     },
                   ),
                   const SizedBox(

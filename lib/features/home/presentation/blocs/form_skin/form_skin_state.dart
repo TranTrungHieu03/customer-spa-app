@@ -1,8 +1,11 @@
 part of 'form_skin_bloc.dart';
 
 @immutable
-sealed class FormSkinState {
+  class FormSkinState extends Equatable {
   const FormSkinState();
+
+  @override
+  List<Object?> get props => [];
 }
 
 final class FormSkinInitial extends FormSkinState {}
@@ -20,5 +23,9 @@ final class FormSkinError extends FormSkinState {
 final class FormSkinPageChanged extends FormSkinState {
   final int pageIndex;
 
-  const FormSkinPageChanged({required this.pageIndex});
+  const FormSkinPageChanged(this.pageIndex);
+  @override
+  List<Object> get props => [pageIndex];
 }
+
+final class FormSkinComplete extends FormSkinState {}

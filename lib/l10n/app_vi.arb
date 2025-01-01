@@ -46,7 +46,7 @@
   "helloMorning": "Chào buổi sáng!",
   "helloAfternoon": "Chào buổi trưa!",
   "helloEvening": "Chào buổi chiều!",
-  "helloNight": "Chúc buổi tối!",
+  "helloNight": "Chào buổi tối!",
   "bannerTitle": "Ưu Đãi Đặc Biệt",
   "addToCart": "Thêm vào giỏ hàng",
   "buyNow": "Mua ngay",
@@ -80,7 +80,7 @@
   "paymentSuccessTitle": "Thanh toán thành công!",
   "paymentSuccessSubTitle": "Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Đơn hàng của bạn đang được xử lý.",
   "apply": "Áp dụng",
-  "book_now":"Đặt lịch ngay",
+  "book_now": "Đặt lịch ngay",
   "account": "Tài khoản",
   "account_settings": "Cài đặt tài khoản",
   "rewards": "Tích điểm",
@@ -101,5 +101,12 @@
   "changeAvatar": "Thay đổi hình đại diện",
   "solaceChat": "Hỏi đáp cùng Solace",
   "analysisImage": "Quét da thông minh",
-  "analysisData": "Phân tích da qua biểu mẫu"
+  "analysisData": "Phân tích qua biểu mẫu",
+  "next": "Tiếp tục",
+  "description_form": "Hãy tham gia bài kiểm tra nhanh để khám phá các sản phẩm và dịch vụ chăm sóc da hoàn hảo, được thiết kế riêng cho bạn. Dù bạn đang đối mặt với tình trạng da khô, mụn, nhạy cảm, hay đơn giản là muốn cải thiện làn da rạng rỡ, chúng tôi sẽ giúp bạn tìm ra giải pháp tốt nhất phù hợp với loại da độc đáo của bạn. Hãy bắt đầu hành trình hướng tới làn da khỏe mạnh và tươi sáng hơn ngay hôm nay!",
+  "title_form": "Tìm Hiểu Điều Da Bạn Thực Sự Cần",
+  "get_started": "Bắt đầu",
+  "has_account": "Đã có tài khoản?",
+  "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt"
 }

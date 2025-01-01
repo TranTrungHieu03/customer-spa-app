@@ -13,6 +13,7 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -40,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _getUser() async {
     final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
-    if (jsonDecode(userJson) != null) {
+    AppLogger.info("User: $userJson");
+    if (userJson != null && jsonDecode(userJson) != null) {
       setState(() {
         user = UserModel.fromJson(jsonDecode(userJson));
         isLoading = false;

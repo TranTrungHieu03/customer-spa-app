@@ -39,6 +39,9 @@ class AuthRepositoryImpl implements AuthRepository {
       String token = await _authRemoteDataSource.login(params);
 
       await _authService.saveToken(token);
+      await LocalStorage.saveData(LocalStorageKey.isLogin, "true");
+      await LocalStorage.saveData(
+          LocalStorageKey.isCompletedOnBoarding, "true");
 
       return right(token);
     } on AppException catch (e) {
@@ -103,6 +106,9 @@ class AuthRepositoryImpl implements AuthRepository {
             role: "Customer"),
       );
       await _authService.saveToken(token);
+      await LocalStorage.saveData(LocalStorageKey.isLogin, "true");
+      await LocalStorage.saveData(
+          LocalStorageKey.isCompletedOnBoarding, "true");
       return right(token);
     } on PlatformException catch (e) {
       if (e.code == 'network_error') {
@@ -153,6 +159,9 @@ class AuthRepositoryImpl implements AuthRepository {
             role: "Customer"),
       );
       await _authService.saveToken(token);
+      await LocalStorage.saveData(LocalStorageKey.isLogin, "true");
+      await LocalStorage.saveData(
+          LocalStorageKey.isCompletedOnBoarding, "true");
       return right(token);
     } on AppException catch (e) {
       return left(ApiFailure(message: e.toString()));
@@ -223,6 +232,21 @@ class AuthRepositoryImpl implements AuthRepository {
       await LocalStorage.saveData(
           LocalStorageKey.userKey, jsonEncode(userModel));
       return right(userModel);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> logout() async {
+    try {
+      await _authRemoteDataSource.logout();
+      await LocalStorage.saveData(LocalStorageKey.isLogin, "false");
+      await LocalStorage.removeData(LocalStorageKey.userKey);
+      await _authService.removeToken();
+      return right("Logout success");
     } on AppException catch (e) {
       return left(ApiFailure(
         message: e.toString(),

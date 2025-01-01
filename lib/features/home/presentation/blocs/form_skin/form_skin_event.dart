@@ -3,6 +3,9 @@ part of 'form_skin_bloc.dart';
 @immutable
 sealed class FormSkinEvent extends Equatable {
   const FormSkinEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 final class OnPageChangedEvent extends FormSkinEvent {
@@ -14,8 +17,6 @@ final class OnPageChangedEvent extends FormSkinEvent {
   List<Object> get props => [pageIndex];
 }
 
-class NextPageEvent extends FormSkinEvent {
-  @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
-}
+class NextPageEvent extends FormSkinEvent {}
+class PreviousPageEvent extends FormSkinEvent {}
+

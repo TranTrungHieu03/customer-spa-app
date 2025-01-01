@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 
 class AuthService {
   Future<void> saveToken(String token) async {
@@ -13,6 +14,7 @@ class AuthService {
 
   Future<void> removeToken() async {
     final prefs = await SharedPreferences.getInstance();
+    AppLogger.info("Remove token");
     await prefs.remove('auth_token');
   }
 }

@@ -2,6 +2,7 @@ class Product {
   final int productId;
   final String productName;
   final String productDescription;
+  final String skinTypeSuitable;
   final double price;
   final int quantity;
   final double volume;
@@ -13,6 +14,7 @@ class Product {
   final List<String> images;
 
   Product({
+    required this.skinTypeSuitable,
     required this.images,
     required this.volume,
     required this.dimension,

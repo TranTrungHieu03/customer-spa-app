@@ -218,3 +218,109 @@
 //     );
 //   }
 // }
+// ###
+// Widget _buildTextField({required String label, required String hint}) {
+//   return Padding(
+//     padding: const EdgeInsets.only(bottom: TSizes.md),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           label,
+//           style: Theme.of(context).textTheme.labelLarge,
+//         ),
+//         const SizedBox(height: TSizes.sm),
+//         TextField(
+//           decoration: InputDecoration(
+//             hintText: hint,
+//             border: const OutlineInputBorder(),
+//           ),
+//         ),
+//       ],
+//     ),
+//   );
+// }
+//
+//   Widget _buildMultiSelectField({
+//     required String label,
+//     required List<String> items,
+//     required List<String> selectedItems,
+//     required Function(String, bool) onChanged,
+//   }) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: TSizes.sm),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             label,
+//             style: Theme.of(context).textTheme.labelLarge,
+//           ),
+//           const SizedBox(height: TSizes.sm),
+//           Column(
+//             children: items.map((item) {
+//               return CheckboxListTile(
+//                 title: Text(item),
+//                 value: selectedItems.contains(item),
+//                 onChanged: (bool? value) {
+//                   if (value != null) {
+//                     onChanged(item, value);
+//                   }
+//                 },
+//               );
+//             }).toList(),
+//           ),
+//           if (selectedItems.isNotEmpty)
+//             Wrap(
+//               spacing: 6.0,
+//               runSpacing: 6.0,
+//               children: selectedItems.map((item) {
+//                 return Chip(
+//                   label: Text(item),
+//                   onDeleted: () {
+//                     setState(() {
+//                       selectedItems.remove(item);
+//                     });
+//                   },
+//                 );
+//               }).toList(),
+//             ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget _buildDropdown({
+//     required String label,
+//     required List<String> items,
+//     required String hint,
+//   }) {
+//     return Padding(
+//       padding: const EdgeInsets.only(bottom: TSizes.sm),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Text(
+//             label,
+//             style: Theme.of(context).textTheme.labelLarge,
+//           ),
+//           const SizedBox(height: TSizes.sm),
+//           DropdownButtonFormField<String>(
+//             decoration: InputDecoration(
+//               hintText: hint,
+//               border: const OutlineInputBorder(),
+//             ),
+//             items: items.map((String value) {
+//               return DropdownMenuItem<String>(
+//                 value: value,
+//                 child: Text(value),
+//               );
+//             }).toList(),
+//             onChanged: (value) {
+//               // Xử lý khi giá trị thay đổi
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }

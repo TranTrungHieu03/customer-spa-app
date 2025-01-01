@@ -7,6 +7,7 @@ class ProductModel extends Product {
   ProductModel(
       {required super.productId,
       required super.productName,
+      required super.skinTypeSuitable,
       required super.productDescription,
       required super.price,
       required super.dimension,
@@ -21,6 +22,7 @@ class ProductModel extends Product {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
+      skinTypeSuitable: json['skinTypeSuitable'],
       productId: json['productId'],
       productName: json['productName'],
       productDescription: json['productDescription'],
@@ -50,6 +52,7 @@ class ProductModel extends Product {
       'discount': discount,
       'status': status,
       'categoryId': categoryId,
+      'skinTypeSuitable': skinTypeSuitable,
       'companyId': companyId,
       'category': category.toJson(),
       'images': (images as List).map((e) => e.toString()).toList(),
@@ -68,6 +71,7 @@ class ProductModel extends Product {
           String? dimension,
           int? categoryId,
           int? companyId,
+          String? skinTypeSuitable,
           CategoryModel? category,
           List<String>? images}) =>
       ProductModel(
@@ -79,6 +83,7 @@ class ProductModel extends Product {
         discount: discount ?? this.discount,
         dimension: dimension ?? this.dimension,
         volume: volume ?? this.volume,
+        skinTypeSuitable: skinTypeSuitable ?? this.skinTypeSuitable,
         status: status ?? this.status,
         categoryId: categoryId ?? this.categoryId,
         companyId: companyId ?? this.companyId,

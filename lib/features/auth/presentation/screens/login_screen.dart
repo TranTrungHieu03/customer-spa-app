@@ -44,9 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
           listener: (context, state) {
             if (state is AuthSuccess) {
               context.read<AuthBloc>().add(GetUserInformationEvent());
-              goHome();
             } else if (state is AuthFailure) {
               TSnackBar.errorSnackBar(context, message: state.message);
+            } else if (state is AuthLoaded) {
+              goHome();
             }
           },
           child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -182,13 +183,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                         if (_formKey.currentState!.validate()) {
                                           context.read<AuthBloc>().add(
                                               LoginEvent(LoginParams(
-                                                  email: _emailController.text.toString().trim(),
+                                                  email: _emailController.text
+                                                      .toString()
+                                                      .trim(),
                                                   password: _passwordController
-                                                      .text.toString().trim())));
+                                                      .text
+                                                      .toString()
+                                                      .trim())));
                                         }
                                       },
                                       child: Text(
-                                          AppLocalizations.of(context)!.login)),
+                                          AppLocalizations.of(context)!.login.toUpperCase())),
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,

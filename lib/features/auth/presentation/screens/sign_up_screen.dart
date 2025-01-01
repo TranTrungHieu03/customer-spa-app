@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/widgets/form_divider.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/common/widgets/social_btn.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -45,10 +47,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is AuthSuccess) {
+          if (state is AuthVerify) {
             goVerify(_emailController.text.toString(), 1);
           } else if (state is AuthFailure) {
             TSnackBar.errorSnackBar(context, message: state.message);
+          } else if (state is AuthSuccess) {
+            context.read<AuthBloc>().add(GetUserInformationEvent());
+          } else if (state is AuthLoaded) {
+            goHome();
           }
         },
         child: BlocBuilder<AuthBloc, AuthState>(
@@ -409,13 +415,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         }
                                       },
                                       child: Text(AppLocalizations.of(context)!
-                                          .createAccount)),
+                                          .createAccount
+                                          .toUpperCase())),
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () => goLoginNotBack(),
+                                        child: Text(
+                                          AppLocalizations.of(context)!
+                                              .has_account,
+                                        ))
+                                  ],
+                                ),
+                                FormDivider(
+                                    dividerText: AppLocalizations.of(context)!
+                                        .signInWith),
                                 const SizedBox(
-                                  width: TSizes.spacebtwItems,
+                                  height: TSizes.defaultSpace,
                                 ),
+
+                                const SocialBtn(),
                               ],
-                            ))
+                            )),
                       ],
                     ),
                   ),

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 
 class LanguageProvider with ChangeNotifier {
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale('vi');
 
   Locale get locale => _locale;
 
@@ -13,15 +13,16 @@ class LanguageProvider with ChangeNotifier {
       String? languageCode = prefs.getString('language_code') ??
           WidgetsBinding.instance.window.locale.languageCode;
 
+      AppLogger.info('Language code: $languageCode');
       if (languageCode.isEmpty) {
-        languageCode = 'en';
+        languageCode = 'vi';
         await prefs.setString('language_code', languageCode);
       }
 
       _locale = Locale(languageCode);
       notifyListeners();
     } catch (e) {
-       AppLogger.info('Error loading language: $e');
+      AppLogger.info('Error loading language: $e');
     }
   }
 
@@ -32,7 +33,7 @@ class LanguageProvider with ChangeNotifier {
       _locale = locale;
       notifyListeners();
     } catch (e) {
-    AppLogger.info('Error changing language: $e');
+      AppLogger.info('Error changing language: $e');
     }
   }
 

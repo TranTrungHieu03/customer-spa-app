@@ -99,7 +99,7 @@ class NetworkApiService implements BaseApiServices {
       responseJson = returnResponse(response);
 
       if (kDebugMode) {
-        AppLogger.debug(responseJson);
+        // AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
@@ -128,7 +128,7 @@ class NetworkApiService implements BaseApiServices {
 
       responseJson = returnResponse(response);
       if (kDebugMode) {
-        AppLogger.debug(responseJson);
+        // AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
@@ -148,7 +148,6 @@ class NetworkApiService implements BaseApiServices {
         e.type == DioExceptionType.receiveTimeout) {
       throw FetchDataException('Network request timed out');
     } else if (e.type == DioExceptionType.badResponse) {
-      AppLogger.debug('Bad response: ${e.response?.statusMessage}');
       throw FetchDataException('Bad response: ${e.response?.statusMessage}');
     } else if (e.type == DioExceptionType.connectionError) {
       throw NoInternetException('No internet connection');
@@ -180,6 +179,13 @@ class NetworkApiService implements BaseApiServices {
       default:
         throw FetchDataException(
             'Error occurred while communicating with server');
+    }
+  }
+
+  void clearTokenCache() {
+    _cachedToken = null;
+    if (kDebugMode) {
+      AppLogger.info("==> Token cache cleared");
     }
   }
 }

@@ -11,6 +11,7 @@ class AppointmentModel extends Appointment {
 
   const AppointmentModel({
     required super.customerId,
+    required super.appointmentId,
     required super.staffId,
     required super.serviceId,
     required super.branchId,
@@ -26,6 +27,7 @@ class AppointmentModel extends Appointment {
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     return AppointmentModel(
+      appointmentId: json['appointmentId'],
       customerId: json['customerId'],
       staffId: json['staffId'],
       serviceId: json['serviceId'],
@@ -45,6 +47,7 @@ class AppointmentModel extends Appointment {
 
   Appointment copyWith({
     int? customerId,
+    int? appointmentId,
     int? staffId,
     int? serviceId,
     int? branchId,
@@ -58,6 +61,7 @@ class AppointmentModel extends Appointment {
     ServiceModel? service,
   }) {
     return AppointmentModel(
+      appointmentId: appointmentId ?? this.appointmentId,
       customerId: customerId ?? this.customerId,
       staffId: staffId ?? this.staffId,
       serviceId: serviceId ?? this.serviceId,

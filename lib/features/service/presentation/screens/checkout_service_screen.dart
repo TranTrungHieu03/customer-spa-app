@@ -159,7 +159,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                   constraints: BoxConstraints(
                                       maxWidth: THelperFunctions.screenWidth(
                                               context) *
-                                          0.4),
+                                          0.7),
                                   child: TProductTitleText(
                                     title: service.name,
                                     maxLines: 1,
@@ -179,7 +179,16 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                 Text(service.duration)
                               ],
                             ),
-                            Text(service.steps),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Steps: ",
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                Text(service.steps),
+                              ],
+                            ),
                           ],
                         ),
                       ),
