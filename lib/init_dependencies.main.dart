@@ -13,7 +13,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
 
   //storage
-
+  serviceLocator.registerLazySingleton<LocalStorage>(() => LocalStorage());
   //internet
   serviceLocator.registerFactory(() => InternetConnection());
 
@@ -27,6 +27,7 @@ Future<void> initDependencies() async {
   await _initService();
   await _initCategory();
   await _initAppointment();
+  await _initAiChat();
 }
 
 Future<void> _initAuth() async {
@@ -152,4 +153,20 @@ Future<void> _initAppointment() async {
     //bloc
     ..registerLazySingleton(() => AppointmentBloc(
         getAppointment: serviceLocator(), createAppointment: serviceLocator()));
+}
+
+Future<void> _initAiChat() async {
+  serviceLocator
+    //data src
+    ..registerFactory<AiChatRemoteDataSource>(
+        () => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    //repo
+    ..registerFactory<AiChatRepository>(() => AiChatRepositoryImpl(
+          serviceLocator<AiChatRemoteDataSource>(),
+        ))
+    //use case
+    ..registerLazySingleton(() => GetAiChat(serviceLocator()))
+
+    //bloc
+    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()));
 }

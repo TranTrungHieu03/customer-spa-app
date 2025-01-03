@@ -108,5 +108,10 @@
   "get_started": "Get's started",
   "has_account": "Already have an account?",
   "english": "English",
-  "vietnamese": "Vietnamese"
+  "vietnamese": "Vietnamese",
+  "home": "Home",
+  "services": "Service",
+  "products": "Product",
+  "setting": "Setting",
+  "chat_bot_help": "Hello! How can I help you today?"
 }

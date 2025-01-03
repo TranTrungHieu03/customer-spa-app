@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _getUser() async {
     final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
     AppLogger.info("User: $userJson");
-    if (userJson != null && jsonDecode(userJson) != null) {
+    if (jsonDecode(userJson) != null) {
       setState(() {
         user = UserModel.fromJson(jsonDecode(userJson));
         isLoading = false;
@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               TFlashAction(
                                 title:
                                     AppLocalizations.of(context)!.analysisImage,
-                                iconData: Iconsax.gallery_import,
+                                iconData: Iconsax.image,
                                 onPressed: () {
                                   context
                                       .read<ImageBloc>()

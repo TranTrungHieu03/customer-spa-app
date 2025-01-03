@@ -84,7 +84,6 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
     );
   }
 
-  // Xử lý khi người dùng chọn ngôn ngữ
   void _handleLanguageChange(String language) async {
     await Provider.of<LanguageProvider>(context, listen: false)
         .changeLanguage(Locale(selectedLanguage));

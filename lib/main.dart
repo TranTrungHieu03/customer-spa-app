@@ -12,6 +12,7 @@ import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
@@ -51,6 +52,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<FormSkinBloc>()),
         BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),
         BlocProvider(create: (_) => serviceLocator<AppointmentBloc>()),
+        BlocProvider(create: (_) => serviceLocator<AiChatBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
         create: (_) => languageProvider,

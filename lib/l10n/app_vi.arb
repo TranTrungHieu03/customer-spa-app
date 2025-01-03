@@ -108,5 +108,10 @@
   "get_started": "Bắt đầu",
   "has_account": "Đã có tài khoản?",
   "english": "Tiếng Anh",
-    "vietnamese": "Tiếng Việt"
+  "vietnamese": "Tiếng Việt",
+  "home": "Trang chủ",
+  "services": "Dịch vụ",
+  "products": "Sản phẩm",
+  "setting": "Cài đặt",
+  "chat_bot_help": "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?"
 }

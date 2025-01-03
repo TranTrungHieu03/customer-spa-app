@@ -7,11 +7,11 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class TOptionItem extends StatefulWidget {
   const TOptionItem({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     required this.isChoose,
-  }) : super(key: key);
+  });
 
   final IconData icon;
   final String title;

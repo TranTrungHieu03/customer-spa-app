@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/section_heading.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';

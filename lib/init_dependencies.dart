@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/utils/service/auth_service.dart';
@@ -23,6 +24,11 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart'
 import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
+import 'package:spa_mobile/features/home/data/datasources/ai_chat_remote_data_source.dart';
+import 'package:spa_mobile/features/home/data/repositories/ai_chat_reposotory_impl.dart';
+import 'package:spa_mobile/features/home/domain/repositories/ai_chat_repository.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_ai_chat.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';

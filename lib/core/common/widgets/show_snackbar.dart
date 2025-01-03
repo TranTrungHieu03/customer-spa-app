@@ -35,12 +35,16 @@ class TSnackBar {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
-          const Icon(Iconsax.check, color: TColors.white),
+          const Icon(Iconsax.check, color: TColors.primary),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(color: TColors.white)),
+              Text(title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.black)),
               if (message.isNotEmpty)
                 ConstrainedBox(
                   constraints: BoxConstraints(
@@ -48,7 +52,10 @@ class TSnackBar {
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: TColors.white),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.grey[800]),
                     maxLines: 3,
                   ),
                 )
@@ -66,12 +73,16 @@ class TSnackBar {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
-          const Icon(Iconsax.warning_2, color: TColors.white),
+          const Icon(Iconsax.warning_2, color: Colors.orange),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(color: TColors.white)),
+              Text(title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.black)),
               if (message.isNotEmpty)
                 ConstrainedBox(
                   constraints: BoxConstraints(
@@ -79,7 +90,10 @@ class TSnackBar {
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: TColors.white),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.grey[800]),
                     maxLines: 3,
                   ),
                 )
@@ -87,7 +101,7 @@ class TSnackBar {
           ),
         ],
       ),
-      backgroundColor: Colors.orange,
+      backgroundColor: Colors.orange[100],
       duration: const Duration(seconds: 3),
     ));
   }
@@ -97,12 +111,16 @@ class TSnackBar {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
-          const Icon(Iconsax.warning_2, color: TColors.white),
+          const Icon(Iconsax.warning_2, color: Colors.red),
           const SizedBox(width: 5),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(color: TColors.white)),
+              Text(title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.black)),
               if (message.isNotEmpty)
                 ConstrainedBox(
                   constraints: BoxConstraints(
@@ -110,7 +128,10 @@ class TSnackBar {
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: TColors.white),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Colors.grey[800]),
                     maxLines: 3,
                   ),
                 )
@@ -118,7 +139,7 @@ class TSnackBar {
           ),
         ],
       ),
-      backgroundColor: Colors.red.shade600,
+      backgroundColor: Colors.red[100],
       duration: const Duration(seconds: 3),
     ));
   }

@@ -109,7 +109,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             child: Text('Search',
                                 style: Theme.of(context).textTheme.bodySmall),
                           ),
-                          const TRoundedIcon(icon: Iconsax.search_favorite)
+                          const TRoundedIcon(icon: Iconsax.search_normal)
                         ],
                       ),
                     ),
