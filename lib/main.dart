@@ -8,6 +8,7 @@ import 'package:spa_mobile/core/common/cubit/user/app_user_cubit.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
+import 'package:spa_mobile/core/services/notification.dart';
 import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
@@ -24,6 +25,7 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 import 'package:spa_mobile/firebase_options.dart';
 import 'package:spa_mobile/init_dependencies.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +35,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await NotificationService.init();
+  tz.initializeTimeZones();
   // Initialize LanguageProvider
   final languageProvider = LanguageProvider();
   await languageProvider.loadLanguage();

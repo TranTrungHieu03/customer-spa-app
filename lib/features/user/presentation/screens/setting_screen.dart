@@ -9,6 +9,7 @@ import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/section_heading.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
+import 'package:spa_mobile/core/services/notification.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -91,7 +92,9 @@ class _SettingScreenState extends State<SettingScreen> {
                   TSettingsMenuTile(
                     icon: Iconsax.award,
                     title: AppLocalizations.of(context)!.rewards,
-                    onTap: () {},
+                    onTap: () {
+                      NotificationService.showNotification(title: "Hello", body: "Test");
+                    },
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(

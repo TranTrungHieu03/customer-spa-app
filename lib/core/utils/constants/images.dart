@@ -1,5 +1,5 @@
 class TImages {
-  static const String logo = "assets/logos/logo_light.jpg";
+  static const String logo = "assets/logos/logo_light.png";
   static const String google = "assets/logos/google.png";
   static const String facebook = "assets/logos/facebook.png";
 
