@@ -27,7 +27,7 @@ class NetworkApiService implements BaseApiServices {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          _cachedToken = _cachedToken ?? await authService.getToken();
+          _cachedToken = _cachedToken ??= await authService.getToken();
 
           options.headers['Authorization'] = 'Bearer $_cachedToken';
           options.headers['Content-Type'] = 'application/json';
