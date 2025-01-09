@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/product/data/model/list_product_model.dart';
@@ -40,6 +41,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
+        AppLogger.info(apiResponse.result!.data);
         return ListProductModel.fromJson(
             apiResponse.result!.data, apiResponse.result!.pagination);
       } else {

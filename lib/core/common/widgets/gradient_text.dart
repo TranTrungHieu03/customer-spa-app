@@ -1,0 +1,43 @@
+import 'package:flutter/cupertino.dart';
+
+class GradientText extends StatelessWidget {
+  const GradientText(
+      this.text, {
+        super.key,
+        required this.gradient,
+        this.style,
+      });
+
+  final String text;
+  final TextStyle? style;
+  final Gradient gradient;
+
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (bounds) => gradient.createShader(
+        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+      ),
+      child: Text(text, style: style),
+    );
+  }
+}
+// GradientText(
+// '1',
+// style: Theme.of(context)
+//     .textTheme
+//     .displayLarge!
+//     .copyWith(
+// fontSize: 200, fontWeight: FontWeight.w900),
+// gradient: const LinearGradient(
+// colors: [
+// TColors.primary,
+// Colors.green,
+// TColors.primaryBackground
+// ],
+// // Màu gradient
+// begin: Alignment.topCenter,
+// end: Alignment.bottomCenter,
+// ),
+// ),

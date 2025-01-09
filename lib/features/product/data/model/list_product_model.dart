@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 
 class ListProductModel {
@@ -9,6 +10,7 @@ class ListProductModel {
 
   factory ListProductModel.fromJson(
       List<dynamic>? json, Map<String, dynamic>? paginationJson) {
+    AppLogger.debug("tesst");
     return ListProductModel(
         products: json != null
             ? json

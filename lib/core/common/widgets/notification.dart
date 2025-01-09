@@ -14,7 +14,7 @@ class TNotificationIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(children: [
       TRoundedIcon(
-        icon: Iconsax.notification,
+        icon: Iconsax.alarm,
         color: iconColor,
         size: 30,
         onPressed: onPressed,

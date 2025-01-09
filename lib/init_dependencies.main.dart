@@ -28,6 +28,7 @@ Future<void> initDependencies() async {
   await _initCategory();
   await _initAppointment();
   await _initAiChat();
+  await _initSkinAnalysis();
 }
 
 Future<void> _initAuth() async {
@@ -169,4 +170,21 @@ Future<void> _initAiChat() async {
 
     //bloc
     ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()));
+}
+
+Future<void> _initSkinAnalysis() async {
+  serviceLocator
+    //data src
+    ..registerFactory<SkinAnalysisRemoteDataSource>(() =>
+        SkinAnalysisRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    //repo
+    ..registerFactory<SkinAnalysisRepository>(() => SkinAnalysisRepositoryImpl(
+          serviceLocator<SkinAnalysisRemoteDataSource>(),
+        ))
+    //use case
+    ..registerLazySingleton(() => SkinAnalysisViaImage(serviceLocator()))
+
+    //bloc
+    ..registerLazySingleton(
+        () => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()));
 }

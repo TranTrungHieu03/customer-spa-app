@@ -53,7 +53,6 @@ dependencies:
   provider: ^6.1.2
   #device:
   device_info_plus: ^10.0.0
-
   carousel_slider: ^5.0.0
   readmore: ^2.2.0
   flutter_rating_bar: ^4.0.1
@@ -75,18 +74,22 @@ dependencies:
   image_picker: ^1.1.2
   image: ^4.3.0
   permission_handler: ^11.3.1
-#  flutter_camera_ml_vision: ^3.0.1
-#  firebase_ml_vision: ^0.12.0+1
-#  camera: ^0.9.4+4
-#  google_ml_kit: ^0.6.0
+  #  camera: ^0.9.4+4
+  #  google_ml_kit: ^0.6.0
+  #  flutter_camera_ml_vision: ^3.0.1
+  #  firebase_ml_vision: ^0.12.0+1
+  #  camera: ^0.9.4+4
+  #  google_ml_kit: ^0.6.0
 
   #  notification
-#  web_socket_channel: ^3.0.1
+  web_socket_channel: ^3.0.1
+  #  web_socket_channel: ^3.0.1
   flutter_local_notifications: ^17.2.3
-  socket_io_client: ^2.0.0
+  socket_io_client: ^3.0.2
 
   #  payment
   webview_flutter: ^4.8.0
+  fl_chart: ^0.70.1
 
 
 dev_dependencies:
@@ -108,42 +111,32 @@ flutter:
     - assets/animations/
     - assets/images/
 
-  fonts:
-    - family: IBMPlexSans
-      fonts:
-        - asset: assets/fonts/IBMPlexSans-Light.ttf
-          weight: 300
-        - asset: assets/fonts/IBMPlexSans-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/IBMPlexSans-Italic.ttf
-          style: italic
-        - asset: assets/fonts/IBMPlexSans-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/IBMPlexSans-MediumItalic.ttf
-          weight: 500
-          style: italic
-        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/IBMPlexSans-SemiBoldItalic.ttf
-          weight: 600
-          style: italic
-        - asset: assets/fonts/IBMPlexSans-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/IBMPlexSans-BoldItalic.ttf
-          weight: 700
-          style: italic
-
-  plugin:
-    platforms:
-      android:
-        package: com.google_mlkit_face_mesh_detection
-        pluginClass: GoogleMlKitFaceMeshDetectionPlugin
-      ios:
-        pluginClass: GoogleMlKitFaceMeshDetectionPlugin
+#  fonts:
+#    - family: IBMPlexSans
+#      fonts:
+#        - asset: assets/fonts/IBMPlexSans-Light.ttf
+#          weight: 300
+#        - asset: assets/fonts/IBMPlexSans-Regular.ttf
+#          weight: 400
+#        - asset: assets/fonts/IBMPlexSans-Italic.ttf
+#          style: italic
+#        - asset: assets/fonts/IBMPlexSans-Medium.ttf
+#          weight: 500
+#        - asset: assets/fonts/IBMPlexSans-MediumItalic.ttf
+#          weight: 500
+#          style: italic
+#        - asset: assets/fonts/IBMPlexSans-SemiBold.ttf
+#          weight: 600
+#        - asset: assets/fonts/IBMPlexSans-SemiBoldItalic.ttf
+#          weight: 600
+#          style: italic
+#        - asset: assets/fonts/IBMPlexSans-Bold.ttf
+#          weight: 700
+#        - asset: assets/fonts/IBMPlexSans-BoldItalic.ttf
+#          weight: 700
+#          style: italic
 
 l10n:
   arb-dir: lib/l10n
   template-arb-file: app_en.arb
   output-localization-file: app_localizations.dart
-
-

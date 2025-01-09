@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/notification.dart';
 import 'package:spa_mobile/core/common/widgets/primary_header_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -17,8 +16,9 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_routine.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
-import 'package:spa_mobile/features/home/presentation/blocs/image_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_categories.dart';
 
@@ -65,185 +65,211 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
           body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TPrimaryHeaderContainer(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: TSizes.defaultSpace / 2,
-                ),
-                TAppbar(
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: TSizes.sm / 2),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getGreetingMessage(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelLarge!
-                                  .apply(color: TColors.white),
-                            ),
-                            isLoading
-                                ? const TShimmerEffect(
-                                    width: TSizes.shimmerLg,
-                                    height: TSizes.shimmerSx)
-                                : ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                        maxWidth: THelperFunctions.screenWidth(
-                                                context) *
-                                            0.7),
-                                    child: Text(
-                                      user?.userName ?? "",
-                                      style: Theme.of(context)
+                TPrimaryHeaderContainer(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: TSizes.defaultSpace / 2,
+                        ),
+                        TAppbar(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: TSizes.sm / 2),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _getGreetingMessage(),
+                                      style: Theme
+                                          .of(context)
                                           .textTheme
-                                          .headlineSmall!
+                                          .labelLarge!
                                           .apply(color: TColors.white),
                                     ),
-                                  ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  actions: [
-                    TNotificationIcon(
-                        onPressed: () {}, iconColor: TColors.primary),
-                    const SizedBox(
-                      width: TSizes.md,
-                    ),
-                  ],
-                ),
-
-                // const TSearchHome(),
-                const SizedBox(
-                  height: TSizes.md * 2,
-                )
-              ],
-            )),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: TSizes.defaultSpace / 2),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  BlocBuilder<ImageBloc, ImageState>(
-                    builder: (context, state) {
-                      return TRoundedContainer(
-                        child: Padding(
-                          padding: const EdgeInsets.all(TSizes.sm),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              TFlashAction(
-                                title: AppLocalizations.of(context)!.solaceChat,
-                                iconData: Iconsax.message,
-                                onPressed: () => goChat(),
-                              ),
-                              TFlashAction(
-                                title:
-                                    AppLocalizations.of(context)!.analysisImage,
-                                iconData: Iconsax.image,
-                                onPressed: () {
-                                  context
-                                      .read<ImageBloc>()
-                                      .add(PickImageEvent());
-                                },
-                              ),
-                              TFlashAction(
-                                title:
-                                    AppLocalizations.of(context)!.analysisData,
-                                iconData: Iconsax.document_1,
-                                onPressed: () => goFormData(),
+                                    isLoading
+                                        ? const TShimmerEffect(
+                                        width: TSizes.shimmerLg,
+                                        height: TSizes.shimmerSx)
+                                        : ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                          maxWidth: THelperFunctions
+                                              .screenWidth(
+                                              context) *
+                                              0.7),
+                                      child: Text(
+                                        user?.userName ?? "",
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .headlineSmall!
+                                            .apply(color: TColors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               )
                             ],
                           ),
+                          actions: [
+                            TNotificationIcon(
+                                onPressed: () {}, iconColor: TColors.primary),
+                            const SizedBox(
+                              width: TSizes.md,
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                  Text(AppLocalizations.of(context)!.bannerTitle,
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const TBanner(),
-                  const SizedBox(
-                    height: TSizes.defaultSpace,
-                  ),
-                  Text(AppLocalizations.of(context)!.service_type,
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                  const TServiceCategories(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.featured_service,
-                          style: Theme.of(context).textTheme.titleLarge),
-                      GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Text(AppLocalizations.of(context)!.view_all,
-                                  style: Theme.of(context).textTheme.bodySmall),
-                              const TRoundedIcon(icon: Icons.chevron_right)
-                            ],
-                          ))
-                    ],
-                  ),
-                  TGridLayout(
-                      itemCount: 2,
-                      crossAxisCount: 2,
-                      itemBuilder: (context, index) {
-                        return null;
 
-                        // return const TServiceCard();
-                      }),
-                  const SizedBox(
-                    height: TSizes.md,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // const TSearchHome(),
+                        const SizedBox(
+                          height: TSizes.md * 2,
+                        )
+                      ],
+                    )),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: TSizes.defaultSpace / 2),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text(AppLocalizations.of(context)!.best_selling_product,
-                          style: Theme.of(context).textTheme.titleLarge),
-                      GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Text(AppLocalizations.of(context)!.view_all,
-                                  style: Theme.of(context).textTheme.bodySmall),
-                              const TRoundedIcon(icon: Icons.chevron_right)
-                            ],
-                          ))
+                      BlocBuilder<ImageBloc, ImageState>(
+                        builder: (context, state) {
+                          return TRoundedContainer(
+                            child: Padding(
+                              padding: const EdgeInsets.all(TSizes.sm),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceEvenly,
+                                children: [
+                                  TFlashAction(
+                                    title: AppLocalizations.of(context)!
+                                        .solaceChat,
+                                    iconData: Iconsax.message,
+                                    onPressed: () => goChat(),
+                                  ),
+                                  TFlashAction(
+                                    title:
+                                    AppLocalizations.of(context)!.analysisImage,
+                                    iconData: Iconsax.scan,
+                                    onPressed: () {
+                                      context
+                                          .read<ImageBloc>()
+                                          .add(PickImageEvent());
+                                    },
+                                  ),
+                                  TFlashAction(
+                                    title:
+                                    AppLocalizations.of(context)!.analysisData,
+                                    iconData: Iconsax.document_1,
+                                    onPressed: () => goFormData(),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
+                      Text(AppLocalizations.of(context)!.bannerTitle,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .titleLarge),
+                      const TBanner(),
+                      const SizedBox(
+                        height: TSizes.defaultSpace,
+                      ),
+                      Text(AppLocalizations.of(context)!.service_type,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .titleLarge),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
+                      const TServiceCategories(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)!.featured_service,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleLarge),
+                          GestureDetector(
+                              onTap: () {},
+                              child: Row(
+                                children: [
+                                  Text(AppLocalizations.of(context)!.view_all,
+                                      style: Theme
+                                          .of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                  const TRoundedIcon(icon: Icons.chevron_right)
+                                ],
+                              ))
+                        ],
+                      ),
+                      // TGridLayout(
+                      //     itemCount: 2,
+                      //     crossAxisCount: 2,
+                      //     itemBuilder: (context, index) {
+                      //       return null;
+                      //
+                      //       // return const TServiceCard();
+                      //     }),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(AppLocalizations.of(context)!
+                              .best_selling_product,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleLarge),
+                          GestureDetector(
+                              onTap: () {},
+                              child: Row(
+                                children: [
+                                  Text(AppLocalizations.of(context)!.view_all,
+                                      style: Theme
+                                          .of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                  const TRoundedIcon(icon: Icons.chevron_right)
+                                ],
+                              ))
+                        ],
+                      ),
+                      // TGridLayout(
+                      //     crossAxisCount: 2,
+                      //     itemCount: 2,
+                      //     itemBuilder: (_, index) => const TProductCardVertical()),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+
                     ],
                   ),
-                  // TGridLayout(
-                  //     crossAxisCount: 2,
-                  //     itemCount: 2,
-                  //     itemBuilder: (_, index) => const TProductCardVertical()),
-                  const SizedBox(
-                    height: TSizes.md,
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      )),
+                )
+              ],
+            ),
+          )),
     );
   }
 
@@ -297,7 +323,10 @@ class TFlashAction extends StatelessWidget {
               ),
               Text(
                 title,
-                style: Theme.of(context).textTheme.labelLarge,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .labelLarge,
                 textAlign: TextAlign.center,
               )
             ],
@@ -324,7 +353,10 @@ class TSearchHome extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: TSizes.md),
                   child: Text(AppLocalizations.of(context)!.search,
-                      style: Theme.of(context).textTheme.bodySmall),
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodySmall),
                 ),
                 const TRoundedIcon(icon: Iconsax.search_favorite)
               ],

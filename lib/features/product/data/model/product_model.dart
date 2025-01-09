@@ -1,3 +1,4 @@
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/product/domain/entities/product.dart';
 import 'package:spa_mobile/features/service/data/model/category_model.dart';
 
@@ -21,6 +22,7 @@ class ProductModel extends Product {
       required super.images});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    AppLogger.debug(json);
     return ProductModel(
       skinTypeSuitable: json['skinTypeSuitable'],
       productId: json['productId'],

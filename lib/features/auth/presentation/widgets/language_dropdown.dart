@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
@@ -25,10 +26,10 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
-
       onSelected: (String value) {
         setState(() {
           selectedLanguage = value;
+          AppLogger.info(selectedLanguage);
         });
         _handleLanguageChange(value);
       },
@@ -36,9 +37,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
         return languages.keys.map<PopupMenuEntry<String>>((String value) {
           return PopupMenuItem<String>(
             value: value,
-
             child: Row(
-
               children: [
                 Image.asset(
                   languages[value]!,
@@ -61,7 +60,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
       child: Container(
         padding: const EdgeInsets.all(TSizes.sm),
         decoration: BoxDecoration(
-          color: TColors.primaryBackground,
+          color: TColors.primaryBackground.withOpacity(0.5),
           borderRadius: BorderRadius.circular(TSizes.md),
         ),
         child: Row(
@@ -86,6 +85,6 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
 
   void _handleLanguageChange(String language) async {
     await Provider.of<LanguageProvider>(context, listen: false)
-        .changeLanguage(Locale(selectedLanguage));
+        .changeLanguage(Locale(language));
   }
 }

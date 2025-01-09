@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -99,7 +100,7 @@ class NetworkApiService implements BaseApiServices {
       responseJson = returnResponse(response);
 
       if (kDebugMode) {
-        // AppLogger.debug(responseJson);
+        AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
@@ -128,7 +129,7 @@ class NetworkApiService implements BaseApiServices {
 
       responseJson = returnResponse(response);
       if (kDebugMode) {
-        // AppLogger.debug(responseJson);
+        AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
@@ -187,5 +188,11 @@ class NetworkApiService implements BaseApiServices {
     if (kDebugMode) {
       AppLogger.info("==> Token cache cleared");
     }
+  }
+
+  @override
+  Future uploadFileApi(File path) {
+    // TODO: implement uploadFileApi
+    throw UnimplementedError();
   }
 }

@@ -38,6 +38,7 @@ class TImages {
 
   //chat
   static const String chatLoading = "assets/animations/chat_load1.json";
+  static const String imageScanning = "assets/animations/scanning.json";
 
   //language
   static const String vietnam = "assets/logos/icons8-vietnam-50.png";

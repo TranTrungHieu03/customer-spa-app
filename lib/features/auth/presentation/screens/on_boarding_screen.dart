@@ -70,14 +70,14 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 },
               ),
               const OnBoardingDotNavigation(),
-              const Positioned(
+                Positioned(
                 right: TSizes.md,
                 left: 0,
                 top: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    LanguageDropdown(),
+                   const  LanguageDropdown(),
                   ],
                 ),
               ),

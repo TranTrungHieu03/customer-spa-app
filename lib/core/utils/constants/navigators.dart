@@ -217,3 +217,16 @@ goOnboarding() async {
   Navigator.push(navigatorKey.currentContext!,
       MaterialPageRoute(builder: (context) => const OnBoardingScreen()));
 }
+
+goSkinAnalysing(String imagePath) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) =>
+              WrapperAnalysingImageScreen(imagePath: imagePath)));
+}
+
+goSkinResult() async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => const AnalysisResultScreen()));
+}

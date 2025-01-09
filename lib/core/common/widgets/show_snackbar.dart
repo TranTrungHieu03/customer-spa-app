@@ -63,7 +63,7 @@ class TSnackBar {
           ),
         ],
       ),
-      backgroundColor: TColors.primary,
+      backgroundColor: Colors.green[200],
       duration: Duration(seconds: duration),
     ));
   }

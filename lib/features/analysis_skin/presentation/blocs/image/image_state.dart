@@ -13,7 +13,17 @@ final class ImagePicked extends ImageState {
   ImagePicked(this.imagePath);
 }
 
-final class ImageValid extends ImageState {}
+final class ImageValid extends ImageState {
+  final String imagePath;
+
+  ImageValid(this.imagePath);
+}
+
+final class ImageCrop extends ImageState {
+  final String imagePath;
+
+  ImageCrop(this.imagePath);
+}
 
 final class ImageInvalid extends ImageState {
   final String error;
