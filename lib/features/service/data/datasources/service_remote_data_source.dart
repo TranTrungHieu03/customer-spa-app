@@ -19,8 +19,7 @@ class ServiceRemoteDataSrcImpl extends ServiceRemoteDataSrc {
   @override
   Future<ServiceModel> getServiceDetail(GetServiceDetailParams params) async {
     try {
-      final response = await _apiServices
-          .getApi('/Service/get-service-by-id?id=${params.id}');
+      final response = await _apiServices.getApi('/Service/get-service-by-id?id=${params.id}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return ServiceModel.fromJson(apiResponse.result!.data);
@@ -35,14 +34,12 @@ class ServiceRemoteDataSrcImpl extends ServiceRemoteDataSrc {
   @override
   Future<ListServiceModel> getServices(int param) async {
     try {
-      final response =
-          await _apiServices.getApi('/Service/get-all-services?page=$param');
+      final response = await _apiServices.getApi('/Service/get-all-services?page=$param');
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        return ListServiceModel.fromJson(
-            apiResponse.result!.data, apiResponse.result!.pagination);
+        return ListServiceModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
       } else {
         throw AppException(apiResponse.result!.message);
       }

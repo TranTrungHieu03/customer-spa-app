@@ -2,11 +2,7 @@ import 'package:spa_mobile/features/service/domain/entities/category.dart';
 
 class CategoryModel extends Category {
   const CategoryModel(
-      {required super.categoryId,
-      required super.name,
-      required super.description,
-      required super.status,
-      required super.imageUrl});
+      {required super.categoryId, required super.name, required super.description, required super.status, required super.imageUrl});
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(

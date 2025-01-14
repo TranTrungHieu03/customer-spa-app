@@ -12,11 +12,9 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   AppointmentRepositoryImpl(this._appointmentRemoteDataSource);
 
   @override
-  Future<Either<Failure, AppointmentModel>> createAppointment(
-      CreateAppointmentParams params) async {
+  Future<Either<Failure, AppointmentModel>> createAppointment(CreateAppointmentParams params) async {
     try {
-      AppointmentModel response =
-          await _appointmentRemoteDataSource.createAppointment(params);
+      AppointmentModel response = await _appointmentRemoteDataSource.createAppointment(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));
@@ -24,11 +22,9 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   }
 
   @override
-  Future<Either<Failure, AppointmentModel>> getAppointment(
-      GetAppointmentParams params) async {
+  Future<Either<Failure, AppointmentModel>> getAppointment(GetAppointmentParams params) async {
     try {
-      AppointmentModel response =
-          await _appointmentRemoteDataSource.getAppointment(params);
+      AppointmentModel response = await _appointmentRemoteDataSource.getAppointment(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

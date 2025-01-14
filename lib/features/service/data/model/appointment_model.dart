@@ -5,9 +5,10 @@ import 'package:spa_mobile/features/service/domain/entities/appointment.dart';
 
 class AppointmentModel extends Appointment {
   final UserModel? customer;
-  final UserModel? staff;
-  final BranchModel branch;
-  final ServiceModel service;
+
+  // final UserModel? staff;
+  final BranchModel? branch;
+  final ServiceModel? service;
 
   const AppointmentModel({
     required super.customerId,
@@ -20,9 +21,9 @@ class AppointmentModel extends Appointment {
     required super.notes,
     required super.feedback,
     this.customer,
-    this.staff,
-    required this.branch,
-    required this.service,
+    // this.staff,
+    this.branch,
+    this.service,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -36,19 +37,17 @@ class AppointmentModel extends Appointment {
       status: json['status'],
       notes: json['notes'],
       feedback: json['feedback'],
-      customer: json['customer'] != null
-          ? UserModel.fromJson(json['customer'])
-          : null,
-      staff: json['staff'] != null ? UserModel.fromJson(json['staff']) : null,
-      branch: BranchModel.fromJson(json['branch']),
-      service: ServiceModel.fromJson(json['service']),
+      customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
+      // staff: json['staff'] != null ? UserModel.fromJson(json['staff']) : null,
+      branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
+      service: json['service'] != null ? ServiceModel.fromJson(json['service']) : null,
     );
   }
 
   Appointment copyWith({
     int? customerId,
     int? appointmentId,
-    int? staffId,
+    // int? staffId,
     int? serviceId,
     int? branchId,
     DateTime? appointmentsTime,
@@ -63,7 +62,7 @@ class AppointmentModel extends Appointment {
     return AppointmentModel(
       appointmentId: appointmentId ?? this.appointmentId,
       customerId: customerId ?? this.customerId,
-      staffId: staffId ?? this.staffId,
+      staffId: staffId ?? staffId,
       serviceId: serviceId ?? this.serviceId,
       branchId: branchId ?? this.branchId,
       appointmentsTime: appointmentsTime ?? this.appointmentsTime,
@@ -71,7 +70,7 @@ class AppointmentModel extends Appointment {
       notes: notes ?? this.notes,
       feedback: feedback ?? this.feedback,
       customer: customer ?? this.customer,
-      staff: staff ?? this.staff,
+      // staff: staff ?? this.staff,
       branch: branch ?? this.branch,
       service: service ?? this.service,
     );

@@ -22,7 +22,7 @@ class TStatusTabService extends StatelessWidget {
         return TRoundedContainer(
           padding: const EdgeInsets.all(TSizes.sm),
           child: GestureDetector(
-            onTap: () => goBookingDetail("1"),
+            onTap: () => goBookingDetail(1),
             child: Column(
               children: [
                 Row(
@@ -65,10 +65,7 @@ class TStatusTabService extends StatelessWidget {
                               children: [
                                 Text(
                                   "09:10 09/10/2024",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.copyWith(
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.bold,
                                       ),

@@ -18,5 +18,5 @@ final class OnPageChangedEvent extends FormSkinEvent {
 }
 
 class NextPageEvent extends FormSkinEvent {}
-class PreviousPageEvent extends FormSkinEvent {}
 
+class PreviousPageEvent extends FormSkinEvent {}

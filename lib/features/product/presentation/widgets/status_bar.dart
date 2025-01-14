@@ -29,8 +29,7 @@ class TStatusTab extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ConstrainedBox(
-                    constraints: BoxConstraints(
-                        maxWidth: THelperFunctions.screenWidth(context) * 0.6),
+                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.6),
                     child: Row(
                       children: [
                         const Icon(Iconsax.shop),

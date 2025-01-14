@@ -14,5 +14,4 @@ class Routine {
     required this.frequency,
     required this.targetSkinTypes,
   });
-
 }

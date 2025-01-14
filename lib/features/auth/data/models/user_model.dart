@@ -77,8 +77,7 @@ class UserModel extends User {
       gender: json['gender'],
       city: json['city'],
       address: json['address'],
-      birthDate:
-          json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
+      birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
       phoneNumber: json['phoneNumber'],
       status: json['status'],
       bonusPoint: json['bonusPoint'],

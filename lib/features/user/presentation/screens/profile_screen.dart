@@ -174,31 +174,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: () {},
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.redAccent,
-            padding:
-                const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
             side: const BorderSide(color: Colors.red, width: 1.0),
           ),
           child: Text(
             AppLocalizations.of(context)!.cancel,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium!
-                .apply(color: Colors.white),
+            style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
           ),
         ),
         const SizedBox(width: TSizes.md),
         ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            padding:
-                const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
           ),
           child: Text(
             AppLocalizations.of(context)!.save,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium!
-                .apply(color: Colors.white),
+            style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
           ),
         ),
       ],

@@ -18,8 +18,7 @@ class TBottomCheckoutService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: TSizes.sm, vertical: TSizes.sm),
+        padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -47,8 +46,7 @@ class TBottomCheckoutService extends StatelessWidget {
                 onPressed();
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: TSizes.md, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
               ),
               child: Text(
                 AppLocalizations.of(context)!.order,

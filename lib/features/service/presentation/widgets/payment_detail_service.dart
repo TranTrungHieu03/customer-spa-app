@@ -6,11 +6,7 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 
 class TPaymentDetailService extends StatelessWidget {
-  const TPaymentDetailService(
-      {super.key,
-      required this.price,
-      required this.tips,
-      required this.total});
+  const TPaymentDetailService({super.key, required this.price, required this.tips, required this.total});
 
   final String price;
   final String tips;
@@ -26,16 +22,14 @@ class TPaymentDetailService extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.payment_details,
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(AppLocalizations.of(context)!.payment_details, style: Theme.of(context).textTheme.bodyLarge),
           Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppLocalizations.of(context)!.total_order_amount,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.total_order_amount, style: Theme.of(context).textTheme.bodyMedium),
                   TProductPriceText(
                     price: price,
                     isLarge: true,
@@ -57,8 +51,7 @@ class TPaymentDetailService extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppLocalizations.of(context)!.total_payment,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyMedium),
                   TProductPriceText(
                     price: total,
                   )

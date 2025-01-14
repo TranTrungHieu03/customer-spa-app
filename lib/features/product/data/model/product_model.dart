@@ -37,8 +37,7 @@ class ProductModel extends Product {
       categoryId: json['categoryId'],
       companyId: json['companyId'],
       category: CategoryModel.fromJson(json['category']),
-      images:
-          (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
+      images: (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
     );
   }
 

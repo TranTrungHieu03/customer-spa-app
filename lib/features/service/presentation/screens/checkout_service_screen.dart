@@ -48,12 +48,9 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
         if (state is AppointmentError) {
           TSnackBar.errorSnackBar(context, message: state.message);
         }
-        if (state is AppointmentLoaded) {
-          goSuccess(
-              AppLocalizations.of(context)!.paymentSuccessTitle,
-              AppLocalizations.of(context)!.paymentSuccessSubTitle,
-              () => goFeedback(),
-              TImages.success);
+        if (state is AppointmentCreateSuccess) {
+          goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
+              () => goBookingDetail(state.appointment.appointmentId), TImages.success);
         }
       },
       builder: (context, state) {
@@ -103,11 +100,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                   return DropdownMenuItem<String>(
                                       value: item,
                                       child: ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                            maxWidth:
-                                                THelperFunctions.screenWidth(
-                                                        context) *
-                                                    0.7),
+                                        constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
                                         child: Text(
                                           item,
                                           overflow: TextOverflow.ellipsis,
@@ -141,25 +134,17 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                               children: [
                                 TRoundedImage(
                                   applyImageRadius: true,
-                                  imageUrl: service.images.isNotEmpty
-                                      ? service.images[0]
-                                      : TImages.thumbnailService,
+                                  imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
                                   isNetworkImage: service.images.isNotEmpty,
-                                  width: THelperFunctions.screenWidth(context) *
-                                      0.2,
-                                  height:
-                                      THelperFunctions.screenWidth(context) *
-                                          0.2,
+                                  width: THelperFunctions.screenWidth(context) * 0.2,
+                                  height: THelperFunctions.screenWidth(context) * 0.2,
                                   fit: BoxFit.cover,
                                 ),
                                 const SizedBox(
                                   width: TSizes.sm,
                                 ),
                                 ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxWidth: THelperFunctions.screenWidth(
-                                              context) *
-                                          0.7),
+                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
                                   child: TProductTitleText(
                                     title: service.name,
                                     maxLines: 1,
@@ -206,32 +191,27 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                               DatePickerWidget(
-                                onDateSelected: (selectedDate) {
-                                  selectedDate = selectedDate;
-                                  AppLogger.info(
-                                      "Ngày đã chọn: ${selectedDate.toIso8601String()}");
+                                onDateSelected: (value) {
+                                  selectedDate = value;
+                                  AppLogger.info("Ngày đã chọn: ${selectedDate.toIso8601String()}");
                                 },
                                 initialDate: selectedDate,
                               ),
                             ],
                           ),
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Select Time",
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
-                                ),
-                                TimePickerWidget(
-                                  onTimeSelected: (selectedTime) {
-                                    selectedTime = selectedTime;
-                                    AppLogger.info(
-                                        "Ngày đã chọn:$selectedDate $selectedTime");
-                                  },
-                                  initialTime: selectedTime,
-                                ),
-                              ])
+                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(
+                              "Select Time",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            TimePickerWidget(
+                              onTimeSelected: (value) {
+                                selectedTime = value;
+                                AppLogger.info("Ngày đã chọn:$selectedDate $selectedTime");
+                              },
+                              initialTime: selectedTime,
+                            ),
+                          ])
                         ],
                       ),
                       const SizedBox(
@@ -250,8 +230,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                           const SizedBox(
                             width: TSizes.sm,
                           ),
-                          Text(AppLocalizations.of(context)!.bank_transfer,
-                              style: Theme.of(context).textTheme.bodyMedium),
+                          Text(AppLocalizations.of(context)!.bank_transfer, style: Theme.of(context).textTheme.bodyMedium),
                           const Spacer(),
                           const TRoundedIcon(
                             icon: Iconsax.tick_circle,
@@ -274,10 +253,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                  AppLocalizations.of(context)!
-                                      .select_or_enter_code,
-                                  style: Theme.of(context).textTheme.bodySmall),
+                              Text(AppLocalizations.of(context)!.select_or_enter_code, style: Theme.of(context).textTheme.bodySmall),
                               const Icon(
                                 Icons.chevron_right,
                                 color: Colors.grey,
@@ -288,9 +264,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                         height: TSizes.md,
                       ),
                       TPaymentDetailService(
-                          price: service.price.toString(),
-                          tips: tips.toString(),
-                          total: (tips + service.price).toString()),
+                          price: service.price.toString(), tips: tips.toString(), total: (tips + service.price).toString()),
                     ],
                   ),
                 ),
@@ -301,15 +275,13 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
           bottomNavigationBar: TBottomCheckoutService(
               price: (tips + service.price).toString(),
               onPressed: () {
-                context.read<AppointmentBloc>().add(CreateAppointmentEvent(
-                    CreateAppointmentParams(
-                        customerId: 1,
-                        staffId: 1,
-                        serviceId: service.serviceId,
-                        branchId: 1,
-                        appointmentsTime:
-                            combineDateTime(selectedDate, selectedTime),
-                        notes: "")));
+                context.read<AppointmentBloc>().add(CreateAppointmentEvent(CreateAppointmentParams(
+                    customerId: 1,
+                    staffId: 1,
+                    serviceId: service.serviceId,
+                    branchId: 2,
+                    appointmentsTime: combineDateTime(selectedDate, selectedTime),
+                    notes: "")));
               }),
         );
       },
@@ -380,13 +352,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
       "Buy 3 Get 1 Free",
       "Buy 5 Get 2 Free",
     ];
-    final voucherCodes = [
-      "FIRST10",
-      "FREE_SHIP50",
-      "B2G1FREE",
-      "B3G1FREE",
-      "B5G2FREE"
-    ];
+    final voucherCodes = ["FIRST10", "FREE_SHIP50", "B2G1FREE", "B3G1FREE", "B5G2FREE"];
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -403,8 +369,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
         trailing: ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            padding:
-                const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
           ),
           child: Text(
             AppLocalizations.of(context)!.apply,

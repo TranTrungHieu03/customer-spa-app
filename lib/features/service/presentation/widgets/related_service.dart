@@ -12,8 +12,7 @@ class TRelatedService extends StatelessWidget {
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: List.generate(6, (index) {
-            return const Padding(
-                padding: EdgeInsets.all(8.0), child: SizedBox());
+            return const Padding(padding: EdgeInsets.all(8.0), child: SizedBox());
           }),
         ));
   }

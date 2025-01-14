@@ -3,8 +3,6 @@ part of 'appointment_bloc.dart';
 @immutable
 sealed class AppointmentEvent {}
 
-
-
 final class GetAppointmentEvent extends AppointmentEvent {
   final int id;
 
@@ -16,4 +14,5 @@ final class CreateAppointmentEvent extends AppointmentEvent {
 
   CreateAppointmentEvent(this.params);
 }
+
 final class ResetAppointmentEvent extends AppointmentEvent {}

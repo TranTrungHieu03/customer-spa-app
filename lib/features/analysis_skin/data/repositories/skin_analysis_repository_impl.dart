@@ -11,11 +11,9 @@ class SkinAnalysisRepositoryImpl implements SkinAnalysisRepository {
   SkinAnalysisRepositoryImpl(this._analysisRemoteDataSource);
 
   @override
-  Future<Either<Failure, AnalysisResponseModel>> analysisViaImage(
-      SkinAnalysisViaImageParams params) async {
+  Future<Either<Failure, AnalysisResponseModel>> analysisViaImage(SkinAnalysisViaImageParams params) async {
     try {
-      AnalysisResponseModel result = await _analysisRemoteDataSource
-          .skinAnalysisViaImage(params);
+      AnalysisResponseModel result = await _analysisRemoteDataSource.skinAnalysisViaImage(params);
       return right(result);
     } catch (e) {
       return left(ApiFailure(

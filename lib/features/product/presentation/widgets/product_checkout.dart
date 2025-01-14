@@ -18,8 +18,7 @@ class TProductCheckout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: TSizes.sm, vertical: TSizes.sm),
+      padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -106,8 +105,7 @@ class TProductCheckout extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(AppLocalizations.of(context)!.shop_voucher,
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(AppLocalizations.of(context)!.shop_voucher, style: Theme.of(context).textTheme.bodyMedium),
               GestureDetector(
                   onTap: () {
                     _showVoucherModal(context);
@@ -116,8 +114,7 @@ class TProductCheckout extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(AppLocalizations.of(context)!.select_or_enter_code,
-                          style: Theme.of(context).textTheme.bodySmall),
+                      Text(AppLocalizations.of(context)!.select_or_enter_code, style: Theme.of(context).textTheme.bodySmall),
                       const Icon(
                         Icons.chevron_right,
                         color: Colors.grey,
@@ -133,8 +130,7 @@ class TProductCheckout extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(AppLocalizations.of(context)!.message_to_shop,
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(AppLocalizations.of(context)!.message_to_shop, style: Theme.of(context).textTheme.bodyMedium),
               GestureDetector(
                   onTap: () {
                     _showMessageModal(context);
@@ -143,8 +139,7 @@ class TProductCheckout extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(AppLocalizations.of(context)!.leave_a_message,
-                          style: Theme.of(context).textTheme.bodySmall),
+                      Text(AppLocalizations.of(context)!.leave_a_message, style: Theme.of(context).textTheme.bodySmall),
                       const Icon(
                         Icons.chevron_right,
                         color: Colors.grey,
@@ -160,10 +155,8 @@ class TProductCheckout extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(AppLocalizations.of(context)!.shipping_carrier,
-                  style: Theme.of(context).textTheme.bodyMedium),
-              Text("Giao hàng nhanh",
-                  style: Theme.of(context).textTheme.bodyLarge),
+              Text(AppLocalizations.of(context)!.shipping_carrier, style: Theme.of(context).textTheme.bodyMedium),
+              Text("Giao hàng nhanh", style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
           const Divider(),
@@ -171,8 +164,7 @@ class TProductCheckout extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(AppLocalizations.of(context)!.total_amount,
-                  style: Theme.of(context).textTheme.bodyMedium),
+              Text(AppLocalizations.of(context)!.total_amount, style: Theme.of(context).textTheme.bodyMedium),
               const TProductPriceText(
                 price: "550",
               )
@@ -250,9 +242,8 @@ Widget _buildVoucherItem(BuildContext context, int index) {
     "Buy 2 Get 1 Free",
     "Buy 3 Get 1 Free",
     "Buy 5 Get 2 Free",
-
   ];
-  final voucherCodes = ["FIRST10", "FREE_SHIP50", "B2G1FREE","B3G1FREE","B5G2FREE"];
+  final voucherCodes = ["FIRST10", "FREE_SHIP50", "B2G1FREE", "B3G1FREE", "B5G2FREE"];
 
   return Card(
     margin: const EdgeInsets.only(bottom: 10),
@@ -269,8 +260,7 @@ Widget _buildVoucherItem(BuildContext context, int index) {
       trailing: ElevatedButton(
         onPressed: () {},
         style: ElevatedButton.styleFrom(
-          padding:
-              const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
         ),
         child: Text(
           AppLocalizations.of(context)!.apply,
@@ -324,8 +314,7 @@ void _showMessageModal(BuildContext context) {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: TSizes.md, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
                     ),
                     child: Text(
                       AppLocalizations.of(context)!.submit,

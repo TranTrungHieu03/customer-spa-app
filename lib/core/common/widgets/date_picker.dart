@@ -7,8 +7,7 @@ class DatePickerWidget extends StatefulWidget {
   final Function(DateTime) onDateSelected; // Hàm callback trả về ngày được chọn
   final DateTime initialDate;
 
-  const DatePickerWidget(
-      {super.key, required this.onDateSelected, required this.initialDate});
+  const DatePickerWidget({super.key, required this.onDateSelected, required this.initialDate});
 
   @override
   _DatePickerWidgetState createState() => _DatePickerWidgetState();
@@ -68,9 +67,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedDate != null
-                  ? "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}"
-                  : "Select a date",
+              _selectedDate != null ? "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}" : "Select a date",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(

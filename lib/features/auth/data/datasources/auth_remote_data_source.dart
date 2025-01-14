@@ -42,8 +42,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> login(LoginParams params) async {
     try {
-      final response =
-          await _apiServices.postApi('/Auth/login', params.toJson());
+      final response = await _apiServices.postApi('/Auth/login', params.toJson());
 
       final apiResponse = ApiResponse<String>.fromJson(response);
 
@@ -60,8 +59,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> signUp(SignUpParams params) async {
     try {
-      final response =
-          await _apiServices.postApi('/Auth/first-step', params.toJson());
+      final response = await _apiServices.postApi('/Auth/first-step', params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -77,8 +75,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> loginWithGoogle(LoginWithGoogleParams params) async {
     try {
-      final response =
-          await _apiServices.postApi('/Auth/login-google', params.toJson());
+      final response = await _apiServices.postApi('/Auth/login-google', params.toJson());
 
       final apiResponse = ApiResponse<String>.fromJson(response);
 
@@ -95,8 +92,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> verifyOtp(VerifyOtpParams params) async {
     try {
-      final response =
-          await _apiServices.postApi("/Auth/submit-otp", params.toJson());
+      final response = await _apiServices.postApi("/Auth/submit-otp", params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -112,8 +108,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> forgetPassword(ForgetPasswordParams params) async {
     try {
-      final response = await _apiServices
-          .postApi("/Auth/forget-password?email=${params.email}", {});
+      final response = await _apiServices.postApi("/Auth/forget-password?email=${params.email}", {});
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -129,8 +124,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> resendOtp(ResendOtpParams params) async {
     try {
-      final response =
-          await _apiServices.getApi("/Auth/resend-otp?email=${params.email}");
+      final response = await _apiServices.getApi("/Auth/resend-otp?email=${params.email}");
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -146,8 +140,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> resetPassword(ResetPasswordParams params) async {
     try {
-      final response = await _apiServices.postApi(
-          "/Auth/update-password?email=${params.email}", params.toJson());
+      final response = await _apiServices.postApi("/Auth/update-password?email=${params.email}", params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -163,8 +156,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> loginWithFacebook(LoginWithFacebookParams params) async {
     try {
-      final response =
-          await _apiServices.postApi('/Auth/login-facebook', params.toJson());
+      final response = await _apiServices.postApi('/Auth/login-facebook', params.toJson());
 
       final apiResponse = ApiResponse<String>.fromJson(response);
 

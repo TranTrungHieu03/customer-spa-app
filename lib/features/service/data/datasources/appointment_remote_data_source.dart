@@ -18,15 +18,14 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   AppointmentRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<AppointmentModel> createAppointment(
-      CreateAppointmentParams params) async {
+  Future<AppointmentModel> createAppointment(CreateAppointmentParams params) async {
     try {
-      final response =
-          await _apiService.postApi('/Appointments/create', params.toJson());
+      final response = await _apiService.postApi('/Appointments/create', params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
+        AppLogger.info("########## ${apiResponse.result!.data!}");
         return AppointmentModel.fromJson(apiResponse.result!.data!);
       } else {
         throw AppException(apiResponse.result!.message!);
@@ -39,6 +38,19 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
 
   @override
   Future<AppointmentModel> getAppointment(GetAppointmentParams params) async {
-    return await _apiService.getApi('/Appointments/get-by-id/${params.id}');
+    try {
+      final response = await _apiService.getApi('/Appointments/get-by-id/${params.id}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return AppointmentModel.fromJson(apiResponse.result!.data!);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      AppLogger.info(e.toString());
+      throw AppException(e.toString());
+    }
   }
 }

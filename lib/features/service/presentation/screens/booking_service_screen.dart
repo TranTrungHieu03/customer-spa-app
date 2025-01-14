@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
-import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -52,9 +50,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                       children: [
                         TRoundedImage(
                           applyImageRadius: true,
-                          imageUrl: service.images.isNotEmpty
-                              ? service.images[0]
-                              : TImages.thumbnailService,
+                          imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
                           isNetworkImage: service.images.isNotEmpty,
                           width: THelperFunctions.screenWidth(context) * 0.2,
                           height: THelperFunctions.screenWidth(context) * 0.2,
@@ -68,8 +64,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints(
-                                maxWidth:
-                                    THelperFunctions.screenWidth(context) * 0.6,
+                                maxWidth: THelperFunctions.screenWidth(context) * 0.6,
                               ),
                               child: TProductTitleText(
                                 title: service.name,
@@ -118,137 +113,137 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
               const SizedBox(
                 height: TSizes.sm,
               ),
-              TRoundedContainer(
-                shadow: true,
-                padding: const EdgeInsets.all(TSizes.sm),
-                radius: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TRoundedImage(
-                      applyImageRadius: true,
-                      imageUrl: TImages.thumbnailService,
-                      isNetworkImage: true,
-                      width: THelperFunctions.screenWidth(context) * 1,
-                      height: THelperFunctions.screenWidth(context) * 0.5,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    THelperFunctions.screenWidth(context) * 0.7,
-                              ),
-                              child: const TProductTitleText(
-                                title: "Service Name 1",
-                                maxLines: 1,
-                              ),
-                            ),
-                            const TProductPriceText(
-                              price: "150",
-                            ),
-                          ],
-                        ),
-                        TRoundedContainer(
-                          shadow: true,
-                          radius: 20,
-                          backgroundColor: TColors.primary,
-                          child: GestureDetector(
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: TSizes.sm, horizontal: TSizes.md),
-                              child: Row(
-                                children: [
-                                  Icon(Iconsax.add),
-                                  Text("Add"),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    const Text("30 mins"),
-                    const Text("Relaxing full body"),
-                    const Text("6-step process. Includes 10-min massage"),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: TSizes.sm,
-              ),
-              TRoundedContainer(
-                shadow: true,
-                padding: const EdgeInsets.all(TSizes.sm),
-                radius: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TRoundedImage(
-                      applyImageRadius: true,
-                      imageUrl: TImages.thumbnailService,
-                      isNetworkImage: true,
-                      width: THelperFunctions.screenWidth(context) * 1,
-                      height: THelperFunctions.screenWidth(context) * 0.5,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    THelperFunctions.screenWidth(context) * 0.7,
-                              ),
-                              child: const TProductTitleText(
-                                title: "Service Name 1",
-                                maxLines: 1,
-                              ),
-                            ),
-                            const TProductPriceText(
-                              price: "150",
-                            ),
-                          ],
-                        ),
-                        TRoundedContainer(
-                          shadow: true,
-                          radius: 20,
-                          backgroundColor: TColors.primary,
-                          child: GestureDetector(
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: TSizes.sm, horizontal: TSizes.md),
-                              child: Row(
-                                children: [
-                                  Icon(Iconsax.add),
-                                  Text("Add"),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    const Text("30 mins"),
-                    const Text("Relaxing full body"),
-                    const Text("6-step process. Includes 10-min massage"),
-                  ],
-                ),
-              ),
+              // TRoundedContainer(
+              //   shadow: true,
+              //   padding: const EdgeInsets.all(TSizes.sm),
+              //   radius: 10,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       TRoundedImage(
+              //         applyImageRadius: true,
+              //         imageUrl: TImages.thumbnailService,
+              //         isNetworkImage: true,
+              //         width: THelperFunctions.screenWidth(context) * 1,
+              //         height: THelperFunctions.screenWidth(context) * 0.5,
+              //         fit: BoxFit.cover,
+              //       ),
+              //       const SizedBox(
+              //         height: TSizes.sm,
+              //       ),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               ConstrainedBox(
+              //                 constraints: BoxConstraints(
+              //                   maxWidth:
+              //                       THelperFunctions.screenWidth(context) * 0.7,
+              //                 ),
+              //                 child: const TProductTitleText(
+              //                   title: "Service Name 1",
+              //                   maxLines: 1,
+              //                 ),
+              //               ),
+              //               const TProductPriceText(
+              //                 price: "150",
+              //               ),
+              //             ],
+              //           ),
+              //           TRoundedContainer(
+              //             shadow: true,
+              //             radius: 20,
+              //             backgroundColor: TColors.primary,
+              //             child: GestureDetector(
+              //               child: const Padding(
+              //                 padding: EdgeInsets.symmetric(
+              //                     vertical: TSizes.sm, horizontal: TSizes.md),
+              //                 child: Row(
+              //                   children: [
+              //                     Icon(Iconsax.add),
+              //                     Text("Add"),
+              //                   ],
+              //                 ),
+              //               ),
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //       const Text("30 mins"),
+              //       const Text("Relaxing full body"),
+              //       const Text("6-step process. Includes 10-min massage"),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: TSizes.sm,
+              // ),
+              // TRoundedContainer(
+              //   shadow: true,
+              //   padding: const EdgeInsets.all(TSizes.sm),
+              //   radius: 10,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       TRoundedImage(
+              //         applyImageRadius: true,
+              //         imageUrl: TImages.thumbnailService,
+              //         isNetworkImage: true,
+              //         width: THelperFunctions.screenWidth(context) * 1,
+              //         height: THelperFunctions.screenWidth(context) * 0.5,
+              //         fit: BoxFit.cover,
+              //       ),
+              //       const SizedBox(
+              //         height: TSizes.sm,
+              //       ),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               ConstrainedBox(
+              //                 constraints: BoxConstraints(
+              //                   maxWidth:
+              //                       THelperFunctions.screenWidth(context) * 0.7,
+              //                 ),
+              //                 child: const TProductTitleText(
+              //                   title: "Service Name 1",
+              //                   maxLines: 1,
+              //                 ),
+              //               ),
+              //               const TProductPriceText(
+              //                 price: "150",
+              //               ),
+              //             ],
+              //           ),
+              //           TRoundedContainer(
+              //             shadow: true,
+              //             radius: 20,
+              //             backgroundColor: TColors.primary,
+              //             child: GestureDetector(
+              //               child: const Padding(
+              //                 padding: EdgeInsets.symmetric(
+              //                     vertical: TSizes.sm, horizontal: TSizes.md),
+              //                 child: Row(
+              //                   children: [
+              //                     Icon(Iconsax.add),
+              //                     Text("Add"),
+              //                   ],
+              //                 ),
+              //               ),
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //       const Text("30 mins"),
+              //       const Text("Relaxing full body"),
+              //       const Text("6-step process. Includes 10-min massage"),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -267,15 +262,14 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                 const SizedBox(
                   width: TSizes.sm / 2,
                 ),
-                const TProductPriceText(price: "5000"),
+                TProductPriceText(price: service.price.toString()),
                 const SizedBox(width: TSizes.md),
                 ElevatedButton(
                   onPressed: () {
                     goServiceCheckout(service);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: TSizes.md, vertical: TSizes.sm),
+                    padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
                   ),
                   child: Text(
                     AppLocalizations.of(context)!.buy,

@@ -14,9 +14,8 @@ class FormSkinBloc extends Bloc<FormSkinEvent, FormSkinState> {
     on<OnPageChangedEvent>(_onPageChanged);
   }
 
-  Future<void> _onNextPage(
-      NextPageEvent event, Emitter<FormSkinState> emit) async {
-    if (currentIndex < 2) {
+  Future<void> _onNextPage(NextPageEvent event, Emitter<FormSkinState> emit) async {
+    if (currentIndex < 9) {
       currentIndex++;
       emit(FormSkinPageChanged(currentIndex));
     } else {
@@ -24,8 +23,7 @@ class FormSkinBloc extends Bloc<FormSkinEvent, FormSkinState> {
     }
   }
 
-  Future<void> _onPreviousPage(
-      PreviousPageEvent event, Emitter<FormSkinState> emit) async {
+  Future<void> _onPreviousPage(PreviousPageEvent event, Emitter<FormSkinState> emit) async {
     if (currentIndex > 0) {
       currentIndex--;
       emit(FormSkinPageChanged(currentIndex));
@@ -34,8 +32,7 @@ class FormSkinBloc extends Bloc<FormSkinEvent, FormSkinState> {
     }
   }
 
-  Future<void> _onPageChanged(
-      OnPageChangedEvent event, Emitter<FormSkinState> emit) async {
+  Future<void> _onPageChanged(OnPageChangedEvent event, Emitter<FormSkinState> emit) async {
     currentIndex = event.pageIndex;
     emit(FormSkinPageChanged(currentIndex));
   }

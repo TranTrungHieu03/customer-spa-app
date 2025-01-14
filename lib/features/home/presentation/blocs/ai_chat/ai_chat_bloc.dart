@@ -16,8 +16,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     on<GetAiChatEvent>(_onGetAiChat);
   }
 
-  Future<void> _onGetAiChat(
-      GetAiChatEvent event, Emitter<AiChatState> emit) async {
+  Future<void> _onGetAiChat(GetAiChatEvent event, Emitter<AiChatState> emit) async {
     emit(AiChatLoading());
     AppLogger.info(event.params.toJson());
     final result = await _getAiChat(event.params);

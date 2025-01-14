@@ -16,9 +16,7 @@ class SocialBtn extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: TColors.grey)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), border: Border.all(color: TColors.grey)),
           child: IconButton(
             onPressed: () => context.read<AuthBloc>().add(GoogleLoginEvent()),
             icon: const Image(
@@ -32,9 +30,7 @@ class SocialBtn extends StatelessWidget {
           width: TSizes.spacebtwItems,
         ),
         Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: TColors.grey)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(100), border: Border.all(color: TColors.grey)),
           child: IconButton(
             onPressed: () => context.read<AuthBloc>().add(FacebookLoginEvent()),
             icon: const Image(

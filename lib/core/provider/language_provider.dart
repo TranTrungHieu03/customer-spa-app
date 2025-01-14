@@ -10,8 +10,7 @@ class LanguageProvider with ChangeNotifier {
   Future<void> loadLanguage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      String? languageCode = prefs.getString('language_code') ??
-          WidgetsBinding.instance.window.locale.languageCode;
+      String? languageCode = prefs.getString('language_code') ?? WidgetsBinding.instance.window.locale.languageCode;
 
       AppLogger.info('Language code: $languageCode');
       if (languageCode.isEmpty) {

@@ -26,9 +26,7 @@ class BranchModel extends Branch {
       latAddress: json['latAddress'],
       status: json['status'],
       managerId: json['managerId'],
-      managerBranch: json['managerBranch'] != null
-          ? UserModel.fromJson(json['managerBranch'])
-          : null,
+      managerBranch: json['managerBranch'] != null ? UserModel.fromJson(json['managerBranch']) : null,
     );
   }
 
@@ -54,7 +52,7 @@ class BranchModel extends Branch {
     String? longAddress,
     String? latAddress,
     String? status,
-    String? managerId,
+    int? managerId,
     UserModel? managerBranch,
   }) {
     return BranchModel(

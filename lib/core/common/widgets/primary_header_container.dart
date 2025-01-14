@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/common/widgets/curved_edges_widget.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+
 class TPrimaryHeaderContainer extends StatelessWidget {
   const TPrimaryHeaderContainer({
     required this.child,

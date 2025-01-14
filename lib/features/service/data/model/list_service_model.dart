@@ -7,16 +7,9 @@ class ListServiceModel {
 
   ListServiceModel({required this.services, required this.pagination});
 
-  factory ListServiceModel.fromJson(
-      List<dynamic>? json, Map<String, dynamic>? paginationJson) {
+  factory ListServiceModel.fromJson(List<dynamic>? json, Map<String, dynamic>? paginationJson) {
     return ListServiceModel(
-        services: json != null
-            ? json
-                .map((productJson) => ServiceModel.fromJson(productJson))
-                .toList()
-            : [],
-        pagination: paginationJson != null
-            ? PaginationModel.fromJson(paginationJson)
-            : PaginationModel.isEmty());
+        services: json != null ? json.map((productJson) => ServiceModel.fromJson(productJson)).toList() : [],
+        pagination: paginationJson != null ? PaginationModel.fromJson(paginationJson) : PaginationModel.isEmty());
   }
 }

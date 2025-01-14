@@ -16,14 +16,12 @@ class SkinAnalysisBloc extends Bloc<SkinAnalysisEvent, SkinAnalysisState> {
     on<AnalysisViaImageEvent>(_onAnalysisViaImage);
   }
 
-  Future<void> _onAnalysisViaImage(
-      AnalysisViaImageEvent event, Emitter<SkinAnalysisState> emit) async {
+  Future<void> _onAnalysisViaImage(AnalysisViaImageEvent event, Emitter<SkinAnalysisState> emit) async {
     emit(SkinAnalysisLoading());
     final result = await _skinAnalysisViaImage(event.params);
     result.fold(
       (failure) => emit(SkinAnalysisError(failure.message)),
-      (data) => emit(SkinAnalysisLoaded(
-          routines: data.routines, skinHealth: data.skinhealth)),
+      (data) => emit(SkinAnalysisLoaded(routines: data.routines, skinHealth: data.skinhealth)),
     );
   }
 }

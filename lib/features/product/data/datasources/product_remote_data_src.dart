@@ -36,14 +36,12 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   @override
   Future<ListProductModel> getProducts(int page) async {
     try {
-      final response =
-          await _apiServices.getApi('/Product/get-all-products?page=$page');
+      final response = await _apiServices.getApi('/Product/get-all-products?page=$page');
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         AppLogger.info(apiResponse.result!.data);
-        return ListProductModel.fromJson(
-            apiResponse.result!.data, apiResponse.result!.pagination);
+        return ListProductModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
       } else {
         throw AppException(apiResponse.result!.message);
       }

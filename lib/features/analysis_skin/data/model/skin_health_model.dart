@@ -1,3 +1,4 @@
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/acne_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/black_head_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_age_model.dart';
@@ -17,7 +18,7 @@ class SkinHealthModel {
   final BlackheadModel eyeFinelines;
   final BlackheadModel glabellaWrinkle;
   final BlackheadModel nasolabialFold;
-  final BlackheadModel nasolabialFoldSeverity;
+  final BlackheadModel? nasolabialFoldSeverity;
   final SkinTypeModel skinType;
   final BlackheadModel poresForehead;
   final BlackheadModel poresLeftCheek;
@@ -43,7 +44,7 @@ class SkinHealthModel {
     required this.eyeFinelines,
     required this.glabellaWrinkle,
     required this.nasolabialFold,
-    required this.nasolabialFoldSeverity,
+    this.nasolabialFoldSeverity,
     required this.skinType,
     required this.poresForehead,
     required this.poresLeftCheek,
@@ -58,34 +59,35 @@ class SkinHealthModel {
     required this.skinHueHa,
   });
 
-  factory SkinHealthModel.fromJson(Map<String, dynamic> json) =>
-      SkinHealthModel(
-        skinColor: BlackheadModel.fromJson(json["skin_color"]),
-        skinAge: SkinAgeModel.fromJson(json["skin_age"]),
-        leftEyelids: BlackheadModel.fromJson(json["left_eyelids"]),
-        rightEyelids: BlackheadModel.fromJson(json["right_eyelids"]),
-        eyePouch: BlackheadModel.fromJson(json["eye_pouch"]),
-        darkCircle: BlackheadModel.fromJson(json["dark_circle"]),
-        foreheadWrinkle: BlackheadModel.fromJson(json["forehead_wrinkle"]),
-        crowsFeet: BlackheadModel.fromJson(json["crows_feet"]),
-        eyeFinelines: BlackheadModel.fromJson(json["eye_finelines"]),
-        glabellaWrinkle: BlackheadModel.fromJson(json["glabella_wrinkle"]),
-        nasolabialFold: BlackheadModel.fromJson(json["nasolabial_fold"]),
-        nasolabialFoldSeverity:
-            BlackheadModel.fromJson(json["nasolabial_fold_severity"]),
-        skinType: SkinTypeModel.fromJson(json["skin_type"]),
-        poresForehead: BlackheadModel.fromJson(json["pores_forehead"]),
-        poresLeftCheek: BlackheadModel.fromJson(json["pores_left_cheek"]),
-        poresRightCheek: BlackheadModel.fromJson(json["pores_right_cheek"]),
-        poresJaw: BlackheadModel.fromJson(json["pores_jaw"]),
-        blackhead: BlackheadModel.fromJson(json["blackhead"]),
-        acne: AcneModel.fromJson(json["acne"]),
-        mole: AcneModel.fromJson(json["mole"]),
-        skinSpot: AcneModel.fromJson(json["skin_spot"]),
-        closedComedones: AcneModel.fromJson(json["closed_comedones"]),
-        skintoneIta: SkintoneItaModel.fromJson(json["skintone_ita"]),
-        skinHueHa: SkinHueHaModel.fromJson(json["skin_hue_ha"]),
-      );
+  factory SkinHealthModel.fromJson(Map<String, dynamic> json) {
+    AppLogger.info("fromJson SkinHealthModel $json");
+    return SkinHealthModel(
+      skinColor: BlackheadModel.fromJson(json["skin_color"]),
+      skinAge: SkinAgeModel.fromJson(json["skin_age"]),
+      leftEyelids: BlackheadModel.fromJson(json["left_eyelids"]),
+      rightEyelids: BlackheadModel.fromJson(json["right_eyelids"]),
+      eyePouch: BlackheadModel.fromJson(json["eye_pouch"]),
+      darkCircle: BlackheadModel.fromJson(json["dark_circle"]),
+      foreheadWrinkle: BlackheadModel.fromJson(json["forehead_wrinkle"]),
+      crowsFeet: BlackheadModel.fromJson(json["crows_feet"]),
+      eyeFinelines: BlackheadModel.fromJson(json["eye_finelines"]),
+      glabellaWrinkle: BlackheadModel.fromJson(json["glabella_wrinkle"]),
+      nasolabialFold: BlackheadModel.fromJson(json["nasolabial_fold"]),
+      nasolabialFoldSeverity: json["nasolabial_fold_severity"] != null ? BlackheadModel.fromJson(json["nasolabial_fold_severity"]) : null,
+      skinType: SkinTypeModel.fromJson(json["skin_type"]),
+      poresForehead: BlackheadModel.fromJson(json["pores_forehead"]),
+      poresLeftCheek: BlackheadModel.fromJson(json["pores_left_cheek"]),
+      poresRightCheek: BlackheadModel.fromJson(json["pores_right_cheek"]),
+      poresJaw: BlackheadModel.fromJson(json["pores_jaw"]),
+      blackhead: BlackheadModel.fromJson(json["blackhead"]),
+      acne: AcneModel.fromJson(json["acne"]),
+      mole: AcneModel.fromJson(json["mole"]),
+      skinSpot: AcneModel.fromJson(json["skin_spot"]),
+      closedComedones: AcneModel.fromJson(json["closed_comedones"]),
+      skintoneIta: SkintoneItaModel.fromJson(json["skintone_ita"]),
+      skinHueHa: SkinHueHaModel.fromJson(json["skin_hue_ha"]),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "skin_color": skinColor.toJson(),
@@ -99,7 +101,7 @@ class SkinHealthModel {
         "eye_finelines": eyeFinelines.toJson(),
         "glabella_wrinkle": glabellaWrinkle.toJson(),
         "nasolabial_fold": nasolabialFold.toJson(),
-        "nasolabial_fold_severity": nasolabialFoldSeverity.toJson(),
+        "nasolabial_fold_severity": nasolabialFoldSeverity?.toJson(),
         "skin_type": skinType.toJson(),
         "pores_forehead": poresForehead.toJson(),
         "pores_left_cheek": poresLeftCheek.toJson(),
@@ -113,4 +115,84 @@ class SkinHealthModel {
         "skintone_ita": skintoneIta.toJson(),
         "skin_hue_ha": skinHueHa.toJson(),
       };
+
+  SkinHealthModel copyWith({
+    BlackheadModel? skinColor,
+    SkinAgeModel? skinAge,
+    BlackheadModel? leftEyelids,
+    BlackheadModel? rightEyelids,
+    BlackheadModel? eyePouch,
+    BlackheadModel? darkCircle,
+    BlackheadModel? foreheadWrinkle,
+    BlackheadModel? crowsFeet,
+    BlackheadModel? eyeFinelines,
+    BlackheadModel? glabellaWrinkle,
+    BlackheadModel? nasolabialFold,
+    BlackheadModel? nasolabialFoldSeverity,
+    SkinTypeModel? skinType,
+    BlackheadModel? poresForehead,
+    BlackheadModel? poresLeftCheek,
+    BlackheadModel? poresRightCheek,
+    BlackheadModel? poresJaw,
+    BlackheadModel? blackhead,
+    AcneModel? acne,
+    AcneModel? mole,
+    AcneModel? skinSpot,
+    AcneModel? closedComedones,
+    SkintoneItaModel? skintoneIta,
+    SkinHueHaModel? skinHueHa,
+  }) {
+    return SkinHealthModel(
+      skinColor: skinColor ?? this.skinColor,
+      skinAge: skinAge ?? this.skinAge,
+      leftEyelids: leftEyelids ?? this.leftEyelids,
+      rightEyelids: rightEyelids ?? this.rightEyelids,
+      eyePouch: eyePouch ?? this.eyePouch,
+      darkCircle: darkCircle ?? this.darkCircle,
+      foreheadWrinkle: foreheadWrinkle ?? this.foreheadWrinkle,
+      crowsFeet: crowsFeet ?? this.crowsFeet,
+      eyeFinelines: eyeFinelines ?? this.eyeFinelines,
+      glabellaWrinkle: glabellaWrinkle ?? this.glabellaWrinkle,
+      nasolabialFold: nasolabialFold ?? this.nasolabialFold,
+      nasolabialFoldSeverity: nasolabialFoldSeverity ?? this.nasolabialFoldSeverity,
+      skinType: skinType ?? this.skinType,
+      poresForehead: poresForehead ?? this.poresForehead,
+      poresLeftCheek: poresLeftCheek ?? this.poresLeftCheek,
+      poresRightCheek: poresRightCheek ?? this.poresRightCheek,
+      poresJaw: poresJaw ?? this.poresJaw,
+      blackhead: blackhead ?? this.blackhead,
+      acne: acne ?? this.acne,
+      mole: mole ?? this.mole,
+      skinSpot: skinSpot ?? this.skinSpot,
+      closedComedones: closedComedones ?? this.closedComedones,
+      skintoneIta: skintoneIta ?? this.skintoneIta,
+      skinHueHa: skinHueHa ?? this.skinHueHa,
+    );
+  }
+
+  static SkinHealthModel empty() => SkinHealthModel(
+        skinColor: BlackheadModel(value: -1, confidence: 0),
+        skinAge: SkinAgeModel(value: -1),
+        leftEyelids: BlackheadModel(value: -1, confidence: 0),
+        rightEyelids: BlackheadModel(value: -1, confidence: 0),
+        eyePouch: BlackheadModel(value: -1, confidence: 0),
+        darkCircle: BlackheadModel(value: -1, confidence: 0),
+        foreheadWrinkle: BlackheadModel(value: -1, confidence: 0),
+        crowsFeet: BlackheadModel(value: -1, confidence: 0),
+        eyeFinelines: BlackheadModel(value: -1, confidence: 0),
+        glabellaWrinkle: BlackheadModel(value: -1, confidence: 0),
+        nasolabialFold: BlackheadModel(value: -1, confidence: 0),
+        skinType: SkinTypeModel(skinType: -1, details: []),
+        poresForehead: BlackheadModel(value: -1, confidence: 0),
+        poresLeftCheek: BlackheadModel(value: -1, confidence: 0),
+        poresRightCheek: BlackheadModel(value: -1, confidence: 0),
+        poresJaw: BlackheadModel(value: -1, confidence: 0),
+        blackhead: BlackheadModel(value: -1, confidence: 0),
+        acne: AcneModel(rectangle: [], length: 0),
+        mole: AcneModel(rectangle: [], length: 0),
+        skinSpot: AcneModel(rectangle: [], length: 0),
+        closedComedones: AcneModel(rectangle: [], length: 0),
+        skintoneIta: SkintoneItaModel(ita: -1, skintone: 1),
+        skinHueHa: SkinHueHaModel(ha: -1, skinHue: -1),
+      );
 }

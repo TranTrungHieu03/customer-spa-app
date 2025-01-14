@@ -7,7 +7,7 @@ import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/features/home/presentation/screens/form_collect_data_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
 
 class TIntroductionForm extends StatelessWidget {
   const TIntroductionForm({super.key, required this.pageController});

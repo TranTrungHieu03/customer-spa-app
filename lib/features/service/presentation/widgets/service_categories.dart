@@ -28,8 +28,7 @@ class TServiceCategories extends StatelessWidget {
                     height: 60,
                     padding: EdgeInsets.all(TSizes.sm / 2),
                   ),
-                  Text("Massage",
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Massage", style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
             );

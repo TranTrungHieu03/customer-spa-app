@@ -9,7 +9,6 @@ import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/section_heading.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
-import 'package:spa_mobile/core/services/notification.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -93,7 +92,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Iconsax.award,
                     title: AppLocalizations.of(context)!.rewards,
                     onTap: () {
-                      NotificationService.showNotification(title: "Hello", body: "Test");
+                      goWebView("https://pub.dev/packages/webview_flutter");
                     },
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
@@ -107,8 +106,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          languageProvider.getLanguageName(
-                              languageProvider.locale.languageCode),
+                          languageProvider.getLanguageName(languageProvider.locale.languageCode),
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         const SizedBox(
@@ -149,8 +147,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           size: 24,
                           color: TColors.black,
                         ),
-                        title: Text(AppLocalizations.of(context)!.logout,
-                            style: Theme.of(context).textTheme.titleSmall),
+                        title: Text(AppLocalizations.of(context)!.logout, style: Theme.of(context).textTheme.titleSmall),
                         trailing: null,
                         onTap: () {
                           context.read<AuthBloc>().add(LogoutEvent());
@@ -225,8 +222,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await Provider.of<LanguageProvider>(context, listen: false)
-                    .changeLanguage(Locale(languageChange));
+                await Provider.of<LanguageProvider>(context, listen: false).changeLanguage(Locale(languageChange));
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(

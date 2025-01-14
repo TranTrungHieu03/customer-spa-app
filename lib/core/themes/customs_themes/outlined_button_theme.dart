@@ -10,8 +10,7 @@ class TOutlinedButtonTheme {
     foregroundColor: Colors.black,
     padding: const EdgeInsets.symmetric(vertical: 18),
     side: const BorderSide(color: Colors.black),
-    textStyle: const TextStyle(
-        fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600, fontFamily: 'KumbhSans'),
+    textStyle: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600, fontFamily: 'IBMPlexSans'),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   ));
   static OutlinedButtonThemeData darkTheme = OutlinedButtonThemeData(

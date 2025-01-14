@@ -10,8 +10,7 @@ class CreateAppointment implements UseCase<Either, CreateAppointmentParams> {
   CreateAppointment(this._appointmentRepository);
 
   @override
-  Future<Either<Failure, AppointmentModel>> call(
-      CreateAppointmentParams params) async {
+  Future<Either<Failure, AppointmentModel>> call(CreateAppointmentParams params) async {
     return await _appointmentRepository.createAppointment(params);
   }
 }

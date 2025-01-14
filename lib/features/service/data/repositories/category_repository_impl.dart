@@ -6,15 +6,14 @@ import 'package:spa_mobile/features/service/data/model/category_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/category_repository.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
- final CategoryRemoteDataSource _categoryRemoteDataSource;
+  final CategoryRemoteDataSource _categoryRemoteDataSource;
 
   CategoryRepositoryImpl(this._categoryRemoteDataSource);
 
   @override
   Future<Either<Failure, List<CategoryModel>>> getListCategories() async {
     try {
-      List<CategoryModel> result =
-          await _categoryRemoteDataSource.getListCategories();
+      List<CategoryModel> result = await _categoryRemoteDataSource.getListCategories();
       return right(result);
     } on AppException catch (e) {
       return left(ApiFailure(

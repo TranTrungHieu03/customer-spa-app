@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/screens/error_screen.dart';
+import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
-import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/payment_detail_service.dart';
 
 class BookingDetailScreen extends StatefulWidget {
   const BookingDetailScreen({super.key, required this.bookingId});
 
-  final String bookingId;
+  final int bookingId;
 
   @override
   State<BookingDetailScreen> createState() => _BookingDetailScreenState();
@@ -23,224 +30,133 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: TAppbar(
+        actions: [
+          TRoundedIcon(
+            icon: Iconsax.home_2,
+            onPressed: () => goHome(),
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(TSizes.sm),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "09:10 09/10/2024",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(
-                height: TSizes.md,
-              ),
-              TRoundedContainer(
-                shadow: true,
-                padding: const EdgeInsets.all(TSizes.sm),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        TRoundedImage(
-                          applyImageRadius: true,
-                          imageUrl: TImages.thumbnailService,
-                          isNetworkImage: true,
-                          width: THelperFunctions.screenWidth(context) * 0.2,
-                          height: THelperFunctions.screenWidth(context) * 0.2,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(
-                          width: TSizes.sm,
-                        ),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  THelperFunctions.screenWidth(context) * 0.7),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        THelperFunctions.screenWidth(context) *
-                                            0.4),
-                                child: const TProductTitleText(
-                                  title: "Service Name 1",
-                                  maxLines: 1,
-                                ),
-                              ),
-                              const Text("30 mins"),
-                              const Text("6-step process. Includes 10-min massage"),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: TSizes.md,
-              ),
-              TRoundedContainer(
-                shadow: true,
-                padding: const EdgeInsets.all(TSizes.sm),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        TRoundedImage(
-                          applyImageRadius: true,
-                          imageUrl: TImages.thumbnailService,
-                          isNetworkImage: true,
-                          width: THelperFunctions.screenWidth(context) * 0.2,
-                          height: THelperFunctions.screenWidth(context) * 0.2,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(
-                          width: TSizes.sm,
-                        ),
-                        ConstrainedBox(
-                          constraints: BoxConstraints(
-                              maxWidth:
-                                  THelperFunctions.screenWidth(context) * 0.7),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        THelperFunctions.screenWidth(context) *
-                                            0.4),
-                                child: const TProductTitleText(
-                                  title: "Service Name 1",
-                                  maxLines: 1,
-                                ),
-                              ),
-                              const Text("30 mins"),
-                              const Text("6-step process. Includes 10-min massage"),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: TSizes.md,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: BlocConsumer<AppointmentBloc, AppointmentState>(listener: (context, state) {
+          if (state is AppointmentError) {
+            TSnackBar.errorSnackBar(context, message: state.message);
+          }
+        }, builder: (context, state) {
+          if (state is AppointmentLoading) {
+            const TLoader();
+          } else if (state is AppointmentLoaded) {
+            final appointment = state.appointment;
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Staff name",
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const Text("Nguyễn Hiền")
+                  Text(
+                    formatDate(appointment.appointmentsTime),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(
+                    height: TSizes.md,
+                  ),
+                  TRoundedContainer(
+                    shadow: true,
+                    padding: const EdgeInsets.all(TSizes.sm),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            TRoundedImage(
+                              applyImageRadius: true,
+                              imageUrl: TImages.thumbnailService,
+                              isNetworkImage: true,
+                              width: THelperFunctions.screenWidth(context) * 0.2,
+                              height: THelperFunctions.screenWidth(context) * 0.2,
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(
+                              width: TSizes.sm,
+                            ),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
+                                    child: TProductTitleText(
+                                      title: appointment.service!.name,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  Text("Steps", style: Theme.of(context).textTheme.titleLarge),
+                                  const SizedBox(
+                                    height: TSizes.sm,
+                                  ),
+                                  Text(appointment.service!.steps, style: Theme.of(context).textTheme.bodyMedium),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: TSizes.md,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Text("Staff name", style: Theme.of(context).textTheme.titleLarge), const Text("Nguyễn Hiền")],
+                  ),
+                  const SizedBox(
+                    height: TSizes.md,
+                  ),
+                  TPaymentDetailService(
+                      price: appointment.service!.price.toString(), tips: 0.toString(), total: (0 + appointment.service!.price).toString()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                          onPressed: () {
+                            _showCancelModal(context);
+                          },
+                          child: const Text("Cancel")),
+                      TextButton(
+                          onPressed: () {
+                            goStatusService(
+                                "Reschedule Complete",
+                                "Dear John Kevin please share your avaluable feedback. This will help use improve our services.",
+                                const Text(""),
+                                TImages.reBookingSuccessIcon,
+                                Colors.orange);
+                          },
+                          child: const Text("Re-booking")),
+                    ],
+                  )
                 ],
               ),
-              const SizedBox(
-                height: TSizes.md,
-              ),
-              TRoundedContainer(
-                radius: 10,
-                padding: const EdgeInsets.all(TSizes.sm),
-                borderColor: TColors.grey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(AppLocalizations.of(context)!.payment_details,
-                        style: Theme.of(context).textTheme.titleMedium),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                                AppLocalizations.of(context)!
-                                    .total_order_amount,
-                                style: Theme.of(context).textTheme.bodyMedium),
-                            const TProductPriceText(
-                              price: "550",
-                              isLarge: true,
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(AppLocalizations.of(context)!.shipping_fee,
-                                style: Theme.of(context).textTheme.bodyMedium),
-                            const TProductPriceText(
-                              price: "50",
-                              isLarge: true,
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(AppLocalizations.of(context)!.total_payment,
-                                style: Theme.of(context).textTheme.bodyMedium),
-                            const TProductPriceText(
-                              price: "500",
-                            )
-                          ],
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                      onPressed: () {
-                        _showCancelModal(context);
-                      },
-                      child: const Text("Cancel")),
-                  TextButton(
-                      onPressed: () {
-                        goStatusService(
-                            "Reschedule Complete",
-                            "Dear John Kevin please share your avaluable feedback. This will help use improve our services.",
-                            const Text(""),
-                            TImages.reBookingSuccessIcon,
-                            Colors.orange);
-                      },
-                      child: const Text("Re-booking")),
-                ],
-              )
-            ],
-          ),
-        ),
+            );
+          }
+          return const TErrorBody();
+        }),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AppointmentBloc>().add(GetAppointmentEvent(widget.bookingId));
   }
 }
 
 void _showCancelModal(BuildContext context) {
-  final List<String> reasons = [
-    "Service not needed anymore",
-    "Found a better option",
-    "Too expensive",
-    "Poor service experience",
-    "Other"
-  ];
+  final List<String> reasons = ["Service not needed anymore", "Found a better option", "Too expensive", "Poor service experience", "Other"];
 
   String? selectedReason;
   showModalBottomSheet(
@@ -312,8 +228,7 @@ void _showCancelModal(BuildContext context) {
                           Colors.redAccent);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: TSizes.md, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
                     ),
                     child: Text(
                       "Cancel",

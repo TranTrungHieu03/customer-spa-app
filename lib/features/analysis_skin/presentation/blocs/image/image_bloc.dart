@@ -16,8 +16,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
     on<ValidateImageEvent>(_onValidateImage);
   }
 
-  Future<void> _onPickImage(
-      PickImageEvent event, Emitter<ImageState> emit) async {
+  Future<void> _onPickImage(PickImageEvent event, Emitter<ImageState> emit) async {
     try {
       emit(ImageLoading());
       final status = await Permission.camera.status;
@@ -29,8 +28,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
         }
       }
       if (status.isDenied || status.isPermanentlyDenied) {
-        emit(ImageInvalid(
-            "Permission to access photos is denied. Please enable it in settings."));
+        emit(ImageInvalid("Permission to access photos is denied. Please enable it in settings."));
         if (status.isPermanentlyDenied) {
           await openAppSettings();
         }
@@ -52,8 +50,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
     }
   }
 
-  Future<void> _onValidateImage(
-      ValidateImageEvent event, Emitter<ImageState> emit) async {
+  Future<void> _onValidateImage(ValidateImageEvent event, Emitter<ImageState> emit) async {
     try {
       emit(ImageLoading());
 
@@ -72,12 +69,10 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
 
       final img.Image? decodedImage = img.decodeImage(file.readAsBytesSync());
       if (decodedImage == null) {
-        emit(ImageInvalid(
-            "Failed to decode the image. Please check if the file is a valid image."));
+        emit(ImageInvalid("Failed to decode the image. Please check if the file is a valid image."));
         return;
       } else if (decodedImage.width < 200 || decodedImage.height < 200) {
-        emit(ImageInvalid(
-            "Image resolution is too small. Minimum required resolution is 200x200 pixels."));
+        emit(ImageInvalid("Image resolution is too small. Minimum required resolution is 200x200 pixels."));
         return;
       } else if (decodedImage.width > 4096 || decodedImage.height > 4096) {
         AppLogger.debug("${decodedImage.width} and ${decodedImage.height}");

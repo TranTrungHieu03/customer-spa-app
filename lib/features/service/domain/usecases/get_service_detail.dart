@@ -10,8 +10,7 @@ class GetServiceDetail implements UseCase<Either, GetServiceDetailParams> {
   GetServiceDetail(this._serviceRepository);
 
   @override
-  Future<Either<Failure, ServiceModel>> call(
-      GetServiceDetailParams params) async {
+  Future<Either<Failure, ServiceModel>> call(GetServiceDetailParams params) async {
     return await _serviceRepository.getServiceDetail(params);
   }
 }

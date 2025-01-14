@@ -64,15 +64,13 @@ class _TCategoriesState extends State<TCategories> {
                     child: Center(
                       child: Text(
                         category.name,
-                        style: Theme.of(context).textTheme.titleLarge!.apply(
-                            color: isSelected ? TColors.white : TColors.black),
+                        style: Theme.of(context).textTheme.titleLarge!.apply(color: isSelected ? TColors.white : TColors.black),
                       ),
                     ),
                   ),
                 );
               },
-              separatorBuilder: (_, __) =>
-                  const SizedBox(width: TSizes.spacebtwSections),
+              separatorBuilder: (_, __) => const SizedBox(width: TSizes.spacebtwSections),
               itemCount: categories.length,
             ),
           );

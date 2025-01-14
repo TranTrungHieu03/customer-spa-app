@@ -45,10 +45,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     children: [
                       Text(
                         AppLocalizations.of(context)!.forgotPasswordTitle,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium!
-                            .apply(color: TColors.primary),
+                        style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.primary),
                       ),
                       const SizedBox(
                         height: TSizes.sm,
@@ -80,11 +77,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-                                context.read<AuthBloc>().add(
-                                    ForgetPasswordEvent(
-                                        params: ForgetPasswordParams(
-                                            email: _emailController.text
-                                                .toString())));
+                                context
+                                    .read<AuthBloc>()
+                                    .add(ForgetPasswordEvent(params: ForgetPasswordParams(email: _emailController.text.toString())));
                               }
                             },
                             child: Text(AppLocalizations.of(context)!.send)),

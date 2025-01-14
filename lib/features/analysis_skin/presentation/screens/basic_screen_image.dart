@@ -67,9 +67,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
                   width: THelperFunctions.screenWidth(context) * 0.5,
                   child: ElevatedButton(
                     onPressed: () {
-                      context
-                          .read<ImageBloc>()
-                          .add(ValidateImageEvent(state.imagePath));
+                      context.read<ImageBloc>().add(ValidateImageEvent(state.imagePath));
                     },
                     child: Text(AppLocalizations.of(context)!.submit),
                   ),

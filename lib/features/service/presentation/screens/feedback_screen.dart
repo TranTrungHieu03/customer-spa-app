@@ -57,8 +57,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   maxLines: 4,
                   decoration: InputDecoration(
                     hintText: "Enter your feedback ...",
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: TSizes.sm, vertical: TSizes.md),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.md),
                     hintStyle: Theme.of(context).textTheme.bodySmall,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -84,10 +83,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 },
                 child: Text(
                   'Gửi đánh giá',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
                 ),
               ),
             ),

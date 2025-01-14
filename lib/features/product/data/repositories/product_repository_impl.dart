@@ -15,8 +15,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<Either<Failure, ProductModel>> getProduct(int productId) async {
     try {
-      ProductModel result =
-          await _productRemoteDataSource.getProduct(productId);
+      ProductModel result = await _productRemoteDataSource.getProduct(productId);
       return right(result);
     } catch (e) {
       return left(ApiFailure(
@@ -28,8 +27,7 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<Either<Failure, ListProductModel>> getProducts(int page) async {
     try {
-      ListProductModel result =
-          await _productRemoteDataSource.getProducts(page);
+      ListProductModel result = await _productRemoteDataSource.getProducts(page);
 
       return right(result);
     } catch (e) {

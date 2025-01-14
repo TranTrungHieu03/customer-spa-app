@@ -1,3 +1,4 @@
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 
@@ -8,10 +9,10 @@ class AnalysisResponseModel {
   AnalysisResponseModel({required this.skinhealth, required this.routines});
 
   factory AnalysisResponseModel.fromJson(Map<String, dynamic> json) {
+    AppLogger.info("fromJson AnalysisResponseModel $json");
     return AnalysisResponseModel(
       skinhealth: SkinHealthModel.fromJson(json['skinhealth']),
-      routines: List<RoutineModel>.from(
-          json['routines'].map((x) => RoutineModel.fromJson(x))),
+      routines: List<RoutineModel>.from(json['routines'].map((x) => RoutineModel.fromJson(x))),
     );
   }
 

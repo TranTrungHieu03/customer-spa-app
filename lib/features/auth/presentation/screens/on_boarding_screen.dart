@@ -45,9 +45,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   return PageView(
                     controller: _pageController,
                     onPageChanged: (index) {
-                      context
-                          .read<OnboardingBloc>()
-                          .add(OnPageChangedEvent(index));
+                      context.read<OnboardingBloc>().add(OnPageChangedEvent(index));
                     },
                     children: [
                       OnBoardingPage(
@@ -70,14 +68,14 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 },
               ),
               const OnBoardingDotNavigation(),
-                Positioned(
+              const Positioned(
                 right: TSizes.md,
                 left: 0,
                 top: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                   const  LanguageDropdown(),
+                    LanguageDropdown(),
                   ],
                 ),
               ),
@@ -93,9 +91,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           child: ElevatedButton(
                               onPressed: () => goSignUp(),
                               child: Text(
-                                AppLocalizations.of(context)!
-                                    .get_started
-                                    .toUpperCase(),
+                                AppLocalizations.of(context)!.get_started.toUpperCase(),
                               ))),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -120,11 +116,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 }
 
 class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage(
-      {super.key,
-      required this.title,
-      required this.image,
-      required this.subTitle});
+  const OnBoardingPage({super.key, required this.title, required this.image, required this.subTitle});
 
   final String image, title, subTitle;
 
@@ -193,8 +185,7 @@ class OnboardingSkip extends StatelessWidget {
           top: 0,
           right: 16,
           child: TextButton(
-            onPressed: () =>
-                context.read<OnboardingBloc>().add(SkipPageEvent()),
+            onPressed: () => context.read<OnboardingBloc>().add(SkipPageEvent()),
             child: Text(AppLocalizations.of(context)!.skip),
           ),
         ));
@@ -213,8 +204,7 @@ class OnBoardingDotNavigation extends StatelessWidget {
       right: 0,
       child: BlocBuilder<OnboardingBloc, OnboardingState>(
         builder: (context, state) {
-          final currentIndex =
-              state is OnboardingPageChanged ? state.pageIndex : 0;
+          final currentIndex = state is OnboardingPageChanged ? state.pageIndex : 0;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -222,9 +212,7 @@ class OnBoardingDotNavigation extends StatelessWidget {
               SmoothPageIndicator(
                 controller: PageController(initialPage: currentIndex),
                 count: 3,
-                effect: ExpandingDotsEffect(
-                    activeDotColor: !dark ? TColors.dark : TColors.light,
-                    dotHeight: 6),
+                effect: ExpandingDotsEffect(activeDotColor: !dark ? TColors.dark : TColors.light, dotHeight: 6),
               ),
             ],
           );

@@ -94,8 +94,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                       isNetworkImage: true,
                                       fit: BoxFit.cover,
                                       onPressed: () => {},
-                                      width:
-                                          THelperFunctions.screenWidth(context),
+                                      width: THelperFunctions.screenWidth(context),
                                     ))
                                 .toList()),
                         if (_currentIndex > 0)
@@ -132,9 +131,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             children: [
                               ConstrainedBox(
                                 constraints: BoxConstraints(
-                                  maxWidth:
-                                      THelperFunctions.screenWidth(context) *
-                                          0.7,
+                                  maxWidth: THelperFunctions.screenWidth(context) * 0.7,
                                 ),
                                 child: TProductTitleText(
                                   title: serviceData.name,
@@ -147,8 +144,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                   padding: const EdgeInsets.all(TSizes.sm),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       const Icon(
                                         Iconsax.star,
@@ -181,40 +177,33 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                   ),
                                   Text(
                                     serviceData.duration.toString(),
-                                    style:
-                                        Theme.of(context).textTheme.labelLarge,
+                                    style: Theme.of(context).textTheme.labelLarge,
                                   )
                                 ],
                               ),
-                              TProductPriceText(
-                                  price: serviceData.price.toString())
+                              TProductPriceText(price: serviceData.price.toString())
                             ],
                           ),
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Text("About the service",
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text("About the service", style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
-                          Text(serviceData.description,
-                              style: Theme.of(context).textTheme.bodyMedium),
+                          Text(serviceData.description, style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
-                          Text("Steps",
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text("Steps", style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
-                          Text(serviceData.steps,
-                              style: Theme.of(context).textTheme.bodyMedium),
+                          Text(serviceData.steps, style: Theme.of(context).textTheme.bodyMedium),
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Text("Related Service",
-                              style: Theme.of(context).textTheme.titleLarge),
+                          Text("Related Service", style: Theme.of(context).textTheme.titleLarge),
                           const TRelatedService()
                         ],
                       ),
@@ -237,10 +226,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)!.book_now,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                         ),
                       ),
                     ),

@@ -20,12 +20,7 @@ class LoginWithGoogleParams {
   final String phone;
   final String role;
 
-  LoginWithGoogleParams(
-      {required this.email,
-      required this.role,
-      required this.userName,
-      required this.imageUrl,
-      required this.phone});
+  LoginWithGoogleParams({required this.email, required this.role, required this.userName, required this.imageUrl, required this.phone});
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

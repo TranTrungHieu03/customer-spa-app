@@ -46,9 +46,7 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
                 ),
                 const SizedBox(width: TSizes.sm),
                 Text(
-                  value == 'en'
-                      ? AppLocalizations.of(context)!.english
-                      : AppLocalizations.of(context)!.vietnamese,
+                  value == 'en' ? AppLocalizations.of(context)!.english : AppLocalizations.of(context)!.vietnamese,
                   style: const TextStyle(fontSize: 16),
                 ),
               ],
@@ -84,7 +82,6 @@ class _LanguageDropdownState extends State<LanguageDropdown> {
   }
 
   void _handleLanguageChange(String language) async {
-    await Provider.of<LanguageProvider>(context, listen: false)
-        .changeLanguage(Locale(language));
+    await Provider.of<LanguageProvider>(context, listen: false).changeLanguage(Locale(language));
   }
 }

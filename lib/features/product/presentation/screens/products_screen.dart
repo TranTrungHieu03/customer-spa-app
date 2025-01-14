@@ -56,9 +56,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       if (currentState is ListProductLoaded &&
           !currentState.isLoadingMore &&
           currentState.pagination.page < currentState.pagination.totalPage) {
-        context
-            .read<ListProductBloc>()
-            .add(GetListProductsEvent(currentState.pagination.page + 1));
+        context.read<ListProductBloc>().add(GetListProductsEvent(currentState.pagination.page + 1));
       }
     }
   }
@@ -69,10 +67,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       appBar: TAppbar(
         title: Text(
           'Product',
-          style: Theme.of(context)
-              .textTheme
-              .headlineMedium!
-              .apply(color: TColors.black),
+          style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
         ),
         actions: const [
           TRoundedIcon(
@@ -117,8 +112,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   "Popular",
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                BlocBuilder<ListProductBloc, ListProductState>(
-                    builder: (context, state) {
+                BlocBuilder<ListProductBloc, ListProductState>(builder: (context, state) {
                   if (state is ListProductLoading) {
                     return TGridLayout(
                       itemCount: 4,
@@ -130,8 +124,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     );
                   } else if (state is ListProductEmpty) {
                     return const Center(
-                      child: Text('No product available.',
-                          style: TextStyle(fontSize: 16)),
+                      child: Text('No product available.', style: TextStyle(fontSize: 16)),
                     );
                   } else if (state is ListProductLoaded) {
                     return TGridLayout(
@@ -139,11 +132,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                       itemCount: state.products.length + 2,
                       isScroll: false,
                       itemBuilder: (context, index) {
-                        if (index == state.products.length ||
-                            index == state.products.length + 1) {
-                          return state.isLoadingMore
-                              ? const TProductCardShimmer()
-                              : const SizedBox();
+                        if (index == state.products.length || index == state.products.length + 1) {
+                          return state.isLoadingMore ? const TProductCardShimmer() : const SizedBox();
                         }
                         return TProductCardVertical(
                           productModel: state.products[index],

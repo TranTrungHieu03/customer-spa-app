@@ -4,8 +4,7 @@ import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 
 class TSnackBar {
-  static hideSnackBar(BuildContext context) =>
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  static hideSnackBar(BuildContext context) => ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
   static customToast(BuildContext context, {required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -17,9 +16,7 @@ class TSnackBar {
         margin: const EdgeInsets.all(30),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: THelperFunctions.isDarkMode(context)
-                ? TColors.darkerGrey.withOpacity(0.9)
-                : TColors.grey.withOpacity(0.9)),
+            color: THelperFunctions.isDarkMode(context) ? TColors.darkerGrey.withOpacity(0.9) : TColors.grey.withOpacity(0.9)),
         child: Center(
           child: Text(
             message,
@@ -30,8 +27,7 @@ class TSnackBar {
     ));
   }
 
-  static successSnackBar(BuildContext context,
-      {String title = "Success", required String message, int duration = 3}) {
+  static successSnackBar(BuildContext context, {String title = "Success", required String message, int duration = 3}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
@@ -40,22 +36,14 @@ class TSnackBar {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.black)),
+              Text(title, style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.black)),
               if (message.isNotEmpty)
                 ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.8),
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.grey[800]),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[800]),
                     maxLines: 3,
                   ),
                 )
@@ -68,8 +56,7 @@ class TSnackBar {
     ));
   }
 
-  static warningSnackBar(BuildContext context,
-      {String title = "Warning", required String message}) {
+  static warningSnackBar(BuildContext context, {String title = "Warning", required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
@@ -78,22 +65,14 @@ class TSnackBar {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.black)),
+              Text(title, style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.black)),
               if (message.isNotEmpty)
                 ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.8),
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.grey[800]),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[800]),
                     maxLines: 3,
                   ),
                 )
@@ -106,8 +85,7 @@ class TSnackBar {
     ));
   }
 
-  static errorSnackBar(BuildContext context,
-      {String title = "Error", required String message}) {
+  static errorSnackBar(BuildContext context, {String title = "Error", required String message}) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Row(
         children: [
@@ -116,22 +94,14 @@ class TSnackBar {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.black)),
+              Text(title, style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.black)),
               if (message.isNotEmpty)
                 ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.8),
                   child: Text(
                     message,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.grey[800]),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[800]),
                     maxLines: 3,
                   ),
                 )

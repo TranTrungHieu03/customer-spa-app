@@ -33,13 +33,9 @@ class NavigationMenu extends StatelessWidget {
               backgroundBlendMode: BlendMode.multiply,
             ),
             child: BottomNavigationBar(
-              currentIndex: state is NavigationIndexChangedState
-                  ? state.selectedIndex
-                  : 0,
+              currentIndex: state is NavigationIndexChangedState ? state.selectedIndex : 0,
               onTap: (index) {
-                context
-                    .read<NavigationBloc>()
-                    .add(ChangeSelectedIndexEvent(index));
+                context.read<NavigationBloc>().add(ChangeSelectedIndexEvent(index));
               },
               type: BottomNavigationBarType.fixed,
               selectedItemColor: TColors.primary,
@@ -59,18 +55,10 @@ class NavigationMenu extends StatelessWidget {
               elevation: 0,
               showSelectedLabels: true,
               items: [
-                BottomNavigationBarItem(
-                    icon: const Icon(Iconsax.home),
-                    label: AppLocalizations.of(context)!.home),
-                BottomNavigationBarItem(
-                    icon: const Icon(Iconsax.mobile),
-                    label: AppLocalizations.of(context)!.products),
-                BottomNavigationBarItem(
-                    icon: const Icon(Iconsax.note),
-                    label: AppLocalizations.of(context)!.services),
-                BottomNavigationBarItem(
-                    icon: const Icon(Iconsax.setting_2),
-                    label: AppLocalizations.of(context)!.setting),
+                BottomNavigationBarItem(icon: const Icon(Iconsax.home), label: AppLocalizations.of(context)!.home),
+                BottomNavigationBarItem(icon: const Icon(Iconsax.mobile), label: AppLocalizations.of(context)!.products),
+                BottomNavigationBarItem(icon: const Icon(Iconsax.note), label: AppLocalizations.of(context)!.services),
+                BottomNavigationBarItem(icon: const Icon(Iconsax.setting_2), label: AppLocalizations.of(context)!.setting),
               ],
             ),
           );

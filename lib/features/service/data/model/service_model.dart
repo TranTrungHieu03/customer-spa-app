@@ -21,8 +21,7 @@ class ServiceModel extends Service {
         price: (json['price'] as num).toDouble(),
         duration: json['duration'] as String,
         status: json['status'] as String,
-        images:
-            (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
+        images: (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
         steps: json['steps'] as String);
   }
 

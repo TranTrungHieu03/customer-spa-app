@@ -20,11 +20,9 @@ class WrapperAnalysingImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<SkinAnalysisBloc>(
-      create: (context) =>
-          SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()),
+      create: (context) => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()),
       child: AnalysingImageScreen(imagePath: imagePath),
     );
-    ;
   }
 }
 
@@ -83,7 +81,6 @@ class _AnalysingImageScreenState extends State<AnalysingImageScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<SkinAnalysisBloc>().add(
-        AnalysisViaImageEvent(SkinAnalysisViaImageParams(widget.imagePath)));
+    context.read<SkinAnalysisBloc>().add(AnalysisViaImageEvent(SkinAnalysisViaImageParams(widget.imagePath)));
   }
 }

@@ -5,12 +5,7 @@ import 'package:spa_mobile/core/common/styles/spacing_styles.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class SuccessScreen extends StatelessWidget {
-  const SuccessScreen(
-      {super.key,
-      required this.image,
-      required this.title,
-      required this.subTitle,
-      required this.onPressed});
+  const SuccessScreen({super.key, required this.image, required this.title, required this.subTitle, required this.onPressed});
 
   final String image, title, subTitle;
   final VoidCallback onPressed;

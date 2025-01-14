@@ -15,11 +15,9 @@ class ServiceRepositoryImpl implements ServiceRepository {
   ServiceRepositoryImpl(this._serviceRemoteDataSrc, this._connectionChecker);
 
   @override
-  Future<Either<Failure, ServiceModel>> getServiceDetail(
-      GetServiceDetailParams params) async {
+  Future<Either<Failure, ServiceModel>> getServiceDetail(GetServiceDetailParams params) async {
     try {
-      ServiceModel result =
-          await _serviceRemoteDataSrc.getServiceDetail(params);
+      ServiceModel result = await _serviceRemoteDataSrc.getServiceDetail(params);
 
       return right(result);
     } on AppException catch (e) {

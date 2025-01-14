@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+
 class TProfileItem extends StatelessWidget {
-  const TProfileItem(
-      {super.key,
-        required this.label,
-        required this.icon,
-        required this.controller});
+  const TProfileItem({super.key, required this.label, required this.icon, required this.controller});
 
   final String label;
   final IconData icon;

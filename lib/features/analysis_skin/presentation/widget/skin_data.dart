@@ -22,8 +22,7 @@ class TSkinData extends StatelessWidget {
   Widget build(BuildContext context) {
     return TRoundedContainer(
       backgroundColor: Colors.white.withOpacity(0.85),
-      padding: const EdgeInsets.symmetric(
-          horizontal: TSizes.md, vertical: TSizes.sm),
+      padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
       borderColor: Colors.transparent,
       child: Row(
         children: [
@@ -31,10 +30,7 @@ class TSkinData extends StatelessWidget {
             flex: 3,
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(fontWeight: FontWeight.normal),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.normal),
             ),
           ),
           Expanded(
@@ -42,17 +38,12 @@ class TSkinData extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TRoundedIcon(
-                    icon: iconData,
-                    color: iconColor,
-                    size: 25,
-                    backgroundColor: backgroundIconColor),
+                TRoundedIcon(icon: iconData, color: iconColor, size: 25, backgroundColor: backgroundIconColor),
                 const SizedBox(
                   width: TSizes.sm,
                 ),
                 ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: THelperFunctions.screenWidth(context) * 0.4),
+                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
                   child: Text(
                     value,
                     style: Theme.of(context).textTheme.bodyLarge,

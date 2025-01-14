@@ -72,8 +72,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onSignUpEvent(
-      SignUpEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onSignUpEvent(SignUpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _signUp(event.params);
 
@@ -83,8 +82,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onGoogleLoginEvent(
-      GoogleLoginEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onGoogleLoginEvent(GoogleLoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
 
     final result = await _googleLogin(NoParams());
@@ -95,8 +93,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onFacebookLoginEvent(
-      FacebookLoginEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onFacebookLoginEvent(FacebookLoginEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
 
     final result = await _facebookLogin(NoParams());
@@ -107,8 +104,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onVerifyEvent(
-      VerifyEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onVerifyEvent(VerifyEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _verifyOtp(event.params);
     result.fold(
@@ -117,8 +113,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onForgetPasswordEvent(
-      ForgetPasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onForgetPasswordEvent(ForgetPasswordEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _forgetPassword(event.params);
     result.fold(
@@ -127,8 +122,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onResetPasswordEvent(
-      ResetPasswordEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onResetPasswordEvent(ResetPasswordEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _resetPassword(event.params);
     result.fold(
@@ -137,8 +131,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onResendOtpEvent(
-      ResendOtpEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onResendOtpEvent(ResendOtpEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _resendOtp(event.params);
     result.fold(
@@ -147,18 +140,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onGetUserInformation(
-      GetUserInformationEvent event, Emitter<AuthState> emit) async {
+  Future<void> _onGetUserInformation(GetUserInformationEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _getUserInformation(NoParams());
-    result.fold((failure) => emit(AuthFailure(failure.message)),
-        (user) => emit(AuthLoaded(user)));
+    result.fold((failure) => emit(AuthFailure(failure.message)), (user) => emit(AuthLoaded(user)));
   }
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     final result = await _logout(NoParams());
-    result.fold((failure) => emit(AuthFailure(failure.message)),
-        (message) => emit(AuthClear(message)));
+    result.fold((failure) => emit(AuthFailure(failure.message)), (message) => emit(AuthClear(message)));
   }
 }

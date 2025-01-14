@@ -14,8 +14,7 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
     on<GetListProductsEvent>(_onGetListProductsEvent);
   }
 
-  Future<void> _onGetListProductsEvent(
-      GetListProductsEvent event, Emitter<ListProductState> emit) async {
+  Future<void> _onGetListProductsEvent(GetListProductsEvent event, Emitter<ListProductState> emit) async {
     final currentState = state;
     if (currentState is ListProductLoaded && currentState.isLoadingMore) {
       return;

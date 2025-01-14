@@ -33,8 +33,7 @@ class NetworkApiService implements BaseApiServices {
           options.headers['Authorization'] = 'Bearer $_cachedToken';
           options.headers['Content-Type'] = 'application/json';
           if (kDebugMode) {
-            AppLogger.info(
-                "==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
+            AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
           }
           return handler.next(options);
         },
@@ -49,18 +48,28 @@ class NetworkApiService implements BaseApiServices {
               final options = error.requestOptions;
               options.headers['Authorization'] = 'Bearer $newToken';
               if (kDebugMode) {
-                AppLogger.warning(
-                    "==> Retry Request with new token: $newToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
+                AppLogger.warning("==> Retry Request with new token: $newToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
               }
-              final response = await _dio.request(
-                options.path,
-                options: Options(
-                  method: options.method,
-                  headers: options.headers,
-                ),
-                data: options.data,
-                queryParameters: options.queryParameters,
-              );
+
+              final response = options.data is FormData
+                  ? await _dio.request(
+                      options.path,
+                      options: Options(
+                        method: options.method,
+                        headers: {...options.headers, "Content-Type": "multipart/form-data"},
+                      ),
+                      data: FormData.fromMap(Map.fromEntries((options.data as FormData).fields)),
+                      queryParameters: options.queryParameters,
+                    )
+                  : await _dio.request(
+                      options.path,
+                      options: Options(
+                        method: options.method,
+                        headers: options.headers,
+                      ),
+                      data: options.data,
+                      queryParameters: options.queryParameters,
+                    );
               return handler.resolve(response);
             }
           }
@@ -125,7 +134,10 @@ class NetworkApiService implements BaseApiServices {
 
     dynamic responseJson;
     try {
-      final Response response = await _dio.post(url, data: data);
+      AppLogger.debug("1######### ${data is FormData}");
+      final Response response = data is FormData
+          ? await _dio.post(url, data: data, options: Options(headers: {'Content-Type': 'multipart/form-data'}))
+          : await _dio.post(url, data: data);
 
       responseJson = returnResponse(response);
       if (kDebugMode) {
@@ -145,8 +157,7 @@ class NetworkApiService implements BaseApiServices {
   }
 
   void _handleDioException(DioException e) {
-    if (e.type == DioExceptionType.connectionTimeout ||
-        e.type == DioExceptionType.receiveTimeout) {
+    if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
       throw FetchDataException('Network request timed out');
     } else if (e.type == DioExceptionType.badResponse) {
       throw FetchDataException('Bad response: ${e.response?.statusMessage}');
@@ -167,6 +178,7 @@ class NetworkApiService implements BaseApiServices {
     switch (response.statusCode) {
       case 200:
       case 400:
+        AppLogger.debug(response.data);
         if (response.data is String) {
           return jsonDecode(response.data);
         } else {
@@ -178,8 +190,7 @@ class NetworkApiService implements BaseApiServices {
       case 404:
         throw BadRequestException(response.data.toString());
       default:
-        throw FetchDataException(
-            'Error occurred while communicating with server');
+        throw FetchDataException('Error occurred while communicating with server');
     }
   }
 

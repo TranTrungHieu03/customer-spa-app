@@ -5,8 +5,7 @@ class ShipmentInformationScreen extends StatefulWidget {
   const ShipmentInformationScreen({super.key});
 
   @override
-  State<ShipmentInformationScreen> createState() =>
-      _ShipmentInformationScreenState();
+  State<ShipmentInformationScreen> createState() => _ShipmentInformationScreenState();
 }
 
 class _ShipmentInformationScreenState extends State<ShipmentInformationScreen> {

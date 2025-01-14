@@ -32,8 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: "Search ...",
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: TSizes.md),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.md),
                   suffixIcon: const TRoundedIcon(icon: Iconsax.search_favorite),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -53,8 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: TRoundedContainer(
                         radius: 0,
                         shadow: false,
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: TSizes.md),
+                        padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
                         child: Column(
                           children: [
                             Row(
@@ -80,8 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                       onTap: () {
-                        _searchController.text =
-                            "${_searchController.text}$index";
+                        _searchController.text = "${_searchController.text}$index";
                       },
                     );
                   }),

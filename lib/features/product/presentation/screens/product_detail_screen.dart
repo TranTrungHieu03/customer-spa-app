@@ -92,8 +92,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       isNetworkImage: true,
                                       fit: BoxFit.cover,
                                       onPressed: () => {},
-                                      width:
-                                          THelperFunctions.screenWidth(context),
+                                      width: THelperFunctions.screenWidth(context),
                                     ))
                                 .toList()),
                         if (_currentIndex > 0)
@@ -136,8 +135,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   padding: const EdgeInsets.all(TSizes.sm),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       const Icon(
                                         Iconsax.star,
@@ -163,8 +161,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              TProductPriceText(
-                                  price: product.price.toString()),
+                              TProductPriceText(price: product.price.toString()),
                               Text(
                                 product.dimension,
                                 style: Theme.of(context).textTheme.bodyMedium,
@@ -222,10 +219,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         alignment: Alignment.center,
                         child: Text(
                           AppLocalizations.of(context)!.buyNow,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(color: Colors.white),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                         ),
                       ),
                     ),

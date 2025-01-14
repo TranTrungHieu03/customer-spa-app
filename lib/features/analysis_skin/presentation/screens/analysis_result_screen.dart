@@ -54,16 +54,12 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                           child: TRoundedContainer(
                             backgroundColor: Colors.greenAccent.shade200,
                             borderColor: TColors.primary,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: TSizes.md, horizontal: TSizes.sm),
+                            padding: const EdgeInsets.symmetric(vertical: TSizes.md, horizontal: TSizes.sm),
                             child: Column(
                               children: [
                                 Text(
-                                  AppLocalizations.of(context)!
-                                      .skin_condition
-                                      .toUpperCase(),
-                                  style:
-                                      Theme.of(context).textTheme.headlineSmall,
+                                  AppLocalizations.of(context)!.skin_condition.toUpperCase(),
+                                  style: Theme.of(context).textTheme.headlineSmall,
                                 ),
 
                                 const SizedBox(
@@ -80,13 +76,11 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                   height: TSizes.sm,
                                 ),
                                 TSkinData(
-                                  title:
-                                      AppLocalizations.of(context)!.skin_type,
+                                  title: AppLocalizations.of(context)!.skin_type,
                                   iconData: Iconsax.drop3,
                                   iconColor: Colors.purple,
                                   backgroundIconColor: Colors.purple.shade50,
-                                  value: SkinAnalysis.getSkinTypeName(
-                                      context, skinHealth.skinType.skinType),
+                                  value: SkinAnalysis.getSkinTypeName(context, skinHealth.skinType.skinType),
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
@@ -102,13 +96,11 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                   height: TSizes.sm,
                                 ),
                                 TSkinData(
-                                  title:
-                                      AppLocalizations.of(context)!.skin_color,
+                                  title: AppLocalizations.of(context)!.skin_color,
                                   iconData: Iconsax.blend,
                                   iconColor: Colors.yellow.shade700,
                                   backgroundIconColor: Colors.yellow.shade100,
-                                  value: SkinAnalysis.getSkinColorName(
-                                      context, skinHealth.skinColor.value),
+                                  value: SkinAnalysis.getSkinColorName(context, skinHealth.skinColor.value),
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
@@ -118,10 +110,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                   iconData: Iconsax.bubble,
                                   iconColor: Colors.white,
                                   backgroundIconColor: Colors.grey.shade500,
-                                  value: skinHealth.acne.rectangle.length
-                                          .toString() +
-                                      (" ") +
-                                      AppLocalizations.of(context)!.zone,
+                                  value: skinHealth.acne.rectangle.length.toString() + (" ") + AppLocalizations.of(context)!.zone,
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
@@ -131,10 +120,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                   iconData: Iconsax.story,
                                   iconColor: Colors.blue,
                                   backgroundIconColor: Colors.blue.shade100,
-                                  value: skinHealth.mole.rectangle.length
-                                          .toString() +
-                                      (" ") +
-                                      AppLocalizations.of(context)!.zone,
+                                  value: skinHealth.mole.rectangle.length.toString() + (" ") + AppLocalizations.of(context)!.zone,
                                 ),
                               ],
                             ),
@@ -146,9 +132,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                       height: TSizes.md,
                     ),
                     Text(
-                      AppLocalizations.of(context)!
-                          .recommendation
-                          .toUpperCase(),
+                      AppLocalizations.of(context)!.recommendation.toUpperCase(),
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(

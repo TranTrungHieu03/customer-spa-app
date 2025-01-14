@@ -26,15 +26,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
           leadingIcon: Iconsax.arrow_left,
           title: Text(
             "Lịch sử đặt hàng",
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .apply(color: TColors.black),
+            style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
           ),
         ),
         body: NestedScrollView(
           body: const Padding(
-            padding: EdgeInsets.all(TSizes.sm/2),
+            padding: EdgeInsets.all(TSizes.sm / 2),
             child: TabBarView(
               children: [
                 TStatusTab(),
@@ -53,13 +50,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   flexibleSpace: const Padding(
                     padding: EdgeInsets.all(TSizes.defaultSpace),
                   ),
-                  backgroundColor: THelperFunctions.isDarkMode(context)
-                      ? TColors.black
-                      : TColors.white,
-                  bottom: TTabBar(
-                      tabs: ['Processing', 'Completed', 'Cancel']
-                          .map((category) => Tab(child: Text(category)))
-                          .toList()))
+                  backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
+                  bottom: TTabBar(tabs: ['Processing', 'Completed', 'Cancel'].map((category) => Tab(child: Text(category))).toList()))
             ];
           },
         ),

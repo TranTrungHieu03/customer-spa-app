@@ -5,12 +5,7 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class TAnimationLoader extends StatelessWidget {
   const TAnimationLoader(
-      {super.key,
-      required this.text,
-      required this.animation,
-      this.showAction = false,
-      this.actionText,
-      this.onActionPressed});
+      {super.key, required this.text, required this.animation, this.showAction = false, this.actionText, this.onActionPressed});
 
   final String text, animation;
   final bool showAction;
@@ -34,13 +29,7 @@ class TAnimationLoader extends StatelessWidget {
           const SizedBox(
             height: TSizes.defaultSpace,
           ),
-          Text(
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall
-                  ?.apply(color: TColors.white),
-              text),
+          Text(textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleSmall?.apply(color: TColors.white), text),
           const SizedBox(
             height: TSizes.defaultSpace,
           ),
@@ -49,14 +38,10 @@ class TAnimationLoader extends StatelessWidget {
                   width: 250,
                   child: OutlinedButton(
                     onPressed: onActionPressed,
-                    style:
-                        OutlinedButton.styleFrom(backgroundColor: TColors.dark),
+                    style: OutlinedButton.styleFrom(backgroundColor: TColors.dark),
                     child: Text(
                       actionText!,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .apply(color: TColors.light),
+                      style: Theme.of(context).textTheme.bodyMedium!.apply(color: TColors.light),
                     ),
                   ),
                 )

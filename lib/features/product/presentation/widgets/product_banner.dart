@@ -19,8 +19,7 @@ class TProductBanner extends StatefulWidget {
 }
 
 class _TProductBannerState extends State<TProductBanner> {
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
+  final CarouselSliderController _carouselController = CarouselSliderController();
   int _currentIndex = 0;
 
   @override
@@ -68,17 +67,13 @@ class _TProductBannerState extends State<TProductBanner> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             TRoundedImage(
-                              imageUrl:
-                                  "https://mfparis.vn/wp-content/uploads/2022/09/serum-la-roche-posay-pure-niacinamide-10-30ml.jpg",
+                              imageUrl: "https://mfparis.vn/wp-content/uploads/2022/09/serum-la-roche-posay-pure-niacinamide-10-30ml.jpg",
                               isNetworkImage: true,
                               fit: BoxFit.contain,
                               onPressed: () => {},
                               width: width * 0.8,
                             ),
-                            SizedBox(
-                                height: _currentIndex != banners.indexOf(banner)
-                                    ? 0
-                                    : TSizes.spacebtwItems),
+                            SizedBox(height: _currentIndex != banners.indexOf(banner) ? 0 : TSizes.spacebtwItems),
                             ConstrainedBox(
                               constraints: BoxConstraints(
                                 maxWidth: width * 0.9,
@@ -90,10 +85,7 @@ class _TProductBannerState extends State<TProductBanner> {
                               ),
                             ),
                             const TProductPriceText(price: '35'),
-                            SizedBox(
-                                height: _currentIndex != banners.indexOf(banner)
-                                    ? 0
-                                    : TSizes.spacebtwSections),
+                            SizedBox(height: _currentIndex != banners.indexOf(banner) ? 0 : TSizes.spacebtwSections),
                           ],
                         ),
                         const Positioned(

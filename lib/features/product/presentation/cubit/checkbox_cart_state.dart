@@ -9,10 +9,7 @@ final class CheckboxCartInitial extends CheckboxCartState {
 
   CheckboxCartInitial({required this.itemStates, required this.isAllSelected});
 
-  CheckboxCartState copyWith(
-      {Map<String, bool>? itemStates, bool? isAllSelected}) {
-    return CheckboxCartInitial(
-        itemStates: itemStates ?? this.itemStates,
-        isAllSelected: isAllSelected ?? this.isAllSelected);
+  CheckboxCartState copyWith({Map<String, bool>? itemStates, bool? isAllSelected}) {
+    return CheckboxCartInitial(itemStates: itemStates ?? this.itemStates, isAllSelected: isAllSelected ?? this.isAllSelected);
   }
 }

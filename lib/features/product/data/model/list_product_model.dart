@@ -8,17 +8,10 @@ class ListProductModel {
 
   ListProductModel({required this.products, required this.pagination});
 
-  factory ListProductModel.fromJson(
-      List<dynamic>? json, Map<String, dynamic>? paginationJson) {
+  factory ListProductModel.fromJson(List<dynamic>? json, Map<String, dynamic>? paginationJson) {
     AppLogger.debug("tesst");
     return ListProductModel(
-        products: json != null
-            ? json
-                .map((productJson) => ProductModel.fromJson(productJson))
-                .toList()
-            : [],
-        pagination: paginationJson != null
-            ? PaginationModel.fromJson(paginationJson)
-            : PaginationModel.isEmty());
+        products: json != null ? json.map((productJson) => ProductModel.fromJson(productJson)).toList() : [],
+        pagination: paginationJson != null ? PaginationModel.fromJson(paginationJson) : PaginationModel.isEmty());
   }
 }

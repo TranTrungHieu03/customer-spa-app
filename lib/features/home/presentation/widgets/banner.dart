@@ -16,8 +16,7 @@ class TBanner extends StatefulWidget {
 }
 
 class _TBannerState extends State<TBanner> {
-  final CarouselSliderController _carouselController =
-      CarouselSliderController();
+  final CarouselSliderController _carouselController = CarouselSliderController();
   int _currentIndex = 0;
 
   @override
@@ -42,8 +41,7 @@ class _TBannerState extends State<TBanner> {
             ),
             items: banners
                 .map((banner) => TRoundedImage(
-                      imageUrl:
-                          TImages.banner1,
+                      imageUrl: TImages.banner1,
                       applyImageRadius: true,
                       isNetworkImage: true,
                       onPressed: () => {},
@@ -59,13 +57,11 @@ class _TBannerState extends State<TBanner> {
               child: Container(
                 width: _currentIndex == entry.key ? 20.0 : 8.0,
                 height: 8.0,
-                margin:
-                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 4.0),
+                margin: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 4.0),
                 decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(10),
-                    color: TColors.primary
-                        .withOpacity(_currentIndex == entry.key ? 0.9 : 0.2)),
+                    color: TColors.primary.withOpacity(_currentIndex == entry.key ? 0.9 : 0.2)),
               ),
             );
           }).toList(),

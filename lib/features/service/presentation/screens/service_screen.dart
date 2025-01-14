@@ -63,9 +63,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
       if (currentState is ListServiceLoaded &&
           !currentState.isLoadingMore &&
           currentState.pagination.page < currentState.pagination.totalPage) {
-        context
-            .read<ListServiceBloc>()
-            .add(GetListServicesEvent(currentState.pagination.page + 1));
+        context.read<ListServiceBloc>().add(GetListServicesEvent(currentState.pagination.page + 1));
       }
     }
   }
@@ -106,8 +104,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: TSizes.md),
-                            child: Text('Search',
-                                style: Theme.of(context).textTheme.bodySmall),
+                            child: Text('Search', style: Theme.of(context).textTheme.bodySmall),
                           ),
                           const TRoundedIcon(icon: Iconsax.search_normal)
                         ],
@@ -131,41 +128,30 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         });
                   } else if (state is ListServiceEmpty) {
                     return const Center(
-                      child: Text('No services available.',
-                          style: TextStyle(fontSize: 16)),
+                      child: Text('No services available.', style: TextStyle(fontSize: 16)),
                     );
                   } else if (state is ListServiceLoaded) {
                     return NotificationListener<ScrollNotification>(
                         onNotification: (scrollNotification) {
-                          if (scrollNotification is ScrollEndNotification &&
-                              _scrollController.position.extentAfter < 200) {
+                          if (scrollNotification is ScrollEndNotification && _scrollController.position.extentAfter < 200) {
                             final currentState = state;
-                            if (!currentState.isLoadingMore &&
-                                currentState.pagination.page <
-                                    currentState.pagination.totalPage) {
-                              context.read<ListServiceBloc>().add(
-                                  GetListServicesEvent(
-                                      currentState.pagination.page + 1));
+                            if (!currentState.isLoadingMore && currentState.pagination.page < currentState.pagination.totalPage) {
+                              context.read<ListServiceBloc>().add(GetListServicesEvent(currentState.pagination.page + 1));
                             }
                           }
                           return false;
                         },
                         child: RefreshIndicator(
                           onRefresh: () async {
-                            context
-                                .read<ListServiceBloc>()
-                                .add(GetListServicesEvent(1));
+                            context.read<ListServiceBloc>().add(GetListServicesEvent(1));
                           },
                           child: TGridLayout(
                             controller: _scrollController,
                             itemCount: state.services.length + 2,
                             crossAxisCount: 2,
                             itemBuilder: (context, index) {
-                              if (index == state.services.length ||
-                                  index == state.services.length + 1) {
-                                return state.isLoadingMore
-                                    ? const TServiceCardShimmer()
-                                    : const SizedBox.shrink();
+                              if (index == state.services.length || index == state.services.length + 1) {
+                                return state.isLoadingMore ? const TServiceCardShimmer() : const SizedBox.shrink();
                               }
                               final service = state.services[index];
                               return TServiceCard(

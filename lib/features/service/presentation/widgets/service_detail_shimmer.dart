@@ -42,10 +42,8 @@ class TServiceDetailShimmer extends StatelessWidget {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TShimmerEffect(
-                        width: TSizes.shimmerLg, height: TSizes.shimmerSx),
-                    TShimmerEffect(
-                        width: TSizes.shimmerSm, height: TSizes.shimmerSx),
+                    TShimmerEffect(width: TSizes.shimmerLg, height: TSizes.shimmerSx),
+                    TShimmerEffect(width: TSizes.shimmerSm, height: TSizes.shimmerSx),
                   ],
                 ),
                 const SizedBox(height: TSizes.sm),

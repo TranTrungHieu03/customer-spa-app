@@ -71,16 +71,14 @@ class TPaymentDetail extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.payment_details,
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(AppLocalizations.of(context)!.payment_details, style: Theme.of(context).textTheme.bodyLarge),
           Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppLocalizations.of(context)!.total_order_amount,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.total_order_amount, style: Theme.of(context).textTheme.bodyMedium),
                   const TProductPriceText(
                     price: "550",
                     isLarge: true,
@@ -91,8 +89,7 @@ class TPaymentDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppLocalizations.of(context)!.shipping_fee,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.shipping_fee, style: Theme.of(context).textTheme.bodyMedium),
                   const TProductPriceText(
                     price: "50",
                     isLarge: true,
@@ -103,8 +100,7 @@ class TPaymentDetail extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(AppLocalizations.of(context)!.total_payment,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyMedium),
                   const TProductPriceText(
                     price: "500",
                   )
@@ -133,8 +129,7 @@ class TPaymentMethod extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context)!.payment_method,
-              style: Theme.of(context).textTheme.bodyLarge),
+          Text(AppLocalizations.of(context)!.payment_method, style: Theme.of(context).textTheme.bodyLarge),
           Column(
             children: [
               Row(
@@ -146,8 +141,7 @@ class TPaymentMethod extends StatelessWidget {
                   const SizedBox(
                     width: TSizes.sm,
                   ),
-                  Text(AppLocalizations.of(context)!.cash,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.cash, style: Theme.of(context).textTheme.bodyMedium),
                   const Spacer(),
                   const Icon(
                     Iconsax.tick_circle,
@@ -167,8 +161,7 @@ class TPaymentMethod extends StatelessWidget {
                   const SizedBox(
                     width: TSizes.sm,
                   ),
-                  Text(AppLocalizations.of(context)!.bank_transfer,
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(AppLocalizations.of(context)!.bank_transfer, style: Theme.of(context).textTheme.bodyMedium),
                   const Spacer(),
                   // const TRoundedIcon(
                   //   icon: Iconsax.tick_circle,
@@ -192,8 +185,7 @@ class TContactInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: TSizes.sm, vertical: TSizes.md * 2 / 3),
+      padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.md * 2 / 3),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -269,8 +261,7 @@ class TBottomCheckout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: TSizes.sm, vertical: TSizes.sm),
+        padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -314,8 +305,7 @@ class TBottomCheckout extends StatelessWidget {
                 // );
               },
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: TSizes.md, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
               ),
               child: Text(
                 AppLocalizations.of(context)!.order,

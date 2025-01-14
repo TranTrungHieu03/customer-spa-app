@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -15,4 +14,9 @@ DateTime combineDateTime(DateTime date, TimeOfDay time) {
     time.hour,
     time.minute,
   );
+}
+
+String formatDate(DateTime date) {
+  final DateFormat formatter = DateFormat('HH:mm dd/MM/yyyy');
+  return formatter.format(date);
 }

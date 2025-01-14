@@ -17,7 +17,6 @@ class AppLogger {
         Level.error: '🚨',
         Level.wtf: '🤷‍♂️ 🤷‍♀️ ',
       },
-
     ),
   );
 

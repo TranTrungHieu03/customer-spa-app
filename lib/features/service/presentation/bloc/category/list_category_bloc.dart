@@ -13,16 +13,14 @@ class ListCategoryBloc extends Bloc<ListCategoryEvent, ListCategoryState> {
     on<GetListCategoriesEvent>(_onGetListCategories);
   }
 
-  Future<void> _onGetListCategories(
-      GetListCategoriesEvent event, Emitter<ListCategoryState> emit) async {
+  Future<void> _onGetListCategories(GetListCategoriesEvent event, Emitter<ListCategoryState> emit) async {
     final currentState = state;
     if (currentState is ListCategoryLoaded) {
       return;
     } else {
       emit(ListCategoryLoading());
       final result = await _categoryRepository.getListCategories();
-      result.fold((failure) => emit(ListCategoryError(failure.message)),
-          (result) {
+      result.fold((failure) => emit(ListCategoryError(failure.message)), (result) {
         if (result.isEmpty) {
           emit(ListCategoryEmpty());
         } else {

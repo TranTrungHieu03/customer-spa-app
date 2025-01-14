@@ -19,16 +19,9 @@ class ResetPasswordParams {
   final String password;
   final String passwordConfirm;
 
-  ResetPasswordParams(
-      {required this.email,
-      required this.password,
-      required this.passwordConfirm});
+  ResetPasswordParams({required this.email, required this.password, required this.passwordConfirm});
 
   Map<String, dynamic> toJson() {
-    return {
-      "email": email,
-      "password": password,
-      "confirmPassword": passwordConfirm
-    };
+    return {"email": email, "password": password, "confirmPassword": passwordConfirm};
   }
 }

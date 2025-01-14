@@ -20,8 +20,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     Emitter<ProductState> emit,
   ) async {
     emit(ProductLoading());
-    final result =
-        await _getProductDetail.call(GetProductDetailParams(event.productId));
+    final result = await _getProductDetail.call(GetProductDetailParams(event.productId));
     result.fold(
       (failure) => emit(ProductFailure(failure.message)),
       (product) => emit(ProductLoaded(product)),

@@ -11,7 +11,8 @@ class ListServiceEmpty extends ListServiceState {}
 
 class ListServiceLoading extends ListServiceState {
   final bool isLoadingMore;
- const  ListServiceLoading({this.isLoadingMore = false});
+
+  const ListServiceLoading({this.isLoadingMore = false});
 }
 
 class ListServiceLoaded extends ListServiceState {

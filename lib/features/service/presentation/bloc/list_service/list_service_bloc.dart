@@ -14,8 +14,7 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
     on<GetListServicesEvent>(_onGetListServices);
   }
 
-  Future<void> _onGetListServices(
-      GetListServicesEvent event, Emitter<ListServiceState> emit) async {
+  Future<void> _onGetListServices(GetListServicesEvent event, Emitter<ListServiceState> emit) async {
     final currentState = state;
     if (currentState is ListServiceLoaded && currentState.isLoadingMore) {
       return;
@@ -25,10 +24,8 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
       final result = await _serviceRepository.getServices(event.page);
       result.fold(
         (failure) => emit(ListServiceFailure(failure.message)),
-        (result) => emit(ListServiceLoaded(
-            services: currentState.services + result.services,
-            pagination: result.pagination,
-            isLoadingMore: false)),
+        (result) =>
+            emit(ListServiceLoaded(services: currentState.services + result.services, pagination: result.pagination, isLoadingMore: false)),
       );
     } else {
       emit(const ListServiceLoading(isLoadingMore: false));

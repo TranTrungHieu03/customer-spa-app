@@ -9,12 +9,7 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class StatusServiceScreen extends StatefulWidget {
   const StatusServiceScreen(
-      {super.key,
-      required this.title,
-      required this.content,
-      required this.value,
-      required this.image,
-      required this.color});
+      {super.key, required this.title, required this.content, required this.value, required this.image, required this.color});
 
   final String title, content;
   final Widget value;
@@ -55,10 +50,7 @@ class _StatusServiceScreenState extends State<StatusServiceScreen> {
               ),
               Text(
                 widget.title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(color: widget.color),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: widget.color),
               ),
               const SizedBox(
                 height: TSizes.md,
@@ -75,7 +67,7 @@ class _StatusServiceScreenState extends State<StatusServiceScreen> {
             Expanded(
                 child: ElevatedButton(
                     onPressed: () {
-                      goBookingDetail("1");
+                      goBookingDetail(1);
                     },
                     child: const Text("View Detail")))
           ],

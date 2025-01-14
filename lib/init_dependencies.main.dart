@@ -4,10 +4,8 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
-  serviceLocator.registerLazySingleton<NetworkApiService>(() =>
-      NetworkApiService(
-          baseUrl: "https://solaceapi.ddnsking.com/api",
-          authService: serviceLocator<AuthService>()));
+  serviceLocator.registerLazySingleton<NetworkApiService>(
+      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api", authService: serviceLocator<AuthService>()));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -18,8 +16,7 @@ Future<void> initDependencies() async {
   serviceLocator.registerFactory(() => InternetConnection());
 
   //core
-  serviceLocator.registerLazySingleton<ConnectionChecker>(
-      () => ConnectionCheckerImpl(serviceLocator()));
+  serviceLocator.registerLazySingleton<ConnectionChecker>(() => ConnectionCheckerImpl(serviceLocator()));
 
   await _initAuth();
   await _initMenu();
@@ -34,13 +31,10 @@ Future<void> initDependencies() async {
 Future<void> _initAuth() async {
   //datasource
   serviceLocator
-    ..registerFactory<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repository
-    ..registerFactory<AuthRepository>(() => AuthRepositoryImpl(
-        serviceLocator<AuthRemoteDataSource>(),
-        serviceLocator<ConnectionChecker>(),
-        serviceLocator<AuthService>()))
+    ..registerFactory<AuthRepository>(() =>
+        AuthRepositoryImpl(serviceLocator<AuthRemoteDataSource>(), serviceLocator<ConnectionChecker>(), serviceLocator<AuthService>()))
 
     //use cases
     ..registerFactory(() => Login(serviceLocator()))
@@ -79,26 +73,24 @@ Future<void> _initMenu() async {
   serviceLocator
     ..registerLazySingleton(() => NavigationBloc())
     ..registerLazySingleton(() => ImageBloc())
-    ..registerLazySingleton(() => FormSkinBloc());
+    // ..registerLazySingleton(() => FormSkinBloc())
+    ..registerLazySingleton(() => WebViewBloc());
 }
 
 Future<void> _initProduct() async {
   serviceLocator
 
     //data src
-    ..registerFactory<ProductRemoteDataSource>(
-        () => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
-    ..registerFactory<ProductRepository>(() => ProductRepositoryImpl(
-        serviceLocator<ProductRemoteDataSource>(),
-        serviceLocator<ConnectionChecker>()))
+    ..registerFactory<ProductRepository>(
+        () => ProductRepositoryImpl(serviceLocator<ProductRemoteDataSource>(), serviceLocator<ConnectionChecker>()))
     //use case
     ..registerLazySingleton(() => GetListProducts(serviceLocator()))
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(
-        () => ProductBloc(getProductDetail: serviceLocator()))
+    ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
     ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
 }
@@ -106,27 +98,23 @@ Future<void> _initProduct() async {
 Future<void> _initService() async {
   serviceLocator
     //data src
-    ..registerFactory<ServiceRemoteDataSrc>(
-        () => ServiceRemoteDataSrcImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<ServiceRemoteDataSrc>(() => ServiceRemoteDataSrcImpl(serviceLocator<NetworkApiService>()))
     //repo
-    ..registerFactory<ServiceRepository>(() => ServiceRepositoryImpl(
-        serviceLocator<ServiceRemoteDataSrc>(),
-        serviceLocator<ConnectionChecker>()))
+    ..registerFactory<ServiceRepository>(
+        () => ServiceRepositoryImpl(serviceLocator<ServiceRemoteDataSrc>(), serviceLocator<ConnectionChecker>()))
     //use case
     ..registerLazySingleton(() => GetListService(serviceLocator()))
     ..registerLazySingleton(() => GetServiceDetail(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(
-        () => ServiceBloc(getServiceDetail: serviceLocator()))
+    ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(serviceLocator()));
 }
 
 Future<void> _initCategory() async {
   serviceLocator
     //data src
-    ..registerFactory<CategoryRemoteDataSource>(
-        () => CategoryRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<CategoryRemoteDataSource>(() => CategoryRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<CategoryRepository>(() => CategoryRepositoryImpl(
           serviceLocator<CategoryRemoteDataSource>(),
@@ -141,8 +129,7 @@ Future<void> _initCategory() async {
 Future<void> _initAppointment() async {
   serviceLocator
     //data src
-    ..registerFactory<AppointmentRemoteDataSource>(() =>
-        AppointmentRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<AppointmentRemoteDataSource>(() => AppointmentRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<AppointmentRepository>(() => AppointmentRepositoryImpl(
           serviceLocator<AppointmentRemoteDataSource>(),
@@ -152,15 +139,13 @@ Future<void> _initAppointment() async {
     ..registerLazySingleton(() => CreateAppointment(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => AppointmentBloc(
-        getAppointment: serviceLocator(), createAppointment: serviceLocator()));
+    ..registerLazySingleton(() => AppointmentBloc(getAppointment: serviceLocator(), createAppointment: serviceLocator()));
 }
 
 Future<void> _initAiChat() async {
   serviceLocator
     //data src
-    ..registerFactory<AiChatRemoteDataSource>(
-        () => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<AiChatRemoteDataSource>(() => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<AiChatRepository>(() => AiChatRepositoryImpl(
           serviceLocator<AiChatRemoteDataSource>(),
@@ -175,8 +160,7 @@ Future<void> _initAiChat() async {
 Future<void> _initSkinAnalysis() async {
   serviceLocator
     //data src
-    ..registerFactory<SkinAnalysisRemoteDataSource>(() =>
-        SkinAnalysisRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<SkinAnalysisRemoteDataSource>(() => SkinAnalysisRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<SkinAnalysisRepository>(() => SkinAnalysisRepositoryImpl(
           serviceLocator<SkinAnalysisRemoteDataSource>(),
@@ -185,6 +169,5 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => SkinAnalysisViaImage(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(
-        () => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()));
+    ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()));
 }

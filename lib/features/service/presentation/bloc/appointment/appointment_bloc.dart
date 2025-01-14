@@ -22,8 +22,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     on<ResetAppointmentEvent>(_onResetAppointmentEvent);
   }
 
-  Future<void> _onGetAppointmentEvent(
-      GetAppointmentEvent event, Emitter<AppointmentState> emit) async {
+  Future<void> _onGetAppointmentEvent(GetAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentLoading());
     final result = await _getAppointment(GetAppointmentParams(id: event.id));
     result.fold(
@@ -32,8 +31,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     );
   }
 
-  Future<void> _onCreateAppointmentEvent(
-      CreateAppointmentEvent event, Emitter<AppointmentState> emit) async {
+  Future<void> _onCreateAppointmentEvent(CreateAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentLoading());
     final result = await _createAppointment(CreateAppointmentParams(
         customerId: event.params.customerId,
@@ -44,12 +42,11 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         notes: event.params.notes));
     result.fold(
       (failure) => emit(AppointmentError(failure.message)),
-      (appointment) => emit(AppointmentLoaded(appointment)),
+      (appointment) => emit(AppointmentCreateSuccess(appointment)),
     );
   }
 
-  Future<void> _onResetAppointmentEvent(
-      ResetAppointmentEvent event, Emitter<AppointmentState> emit) async {
+  Future<void> _onResetAppointmentEvent(ResetAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentInitial());
   }
 }

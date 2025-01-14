@@ -22,10 +22,8 @@ class ChatAiScreen extends StatefulWidget {
   State<ChatAiScreen> createState() => _ChatAiScreenState();
 }
 
-class _ChatAiScreenState extends State<ChatAiScreen>
-    with WidgetsBindingObserver {
+class _ChatAiScreenState extends State<ChatAiScreen> with WidgetsBindingObserver {
   final _messageController = TextEditingController();
-
 
   final List<MessageChatModel> messages = [];
 
@@ -92,10 +90,7 @@ class _ChatAiScreenState extends State<ChatAiScreen>
             showBackArrow: true,
             title: Text(
               AppLocalizations.of(context)!.solaceChat,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium!
-                  .apply(color: TColors.black),
+              style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
             ),
           ),
           body: ListView.builder(
@@ -124,22 +119,17 @@ class _ChatAiScreenState extends State<ChatAiScreen>
                 return Container(
                   margin: const EdgeInsets.symmetric(vertical: TSizes.xs),
                   child: Row(
-                    mainAxisAlignment: message.isUser == true
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
+                    mainAxisAlignment: message.isUser == true ? MainAxisAlignment.end : MainAxisAlignment.start,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(TSizes.sm),
                         decoration: BoxDecoration(
-                          color: message.isUser == false
-                              ? TColors.primary
-                              : Colors.grey[200],
+                          color: message.isUser == false ? TColors.primary : Colors.grey[200],
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxWidth:
-                                THelperFunctions.screenWidth(context) * 0.85,
+                            maxWidth: THelperFunctions.screenWidth(context) * 0.85,
                           ),
                           child: Text(
                             message.text,
@@ -152,6 +142,7 @@ class _ChatAiScreenState extends State<ChatAiScreen>
                   ),
                 );
               }
+              return null;
             },
           ),
           bottomNavigationBar: Padding(
@@ -173,8 +164,7 @@ class _ChatAiScreenState extends State<ChatAiScreen>
                       maxLines: null,
                       decoration: InputDecoration(
                         hintText: "Enter your message ...",
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: TSizes.sm),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
                         hintStyle: Theme.of(context).textTheme.bodySmall,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -192,13 +182,9 @@ class _ChatAiScreenState extends State<ChatAiScreen>
                   TRoundedIcon(
                     onPressed: () {
                       setState(() {
-                        messages.add(MessageChatModel(
-                            text: _messageController.text.toString(),
-                            isUser: true));
+                        messages.add(MessageChatModel(text: _messageController.text.toString(), isUser: true));
 
-                        context
-                            .read<AiChatBloc>()
-                            .add(GetAiChatEvent(GetAiChatParams(
+                        context.read<AiChatBloc>().add(GetAiChatEvent(GetAiChatParams(
                               _messageController.text.toString(),
                             )));
                         FocusScope.of(context).unfocus();

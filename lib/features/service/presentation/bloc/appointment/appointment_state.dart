@@ -15,6 +15,12 @@ final class AppointmentLoaded extends AppointmentState {
   const AppointmentLoaded(this.appointment);
 }
 
+final class AppointmentCreateSuccess extends AppointmentState {
+  final AppointmentModel appointment;
+
+  const AppointmentCreateSuccess(this.appointment);
+}
+
 final class AppointmentError extends AppointmentState {
   final String message;
 

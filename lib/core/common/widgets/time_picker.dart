@@ -4,8 +4,7 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class TimePickerWidget extends StatefulWidget {
-  final Function(TimeOfDay)
-      onTimeSelected;
+  final Function(TimeOfDay) onTimeSelected;
   final TimeOfDay initialTime;
 
   const TimePickerWidget({super.key, required this.onTimeSelected, required this.initialTime});
@@ -22,6 +21,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
     super.initState();
     _selectedTime = widget.initialTime;
   }
+
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -62,9 +62,7 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedTime != null
-                  ? _selectedTime.format(context)
-                  : "Select time",
+              _selectedTime != null ? _selectedTime.format(context) : "Select time",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(

@@ -30,8 +30,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final AuthService _authService;
 
-  AuthRepositoryImpl(
-      this._authRemoteDataSource, this._connectionChecker, this._authService);
+  AuthRepositoryImpl(this._authRemoteDataSource, this._connectionChecker, this._authService);
 
   @override
   Future<Either<Failure, String>> login(LoginParams params) async {
@@ -40,8 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       await _authService.saveToken(token);
       await LocalStorage.saveData(LocalStorageKey.isLogin, "true");
-      await LocalStorage.saveData(
-          LocalStorageKey.isCompletedOnBoarding, "true");
+      await LocalStorage.saveData(LocalStorageKey.isCompletedOnBoarding, "true");
 
       return right(token);
     } on AppException catch (e) {
@@ -72,8 +70,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return left(const ApiFailure(message: "Google sign-in aborted"));
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw Exception("Failed to retrieve Google tokens");
       }
@@ -85,8 +82,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (googleAuth.accessToken == null || googleAuth.idToken == null) {
         throw Exception("Failed to retrieve Google tokens");
       }
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credentials);
+      final userCredential = await FirebaseAuth.instance.signInWithCredential(credentials);
 
       final User? user = userCredential.user;
 
@@ -98,22 +94,15 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.info("$email $userName $phone");
 
       String token = await _authRemoteDataSource.loginWithGoogle(
-        LoginWithGoogleParams(
-            email: email,
-            userName: userName,
-            imageUrl: imageUrl,
-            phone: phone,
-            role: "Customer"),
+        LoginWithGoogleParams(email: email, userName: userName, imageUrl: imageUrl, phone: phone, role: "Customer"),
       );
       await _authService.saveToken(token);
       await LocalStorage.saveData(LocalStorageKey.isLogin, "true");
-      await LocalStorage.saveData(
-          LocalStorageKey.isCompletedOnBoarding, "true");
+      await LocalStorage.saveData(LocalStorageKey.isCompletedOnBoarding, "true");
       return right(token);
     } on PlatformException catch (e) {
       if (e.code == 'network_error') {
-        return left(
-            ApiFailure(message: "Network error occurred: ${e.message}"));
+        return left(ApiFailure(message: "Network error occurred: ${e.message}"));
       }
       return left(ApiFailure(message: "PlatformException: ${e.message}"));
     } on AppException catch (e) {
@@ -139,8 +128,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final AccessToken accessToken = loginResult.accessToken!;
 
-      final OAuthCredential facebookAuthCredential =
-          FacebookAuthProvider.credential(accessToken.tokenString);
+      final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(accessToken.tokenString);
 
       await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 
@@ -151,17 +139,11 @@ class AuthRepositoryImpl implements AuthRepository {
       AppLogger.info("$email $userName $imageUrl");
 
       String token = await _authRemoteDataSource.loginWithFacebook(
-        LoginWithFacebookParams(
-            email: email,
-            userName: userName,
-            imageUrl: imageUrl,
-            phone: "",
-            role: "Customer"),
+        LoginWithFacebookParams(email: email, userName: userName, imageUrl: imageUrl, phone: "", role: "Customer"),
       );
       await _authService.saveToken(token);
       await LocalStorage.saveData(LocalStorageKey.isLogin, "true");
-      await LocalStorage.saveData(
-          LocalStorageKey.isCompletedOnBoarding, "true");
+      await LocalStorage.saveData(LocalStorageKey.isCompletedOnBoarding, "true");
       return right(token);
     } on AppException catch (e) {
       return left(ApiFailure(message: e.toString()));
@@ -188,8 +170,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> forgetPassword(
-      ForgetPasswordParams params) async {
+  Future<Either<Failure, String>> forgetPassword(ForgetPasswordParams params) async {
     try {
       String message = await _authRemoteDataSource.forgetPassword(params);
       return right(message);
@@ -201,8 +182,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> resetPassword(
-      ResetPasswordParams params) async {
+  Future<Either<Failure, String>> resetPassword(ResetPasswordParams params) async {
     try {
       String message = await _authRemoteDataSource.resetPassword(params);
       return right(message);
@@ -229,8 +209,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserModel>> getUserInfo() async {
     try {
       UserModel userModel = await _authRemoteDataSource.getUserInfo();
-      await LocalStorage.saveData(
-          LocalStorageKey.userKey, jsonEncode(userModel));
+      await LocalStorage.saveData(LocalStorageKey.userKey, jsonEncode(userModel));
       return right(userModel);
     } on AppException catch (e) {
       return left(ApiFailure(

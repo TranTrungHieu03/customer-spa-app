@@ -30,9 +30,7 @@ class TServiceCard extends StatelessWidget {
           children: [
             TRoundedImage(
               applyImageRadius: true,
-              imageUrl: service.images.isNotEmpty
-                  ? service.images[0]
-                  : TImages.thumbnailService,
+              imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
               isNetworkImage: service.images.isNotEmpty,
               width: THelperFunctions.screenWidth(context) * 0.45,
               height: 150,
@@ -49,8 +47,7 @@ class TServiceCard extends StatelessWidget {
                       children: [
                         ConstrainedBox(
                             constraints: BoxConstraints(
-                              maxWidth:
-                                  THelperFunctions.screenWidth(context) * 0.44,
+                              maxWidth: THelperFunctions.screenWidth(context) * 0.44,
                             ),
                             child: TProductTitleText(
                               title: service.name,
@@ -59,8 +56,7 @@ class TServiceCard extends StatelessWidget {
                             )),
                         ConstrainedBox(
                             constraints: BoxConstraints(
-                              maxWidth:
-                                  THelperFunctions.screenWidth(context) * 0.44,
+                              maxWidth: THelperFunctions.screenWidth(context) * 0.44,
                             ),
                             child: Text(
                               service.description,

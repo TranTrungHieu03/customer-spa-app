@@ -28,17 +28,14 @@ class TUserProfileTile extends StatelessWidget {
         padding: 0,
       ),
       title: userData?.userName != null
-          ? Text(userData!.userName,
-              style: Theme.of(context).textTheme.headlineSmall!)
-          : const TShimmerEffect(
-              width: TSizes.shimmerLg, height: TSizes.shimmerSx),
+          ? Text(userData!.userName, style: Theme.of(context).textTheme.headlineSmall!)
+          : const TShimmerEffect(width: TSizes.shimmerLg, height: TSizes.shimmerSx),
       subtitle: userData?.userName != null
           ? Text(
               userData!.email,
               style: Theme.of(context).textTheme.bodyMedium!,
             )
-          : const TShimmerEffect(
-              width: TSizes.shimmerXl, height: TSizes.shimmerSx),
+          : const TShimmerEffect(width: TSizes.shimmerXl, height: TSizes.shimmerSx),
       trailing: IconButton(
         onPressed: onPressed,
         icon: const Icon(

@@ -8,7 +8,7 @@ class Branch extends Equatable {
   final String longAddress;
   final String latAddress;
   final String status;
-  final String managerId;
+  final int managerId;
 
   const Branch({
     required this.branchId,

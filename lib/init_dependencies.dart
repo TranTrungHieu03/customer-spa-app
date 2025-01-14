@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:spa_mobile/core/common/bloc/web_view_bloc.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/core/network/network.dart';
@@ -35,7 +36,6 @@ import 'package:spa_mobile/features/home/data/repositories/ai_chat_reposotory_im
 import 'package:spa_mobile/features/home/domain/repositories/ai_chat_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_ai_chat.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
-import 'package:spa_mobile/features/home/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/product/data/datasources/product_remote_data_src.dart';
 import 'package:spa_mobile/features/product/data/repositories/product_repository_impl.dart';

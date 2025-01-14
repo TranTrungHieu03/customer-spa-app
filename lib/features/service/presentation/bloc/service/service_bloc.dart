@@ -16,11 +16,9 @@ class ServiceBloc extends Bloc<ServiceEvent, ServiceState> {
     on<GetServiceDetailEvent>(_onGetServiceDetail);
   }
 
-  Future<void> _onGetServiceDetail(
-      GetServiceDetailEvent event, Emitter<ServiceState> emit) async {
+  Future<void> _onGetServiceDetail(GetServiceDetailEvent event, Emitter<ServiceState> emit) async {
     emit(ServiceLoading());
-    final result =
-        await _getServiceDetail(GetServiceDetailParams(id: event.id));
+    final result = await _getServiceDetail(GetServiceDetailParams(id: event.id));
     result.fold(
       (failure) => emit(ServiceDetailFailure(failure.message)),
       (result) => emit(ServiceDetailSuccess(result)),

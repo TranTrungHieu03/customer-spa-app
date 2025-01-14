@@ -70,8 +70,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                         ),
                       ),
                     ),
-                    child: TProductCart(
-                        index: index), // Pass the index to TProductCart
+                    child: TProductCart(index: index), // Pass the index to TProductCart
                   );
                 },
                 separatorBuilder: (_, __) {
@@ -84,8 +83,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
           builder: (context, state) {
             if (state is CheckboxCartInitial) {
               return Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: TSizes.sm, vertical: TSizes.sm),
+                padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -101,9 +99,7 @@ class _MyCartScreenState extends State<MyCartScreen> {
                     Checkbox(
                       value: state.isAllSelected,
                       onChanged: (bool? newValue) {
-                        context
-                            .read<CheckboxCartCubit>()
-                            .toggleSelectAll(newValue ?? false);
+                        context.read<CheckboxCartCubit>().toggleSelectAll(newValue ?? false);
                       },
                     ),
                     Text(
@@ -114,10 +110,12 @@ class _MyCartScreenState extends State<MyCartScreen> {
                     Row(
                       children: [
                         Text(
-                          AppLocalizations.of(context)!.totalPayment ,
+                          AppLocalizations.of(context)!.totalPayment,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
-                        const SizedBox(width: TSizes.sm/2,),
+                        const SizedBox(
+                          width: TSizes.sm / 2,
+                        ),
                         const TProductPriceText(price: "5000"),
                         const SizedBox(width: TSizes.md),
                         ElevatedButton(
@@ -125,16 +123,14 @@ class _MyCartScreenState extends State<MyCartScreen> {
                             goCheckout();
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: TSizes.md, vertical: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
                           ),
                           child: Text(
                             AppLocalizations.of(context)!.buy,
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      color: Colors.white,
-                                      fontSize: TSizes.md,
-                                    ),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: Colors.white,
+                                  fontSize: TSizes.md,
+                                ),
                           ),
                         ),
                       ],
@@ -167,8 +163,7 @@ class TProductCart extends StatelessWidget {
           builder: (context, state) {
             if (state is CheckboxCartInitial) {
               return Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: TSizes.sm / 2, vertical: TSizes.sm),
+                padding: const EdgeInsets.symmetric(horizontal: TSizes.sm / 2, vertical: TSizes.sm),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -195,7 +190,9 @@ class TProductCart extends StatelessWidget {
                     ),
                     SizedBox(
                         width: THelperFunctions.screenWidth(context),
-                        child: const Divider(thickness: 0.2,)),
+                        child: const Divider(
+                          thickness: 0.2,
+                        )),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -203,10 +200,7 @@ class TProductCart extends StatelessWidget {
                         Checkbox(
                           value: state.itemStates[index.toString()] ?? false,
                           onChanged: (bool? newValue) {
-                            context
-                                .read<CheckboxCartCubit>()
-                                .toggleItemCheckbox(
-                                    index.toString(), newValue ?? false);
+                            context.read<CheckboxCartCubit>().toggleItemCheckbox(index.toString(), newValue ?? false);
                           },
                         ),
                         TRoundedImage(
@@ -224,8 +218,7 @@ class TProductCart extends StatelessWidget {
                           padding: const EdgeInsets.only(left: TSizes.sm),
                           child: ConstrainedBox(
                             constraints: BoxConstraints(
-                              maxWidth:
-                                  THelperFunctions.screenWidth(context) * 0.5,
+                              maxWidth: THelperFunctions.screenWidth(context) * 0.5,
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,19 +241,14 @@ class TProductCart extends StatelessWidget {
                                   children: [
                                     TRoundedIcon(
                                       icon: Iconsax.minus,
-                                      backgroundColor:
-                                          TColors.primary.withOpacity(0.05),
+                                      backgroundColor: TColors.primary.withOpacity(0.05),
                                       width: 40,
                                       height: 40,
                                     ),
                                     const SizedBox(width: TSizes.sm / 2),
                                     SizedBox(
-                                      width: THelperFunctions.screenWidth(
-                                              context) *
-                                          0.1,
-                                      height: THelperFunctions.screenWidth(
-                                              context) *
-                                          0.1,
+                                      width: THelperFunctions.screenWidth(context) * 0.1,
+                                      height: THelperFunctions.screenWidth(context) * 0.1,
                                       child: Form(
                                           child: TextFormField(
                                         initialValue: "1",
@@ -283,8 +271,7 @@ class TProductCart extends StatelessWidget {
                                         decoration: const InputDecoration(
                                           border: OutlineInputBorder(),
                                           isDense: true,
-                                          contentPadding:
-                                              EdgeInsets.all(TSizes.sm),
+                                          contentPadding: EdgeInsets.all(TSizes.sm),
                                         ),
                                       )),
                                     ),
@@ -292,8 +279,7 @@ class TProductCart extends StatelessWidget {
                                     TRoundedIcon(
                                       icon: Iconsax.add,
                                       width: 40,
-                                      backgroundColor:
-                                          TColors.primary.withOpacity(0.05),
+                                      backgroundColor: TColors.primary.withOpacity(0.05),
                                       height: 40,
                                     ),
                                   ],

@@ -15,8 +15,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
   @override
   Future<String> getAiChat(GetAiChatParams params) async {
     try {
-      final response =
-          await _apiService.postApi('/BotChat/send', params.toJson());
+      final response = await _apiService.postApi('/BotChat/send', params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
 

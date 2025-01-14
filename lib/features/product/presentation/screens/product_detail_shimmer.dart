@@ -34,8 +34,7 @@ class TProductDetailShimmer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TShimmerEffect(
-                    width: TSizes.shimmerLg, height: TSizes.shimmerSx),
+                const TShimmerEffect(width: TSizes.shimmerLg, height: TSizes.shimmerSx),
                 const SizedBox(height: TSizes.md),
                 TShimmerEffect(
                   width: MediaQuery.of(context).size.width * 0.7,
@@ -45,10 +44,8 @@ class TProductDetailShimmer extends StatelessWidget {
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TShimmerEffect(
-                        width: TSizes.shimmerLg, height: TSizes.shimmerSx),
-                    TShimmerEffect(
-                        width: TSizes.shimmerSm, height: TSizes.shimmerSx),
+                    TShimmerEffect(width: TSizes.shimmerLg, height: TSizes.shimmerSx),
+                    TShimmerEffect(width: TSizes.shimmerSm, height: TSizes.shimmerSx),
                   ],
                 ),
                 const SizedBox(height: TSizes.sm),

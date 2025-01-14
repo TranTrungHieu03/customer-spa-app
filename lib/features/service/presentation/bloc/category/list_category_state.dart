@@ -6,6 +6,7 @@ sealed class ListCategoryState {}
 final class ListCategoryInitial extends ListCategoryState {}
 
 class ListCategoryLoading extends ListCategoryState {}
+
 class ListCategoryEmpty extends ListCategoryState {}
 
 class ListCategoryLoaded extends ListCategoryState {

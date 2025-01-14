@@ -20,12 +20,7 @@ class LoginWithFacebookParams {
   final String phone;
   final String role;
 
-  LoginWithFacebookParams(
-      {required this.email,
-      required this.role,
-      required this.userName,
-      required this.imageUrl,
-      required this.phone});
+  LoginWithFacebookParams({required this.email, required this.role, required this.userName, required this.imageUrl, required this.phone});
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

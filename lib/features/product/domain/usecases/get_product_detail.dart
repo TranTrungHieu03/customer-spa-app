@@ -10,8 +10,7 @@ class GetProductDetail implements UseCase<Either, GetProductDetailParams> {
   GetProductDetail(this._productRepository);
 
   @override
-  Future<Either<Failure, ProductModel>> call(
-      GetProductDetailParams params) async {
+  Future<Either<Failure, ProductModel>> call(GetProductDetailParams params) async {
     return await _productRepository.getProduct(params.productId);
   }
 }

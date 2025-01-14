@@ -26,10 +26,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
           leadingIcon: Iconsax.arrow_left,
           title: Text(
             "Lịch sử đặt lịch",
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .apply(color: TColors.black),
+            style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
           ),
         ),
         body: NestedScrollView(
@@ -53,13 +50,8 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                   flexibleSpace: const Padding(
                     padding: EdgeInsets.all(TSizes.defaultSpace),
                   ),
-                  backgroundColor: THelperFunctions.isDarkMode(context)
-                      ? TColors.black
-                      : TColors.white,
-                  bottom: TTabBar(
-                      tabs: ["Upcoming", "Done", "Cancel"]
-                          .map((category) => Tab(child: Text(category)))
-                          .toList()))
+                  backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
+                  bottom: TTabBar(tabs: ["Upcoming", "Done", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
             ];
           },
         ),
