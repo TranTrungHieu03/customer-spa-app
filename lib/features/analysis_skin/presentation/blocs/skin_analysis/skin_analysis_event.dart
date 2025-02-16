@@ -9,4 +9,8 @@ final class AnalysisViaImageEvent extends SkinAnalysisEvent {
   AnalysisViaImageEvent(this.params);
 }
 
-final class AnalysisViaFormEvent extends SkinAnalysisEvent {}
+final class AnalysisViaFormEvent extends SkinAnalysisEvent {
+  final SkinAnalysisViaFormParams params;
+
+  AnalysisViaFormEvent(this.params);
+}

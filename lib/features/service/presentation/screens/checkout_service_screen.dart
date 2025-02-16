@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/date_picker.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -10,34 +13,62 @@ import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/time_picker.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/bottom_checkout_service.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/payment_detail_service.dart';
 
-// cho nhap dia chi xong rcm branch gan do va km
 class CheckoutServiceScreen extends StatefulWidget {
-  const CheckoutServiceScreen({super.key, required this.service});
+  const CheckoutServiceScreen({super.key, required this.services});
 
-  final ServiceModel service;
+  final List<ServiceModel> services;
 
   @override
   State<CheckoutServiceScreen> createState() => _CheckoutServiceScreenState();
 }
 
 class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
+  int? selectedBranch;
+  BranchModel? branchInfo;
+  int? selectedStaffId;
+  StaffModel? staffInfo;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
+    context.read<ListBranchesBloc>().add(GetListBranchesEvent());
+    context.read<ListStaffBloc>().add(GetListStaffEvent(id: int.parse(branchId) ?? 1));
+
+    branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
+    setState(() {
+      selectedBranch = int.parse(branchId ?? "1");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final service = widget.service;
-    String? selectedValue;
+    final services = widget.services;
+    List<int> staffLists = List.filled(services.length, 0);
+    List<int> servicesList = services.map((e) => e.serviceId).toList();
+
+    double total = services.fold(0, (previousValue, element) => previousValue + element.price);
+
     DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
 
     TimeOfDay selectedTime = TimeOfDay.now();
@@ -48,10 +79,10 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
         if (state is AppointmentError) {
           TSnackBar.errorSnackBar(context, message: state.message);
         }
-        if (state is AppointmentCreateSuccess) {
-          goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
-              () => goBookingDetail(state.appointment.appointmentId), TImages.success);
-        }
+        // if (state is AppointmentCreateSuccess) {
+        //   goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
+        //       () => goBookingDetail(state.appointment.appointmentId), TImages.success);
+        // }
       },
       builder: (context, state) {
         return Scaffold(
@@ -64,158 +95,316 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          const TRoundedIcon(icon: Iconsax.location),
-                          Text(
-                            "Update my location",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                      Text(
-                        "Branch Address",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: THelperFunctions.screenWidth(context),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              // Giới hạn không gian để mũi tên không tràn
-                              child: DropdownButtonFormField<String>(
-                                value: selectedValue,
-                                isDense: true,
-                                dropdownColor: TColors.white,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Iconsax.building),
-                                ),
-                                items: [
-                                  "147 Hoang Huu Nam Tan Phu Thu Duc (5km)",
-                                  "123 Le Thi Rieng, District 1 (7km)",
-                                  "456 Nguyen Thi Minh Khai, District 3 (9km)",
-                                ].map<DropdownMenuItem<String>>((String item) {
-                                  return DropdownMenuItem<String>(
-                                      value: item,
-                                      child: ConstrainedBox(
-                                        constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
-                                        child: Text(
-                                          item,
-                                          overflow: TextOverflow.ellipsis,
-                                          softWrap: true,
-                                          maxLines: 2,
-                                        ),
-                                      ));
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  selectedValue = newValue;
-                                },
+                      BlocConsumer<ListBranchesBloc, ListBranchesState>(
+                        listener: (context, state) {
+                          if (state is ListBranchesError) {
+                            TSnackBar.errorSnackBar(context, message: state.message);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is ListBranchesLoaded) {
+                            return TRoundedContainer(
+                              padding: const EdgeInsets.all(TSizes.sm),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Branch",
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(
+                                    width: TSizes.sm,
+                                  ),
+                                  Expanded(
+                                      child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        branchInfo?.branchName ?? "",
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                      ),
+                                      Text(
+                                        branchInfo?.branchAddress ?? "",
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  )),
+                                  TRoundedIcon(
+                                    icon: Iconsax.edit,
+                                    onPressed: () {
+                                      _showModalAddress(context, state.branches);
+                                    },
+                                  )
+                                ],
                               ),
+                            );
+                          }
+                          return TRoundedContainer(
+                            padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "All Branches ",
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                TRoundedIcon(
+                                  icon: Iconsax.filter_tick,
+                                  onPressed: () {
+                                    TSnackBar.warningSnackBar(context, message: "No branch available.");
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                       const SizedBox(
                         height: TSizes.md,
                       ),
-                      Text(
-                        AppLocalizations.of(context)!.service,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      TRoundedContainer(
-                        shadow: true,
-                        padding: const EdgeInsets.all(TSizes.sm),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: Row(
                               children: [
-                                TRoundedImage(
-                                  applyImageRadius: true,
-                                  imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
-                                  isNetworkImage: service.images.isNotEmpty,
-                                  width: THelperFunctions.screenWidth(context) * 0.2,
-                                  height: THelperFunctions.screenWidth(context) * 0.2,
-                                  fit: BoxFit.cover,
+                                Text(
+                                  "Date",
+                                  style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 const SizedBox(
-                                  width: TSizes.sm,
-                                ),
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
-                                  child: TProductTitleText(
-                                    title: service.name,
-                                    maxLines: 1,
-                                  ),
+                                  width: TSizes.md,
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: TSizes.sm,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "Duration: ",
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                                Text(service.duration)
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Steps: ",
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                                Text(service.steps),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: TSizes.md,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Select Day",
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              DatePickerWidget(
-                                onDateSelected: (value) {
-                                  selectedDate = value;
-                                  AppLogger.info("Ngày đã chọn: ${selectedDate.toIso8601String()}");
-                                },
-                                initialDate: selectedDate,
-                              ),
-                            ],
                           ),
-                          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text(
-                              "Select Time",
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            TimePickerWidget(
-                              onTimeSelected: (value) {
-                                selectedTime = value;
-                                AppLogger.info("Ngày đã chọn:$selectedDate $selectedTime");
+                          Expanded(
+                            flex: 6,
+                            child: DatePickerWidget(
+                              onDateSelected: (value) {
+                                selectedDate = value;
+                                AppLogger.info("Ngày đã chọn: ${selectedDate.toIso8601String()}");
                               },
-                              initialTime: selectedTime,
+                              initialDate: selectedDate,
                             ),
-                          ])
+                          ),
                         ],
                       ),
                       const SizedBox(
                         height: TSizes.md,
+                      ),
+                      Text(
+                        AppLocalizations.of(context)!.service + "  x${services.length}",
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+
+                      ListView.builder(
+                        itemCount: services.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final service = services[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: TSizes.md), // Khoảng cách giữa các item
+                            child: TRoundedContainer(
+                              shadow: true,
+                              padding: const EdgeInsets.all(TSizes.sm),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Hàng đầu tiên: Hình ảnh + Tiêu đề dịch vụ
+                                  Row(
+                                    children: [
+                                      TRoundedImage(
+                                        applyImageRadius: true,
+                                        imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
+                                        isNetworkImage: service.images.isNotEmpty,
+                                        width: THelperFunctions.screenWidth(context) * 0.2,
+                                        height: THelperFunctions.screenWidth(context) * 0.2,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      const SizedBox(width: TSizes.sm),
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
+                                        child: TProductTitleText(
+                                          title: service.name,
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: TSizes.sm),
+
+                                  // Hàng thứ hai: Chọn nhân viên
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 4, // Chữ "Staff" chiếm 4 phần
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Staff",
+                                              style: Theme.of(context).textTheme.titleMedium,
+                                            ),
+                                            const SizedBox(width: TSizes.sm),
+                                            GestureDetector(
+                                              child: const Icon(
+                                                Iconsax.info_circle,
+                                                size: 20,
+                                                color: Colors.grey,
+                                              ),
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  shape: const RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.sm)),
+                                                  ),
+                                                  builder: (context) {
+                                                    return const Padding(
+                                                      padding: EdgeInsets.all(TSizes.sm),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(
+                                                            "Nếu bạn muốn nhân viên được chỉ định làm, thời gian có thể thay đổi",
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 6, // Phần chọn nhân viên chiếm 6 phần
+                                        child: BlocConsumer<ListStaffBloc, ListStaffState>(
+                                          listener: (context, state) {
+                                            if (state is ListStaffError) {
+                                              TSnackBar.errorSnackBar(context, message: state.message);
+                                            }
+                                          },
+                                          builder: (context, state) {
+                                            if (state is ListStaffEmpty) {
+                                              return const Text("No staff available");
+                                            } else if (state is ListStaffLoaded) {
+                                              final staffs = state.listStaff;
+                                              return TRoundedContainer(
+                                                padding: const EdgeInsets.all(TSizes.sm * 1.5),
+                                                showBorder: true,
+                                                borderColor: Colors.black12,
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Text(
+                                                        staffs[0].staffInfo.userName,
+                                                        style: Theme.of(context).textTheme.bodyMedium,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: TSizes.md),
+                                                    GestureDetector(
+                                                      child: const Icon(
+                                                        Iconsax.arrow_down_1,
+                                                        size: 20,
+                                                      ),
+                                                      onTap: () {
+                                                        _showModalStaff(context, staffs);
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                            return const SizedBox();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: TSizes.sm),
+
+                                  // Hàng thứ ba: Chọn thời gian
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 4, // Chữ "Time" chiếm 4 phần
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              "Time",
+                                              style: Theme.of(context).textTheme.titleMedium,
+                                            ),
+                                            const SizedBox(width: TSizes.sm),
+                                            GestureDetector(
+                                              child: const Icon(
+                                                Iconsax.info_circle,
+                                                size: 20,
+                                                color: Colors.grey,
+                                              ),
+                                              onTap: () {
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  shape: const RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.sm)),
+                                                  ),
+                                                  builder: (context) {
+                                                    return Padding(
+                                                      padding: const EdgeInsets.all(TSizes.sm),
+                                                      child: Column(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(
+                                                            "Nếu bạn muốn nhân viên được chỉ định làm, thời gian có thể thay đổi",
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 6, // Phần chọn thời gian chiếm 6 phần
+                                        child: TimePickerWidget(
+                                          onTimeSelected: (value) {
+                                            int hour = value.hour;
+
+                                            // Kiểm tra nếu chọn giờ từ 22h - 7h59 thì không cho phép
+                                            if (hour >= 22 || hour < 8) {
+                                              TSnackBar.warningSnackBar(context, message: "Vui lòng chọn thời gian từ 08:00 đến 21:59");
+                                              value = selectedTime;
+                                            } else {
+                                              selectedTime = value;
+                                              AppLogger.info("Ngày đã chọn: $selectedDate $selectedTime");
+                                            }
+                                          },
+                                          initialTime: selectedTime,
+                                        ),
+                                      )
+
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       Text(
                         "Payment Methods",
@@ -263,8 +452,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                       const SizedBox(
                         height: TSizes.md,
                       ),
-                      TPaymentDetailService(
-                          price: service.price.toString(), tips: tips.toString(), total: (tips + service.price).toString()),
+                      TPaymentDetailService(price: total.toString(), total:total.toString()),
                     ],
                   ),
                 ),
@@ -273,13 +461,13 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
             ],
           ),
           bottomNavigationBar: TBottomCheckoutService(
-              price: (tips + service.price).toString(),
+              price: total.toString(),
               onPressed: () {
                 context.read<AppointmentBloc>().add(CreateAppointmentEvent(CreateAppointmentParams(
                     customerId: 1,
-                    staffId: 1,
-                    serviceId: service.serviceId,
-                    branchId: 2,
+                    staffId: staffLists,
+                    serviceId: servicesList,
+                    branchId: selectedBranch ?? 1,
                     appointmentsTime: combineDateTime(selectedDate, selectedTime),
                     notes: "")));
               }),
@@ -381,5 +569,237 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
         ),
       ),
     );
+  }
+
+  void _showModalAddress(BuildContext context, List<BranchModel> branches) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: TSizes.md,
+              right: TSizes.md,
+              top: TSizes.sm,
+              bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.md,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Branch',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: TSizes.sm),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: branches.length,
+                  itemBuilder: (context, index) {
+                    final branch = branches[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(TSizes.xs / 4),
+                      child: Row(
+                        children: [
+                          Radio<int>(
+                            value: branch.branchId,
+                            activeColor: TColors.primary,
+                            groupValue: selectedBranch,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedBranch = value;
+                              });
+                              AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
+                            },
+                          ),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                            ),
+                            child: Text(
+                              branch.branchName,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: TSizes.md),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (selectedBranch != null) {
+                          await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
+                          await LocalStorage.saveData(
+                              LocalStorageKey.branchInfo, jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
+                          setState(() {
+                            branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
+                          });
+                          AppLogger.info(selectedBranch);
+                          Navigator.pop(context, branchInfo);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+                      ),
+                      child: Text(
+                        "Set as default",
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    ).then((selectedBranchInfo) {
+      if (selectedBranchInfo != null) {
+        setState(() {
+          branchInfo = selectedBranchInfo;
+        });
+      } else {
+        setState(() {
+          branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
+        });
+      }
+    });
+  }
+
+  void _showModalStaff(BuildContext context, List<StaffModel> staffs) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
+      ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              left: TSizes.md,
+              right: TSizes.md,
+              top: TSizes.sm,
+              bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.md,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Staffs',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: TSizes.sm),
+                Row(
+                  children: [
+                    Radio<int>(
+                      value: 0,
+                      activeColor: TColors.primary,
+                      groupValue: selectedBranch,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedBranch = value;
+                        });
+                        AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
+                      },
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                      ),
+                      child: Text(
+                        "Random Staff",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: staffs.length,
+                  itemBuilder: (context, index) {
+                    final staff = staffs[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(TSizes.xs / 4),
+                      child: Row(
+                        children: [
+                          Radio<int>(
+                            value: staff.staffId,
+                            activeColor: TColors.primary,
+                            groupValue: selectedBranch,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedBranch = value;
+                              });
+                              AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
+                            },
+                          ),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                            ),
+                            child: Text(
+                              staff.staffInfo.fullName ?? staff.staffInfo.userName,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: TSizes.md),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        if (selectedBranch != null) {
+                          // await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
+                          // await LocalStorage.saveData(
+                          //     LocalStorageKey.branchInfo, jsonEncode(staffs.where((e) => e.branchId == selectedBranch).first));
+                          // setState(() {
+                          //   branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
+                          // });
+                          AppLogger.info(selectedBranch);
+                          Navigator.pop(context, branchInfo);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+                      ),
+                      child: Text(
+                        "Set as default",
+                        style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    ).then((selectedStaffInfo) {
+      if (selectedStaffInfo != null) {
+        setState(() {
+          branchInfo = selectedStaffInfo;
+        });
+      } else {
+        setState(() {
+          // branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
+        });
+      }
+    });
   }
 }

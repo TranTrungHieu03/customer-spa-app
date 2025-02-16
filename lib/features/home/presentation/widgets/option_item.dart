@@ -18,7 +18,7 @@ class TOptionItem extends StatefulWidget {
   final IconData icon;
   final String title;
   final bool isChoose;
-  final int value;
+  final dynamic value;
   final VoidCallback onPressed;
 
   @override
@@ -71,7 +71,7 @@ class _TOptionItemState extends State<TOptionItem> {
                   constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
                   child: Text(
                     widget.title,
-                    style: Theme.of(context).textTheme.labelLarge,
+                    style: Theme.of(context).textTheme.bodyMedium,
                     softWrap: true,
                   ),
                 ),

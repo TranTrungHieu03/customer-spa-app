@@ -8,3 +8,9 @@ class UpdateSkinHealthEvent extends FormDataSkinEvent {
 
   UpdateSkinHealthEvent(this.values);
 }
+
+class SubmitSkinHealthEvent extends FormDataSkinEvent {
+  final SkinHealthModel values;
+
+  SubmitSkinHealthEvent(this.values);
+}

@@ -16,8 +16,10 @@ class TFormItemPage extends StatefulWidget {
     this.isText = false,
     this.isMultiChoice = false,
     this.children = const SizedBox(),
-    required this.answerValue,
+    this.answerValue = -1,
     required this.onChanged,
+    this.answerValues = const [],
+    this.formController,
   });
 
   final PageController pageController;
@@ -26,24 +28,35 @@ class TFormItemPage extends StatefulWidget {
   final Widget children;
   final bool isMultiChoice, isText;
   final int answerValue;
+  final List<String> answerValues;
+  final TextEditingController? formController;
 
-  final Function(int) onChanged;
+  final Function(Set<dynamic>) onChanged;
 
   @override
   State<TFormItemPage> createState() => _TFormItemPageState();
 }
 
 class _TFormItemPageState extends State<TFormItemPage> {
-  late Set<int> _selectedAnswers;
+  late Set<int> _selectedIntAnswers;
+  late Set<String> _selectedStringAnswers;
 
   @override
   void initState() {
     super.initState();
-    _selectedAnswers = {widget.answerValue};
+
+    if (widget.isMultiChoice) {
+      _selectedStringAnswers = {...widget.answerValues};
+    } else {
+      _selectedIntAnswers = {widget.answerValue};
+      _selectedIntAnswers.removeWhere((e) => e < 0);
+
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final selectedAnswers = widget.isMultiChoice ? _selectedStringAnswers : _selectedIntAnswers;
     return Scaffold(
       appBar: TAppbar(
         leadingIcon: Iconsax.arrow_left,
@@ -72,23 +85,29 @@ class _TFormItemPageState extends State<TFormItemPage> {
                           return TOptionItem(
                             icon: Iconsax.gallery,
                             title: ans.title,
-                            isChoose: _selectedAnswers.contains(ans.value),
+                            isChoose: selectedAnswers.contains(ans.value),
                             value: ans.value,
                             onPressed: () {
                               setState(() {
                                 if (widget.isMultiChoice) {
-                                  if (_selectedAnswers.contains(ans.value)) {
-                                    _selectedAnswers.remove(ans.value);
+                                  if (ans.value == "none" || ans.value == "unknown") {
+                                    selectedAnswers.clear();
+                                    selectedAnswers.add(ans.value);
+                                  } else if (selectedAnswers.contains(ans.value)) {
+                                    selectedAnswers.remove(ans.value);
                                   } else {
-                                    _selectedAnswers.add(ans.value);
+                                    selectedAnswers.contains("none") || selectedAnswers.contains("unknown")
+                                        ? selectedAnswers.clear()
+                                        : () {};
+                                    selectedAnswers.add(ans.value);
                                   }
                                 } else {
-                                  _selectedAnswers.clear();
-                                  _selectedAnswers.add(ans.value);
+                                  selectedAnswers.clear();
+                                  selectedAnswers.add(ans.value);
                                 }
                               });
-                              AppLogger.info(_selectedAnswers);
-                              widget.onChanged(ans.value);
+                              AppLogger.debug(selectedAnswers);
+                              widget.onChanged(selectedAnswers);
                             },
                           );
                         }).toList(),
@@ -96,7 +115,10 @@ class _TFormItemPageState extends State<TFormItemPage> {
                     : const SizedBox.shrink(),
             widget.isText ? const Spacer() : const SizedBox(),
             const SizedBox(height: TSizes.lg),
-            FormNextBtn(pageController: widget.pageController),
+            FormNextBtn(
+              pageController: widget.pageController,
+              isHasValue: selectedAnswers.isNotEmpty,
+            ),
             const SizedBox(height: TSizes.sm),
           ],
         ),

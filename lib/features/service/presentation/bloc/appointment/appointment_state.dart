@@ -16,7 +16,7 @@ final class AppointmentLoaded extends AppointmentState {
 }
 
 final class AppointmentCreateSuccess extends AppointmentState {
-  final AppointmentModel appointment;
+  final List<AppointmentModel> appointment;
 
   const AppointmentCreateSuccess(this.appointment);
 }

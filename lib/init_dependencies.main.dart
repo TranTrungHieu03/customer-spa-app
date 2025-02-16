@@ -99,16 +99,26 @@ Future<void> _initService() async {
   serviceLocator
     //data src
     ..registerFactory<ServiceRemoteDataSrc>(() => ServiceRemoteDataSrcImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<BranchRemoteDataSource>(() => BranchRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<StaffRemoteDataSource>(() => StaffRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+
     //repo
     ..registerFactory<ServiceRepository>(
         () => ServiceRepositoryImpl(serviceLocator<ServiceRemoteDataSrc>(), serviceLocator<ConnectionChecker>()))
+    ..registerFactory<BranchRepository>(() => BranchRepositoryImpl(serviceLocator<BranchRemoteDataSource>()))
+    ..registerFactory<StaffRepository>(() => StaffRepositoryImpl(serviceLocator<StaffRemoteDataSource>()))
+
     //use case
     ..registerLazySingleton(() => GetListService(serviceLocator()))
     ..registerLazySingleton(() => GetServiceDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetListBranches(serviceLocator()))
+    ..registerLazySingleton(() => GetListStaff(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
-    ..registerLazySingleton(() => ListServiceBloc(serviceLocator()));
+    ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
+    ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator()))
+    ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));
 }
 
 Future<void> _initCategory() async {
@@ -123,7 +133,7 @@ Future<void> _initCategory() async {
     ..registerLazySingleton(() => GetListCategories(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => ListCategoryBloc(serviceLocator()));
+    ..registerLazySingleton(() => ListCategoryBloc(getListCategories: serviceLocator()));
 }
 
 Future<void> _initAppointment() async {
@@ -137,9 +147,11 @@ Future<void> _initAppointment() async {
     //use case
     ..registerLazySingleton(() => GetAppointment(serviceLocator()))
     ..registerLazySingleton(() => CreateAppointment(serviceLocator()))
+    ..registerLazySingleton(() => GetListAppointment(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => AppointmentBloc(getAppointment: serviceLocator(), createAppointment: serviceLocator()));
+    ..registerLazySingleton(() => AppointmentBloc(getAppointment: serviceLocator(), createAppointment: serviceLocator()))
+    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator()));
 }
 
 Future<void> _initAiChat() async {
@@ -167,7 +179,8 @@ Future<void> _initSkinAnalysis() async {
         ))
     //use case
     ..registerLazySingleton(() => SkinAnalysisViaImage(serviceLocator()))
+    ..registerLazySingleton(() => SkinAnalysisViaForm(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()));
+    ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()));
 }

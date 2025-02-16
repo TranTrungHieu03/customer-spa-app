@@ -41,7 +41,8 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
       );
 
       if (image != null) {
-        emit(ImagePicked(image.path));
+        final File file = File(image.path);
+        emit(ImagePicked(file));
       } else {
         emit(ImageInvalid("No image selected."));
       }
@@ -54,7 +55,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
     try {
       emit(ImageLoading());
 
-      final File file = File(event.imagePath);
+      final File file = event.image;
 
       final String extension = file.path.split('.').last.toLowerCase();
       if (extension != 'jpg' && extension != 'jpeg') {
@@ -87,16 +88,20 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
           height: 4096,
         );
 
-        final croppedImageFile = File('${event.imagePath}_cropped.jpg');
+        final croppedImageFile = File('${event.image}_cropped.jpg');
         await croppedImageFile.writeAsBytes(img.encodeJpg(croppedImage));
         AppLogger.debug("${croppedImage.width} and ${croppedImage.height}");
-        emit(ImageValid(croppedImageFile.path));
+        if (!await croppedImageFile.exists()) {
+          emit(ImageInvalid("Cropped image file does not exist."));
+          return;
+        }
+        emit(ImageValid(croppedImageFile));
         // emit(ImageInvalid(
         //     "Image resolution is too large. Maximum allowed resolution is 4096x4096 pixels."));
         return;
       }
 
-      emit(ImageValid(event.imagePath));
+      emit(ImageValid(event.image));
     } catch (e) {
       emit(ImageInvalid("Validation error: $e"));
     }

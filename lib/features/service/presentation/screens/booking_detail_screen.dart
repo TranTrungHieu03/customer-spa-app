@@ -117,7 +117,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     height: TSizes.md,
                   ),
                   TPaymentDetailService(
-                      price: appointment.service!.price.toString(), tips: 0.toString(), total: (0 + appointment.service!.price).toString()),
+                      price: appointment.service!.price.toString(),  total: (0 + appointment.service!.price).toString()),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

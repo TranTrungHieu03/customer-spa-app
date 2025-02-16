@@ -1,5 +1,5 @@
 class Blackhead {
-  final int value;
+  int value;
   final double confidence;
 
   Blackhead({

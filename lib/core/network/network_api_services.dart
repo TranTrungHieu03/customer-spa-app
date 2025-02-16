@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/base_api_services.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/service/auth_service.dart';
 
 /// Class for handling network API requests.
@@ -51,25 +52,44 @@ class NetworkApiService implements BaseApiServices {
                 AppLogger.warning("==> Retry Request with new token: $newToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
               }
 
+              // final response = options.data is FormData
+              //     ? await _dio.request(
+              //         options.path,
+              //         options: Options(
+              //           method: options.method,
+              //           headers: {...options.headers, "Content-Type": "multipart/form-data"},
+              //         ),
+              //         data: FormData.fromMap(Map.fromEntries((options.data as FormData).fields)),
+              //         queryParameters: options.queryParameters,
+              //       )
+              //     : await _dio.request(
+              //         options.path,
+              //         options: Options(
+              //           method: options.method,
+              //           headers: options.headers,
+              //         ),
+              //         data: options.data,
+              //         queryParameters: options.queryParameters,
+              //       );
               final response = options.data is FormData
                   ? await _dio.request(
-                      options.path,
-                      options: Options(
-                        method: options.method,
-                        headers: {...options.headers, "Content-Type": "multipart/form-data"},
-                      ),
-                      data: FormData.fromMap(Map.fromEntries((options.data as FormData).fields)),
-                      queryParameters: options.queryParameters,
-                    )
+                options.path,
+                options: Options(
+                  method: options.method,
+                  headers: options.headers,
+                ),
+                data: options.data, // Giữ nguyên FormData
+                queryParameters: options.queryParameters,
+              )
                   : await _dio.request(
-                      options.path,
-                      options: Options(
-                        method: options.method,
-                        headers: options.headers,
-                      ),
-                      data: options.data,
-                      queryParameters: options.queryParameters,
-                    );
+                options.path,
+                options: Options(
+                  method: options.method,
+                  headers: options.headers,
+                ),
+                data: options.data,
+                queryParameters: options.queryParameters,
+              );
               return handler.resolve(response);
             }
           }
@@ -83,19 +103,23 @@ class NetworkApiService implements BaseApiServices {
     try {
       final response = await _dio.get('/Auth/refresh-token');
       final newToken = response.data['result']['data'] as String?;
-      if (kDebugMode) {
-        AppLogger.info("==> Request Refresh Token");
-        AppLogger.info("New Token: $newToken");
-      }
       if (newToken != null) {
         await authService.saveToken(newToken);
+        _cachedToken = newToken;
+        return newToken;
       }
-      return newToken;
     } catch (e) {
       AppLogger.info('Failed to refresh token: $e');
-      return null;
+      _handleSessionExpired();
     }
+    return null;
   }
+
+  void _handleSessionExpired() {
+    AppLogger.info('Session expired. Redirecting to login...');
+    goLoginNotBack();
+  }
+
 
   /// Sends a GET request to the specified [url] and returns the response.
   ///
@@ -109,7 +133,7 @@ class NetworkApiService implements BaseApiServices {
       responseJson = returnResponse(response);
 
       if (kDebugMode) {
-        AppLogger.debug(responseJson);
+        // AppLogger.debug(responseJson);
       }
       return responseJson;
     } on DioException catch (e) {
@@ -135,10 +159,18 @@ class NetworkApiService implements BaseApiServices {
     dynamic responseJson;
     try {
       AppLogger.debug("1######### ${data is FormData}");
-      final Response response = data is FormData
-          ? await _dio.post(url, data: data, options: Options(headers: {'Content-Type': 'multipart/form-data'}))
-          : await _dio.post(url, data: data);
+      if (data is FormData) {
+        AppLogger.debug("FormData fields: ${data.fields}");
+        AppLogger.debug("FormData files: ${data.files}");
+      }
+      // final Options? options = data is FormData
+      //     ? Options(headers: {'Content-Type': 'multipart/form-data'})
+      //     : null;
 
+      final Response response = await _dio.post(
+        url,
+        data: data,
+      );
       responseJson = returnResponse(response);
       if (kDebugMode) {
         AppLogger.debug(responseJson);

@@ -8,21 +8,21 @@ final class ImageInitial extends ImageState {}
 final class ImageLoading extends ImageState {}
 
 final class ImagePicked extends ImageState {
-  final String imagePath;
+  final File image;
 
-  ImagePicked(this.imagePath);
+  ImagePicked(this.image);
 }
 
 final class ImageValid extends ImageState {
-  final String imagePath;
+  final File image;
 
-  ImageValid(this.imagePath);
+  ImageValid(this.image);
 }
 
 final class ImageCrop extends ImageState {
-  final String imagePath;
+  final File image;
 
-  ImageCrop(this.imagePath);
+  ImageCrop(this.image);
 }
 
 final class ImageInvalid extends ImageState {

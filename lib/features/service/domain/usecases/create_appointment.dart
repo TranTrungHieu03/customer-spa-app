@@ -10,15 +10,15 @@ class CreateAppointment implements UseCase<Either, CreateAppointmentParams> {
   CreateAppointment(this._appointmentRepository);
 
   @override
-  Future<Either<Failure, AppointmentModel>> call(CreateAppointmentParams params) async {
+  Future<Either<Failure, List<AppointmentModel>>> call(CreateAppointmentParams params) async {
     return await _appointmentRepository.createAppointment(params);
   }
 }
 
 class CreateAppointmentParams {
   final int customerId;
-  final int staffId;
-  final int serviceId;
+  final List<int> staffId;
+  final List<int> serviceId;
   final int branchId;
   final DateTime appointmentsTime;
   final String notes;

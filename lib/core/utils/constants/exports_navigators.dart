@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/screens/success_screen.dart';
@@ -31,6 +33,7 @@ import 'package:spa_mobile/features/service/presentation/screens/booking_detail_
 import 'package:spa_mobile/features/service/presentation/screens/booking_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/checkout_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/feedback_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/qr_code_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_history_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';

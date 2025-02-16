@@ -6,6 +6,7 @@ import 'package:spa_mobile/features/service/data/datasources/service_remote_data
 import 'package:spa_mobile/features/service/data/model/list_service_model.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/service_repository.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
 
 class ServiceRepositoryImpl implements ServiceRepository {
@@ -28,9 +29,22 @@ class ServiceRepositoryImpl implements ServiceRepository {
   }
 
   @override
-  Future<Either<Failure, ListServiceModel>> getServices(int param) async {
+  Future<Either<Failure, ListServiceModel>> getServices(GetListServiceParams param) async {
     try {
       ListServiceModel result = await _serviceRemoteDataSrc.getServices(param);
+
+      return right(result);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ListServiceModel>> getServicesByBranch(GetListServiceParams param) async {
+    try {
+      ListServiceModel result = await _serviceRemoteDataSrc.getServicesByBranch(param);
 
       return right(result);
     } on AppException catch (e) {

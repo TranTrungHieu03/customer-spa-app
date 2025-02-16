@@ -5,6 +5,7 @@ import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/appointment_repository.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 
 class AppointmentRepositoryImpl extends AppointmentRepository {
   final AppointmentRemoteDataSource _appointmentRemoteDataSource;
@@ -12,9 +13,9 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   AppointmentRepositoryImpl(this._appointmentRemoteDataSource);
 
   @override
-  Future<Either<Failure, AppointmentModel>> createAppointment(CreateAppointmentParams params) async {
+  Future<Either<Failure, List<AppointmentModel>>> createAppointment(CreateAppointmentParams params) async {
     try {
-      AppointmentModel response = await _appointmentRemoteDataSource.createAppointment(params);
+      List<AppointmentModel> response = await _appointmentRemoteDataSource.createAppointment(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));
@@ -25,6 +26,16 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   Future<Either<Failure, AppointmentModel>> getAppointment(GetAppointmentParams params) async {
     try {
       AppointmentModel response = await _appointmentRemoteDataSource.getAppointment(params);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<AppointmentModel>>> getHistoryBooking(GetListAppointmentParams params) async {
+    try {
+      List<AppointmentModel> response = await _appointmentRemoteDataSource.getHistoryBooking(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

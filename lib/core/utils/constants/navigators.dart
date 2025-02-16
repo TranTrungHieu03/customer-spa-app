@@ -130,7 +130,7 @@ goServiceBooking(ServiceModel service) async {
 }
 
 goServiceCheckout(ServiceModel service) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(service: service)));
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: [service,service])));
 }
 
 goVerify(String email, int statePage) async {
@@ -158,7 +158,7 @@ goStatusService(String title, String content, Widget value, String image, Color 
           builder: (context) => StatusServiceScreen(title: title, content: content, value: value, image: image, color: color)));
 }
 
-goImageReview(String image) async {
+goImageReview(File image) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
@@ -175,7 +175,7 @@ goOnboarding() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const OnBoardingScreen()));
 }
 
-goSkinAnalysing(String imagePath) async {
+goSkinAnalysing(File imagePath) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperAnalysingImageScreen(imagePath: imagePath)));
 }
 
@@ -185,4 +185,8 @@ goSkinResult() async {
 
 goWebView(String url) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WebViewScreen(url: url)));
+}
+
+goQrCode(String id, DateTime time) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => QrCodeScreen(id: id, time: time)));
 }

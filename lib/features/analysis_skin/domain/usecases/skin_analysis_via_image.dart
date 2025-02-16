@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/analysis_response_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/repositories/skin_analysis_repository.dart';
@@ -17,13 +20,18 @@ class SkinAnalysisViaImage implements UseCase<Either, SkinAnalysisViaImageParams
 }
 
 class SkinAnalysisViaImageParams {
-  final String path;
+  final File path;
 
   SkinAnalysisViaImageParams(this.path);
 
   Future<FormData> toFormData() async {
+    AppLogger.info("Path: ${path.path}");
     return FormData.fromMap({
-      "file": await MultipartFile.fromFile(path),
+      "file": await MultipartFile.fromFile(
+        path.path,
+        filename: path.path.split('/').last,
+        contentType: DioMediaType("image", "jpeg"),
+      ),
     });
   }
 }

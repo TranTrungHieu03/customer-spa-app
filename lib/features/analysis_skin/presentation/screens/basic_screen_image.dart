@@ -13,7 +13,7 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image
 class BasicScreenImage extends StatefulWidget {
   const BasicScreenImage({super.key, required this.image});
 
-  final String image;
+  final File image;
 
   @override
   State<BasicScreenImage> createState() => _BasicScreenImageState();
@@ -30,7 +30,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
             TSnackBar.warningSnackBar(context, message: state.error);
             // goHome();
           } else if (state is ImageValid) {
-            goSkinAnalysing(state.imagePath);
+            goSkinAnalysing(state.image);
           } else if (state is ImageLoading) {
             const TLoader();
           }
@@ -58,8 +58,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(TSizes.md),
                           child: Image.file(
-                            File(state.imagePath),
-                            fit: BoxFit.cover,
+                            state.image, fit: BoxFit.cover,
                           ))),
                 ),
                 const SizedBox(height: TSizes.md),
@@ -67,7 +66,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
                   width: THelperFunctions.screenWidth(context) * 0.5,
                   child: ElevatedButton(
                     onPressed: () {
-                      context.read<ImageBloc>().add(ValidateImageEvent(state.imagePath));
+                      context.read<ImageBloc>().add(ValidateImageEvent(state.image));
                     },
                     child: Text(AppLocalizations.of(context)!.submit),
                   ),

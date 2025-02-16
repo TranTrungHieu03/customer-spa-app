@@ -80,4 +80,12 @@ class TValidator {
 
     return null;
   }
+
+  static String? validateNumber(int value) {
+    if (value < 0) {
+      return 'Number must be greater than 0';
+    }
+
+    return null;
+  }
 }

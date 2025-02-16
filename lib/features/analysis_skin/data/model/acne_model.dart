@@ -8,7 +8,11 @@ class AcneModel extends Acne {
   factory AcneModel.fromJson(Map<String, dynamic> json) {
     AppLogger.info("fromJson AcneModel $json");
     return AcneModel(
-        rectangle: List<RectangleModel>.from(json["rectangle"].map((x) => RectangleModel.fromJson(x))), length: json["length"]);
+      rectangle: json["rectangle"] == null || json["rectangle"] is! List
+          ? []
+          : List<RectangleModel>.from(json["rectangle"].map((x) => RectangleModel.fromJson(x))),
+      length: json["length"] ?? 0,
+    );
   }
 
   Map<String, dynamic> toJson() => {"rectangle": List<dynamic>.from(rectangle.map((x) => x.toJson())), "length": length};

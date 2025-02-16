@@ -90,6 +90,8 @@ dependencies:
   #  payment
   webview_flutter: ^4.8.0
   fl_chart: ^0.70.1
+  #qr code
+  qr_flutter: ^4.1.0
 
 
 dev_dependencies:

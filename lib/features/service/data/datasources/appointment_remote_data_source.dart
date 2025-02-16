@@ -5,11 +5,14 @@ import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 
 abstract class AppointmentRemoteDataSource {
   Future<AppointmentModel> getAppointment(GetAppointmentParams params);
 
-  Future<AppointmentModel> createAppointment(CreateAppointmentParams params);
+  Future<List<AppointmentModel>> createAppointment(CreateAppointmentParams params);
+
+  Future<List<AppointmentModel>> getHistoryBooking(GetListAppointmentParams params);
 }
 
 class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
@@ -18,15 +21,14 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   AppointmentRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<AppointmentModel> createAppointment(CreateAppointmentParams params) async {
+  Future<List<AppointmentModel>> createAppointment(CreateAppointmentParams params) async {
     try {
       final response = await _apiService.postApi('/Appointments/create', params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        AppLogger.info("########## ${apiResponse.result!.data!}");
-        return AppointmentModel.fromJson(apiResponse.result!.data!);
+        return (apiResponse.result!.data as List).map((e) => AppointmentModel.fromJson(e)).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }
@@ -45,6 +47,24 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
 
       if (apiResponse.success) {
         return AppointmentModel.fromJson(apiResponse.result!.data!);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      AppLogger.info(e.toString());
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<AppointmentModel>> getHistoryBooking(GetListAppointmentParams params) async {
+    try {
+      final response = await _apiService.getApi('/Appointments/history-booking?page=${params.page}&status=${params.status}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((e) => AppointmentModel.fromJson(e)).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }

@@ -34,7 +34,7 @@ class FormAnswerModel extends FormAnswer {
   factory FormAnswerModel.fromJson(Map<String, dynamic> json) {
     return FormAnswerModel(
       title: json['title'] as String,
-      value: json['value'] as int,
+      value: json['value']  ,
     );
   }
 

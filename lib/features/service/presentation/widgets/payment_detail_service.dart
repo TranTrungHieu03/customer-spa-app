@@ -6,10 +6,9 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 
 class TPaymentDetailService extends StatelessWidget {
-  const TPaymentDetailService({super.key, required this.price, required this.tips, required this.total});
+  const TPaymentDetailService({super.key, required this.price, required this.total});
 
   final String price;
-  final String tips;
   final String total;
 
   @override
@@ -32,17 +31,6 @@ class TPaymentDetailService extends StatelessWidget {
                   Text(AppLocalizations.of(context)!.total_order_amount, style: Theme.of(context).textTheme.bodyMedium),
                   TProductPriceText(
                     price: price,
-                    isLarge: true,
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("Tips", style: Theme.of(context).textTheme.bodyMedium),
-                  TProductPriceText(
-                    price: tips,
                     isLarge: true,
                   )
                 ],

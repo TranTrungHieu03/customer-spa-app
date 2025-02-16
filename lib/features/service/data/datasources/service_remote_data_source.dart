@@ -3,10 +3,13 @@ import 'package:spa_mobile/core/network/network_api_services.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/service/data/model/list_service_model.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
 
 abstract class ServiceRemoteDataSrc {
-  Future<ListServiceModel> getServices(int param);
+  Future<ListServiceModel> getServices(GetListServiceParams param);
+
+  Future<ListServiceModel> getServicesByBranch(GetListServiceParams param);
 
   Future<ServiceModel> getServiceDetail(GetServiceDetailParams params);
 }
@@ -32,9 +35,27 @@ class ServiceRemoteDataSrcImpl extends ServiceRemoteDataSrc {
   }
 
   @override
-  Future<ListServiceModel> getServices(int param) async {
+  Future<ListServiceModel> getServices(GetListServiceParams param) async {
     try {
-      final response = await _apiServices.getApi('/Service/get-all-services?page=$param');
+      final response = await _apiServices.getApi('/Service/get-all-services?page=${param.page}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return ListServiceModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<ListServiceModel> getServicesByBranch(GetListServiceParams param) async {
+    try {
+      final response =
+          await _apiServices.getApi('/Service/get-all-services-for-branch?branchId=${param.branchId}&page=${param.page}&pageSize=10');
 
       final apiResponse = ApiResponse.fromJson(response);
 

@@ -14,7 +14,7 @@ class FormCollectData extends Equatable {
 
 class FormAnswer extends Equatable {
   final String title;
-  final int value;
+  final dynamic value;
 
   const FormAnswer({required this.title, required this.value});
 

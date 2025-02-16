@@ -6,7 +6,7 @@ sealed class ImageEvent {}
 final class PickImageEvent extends ImageEvent {}
 
 final class ValidateImageEvent extends ImageEvent {
-  final String imagePath;
+  final File image;
 
-  ValidateImageEvent(this.imagePath);
+  ValidateImageEvent(this.image);
 }

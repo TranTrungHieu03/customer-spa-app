@@ -9,10 +9,14 @@ final class ListServiceInitial extends ListServiceState {}
 
 class ListServiceEmpty extends ListServiceState {}
 
+class ListServiceChangeBranch extends ListServiceState {}
+
 class ListServiceLoading extends ListServiceState {
   final bool isLoadingMore;
+  final List<ServiceModel> services;
+  final PaginationModel pagination;
 
-  const ListServiceLoading({this.isLoadingMore = false});
+  const ListServiceLoading({required this.services, required this.pagination, this.isLoadingMore = false});
 }
 
 class ListServiceLoaded extends ListServiceState {

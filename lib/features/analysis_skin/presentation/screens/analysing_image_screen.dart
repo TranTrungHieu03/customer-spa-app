@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -5,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -15,12 +18,13 @@ import 'package:spa_mobile/init_dependencies.dart';
 class WrapperAnalysingImageScreen extends StatelessWidget {
   const WrapperAnalysingImageScreen({super.key, required this.imagePath});
 
-  final String imagePath;
+  final File imagePath;
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.info(imagePath);
     return BlocProvider<SkinAnalysisBloc>(
-      create: (context) => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator()),
+      create: (context) => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()),
       child: AnalysingImageScreen(imagePath: imagePath),
     );
   }
@@ -29,7 +33,7 @@ class WrapperAnalysingImageScreen extends StatelessWidget {
 class AnalysingImageScreen extends StatefulWidget {
   const AnalysingImageScreen({super.key, required this.imagePath});
 
-  final String imagePath;
+  final File imagePath;
 
   @override
   State<AnalysingImageScreen> createState() => _AnalysingImageScreenState();

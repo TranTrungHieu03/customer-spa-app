@@ -1,15 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/service/data/model/category_model.dart';
-import 'package:spa_mobile/features/service/domain/repository/category_repository.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_categories.dart';
 
 part 'list_category_event.dart';
 part 'list_category_state.dart';
 
 class ListCategoryBloc extends Bloc<ListCategoryEvent, ListCategoryState> {
-  final CategoryRepository _categoryRepository;
+  final GetListCategories _getListCategories;
 
-  ListCategoryBloc(this._categoryRepository) : super(ListCategoryInitial()) {
+  ListCategoryBloc({required GetListCategories getListCategories})
+      : _getListCategories = getListCategories,
+        super(ListCategoryInitial()) {
     on<GetListCategoriesEvent>(_onGetListCategories);
   }
 
@@ -19,7 +22,7 @@ class ListCategoryBloc extends Bloc<ListCategoryEvent, ListCategoryState> {
       return;
     } else {
       emit(ListCategoryLoading());
-      final result = await _categoryRepository.getListCategories();
+      final result = await _getListCategories(NoParams());
       result.fold((failure) => emit(ListCategoryError(failure.message)), (result) {
         if (result.isEmpty) {
           emit(ListCategoryEmpty());

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/acne_model.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/black_head_model.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 
 class THelperFunctions {
   static Color? getColor(String value) {
@@ -86,5 +90,64 @@ class THelperFunctions {
       wrappedList.add(Row(children: rowChildren));
     }
     return wrappedList;
+  }
+
+  static bool checkIsTrueSkinForm(dynamic model) {
+    if (model is AcneModel) {
+      return model.length > 0 || model.rectangle.isNotEmpty;
+    }
+    if (model is BlackheadModel) {
+      return model.value == 1;
+    }
+
+    return false;
+  }
+
+  static List<String> listAcneStatus(SkinHealthModel model) {
+    List<String> ans = [];
+
+    if (checkIsTrueSkinForm(model.acne)) {
+      ans.add("acne");
+    }
+    if (checkIsTrueSkinForm(model.closedComedones)) {
+      ans.add("closedComedones");
+    }
+    if (checkIsTrueSkinForm(model.blackhead)) {
+      ans.add("blackHead");
+    }
+    return ans;
+  }
+
+  static List<String> listWrinkleStatus(SkinHealthModel model) {
+    List<String> ans = [];
+
+    if (checkIsTrueSkinForm(model.crowsFeet)) {
+      ans.add("crowsFeet");
+    }
+    if (checkIsTrueSkinForm(model.eyeFinelines)) {
+      ans.add("eyeFinelines");
+    }
+    if (checkIsTrueSkinForm(model.glabellaWrinkle)) {
+      ans.add("glabellaWrinkle");
+    }
+    if (checkIsTrueSkinForm(model.glabellaWrinkle)) {
+      ans.add("nasolabialFold");
+    }
+    return ans;
+  }
+
+  static List<String> listEyeStatus(SkinHealthModel model) {
+    List<String> ans = [];
+
+    if (checkIsTrueSkinForm(model.eyePouch)) {
+      ans.add("eyePouch");
+      AppLogger.debug("eyePouch");
+    }
+    if (checkIsTrueSkinForm(model.darkCircle)) {
+      ans.add("darkCircle");
+      AppLogger.debug("darkCircle");
+    }
+
+    return ans;
   }
 }

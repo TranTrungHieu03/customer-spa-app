@@ -15,7 +15,7 @@ class FormSkinBloc extends Bloc<FormSkinEvent, FormSkinState> {
   }
 
   Future<void> _onNextPage(NextPageEvent event, Emitter<FormSkinState> emit) async {
-    if (currentIndex < 9) {
+    if (currentIndex < 10) {
       currentIndex++;
       emit(FormSkinPageChanged(currentIndex));
     } else {

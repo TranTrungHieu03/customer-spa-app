@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocListener<ImageBloc, ImageState>(
       listener: (context, state) {
         if (state is ImagePicked) {
-          goImageReview(state.imagePath);
+          goImageReview(state.image);
         }
       },
       child: Scaffold(
@@ -218,6 +218,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.md,
                   ),
+                  TextButton(
+                    onPressed: () {
+                      goQrCode("1", DateTime.now());
+                    },
+                    child: Text("QR CODE"),
+                  )
                 ],
               ),
             )
