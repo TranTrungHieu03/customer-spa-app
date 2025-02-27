@@ -63,7 +63,7 @@ class _SubmitFormScreenState extends State<SubmitFormScreen> {
                   ),
                 );
               } else if (state is SkinAnalysisLoaded) {
-                goHome();
+                return SizedBox.shrink();
               }
               return const SizedBox.shrink();
             }, listener: (context, state) {

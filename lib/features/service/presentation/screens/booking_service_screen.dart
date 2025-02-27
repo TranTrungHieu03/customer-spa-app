@@ -52,7 +52,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                           applyImageRadius: true,
                           imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
                           isNetworkImage: service.images.isNotEmpty,
-                          width: THelperFunctions.screenWidth(context) * 0.2,
+                          width: THelperFunctions.screenWidth(context) * 0.4,
                           height: THelperFunctions.screenWidth(context) * 0.2,
                           fit: BoxFit.cover,
                         ),
@@ -64,7 +64,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints(
-                                maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                                maxWidth: THelperFunctions.screenWidth(context) * 0.5,
                               ),
                               child: TProductTitleText(
                                 title: service.name,
@@ -84,17 +84,18 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                     Row(
                       children: [
                         Text(
-                          "Duration: ",
+                          AppLocalizations.of(context)!.duration + ": ",
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
-                        Text(service.duration)
+                        Text(service.duration),
+                        Text(AppLocalizations.of(context)!.minutes)
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Steps: ",
+                          AppLocalizations.of(context)!.step + ": ",
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                         Text(service.steps),
@@ -272,7 +273,7 @@ class _BookingServiceScreenState extends State<BookingServiceScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
                   ),
                   child: Text(
-                    AppLocalizations.of(context)!.buy,
+                    AppLocalizations.of(context)!.continue_book,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Colors.white,
                           fontSize: TSizes.md,

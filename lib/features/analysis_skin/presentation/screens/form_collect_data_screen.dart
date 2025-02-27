@@ -22,19 +22,22 @@ import 'package:spa_mobile/features/home/presentation/widgets/introduction_form.
 import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperFormCollectData extends StatelessWidget {
-  const WrapperFormCollectData({super.key});
+  const WrapperFormCollectData({super.key, required this.skinHealth, this.isFromAI = true});
+
+  final SkinHealthModel skinHealth;
+  final bool isFromAI;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SkinAnalysisBloc>(
-      create: (context) => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()),
-      child: const FormCollectDataScreen(),
-    );
+    return FormCollectDataScreen(skinHealth: skinHealth, isFromAI: isFromAI);
   }
 }
 
 class FormCollectDataScreen extends StatefulWidget {
-  const FormCollectDataScreen({super.key});
+  const FormCollectDataScreen({super.key, required this.skinHealth,required this.isFromAI});
+
+  final bool isFromAI;
+  final SkinHealthModel skinHealth;
 
   @override
   State<FormCollectDataScreen> createState() => _FormCollectDataScreenState();
@@ -51,7 +54,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
     final formSkinWrinkle = FormDataSkinAnalysis.wrinkleStatus(context);
     final PageController pageController = PageController();
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    final SkinHealthModel skinHealthModel = SkinHealthModel.empty();
+    final SkinHealthModel skinHealthModel = widget.skinHealth;
     final TextEditingController skinAgeController =
         TextEditingController(text: skinHealthModel.skinAge.value > 0 ? skinHealthModel.skinAge.value.toString() : "");
 
@@ -103,6 +106,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     isMultiChoice: formSkinAge.isMultiple,
                                     child: formSkinAge.answer,
                                     isText: true,
+                                    isFromAI: widget.isFromAI,
                                     answerValue: values.skinAge.value > 0 ? values.skinAge.value : 0,
                                     formController: skinAgeController,
                                     onChanged: (newValue) {},
@@ -165,6 +169,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     ),
                                   ),
                                   TFormItemPage(
+                                    isFromAI: widget.isFromAI,
                                     pageController: pageController,
                                     question: formSkinType.question,
                                     isMultiChoice: formSkinType.isMultiple,
@@ -178,6 +183,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     },
                                   ),
                                   TFormItemPage(
+                                    isFromAI: widget.isFromAI,
                                     pageController: pageController,
                                     question: formSkinColor.question,
                                     isMultiChoice: formSkinColor.isMultiple,
@@ -191,6 +197,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     },
                                   ),
                                   TFormItemPage(
+                                    isFromAI: widget.isFromAI,
                                     pageController: pageController,
                                     question: formSkinAcne.question,
                                     isMultiChoice: formSkinAcne.isMultiple,
@@ -214,6 +221,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     },
                                   ),
                                   TFormItemPage(
+                                    isFromAI: widget.isFromAI,
                                     pageController: pageController,
                                     question: formSkinEye.question,
                                     isMultiChoice: formSkinEye.isMultiple,
@@ -234,6 +242,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     },
                                   ),
                                   TFormItemPage(
+                                    isFromAI: widget.isFromAI,
                                     pageController: pageController,
                                     question: formSkinWrinkle.question,
                                     isMultiChoice: formSkinWrinkle.isMultiple,

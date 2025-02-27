@@ -13,7 +13,6 @@ import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/skin_analysis_via_image.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
-import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperAnalysingImageScreen extends StatelessWidget {
   const WrapperAnalysingImageScreen({super.key, required this.imagePath});
@@ -23,10 +22,7 @@ class WrapperAnalysingImageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppLogger.info(imagePath);
-    return BlocProvider<SkinAnalysisBloc>(
-      create: (context) => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()),
-      child: AnalysingImageScreen(imagePath: imagePath),
-    );
+    return AnalysingImageScreen(imagePath: imagePath);
   }
 }
 

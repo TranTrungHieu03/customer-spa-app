@@ -3,6 +3,7 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/list_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
@@ -12,7 +13,7 @@ abstract class AppointmentRemoteDataSource {
 
   Future<List<AppointmentModel>> createAppointment(CreateAppointmentParams params);
 
-  Future<List<AppointmentModel>> getHistoryBooking(GetListAppointmentParams params);
+  Future<ListAppointmentModel> getHistoryBooking(GetListAppointmentParams params);
 }
 
 class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
@@ -57,14 +58,14 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   }
 
   @override
-  Future<List<AppointmentModel>> getHistoryBooking(GetListAppointmentParams params) async {
+  Future<ListAppointmentModel> getHistoryBooking(GetListAppointmentParams params) async {
     try {
       final response = await _apiService.getApi('/Appointments/history-booking?page=${params.page}&status=${params.status}');
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        return (apiResponse.result!.data as List).map((e) => AppointmentModel.fromJson(e)).toList();
+        return ListAppointmentModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
       } else {
         throw AppException(apiResponse.result!.message!);
       }

@@ -71,7 +71,6 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
         if (result.services.isEmpty) {
           emit(ListServiceEmpty());
         } else{
-
           emit(ListServiceLoaded(
             services: result.services,
             pagination: result.pagination,

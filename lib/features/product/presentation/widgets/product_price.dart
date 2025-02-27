@@ -7,14 +7,16 @@ class TProductPriceText extends StatelessWidget {
     this.currencySign = '₫',
     required this.price,
     this.maxLine = 1,
-    this.isLarge = false,
+    this.isLarge = true,
     this.lineThrough = false,
+    this.color,
   });
 
   final String currencySign, price;
   final int maxLine;
   final bool isLarge;
   final bool lineThrough;
+  final Color? color; // Thêm màu tuỳ chọn
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +25,14 @@ class TProductPriceText extends StatelessWidget {
       maxLines: maxLine,
       overflow: TextOverflow.ellipsis,
       style: isLarge
-          ? Theme.of(context).textTheme.bodyMedium!.apply(decoration: lineThrough ? TextDecoration.lineThrough : null)
-          : Theme.of(context).textTheme.titleLarge!.apply(decoration: lineThrough ? TextDecoration.lineThrough : null),
+          ? Theme.of(context).textTheme.titleLarge!.apply(
+                decoration: lineThrough ? TextDecoration.lineThrough : null,
+                color: color, // Áp dụng màu sắc
+              )
+          : Theme.of(context).textTheme.bodySmall!.apply(
+                decoration: lineThrough ? TextDecoration.lineThrough : null,
+                color: color, // Áp dụng màu sắc
+              ),
     );
   }
 }

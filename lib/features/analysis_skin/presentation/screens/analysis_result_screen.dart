@@ -7,7 +7,9 @@ import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/constants/skin_analysis.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
@@ -24,8 +26,17 @@ class AnalysisResultScreen extends StatefulWidget {
 }
 
 class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
+  bool _isVisible = false;
+
+  void _toggleVisibility() {
+    setState(() {
+      _isVisible = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool isOk = false;
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: true,
@@ -42,7 +53,9 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             const TLoader();
           } else if (state is SkinAnalysisLoaded) {
             final routines = state.routines;
+            AppLogger.debug(routines);
             final skinHealth = state.skinHealth;
+            AppLogger.debug(skinHealth);
             return Padding(
               padding: const EdgeInsets.all(TSizes.sm),
               child: SingleChildScrollView(
@@ -61,17 +74,6 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                   AppLocalizations.of(context)!.skin_condition.toUpperCase(),
                                   style: Theme.of(context).textTheme.headlineSmall,
                                 ),
-
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                // TSkinData(
-                                //   title: "General skin health",
-                                //   iconData: Iconsax.gemini,
-                                //   iconColor: TColors.primary,
-                                //   backgroundIconColor: Colors.greenAccent.shade100,
-                                //   value: "80%",
-                                // ),
                                 const SizedBox(
                                   height: TSizes.sm,
                                 ),
@@ -131,36 +133,58 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                     const SizedBox(
                       height: TSizes.md,
                     ),
-                    Text(
-                      AppLocalizations.of(context)!.recommendation.toUpperCase(),
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
+                    if (!_isVisible)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              _toggleVisibility();
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.recommendation,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              goFormData(skinHealth, true);
+                            },
+                            child: Text(
+                              AppLocalizations.of(context)!.editForm,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          )
+                        ],
+                      ),
                     const SizedBox(
                       height: TSizes.sm,
                     ),
-                    SizedBox(
-                      height: 170,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return TServiceRoutine(
-                            routineModel: routines[index],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            width: TSizes.md,
-                          );
-                        },
-                        itemCount: 5,
+                    if (_isVisible)
+                      SizedBox(
+                        height: 170,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () => goRoutineDetail(routines[index].skincareRoutineId.toString()),
+                              child: TServiceRoutine(
+                                routineModel: routines[index],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
+                          itemCount: routines.length,
+                        ),
                       ),
-                    )
                   ],
                 ),
               ),
             );
+          } else if (state is SkinAnalysisError) {
+            return const TErrorBody();
           }
-          return const TErrorBody();
+          return const SizedBox.shrink();
         },
       ),
     );

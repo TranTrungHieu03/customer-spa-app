@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 
@@ -37,7 +38,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
 
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.camera,
+        source: ImageSource.gallery,
       );
 
       if (image != null) {
@@ -88,7 +89,11 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
           height: 4096,
         );
 
-        final croppedImageFile = File('${event.image}_cropped.jpg');
+        final Directory tempDir = await getTemporaryDirectory();
+        final String tempPath = '${tempDir.path}/cropped_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        final File croppedImageFile = File(tempPath);
+
+// Lưu ảnh đã cắt ra file tạm thời
         await croppedImageFile.writeAsBytes(img.encodeJpg(croppedImage));
         AppLogger.debug("${croppedImage.width} and ${croppedImage.height}");
         if (!await croppedImageFile.exists()) {

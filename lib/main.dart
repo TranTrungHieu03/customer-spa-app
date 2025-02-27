@@ -14,6 +14,8 @@ import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/form_skin/form_skin_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
@@ -65,6 +67,8 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<ListBranchesBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListAppointmentBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListStaffBloc>()),
+        BlocProvider(create: (_) => serviceLocator<SkinAnalysisBloc>()),
+        BlocProvider(create: (_) => serviceLocator<RoutineBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
         create: (_) => languageProvider,

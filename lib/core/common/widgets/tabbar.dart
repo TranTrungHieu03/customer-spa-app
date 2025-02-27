@@ -4,21 +4,26 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/device/device_utility.dart';
 
 class TTabBar extends StatelessWidget implements PreferredSizeWidget {
-  const TTabBar({super.key, required this.tabs});
+  const TTabBar({super.key, required this.tabs, required this.isScroll});
 
   final List<Widget> tabs;
+  final bool isScroll;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     return Material(
       color: dark ? TColors.black : Colors.white,
-      child: TabBar(
-          isScrollable: true,
+      child: Align(
+        alignment: Alignment.center,
+        child: TabBar(
+          isScrollable: isScroll,
           indicatorColor: TColors.primary,
           unselectedLabelColor: TColors.darkGrey,
-          labelColor: THelperFunctions.isDarkMode(context) ? TColors.white : TColors.primary,
-          tabs: tabs),
+          labelColor: dark ? TColors.white : TColors.primary,
+          tabs: tabs,
+        ),
+      ),
     );
   }
 

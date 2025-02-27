@@ -73,7 +73,7 @@ class TSnackBar {
                     message,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[800]),
-                    maxLines: 3,
+                    maxLines: 8,
                   ),
                 )
             ],

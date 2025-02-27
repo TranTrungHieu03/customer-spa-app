@@ -16,6 +16,7 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
@@ -151,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               TFlashAction(
                                 title: AppLocalizations.of(context)!.analysisData,
                                 iconData: Iconsax.document_1,
-                                onPressed: () => goFormData(),
+                                onPressed: () => goFormData(SkinHealthModel.empty(), false),
                               )
                             ],
                           ),
@@ -162,6 +163,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
+                  Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(
+                    height: TSizes.sm,
+                  ),
+                  Text("Sản phẩm đề xuất", style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(
+                    height: TSizes.sm,
+                  ),
+
                   Text(AppLocalizations.of(context)!.bannerTitle, style: Theme.of(context).textTheme.titleLarge),
                   const TBanner(),
                   const SizedBox(
@@ -223,6 +233,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       goQrCode("1", DateTime.now());
                     },
                     child: Text("QR CODE"),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text("Statistics"),
                   )
                 ],
               ),

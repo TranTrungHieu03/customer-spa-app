@@ -53,7 +53,7 @@
   "edit": "Sửa",
   "done": "Xong",
   "all": "Tất cả",
-  "totalPayment": "Tổng thanh toán",
+  "totalPayment": "Tổng",
   "buy": "Mua hàng",
   "cart": "Giỏ hàng",
   "checkout": "Thanh toán",
@@ -130,7 +130,7 @@
   "skin_color": "Màu da",
   "acne": "Mụn",
   "mole": "Nốt ruồi",
-  "recommendation": "Đề xuất",
+  "recommendation": "Xem đề xuất",
   "analysis_result": "Kết quả phân tích",
   "zone": "vùng",
   "scanningImage": "Đang phân tích hình ảnh, vui lòng chờ...",
@@ -152,5 +152,13 @@
   "skinAgeQuestion": "Tuổi của làn da bạn",
   "skinWrinkleQuestion": "Tình trạng nếp nhăn hiện tại của bạn như thế nào?",
   "skinEyeQuestion": "Tình trạng vùng da quanh mắt của bạn như thế nào?",
-  "skinOtherQuestion": "Tình trạng khác là gì?"
+  "skinOtherQuestion": "Tình trạng khác là gì?",
+  "editForm": "Chỉnh sửa dữ liệu",
+  "minutes": " phút",
+  "duration": "Thời gian",
+  "step": "Các bước",
+  "fullPayment": "Thanh toán đủ",
+  "deposit30": "Cọc 30%",
+  "continue_book":"Tiếp tục",
+  "history_book": "Lịch sử đặt lịch"
 }

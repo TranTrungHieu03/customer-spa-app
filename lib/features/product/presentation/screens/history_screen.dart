@@ -51,7 +51,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     padding: EdgeInsets.all(TSizes.defaultSpace),
                   ),
                   backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
-                  bottom: TTabBar(tabs: ['Processing', 'Completed', 'Cancel'].map((category) => Tab(child: Text(category))).toList()))
+                  bottom: TTabBar(
+                      isScroll: false, tabs: ['Processing', 'Completed', 'Cancel'].map((category) => Tab(child: Text(category))).toList()))
             ];
           },
         ),

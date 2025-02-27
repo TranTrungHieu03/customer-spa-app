@@ -10,7 +10,6 @@ Customers have three login options: Google, Facebook (via Firebase), and email/p
   <img src="https://res.cloudinary.com/dtcaf7prf/image/upload/v1739699719/f1e616c530d08e8ed7c11_huc8w8.jpg" alt="Onboarding 1" width="30%" />
   <img src="https://res.cloudinary.com/dtcaf7prf/image/upload/v1739699700/85d65d156500db5e8211_t47ui5.jpg" alt="Onboarding 2" width="30%" />
 
-
 </p>
 
 - Home
@@ -23,10 +22,13 @@ Customers can chat with the system's chatbot to find information. Additionally, 
 </p>
 
 - Product and Service
+Customers can search for suitable products and services to purchase or book for use.
 <p align="center">
   <img src="https://res.cloudinary.com/dtcaf7prf/image/upload/v1739699718/eac6c8d5eec0509e09d16_iyngvp.jpg" alt="Onboarding 1" width="30%" />
   <img src="https://res.cloudinary.com/dtcaf7prf/image/upload/v1739699712/7ab541a167b4d9ea80a58_slvnbo.jpg" alt="Onboarding 2" width="30%" />
    <img src="https://res.cloudinary.com/dtcaf7prf/image/upload/v1739699717/e151aa478c52320c6b437_vxo6z4.jpg" alt="Onboarding 1" width="30%" />
 
-
 </p>
+- Setting
+Customers can change the system language (Vietnamese or English) and view their purchase and booking history.
+ <img src="https://res.cloudinary.com/dtcaf7prf/image/upload/v1739699711/5b995d907b85c5db9c9410_twmszs.jpg" alt="Onboarding 1" width="30%" />

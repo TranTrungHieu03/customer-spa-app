@@ -7,18 +7,24 @@ import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/date_picker.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/common/widgets/payment_method.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
+import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/time_picker.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/enum.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_model.dart';
@@ -43,28 +49,65 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
   BranchModel? branchInfo;
   int? selectedStaffId;
   StaffModel? staffInfo;
+  UserModel? user;
+  bool isLoading = true;
+  bool isValidate = false;
+  List<int> staffList = [];
+
+  void _getUser() async {
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    AppLogger.info("User: $userJson");
+    if (jsonDecode(userJson) != null) {
+      setState(() {
+        user = UserModel.fromJson(jsonDecode(userJson));
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      goLoginNotBack();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _initializeData();
+    _getUser();
+    staffList = List.filled(widget.services.length, 0);
   }
 
   Future<void> _initializeData() async {
     final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
-    context.read<ListBranchesBloc>().add(GetListBranchesEvent());
-    context.read<ListStaffBloc>().add(GetListStaffEvent(id: int.parse(branchId) ?? 1));
-
-    branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
     setState(() {
-      selectedBranch = int.parse(branchId ?? "1");
+      selectedBranch = int.parse(branchId) == 0 ? 1 : int.parse(branchId);
     });
+    if (selectedBranch != "0") {
+      context.read<ListBranchesBloc>().add(GetListBranchesEvent());
+      context.read<ListStaffBloc>().add(GetListStaffEvent(id: selectedBranch ?? 1));
+
+      branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
+    } else {
+      TSnackBar.warningSnackBar(context, message: "Vui long chon chi nhanh");
+    }
+  }
+
+  void checkValue () {
+    setState(() {
+      isValidate = checkIsValidate();
+    });
+  }
+  bool checkIsValidate() {
+    if (staffList.contains(0)) {
+      return false;
+    }
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     final services = widget.services;
-    List<int> staffLists = List.filled(services.length, 0);
     List<int> servicesList = services.map((e) => e.serviceId).toList();
 
     double total = services.fold(0, (previousValue, element) => previousValue + element.price);
@@ -72,17 +115,24 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
     DateTime selectedDate = DateTime.now().add(const Duration(days: 1));
 
     TimeOfDay selectedTime = TimeOfDay.now();
-    double tips = 0;
+    PaymentOption _selectedPaymentOption = PaymentOption.full;
+
+    void handlePaymentOptionChange(PaymentOption option) {
+      setState(() {
+        _selectedPaymentOption = option;
+      });
+    }
 
     return BlocConsumer<AppointmentBloc, AppointmentState>(
       listener: (context, state) {
         if (state is AppointmentError) {
           TSnackBar.errorSnackBar(context, message: state.message);
         }
-        // if (state is AppointmentCreateSuccess) {
-        //   goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
-        //       () => goBookingDetail(state.appointment.appointmentId), TImages.success);
-        // }
+        if (state is AppointmentCreateSuccess) {
+          goWebView("https://www.youtube.com");
+          // goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
+          //     () => goBookingDetail(state.appointment.appointmentId), TImages.success);
+        }
       },
       builder: (context, state) {
         return Scaffold(
@@ -120,11 +170,11 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        branchInfo?.branchName ?? "",
+                                        branchInfo?.branchName ?? "Chưa có dữ liệu",
                                         style: Theme.of(context).textTheme.bodyMedium,
                                       ),
                                       Text(
-                                        branchInfo?.branchAddress ?? "",
+                                        branchInfo?.branchAddress ?? "...",
                                         style: Theme.of(context).textTheme.bodySmall,
                                       ),
                                     ],
@@ -196,13 +246,12 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                         height: TSizes.md,
                       ),
                       Text(
-                        AppLocalizations.of(context)!.service + "  x${services.length}",
+                        AppLocalizations.of(context)!.service + "  (${services.length})",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(
                         height: TSizes.md,
                       ),
-
                       ListView.builder(
                         itemCount: services.length,
                         shrinkWrap: true,
@@ -218,25 +267,46 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Hàng đầu tiên: Hình ảnh + Tiêu đề dịch vụ
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       TRoundedImage(
                                         applyImageRadius: true,
                                         imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
                                         isNetworkImage: service.images.isNotEmpty,
-                                        width: THelperFunctions.screenWidth(context) * 0.2,
+                                        width: THelperFunctions.screenWidth(context) * 0.4,
                                         height: THelperFunctions.screenWidth(context) * 0.2,
                                         fit: BoxFit.cover,
                                       ),
                                       const SizedBox(width: TSizes.sm),
-                                      ConstrainedBox(
-                                        constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
-                                        child: TProductTitleText(
-                                          title: service.name,
-                                          maxLines: 1,
-                                        ),
-                                      ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          ConstrainedBox(
+                                            constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.5),
+                                            child: TProductTitleText(
+                                              title: service.name,
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                          ConstrainedBox(
+                                            constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.5),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  AppLocalizations.of(context)!.duration + ": ",
+                                                  style: Theme.of(context).textTheme.labelLarge,
+                                                ),
+                                                Text(service.duration),
+                                                Text(AppLocalizations.of(context)!.minutes)
+                                              ],
+                                            ),
+                                          ),
+                                          ConstrainedBox(
+                                              constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.5),
+                                              child: TProductPriceText(price: service.price.toString())),
+                                        ],
+                                      )
                                     ],
                                   ),
 
@@ -287,7 +357,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                         ),
                                       ),
                                       Expanded(
-                                        flex: 6, // Phần chọn nhân viên chiếm 6 phần
+                                        flex: 6,
                                         child: BlocConsumer<ListStaffBloc, ListStaffState>(
                                           listener: (context, state) {
                                             if (state is ListStaffError) {
@@ -299,6 +369,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                               return const Text("No staff available");
                                             } else if (state is ListStaffLoaded) {
                                               final staffs = state.listStaff;
+
                                               return TRoundedContainer(
                                                 padding: const EdgeInsets.all(TSizes.sm * 1.5),
                                                 showBorder: true,
@@ -307,24 +378,25 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                                   children: [
                                                     Expanded(
                                                       child: Text(
-                                                        staffs[0].staffInfo.userName,
+                                                        staffInfo != null
+                                                            ? staffInfo!.staffInfo.fullName ?? staffInfo!.staffInfo.userName
+                                                            : "Choose staff",
                                                         style: Theme.of(context).textTheme.bodyMedium,
                                                         overflow: TextOverflow.ellipsis,
                                                       ),
                                                     ),
                                                     const SizedBox(width: TSizes.md),
                                                     GestureDetector(
-                                                      child: const Icon(
-                                                        Iconsax.arrow_down_1,
-                                                        size: 20,
-                                                      ),
+                                                      child: const Icon(Iconsax.arrow_down_1, size: 20),
                                                       onTap: () {
-                                                        _showModalStaff(context, staffs);
+                                                        _showModalStaff(context, staffs, index);
                                                       },
                                                     ),
                                                   ],
                                                 ),
                                               );
+                                            } else if (state is ListStaffLoading) {
+                                              return const TShimmerEffect(width: TSizes.shimmerLg, height: TSizes.shimmerSx * 2);
                                             }
                                             return const SizedBox();
                                           },
@@ -339,7 +411,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                   Row(
                                     children: [
                                       Expanded(
-                                        flex: 4, // Chữ "Time" chiếm 4 phần
+                                        flex: 4,
                                         child: Row(
                                           children: [
                                             Text(
@@ -360,8 +432,8 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                                     borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.sm)),
                                                   ),
                                                   builder: (context) {
-                                                    return Padding(
-                                                      padding: const EdgeInsets.all(TSizes.sm),
+                                                    return const Padding(
+                                                      padding: EdgeInsets.all(TSizes.sm),
                                                       child: Column(
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: [
@@ -385,7 +457,6 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                           onTimeSelected: (value) {
                                             int hour = value.hour;
 
-                                            // Kiểm tra nếu chọn giờ từ 22h - 7h59 thì không cho phép
                                             if (hour >= 22 || hour < 8) {
                                               TSnackBar.warningSnackBar(context, message: "Vui lòng chọn thời gian từ 08:00 đến 21:59");
                                               value = selectedTime;
@@ -397,7 +468,6 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                           initialTime: selectedTime,
                                         ),
                                       )
-
                                     ],
                                   ),
                                 ],
@@ -410,23 +480,10 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                         "Payment Methods",
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      Row(
-                        children: [
-                          const Icon(
-                            Iconsax.wallet,
-                            color: TColors.primary,
-                          ),
-                          const SizedBox(
-                            width: TSizes.sm,
-                          ),
-                          Text(AppLocalizations.of(context)!.bank_transfer, style: Theme.of(context).textTheme.bodyMedium),
-                          const Spacer(),
-                          const TRoundedIcon(
-                            icon: Iconsax.tick_circle,
-                            color: TColors.primary,
-                          ),
-                        ],
+                      const SizedBox(
+                        height: TSizes.md,
                       ),
+                      TPaymentSelection(total: total, onOptionChanged: handlePaymentOptionChange, selectedOption: _selectedPaymentOption),
                       const SizedBox(
                         height: TSizes.md,
                       ),
@@ -452,7 +509,7 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                       const SizedBox(
                         height: TSizes.md,
                       ),
-                      TPaymentDetailService(price: total.toString(), total:total.toString()),
+                      TPaymentDetailService(price: total.toString(), total: total.toString()),
                     ],
                   ),
                 ),
@@ -460,17 +517,16 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
               if (state is AppointmentLoading) const TLoader()
             ],
           ),
-          bottomNavigationBar: TBottomCheckoutService(
-              price: total.toString(),
-              onPressed: () {
-                context.read<AppointmentBloc>().add(CreateAppointmentEvent(CreateAppointmentParams(
-                    customerId: 1,
-                    staffId: staffLists,
-                    serviceId: servicesList,
-                    branchId: selectedBranch ?? 1,
-                    appointmentsTime: combineDateTime(selectedDate, selectedTime),
-                    notes: "")));
-              }),
+          bottomNavigationBar: TBottomCheckoutService(onPressed: () {
+            context.read<AppointmentBloc>().add(CreateAppointmentEvent(CreateAppointmentParams(
+                customerId: user?.userId ?? 1,
+                //api create appoinment cho customer và cho cashier chung hay riêng
+                staffId: staffList,
+                serviceId: servicesList,
+                branchId: selectedBranch ?? 1,
+                appointmentsTime: combineDateTime(selectedDate, selectedTime),
+                notes: "")));
+          }, isValue: isValidate,),
         );
       },
     );
@@ -612,8 +668,9 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                             onChanged: (value) {
                               setState(() {
                                 selectedBranch = value;
+                                branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
                               });
-                              AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
+                              context.read<ListStaffBloc>().add(GetListStaffEvent(id: selectedBranch ?? 1));
                             },
                           ),
                           ConstrainedBox(
@@ -663,19 +720,21 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
         });
       },
     ).then((selectedBranchInfo) {
+      AppLogger.debug(selectedBranchInfo.toString());
       if (selectedBranchInfo != null) {
         setState(() {
           branchInfo = selectedBranchInfo;
         });
       } else {
+        AppLogger.debug("No selected branch");
         setState(() {
-          branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
+          // branchInfo = branches[0];
         });
       }
     });
   }
 
-  void _showModalStaff(BuildContext context, List<StaffModel> staffs) {
+  void _showModalStaff(BuildContext context, List<StaffModel> staffs, int indexService) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -700,30 +759,6 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: TSizes.sm),
-                Row(
-                  children: [
-                    Radio<int>(
-                      value: 0,
-                      activeColor: TColors.primary,
-                      groupValue: selectedBranch,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedBranch = value;
-                        });
-                        AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
-                      },
-                    ),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: THelperFunctions.screenWidth(context) * 0.6,
-                      ),
-                      child: Text(
-                        "Random Staff",
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
-                ),
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: staffs.length,
@@ -736,12 +771,13 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                           Radio<int>(
                             value: staff.staffId,
                             activeColor: TColors.primary,
-                            groupValue: selectedBranch,
+                            groupValue: selectedStaffId,
                             onChanged: (value) {
                               setState(() {
-                                selectedBranch = value;
+                                selectedStaffId = value;
+                                staffInfo = staffs.where((e) => e.staffId == selectedStaffId).first;
+                                staffList[indexService] = selectedStaffId!;
                               });
-                              AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
                             },
                           ),
                           ConstrainedBox(
@@ -764,15 +800,8 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
-                        if (selectedBranch != null) {
-                          // await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
-                          // await LocalStorage.saveData(
-                          //     LocalStorageKey.branchInfo, jsonEncode(staffs.where((e) => e.branchId == selectedBranch).first));
-                          // setState(() {
-                          //   branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
-                          // });
-                          AppLogger.info(selectedBranch);
-                          Navigator.pop(context, branchInfo);
+                        if (selectedStaffId != null) {
+                          Navigator.pop(context, staffs.firstWhere((staff) => staff.staffId == selectedStaffId));
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -791,13 +820,14 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
         });
       },
     ).then((selectedStaffInfo) {
+      checkValue();
       if (selectedStaffInfo != null) {
         setState(() {
-          branchInfo = selectedStaffInfo;
+          staffInfo = selectedStaffInfo;
         });
       } else {
         setState(() {
-          // branchInfo = branches.where((e) => e.branchId == selectedBranch).first;
+          // staffInfo = staffs.where((e) => e.staffId == selectedStaffId).first;
         });
       }
     });

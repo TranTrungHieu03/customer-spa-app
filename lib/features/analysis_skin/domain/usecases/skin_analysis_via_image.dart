@@ -27,7 +27,7 @@ class SkinAnalysisViaImageParams {
   Future<FormData> toFormData() async {
     AppLogger.info("Path: ${path.path}");
     return FormData.fromMap({
-      "file": await MultipartFile.fromFile(
+      "file": MultipartFile.fromFileSync(
         path.path,
         filename: path.path.split('/').last,
         contentType: DioMediaType("image", "jpeg"),

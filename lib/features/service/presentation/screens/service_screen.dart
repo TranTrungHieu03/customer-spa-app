@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
+import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
@@ -72,15 +73,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
     context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
   }
 
-  Future<void> _loadSelectedBranch() async {
-    final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
-    if (branchId != null) {
-      setState(() {
-        selectedBranch = int.parse(branchId);
-      });
-    }
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
@@ -107,8 +99,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
               onPressed: () => goSearch(),
             ),
             TRoundedIcon(
-              icon: Iconsax.ticket,
-              onPressed: () => goServiceHistory(),
+              icon: Iconsax.shopping_bag,
+              onPressed: () => goCart(false),
             ),
           ],
         ),
@@ -220,6 +212,13 @@ class _ServiceScreenState extends State<ServiceScreen> {
                           },
                           child: RefreshIndicator(
                             onRefresh: () async {
+                              context.read<ListServiceBloc>().emit(
+                                    ListServiceLoading(
+                                      isLoadingMore: false,
+                                      services: [],
+                                      pagination: PaginationModel.isEmty(),
+                                    ),
+                                  );
                               context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
                             },
                             child: TGridLayout(
@@ -285,11 +284,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         activeColor: TColors.primary,
                         groupValue: selectedBranch,
                         onChanged: (value) {
-                          AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
-
-                          if (value != selectedBranch) {
-                            context.read<ListServiceBloc>().add(GetListServiceChangeBranchEvent(0));
-                          }
                           setState(() {
                             selectedBranch = value;
                           });
@@ -323,9 +317,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             onChanged: (value) {
                               AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
 
-                              if (value != selectedBranch) {
-                                context.read<ListServiceBloc>().add(GetListServiceChangeBranchEvent(value ?? 0));
-                              }
                               setState(() {
                                 selectedBranch = value;
                               });
@@ -351,11 +342,13 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
+                        AppLogger.debug(selectedBranch);
                         if (selectedBranch != null) {
                           await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
-                          await LocalStorage.saveData(
-                              LocalStorageKey.branchInfo, jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
-                          setState(() {});
+                          if (selectedBranch != 0) {
+                            await LocalStorage.saveData(
+                                LocalStorageKey.branchInfo, jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
+                          }
                           Navigator.of(context).pop();
                         }
                       },
@@ -374,6 +367,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
           );
         });
       },
-    );
+    ).then((_) {
+      context.read<ListServiceBloc>().emit(
+            ListServiceLoading(
+              isLoadingMore: false,
+              services: [],
+              pagination: PaginationModel.isEmty(),
+            ),
+          );
+      context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
+    });
   }
 }

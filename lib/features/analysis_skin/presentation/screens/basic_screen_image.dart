@@ -36,41 +36,45 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
           }
         },
         builder: (context, state) {
-          if (state is ImageLoading) {
-            return const TLoader();
-          } else if (state is ImagePicked) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+          if (state is ImagePicked) {
+            return Stack(
               children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: THelperFunctions.screenHeight(context) * 0.6,
-                  ),
-                  child: Container(
-                      width: THelperFunctions.screenWidth(context),
-                      // height: THelperFunctions.screenHeight(context) * 0.6,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(TSizes.md),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: THelperFunctions.screenHeight(context) * 0.6,
                       ),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(TSizes.md),
-                          child: Image.file(
-                            state.image, fit: BoxFit.cover,
-                          ))),
+                      child: Container(
+                          width: THelperFunctions.screenWidth(context),
+                          // height: THelperFunctions.screenHeight(context) * 0.6,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(TSizes.md),
+                          ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(TSizes.md),
+                              child: Image.file(
+                                state.image,
+                                fit: BoxFit.cover,
+                              ))),
+                    ),
+                    const SizedBox(height: TSizes.md),
+                    SizedBox(
+                      width: THelperFunctions.screenWidth(context) * 0.5,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<ImageBloc>().add(ValidateImageEvent(state.image));
+                        },
+                        child: Text(AppLocalizations.of(context)!.submit),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: TSizes.md),
-                SizedBox(
-                  width: THelperFunctions.screenWidth(context) * 0.5,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<ImageBloc>().add(ValidateImageEvent(state.image));
-                    },
-                    child: Text(AppLocalizations.of(context)!.submit),
-                  ),
-                ),
+                if (state is ImageLoading) const TLoader()
               ],
             );
           }

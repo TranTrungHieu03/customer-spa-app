@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/screens/success_screen.dart';
 import 'package:spa_mobile/core/common/screens/web_view_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysing_image_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysis_result_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/basic_screen_image.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_detail_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit.dart';
@@ -25,7 +28,6 @@ import 'package:spa_mobile/features/home/presentation/screens/search_screen.dart
 import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/history_screen.dart';
-import 'package:spa_mobile/features/product/presentation/screens/my_cart_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/shipment_information_screen.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
@@ -37,6 +39,7 @@ import 'package:spa_mobile/features/service/presentation/screens/qr_code_screen.
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_history_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';
+import 'package:spa_mobile/features/user/presentation/screens/cart_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 

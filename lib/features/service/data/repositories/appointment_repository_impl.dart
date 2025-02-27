@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/features/service/data/datasources/appointment_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/list_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/appointment_repository.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
@@ -33,9 +34,9 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   }
 
   @override
-  Future<Either<Failure, List<AppointmentModel>>> getHistoryBooking(GetListAppointmentParams params) async {
+  Future<Either<Failure, ListAppointmentModel>> getHistoryBooking(GetListAppointmentParams params) async {
     try {
-      List<AppointmentModel> response = await _appointmentRemoteDataSource.getHistoryBooking(params);
+      ListAppointmentModel response = await _appointmentRemoteDataSource.getHistoryBooking(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

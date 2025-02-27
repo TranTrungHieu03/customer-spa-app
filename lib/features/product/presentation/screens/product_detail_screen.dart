@@ -60,7 +60,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   TRoundedIcon(
                     icon: Iconsax.shopping_bag,
                     size: 30,
-                    onPressed: () => goCart(),
+                    onPressed: () => goCart(true),
                   )
                 ],
               ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/tabbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
@@ -24,7 +26,9 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
       length: 3,
       child: BlocConsumer<ListAppointmentBloc, ListAppointmentState>(
         listener: (context, state) {
-          // TODO: implement listener
+          if (state is ListAppointmentError) {
+            TSnackBar.errorSnackBar(context, message: state.message);
+          }
         },
         builder: (context, state) {
           return Scaffold(
@@ -32,7 +36,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
               leadingOnPressed: () => goHome(),
               leadingIcon: Iconsax.arrow_left,
               title: Text(
-                "Lịch sử đặt lịch",
+                AppLocalizations.of(context)!.history_book,
                 style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
               ),
             ),
@@ -41,9 +45,15 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                 padding: EdgeInsets.all(TSizes.sm / 2),
                 child: TabBarView(
                   children: [
-                    TStatusTabService(),
-                    TStatusTabService(),
-                    TStatusTabService(),
+                    TStatusTabService(
+                      status: "pending",
+                    ),
+                    TStatusTabService(
+                      status: "completed",
+                    ),
+                    TStatusTabService(
+                      status: "cancel",
+                    ),
                   ],
                 ),
               ),
@@ -58,7 +68,8 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                         padding: EdgeInsets.all(TSizes.defaultSpace),
                       ),
                       backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
-                      bottom: TTabBar(tabs: ["Upcoming", "Done", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
+                      bottom: TTabBar(
+                          isScroll: false, tabs: ["Pending", "Done", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
                 ];
               },
             ),

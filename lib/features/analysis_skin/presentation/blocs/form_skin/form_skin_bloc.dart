@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 
 part 'form_skin_event.dart';
 part 'form_skin_state.dart';
@@ -17,6 +18,7 @@ class FormSkinBloc extends Bloc<FormSkinEvent, FormSkinState> {
   Future<void> _onNextPage(NextPageEvent event, Emitter<FormSkinState> emit) async {
     if (currentIndex < 10) {
       currentIndex++;
+      AppLogger.debug(currentIndex);
       emit(FormSkinPageChanged(currentIndex));
     } else {
       emit(FormSkinComplete());

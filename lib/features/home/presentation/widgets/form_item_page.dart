@@ -20,13 +20,14 @@ class TFormItemPage extends StatefulWidget {
     required this.onChanged,
     this.answerValues = const [],
     this.formController,
+    this.isFromAI = true
   });
 
   final PageController pageController;
   final String question;
   final List<FormAnswerModel>? child;
   final Widget children;
-  final bool isMultiChoice, isText;
+  final bool isMultiChoice, isText, isFromAI;
   final int answerValue;
   final List<String> answerValues;
   final TextEditingController? formController;
@@ -46,11 +47,14 @@ class _TFormItemPageState extends State<TFormItemPage> {
     super.initState();
 
     if (widget.isMultiChoice) {
-      _selectedStringAnswers = {...widget.answerValues};
+      if (widget.answerValues.isEmpty && widget.isFromAI) {
+        _selectedStringAnswers = {"none"};
+      } else {
+        _selectedStringAnswers = {...widget.answerValues};
+      }
     } else {
       _selectedIntAnswers = {widget.answerValue};
       _selectedIntAnswers.removeWhere((e) => e < 0);
-
     }
   }
 
@@ -73,46 +77,50 @@ class _TFormItemPageState extends State<TFormItemPage> {
           children: [
             Text(
               widget.question,
-              style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.w600),
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 20),
             const Spacer(),
             widget.isText
                 ? widget.children
                 : (widget.child != null)
-                    ? Column(
-                        children: widget.child!.map((ans) {
-                          return TOptionItem(
-                            icon: Iconsax.gallery,
-                            title: ans.title,
-                            isChoose: selectedAnswers.contains(ans.value),
-                            value: ans.value,
-                            onPressed: () {
-                              setState(() {
-                                if (widget.isMultiChoice) {
-                                  if (ans.value == "none" || ans.value == "unknown") {
-                                    selectedAnswers.clear();
-                                    selectedAnswers.add(ans.value);
-                                  } else if (selectedAnswers.contains(ans.value)) {
-                                    selectedAnswers.remove(ans.value);
-                                  } else {
-                                    selectedAnswers.contains("none") || selectedAnswers.contains("unknown")
-                                        ? selectedAnswers.clear()
-                                        : () {};
-                                    selectedAnswers.add(ans.value);
-                                  }
-                                } else {
-                                  selectedAnswers.clear();
-                                  selectedAnswers.add(ans.value);
-                                }
-                              });
-                              AppLogger.debug(selectedAnswers);
-                              widget.onChanged(selectedAnswers);
-                            },
-                          );
-                        }).toList(),
-                      )
-                    : const SizedBox.shrink(),
+                ? Column(
+              children: widget.child!.map((ans) {
+                return TOptionItem(
+                  icon: Iconsax.gallery,
+                  title: ans.title,
+                  isChoose: selectedAnswers.contains(ans.value),
+                  value: ans.value,
+                  onPressed: () {
+                    setState(() {
+                      if (widget.isMultiChoice) {
+                        if (ans.value == "none" || ans.value == "unknown") {
+                          selectedAnswers.clear();
+                          selectedAnswers.add(ans.value);
+                        } else if (selectedAnswers.contains(ans.value)) {
+                          selectedAnswers.remove(ans.value);
+                        } else {
+                          selectedAnswers.contains("none") || selectedAnswers.contains("unknown")
+                              ? selectedAnswers.clear()
+                              : () {};
+                          selectedAnswers.add(ans.value);
+                        }
+                      } else {
+                        selectedAnswers.clear();
+                        selectedAnswers.add(ans.value);
+                      }
+                    });
+                    AppLogger.debug(selectedAnswers);
+                    widget.onChanged(selectedAnswers);
+                  },
+                );
+              }).toList(),
+            )
+                : const SizedBox.shrink(),
             widget.isText ? const Spacer() : const SizedBox(),
             const SizedBox(height: TSizes.lg),
             FormNextBtn(

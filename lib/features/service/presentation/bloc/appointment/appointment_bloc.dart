@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
@@ -33,6 +34,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
 
   Future<void> _onCreateAppointmentEvent(CreateAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentLoading());
+    AppLogger.debug(event.params);
     final result = await _createAppointment(CreateAppointmentParams(
         customerId: event.params.customerId,
         staffId: event.params.staffId,

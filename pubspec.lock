@@ -898,6 +898,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
+  message_pack_dart:
+    dependency: transitive
+    description:
+      name: message_pack_dart
+      sha256: "71b9f0ff60e5896e60b337960bb535380d7dba3297b457ac763ccae807385b59"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
   meta:
     dependency: "direct main"
     description:
@@ -1074,6 +1082,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.8"
+  pool:
+    dependency: transitive
+    description:
+      name: pool
+      sha256: "20fe868b6314b322ea036ba325e6fc0711a22948856475e2c2b6306e8ab39c2a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.5.1"
   provider:
     dependency: "direct main"
     description:
@@ -1186,6 +1202,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
+  shelf:
+    dependency: transitive
+    description:
+      name: shelf
+      sha256: ad29c505aee705f41a4d8963641f91ac4cee3c8fad5947e033390a7bd8180fa4
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.1"
   shimmer:
     dependency: "direct main"
     description:
@@ -1194,6 +1218,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  signalr_netcore:
+    dependency: "direct main"
+    description:
+      name: signalr_netcore
+      sha256: bf42db085aee4adeafb772e436fb51a4af0baa06dee91bb193d7ca3cdfa55518
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -1287,6 +1319,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  sse:
+    dependency: transitive
+    description:
+      name: sse
+      sha256: "4389a01d5bc7ef3e90fbc645f8e7c6d8711268adb1f511e14ae9c71de47ee32b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.7"
+  sse_channel:
+    dependency: transitive
+    description:
+      name: sse_channel
+      sha256: "9aad5d4eef63faf6ecdefb636c0f857bd6f74146d2196087dcf4b17ab5b49b1b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   stack_trace:
     dependency: transitive
     description:
@@ -1343,6 +1391,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.4"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   typed_data:
     dependency: transitive
     description:

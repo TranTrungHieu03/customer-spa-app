@@ -92,6 +92,7 @@ dependencies:
   fl_chart: ^0.70.1
   #qr code
   qr_flutter: ^4.1.0
+  signalr_netcore: 1.4.0
 
 
 dev_dependencies:

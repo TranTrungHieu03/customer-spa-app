@@ -40,10 +40,6 @@ goSetPassword(String email) async {
               )));
 }
 
-goCart() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const MyCartScreen()));
-}
-
 goHome() async {
   navigatorKey.currentContext!.read<NavigationBloc>().add(ChangeSelectedIndexEvent(0));
   Navigator.pushAndRemoveUntil(
@@ -130,7 +126,7 @@ goServiceBooking(ServiceModel service) async {
 }
 
 goServiceCheckout(ServiceModel service) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: [service,service])));
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: [service])));
 }
 
 goVerify(String email, int statePage) async {
@@ -167,8 +163,9 @@ goImageReview(File image) async {
               )));
 }
 
-goFormData() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const FormCollectDataScreen()));
+goFormData(SkinHealthModel skinHealth, bool isFromAI) async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => WrapperFormCollectData(skinHealth: skinHealth, isFromAI: isFromAI)));
 }
 
 goOnboarding() async {
@@ -189,4 +186,16 @@ goWebView(String url) async {
 
 goQrCode(String id, DateTime time) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => QrCodeScreen(id: id, time: time)));
+}
+
+goCart(bool isProduct) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen(isProduct: isProduct)));
+}
+
+goRoutineDetail(String id) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+        builder: (context) => RoutineDetailScreen(id: id),
+      ));
 }

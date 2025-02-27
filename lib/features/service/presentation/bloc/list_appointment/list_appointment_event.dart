@@ -8,7 +8,9 @@ sealed class ListAppointmentEvent {
   const ListAppointmentEvent({required this.page, required this.title});
 }
 
-
+final class GetListAppointmentEvent extends ListAppointmentEvent {
+  const GetListAppointmentEvent({required super.page, required super.title});
+}
 
 final class GetListAppointmentDoneEvent extends ListAppointmentEvent {
   GetListAppointmentDoneEvent({required super.page, required super.title});

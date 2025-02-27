@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
@@ -15,70 +14,47 @@ import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cub
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
-class MyCartScreen extends StatefulWidget {
-  const MyCartScreen({super.key});
+class TProductCart extends StatelessWidget {
+  const TProductCart({super.key});
 
-  @override
-  State<MyCartScreen> createState() => _MyCartScreenState();
-}
-
-class _MyCartScreenState extends State<MyCartScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => CheckboxCartCubit(),
       child: Scaffold(
-        appBar: TAppbar(
-          showBackArrow: true,
-          title: Text(
-            AppLocalizations.of(context)!.cart,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                AppLocalizations.of(context)!.edit,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-          ],
-        ),
-        body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
-            child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(index.toString()),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Item deleted')),
-                      );
-                    },
-                    background: Container(
-                      color: Colors.redAccent.withOpacity(0.8),
-                      child: const Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Icon(
-                            Iconsax.shop_remove,
-                            color: Colors.white,
-                            size: TSizes.lg,
-                          ),
-                        ),
+        body: ListView.separated(
+            itemBuilder: (context, index) {
+              return Dismissible(
+                key: Key(index.toString()),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Item deleted')),
+                  );
+                },
+                background: Container(
+                  color: Colors.redAccent.withOpacity(0.8),
+                  child: const Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Icon(
+                        Iconsax.shop_remove,
+                        color: Colors.white,
+                        size: TSizes.lg,
                       ),
                     ),
-                    child: TProductCart(index: index), // Pass the index to TProductCart
-                  );
-                },
-                separatorBuilder: (_, __) {
-                  return const SizedBox(
-                    height: TSizes.sm,
-                  );
-                },
-                itemCount: 6)),
+                  ),
+                ),
+                child: TProductCartItem(index: index), // Pass the index to TProductCart
+              );
+            },
+            separatorBuilder: (_, __) {
+              return const SizedBox(
+                height: TSizes.sm,
+              );
+            },
+            itemCount: 6),
         bottomNavigationBar: BlocBuilder<CheckboxCartCubit, CheckboxCartState>(
           builder: (context, state) {
             if (state is CheckboxCartInitial) {
@@ -96,16 +72,21 @@ class _MyCartScreenState extends State<MyCartScreen> {
                 ),
                 child: Row(
                   children: [
-                    Checkbox(
-                      value: state.isAllSelected,
-                      onChanged: (bool? newValue) {
-                        context.read<CheckboxCartCubit>().toggleSelectAll(newValue ?? false);
-                      },
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!.all,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                     Column(
+                       mainAxisSize: MainAxisSize.min,
+                       children: [
+                         Checkbox(
+                           value: state.isAllSelected,
+                           onChanged: (bool? newValue) {
+                             context.read<CheckboxCartCubit>().toggleSelectAll(newValue ?? false);
+                           },
+                         ),
+                         Text(
+                           AppLocalizations.of(context)!.all,
+                           style: Theme.of(context).textTheme.bodyMedium,
+                         ),
+                       ],
+                     ),
                     const Spacer(),
                     Row(
                       children: [
@@ -147,10 +128,10 @@ class _MyCartScreenState extends State<MyCartScreen> {
   }
 }
 
-class TProductCart extends StatelessWidget {
+class TProductCartItem extends StatelessWidget {
   final int index;
 
-  const TProductCart({
+  const TProductCartItem({
     super.key,
     required this.index,
   });

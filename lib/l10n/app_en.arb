@@ -130,7 +130,7 @@
   "skin_color": "Skin color",
   "acne": "Acne",
   "mole": "Mole",
-  "recommendation": "Recommendation",
+  "recommendation": "View Recommendation",
   "analysis_result": "Analysis Result",
   "zone": "zone(s)",
   "scanningImage": "Analyzing the image, please wait...",
@@ -152,5 +152,13 @@
   "skinAgeQuestion": "Your skin age",
   "skinWrinkleQuestion": "What is the current condition of your wrinkle?",
   "skinEyeQuestion": "What is the current condition of your eye?",
-  "skinOtherQuestion": "What is the other condition"
+  "skinOtherQuestion": "What is the other condition",
+  "editForm": "Update skin's data",
+  "minutes": " minutes",
+  "duration": "Duration",
+  "step": "Steps",
+  "fullPayment": "Full payment",
+  "deposit30": "30% deposit",
+  "continue_book": "Continue",
+  "history_book": "History booking"
 }

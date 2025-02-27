@@ -177,10 +177,13 @@ Future<void> _initSkinAnalysis() async {
     ..registerFactory<SkinAnalysisRepository>(() => SkinAnalysisRepositoryImpl(
           serviceLocator<SkinAnalysisRemoteDataSource>(),
         ))
+
     //use case
     ..registerLazySingleton(() => SkinAnalysisViaImage(serviceLocator()))
     ..registerLazySingleton(() => SkinAnalysisViaForm(serviceLocator()))
+    ..registerLazySingleton(() => GetRoutineDetail(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()));
+    ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
+    ..registerLazySingleton(() => RoutineBloc(getRoutineDetail: serviceLocator()));
 }

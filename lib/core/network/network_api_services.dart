@@ -32,7 +32,9 @@ class NetworkApiService implements BaseApiServices {
           _cachedToken = _cachedToken ??= await authService.getToken();
 
           options.headers['Authorization'] = 'Bearer $_cachedToken';
-          options.headers['Content-Type'] = 'application/json';
+          if (options.data is! FormData) {
+            options.headers['Content-Type'] = 'application/json';
+          }
           if (kDebugMode) {
             AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
           }
@@ -48,53 +50,46 @@ class NetworkApiService implements BaseApiServices {
               // Retry the failed request with new token
               final options = error.requestOptions;
               options.headers['Authorization'] = 'Bearer $newToken';
-              if (kDebugMode) {
-                AppLogger.warning("==> Retry Request with new token: $newToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
-              }
 
-              // final response = options.data is FormData
-              //     ? await _dio.request(
-              //         options.path,
-              //         options: Options(
-              //           method: options.method,
-              //           headers: {...options.headers, "Content-Type": "multipart/form-data"},
-              //         ),
-              //         data: FormData.fromMap(Map.fromEntries((options.data as FormData).fields)),
-              //         queryParameters: options.queryParameters,
-              //       )
-              //     : await _dio.request(
-              //         options.path,
-              //         options: Options(
-              //           method: options.method,
-              //           headers: options.headers,
-              //         ),
-              //         data: options.data,
-              //         queryParameters: options.queryParameters,
-              //       );
-              final response = options.data is FormData
-                  ? await _dio.request(
-                options.path,
-                options: Options(
-                  method: options.method,
-                  headers: options.headers,
-                ),
-                data: options.data, // Giữ nguyên FormData
-                queryParameters: options.queryParameters,
-              )
-                  : await _dio.request(
-                options.path,
-                options: Options(
-                  method: options.method,
-                  headers: options.headers,
-                ),
-                data: options.data,
-                queryParameters: options.queryParameters,
-              );
-              return handler.resolve(response);
+              try {
+                final response = options.data is FormData
+                    ? await _dio.request(
+                        options.path,
+                        options: Options(
+                          method: options.method,
+                          headers: options.headers,
+                        ),
+                        data: await refreshFormData(options.data),
+                        queryParameters: options.queryParameters,
+                      )
+                    : await _dio.request(
+                        options.path,
+                        options: Options(
+                          method: options.method,
+                          headers: options.headers,
+                        ),
+                        data: options.data,
+                        queryParameters: options.queryParameters,
+                      );
+
+                return handler.resolve(response);
+              } on DioException catch (e) {
+                return handler.reject(e);
+              }
             }
           }
+
           return handler.next(error);
         },
+      ),
+    );
+    _dio.interceptors.add(
+      LogInterceptor(
+        request: true,
+        requestBody: true,
+        responseBody: true,
+        error: true,
+        responseHeader: true,
       ),
     );
   }
@@ -119,7 +114,6 @@ class NetworkApiService implements BaseApiServices {
     AppLogger.info('Session expired. Redirecting to login...');
     goLoginNotBack();
   }
-
 
   /// Sends a GET request to the specified [url] and returns the response.
   ///
@@ -162,14 +156,21 @@ class NetworkApiService implements BaseApiServices {
       if (data is FormData) {
         AppLogger.debug("FormData fields: ${data.fields}");
         AppLogger.debug("FormData files: ${data.files}");
+        for (final file in data.files) {
+          final String key = file.key;
+          final MultipartFile multipartFile = file.value;
+
+          AppLogger.debug("File Field Key: $key");
+          AppLogger.debug("File Name: ${multipartFile.filename}");
+          AppLogger.debug("File Content-Type: ${multipartFile.contentType}");
+          AppLogger.debug("File Length: ${multipartFile.length}");
+        }
       }
-      // final Options? options = data is FormData
-      //     ? Options(headers: {'Content-Type': 'multipart/form-data'})
-      //     : null;
 
       final Response response = await _dio.post(
         url,
         data: data,
+        options: data is FormData ? Options(headers: {'Content-Type': 'multipart/form-data'}) : null,
       );
       responseJson = returnResponse(response);
       if (kDebugMode) {
@@ -189,8 +190,17 @@ class NetworkApiService implements BaseApiServices {
   }
 
   void _handleDioException(DioException e) {
+    AppLogger.error('❌ DioException: ${e.message}');
+    AppLogger.error('📄 Response Data: ${e.response?.data}');
+    AppLogger.error('🔗 Request Data: ${e.requestOptions.data}');
+    AppLogger.error('🔗 Request Headers: ${e.requestOptions.headers}');
     if (e.type == DioExceptionType.connectionTimeout || e.type == DioExceptionType.receiveTimeout) {
       throw FetchDataException('Network request timed out');
+    } else if (e.type == DioExceptionType.badResponse) {
+      if (e.response?.statusCode == 401) {
+        _handleSessionExpired();
+      }
+      throw FetchDataException('Bad response: ${e.response?.statusMessage}');
     } else if (e.type == DioExceptionType.badResponse) {
       throw FetchDataException('Bad response: ${e.response?.statusMessage}');
     } else if (e.type == DioExceptionType.connectionError) {
@@ -210,7 +220,7 @@ class NetworkApiService implements BaseApiServices {
     switch (response.statusCode) {
       case 200:
       case 400:
-        AppLogger.debug(response.data);
+        // AppLogger.debug(response.data);
         if (response.data is String) {
           return jsonDecode(response.data);
         } else {
@@ -233,9 +243,32 @@ class NetworkApiService implements BaseApiServices {
     }
   }
 
-  @override
-  Future uploadFileApi(File path) {
-    // TODO: implement uploadFileApi
-    throw UnimplementedError();
+  Future<FormData> refreshFormData(FormData originalFormData) async {
+    final files = originalFormData.files;
+    final newFormData = FormData();
+
+    // Copy non-file fields
+    for (final entry in originalFormData.fields) {
+      newFormData.fields.add(MapEntry(entry.key, entry.value));
+    }
+
+    // Handle file fields
+    for (final fileEntry in files) {
+      final filePath = fileEntry.value.filename!;
+      final file = File(filePath);
+
+      if (await file.exists()) {
+        AppLogger.info('File found: $filePath');
+        newFormData.files.add(MapEntry(
+          fileEntry.key,
+          MultipartFile.fromFileSync(file.path, filename: filePath),
+        ));
+      } else {
+        print('File not found: $filePath');
+        // Handle the error (e.g., skip the file or throw an exception)
+      }
+    }
+
+    return newFormData;
   }
 }
