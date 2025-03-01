@@ -130,6 +130,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     return TGridLayout(
                       crossAxisCount: 2,
                       itemCount: state.products.length + 2,
+                      mainAxisExtent: 290,
                       isScroll: false,
                       itemBuilder: (context, index) {
                         if (index == state.products.length || index == state.products.length + 1) {

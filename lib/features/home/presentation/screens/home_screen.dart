@@ -230,12 +230,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      goQrCode("1", DateTime.now());
+                      // goSelectSpecialist();
                     },
                     child: Text("QR CODE"),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // goSelectTime();
+                    },
                     child: Text("Statistics"),
                   )
                 ],

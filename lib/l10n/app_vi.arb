@@ -160,5 +160,7 @@
   "fullPayment": "Thanh toán đủ",
   "deposit30": "Cọc 30%",
   "continue_book":"Tiếp tục",
-  "history_book": "Lịch sử đặt lịch"
+  "history_book": "Lịch sử đặt lịch",
+  "add": "Thêm",
+  "confirm": "Xác nhận"
 }

@@ -113,11 +113,12 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetServiceDetail(serviceLocator()))
     ..registerLazySingleton(() => GetListBranches(serviceLocator()))
     ..registerLazySingleton(() => GetListStaff(serviceLocator()))
+    ..registerLazySingleton(() => GetSingleStaff(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
-    ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator()))
+    ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));
 }
 

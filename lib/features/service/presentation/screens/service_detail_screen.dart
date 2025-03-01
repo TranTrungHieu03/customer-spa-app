@@ -180,7 +180,6 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                   ),
                                   Text(
                                     serviceData.duration.toString(),
-                                    style: Theme.of(context).textTheme.labelLarge,
                                   ),
                                   Text(AppLocalizations.of(context)!.minutes)
                                 ],
@@ -191,7 +190,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Text("About the service", style: Theme.of(context).textTheme.titleLarge),
+                          Text("About the service", style: Theme.of(context).textTheme.bodyLarge),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
@@ -199,7 +198,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           const SizedBox(
                             height: TSizes.sm,
                           ),
-                          Text(AppLocalizations.of(context)!.step + ": ", style: Theme.of(context).textTheme.titleLarge),
+                          Text(AppLocalizations.of(context)!.step + ": ", style: Theme.of(context).textTheme.bodyLarge),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
@@ -207,7 +206,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Text("Related Service", style: Theme.of(context).textTheme.titleLarge),
+                          Text("Related Service", style: Theme.of(context).textTheme.bodyLarge),
                           const TRelatedService()
                         ],
                       ),
@@ -244,7 +243,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   Expanded(
                     flex: 3,
                     child: GestureDetector(
-                      onTap: () => goServiceBooking(serviceData),
+                      onTap: () => goServiceCheckout([serviceData]),
                       child: Container(
                         height: 55,
                         decoration: const BoxDecoration(

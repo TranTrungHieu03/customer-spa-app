@@ -16,32 +16,55 @@ class CreateAppointment implements UseCase<Either, CreateAppointmentParams> {
 }
 
 class CreateAppointmentParams {
-  final int customerId;
   final List<int> staffId;
   final List<int> serviceId;
   final int branchId;
   final DateTime appointmentsTime;
   final String notes;
+  final int voucherId;
+  final String? feedback;
 
   CreateAppointmentParams({
-    required this.customerId,
     required this.staffId,
     required this.serviceId,
     required this.branchId,
     required this.appointmentsTime,
     required this.notes,
+    this.feedback,
+    this.voucherId = 0,
   });
 
+  // Phương thức toJson
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'customerId': customerId,
+    return {
       'staffId': staffId,
       'serviceId': serviceId,
       'branchId': branchId,
-      'appointmentsTime': appointmentsTime.toIso8601String(),
+      'appointmentsTime': appointmentsTime.toIso8601String(), // Chuyển DateTime thành chuỗi ISO 8601
       'notes': notes,
-      'status': "",
-      'feedback': ""
+      'voucherId': voucherId,
+      'feedback': feedback,
     };
+  }
+
+  // Phương thức copyWith
+  CreateAppointmentParams copyWith({
+    List<int>? staffId,
+    List<int>? serviceId,
+    int? branchId,
+    DateTime? appointmentsTime,
+    String? notes,
+    int? voucherId,
+    String? feedback,
+  }) {
+    return CreateAppointmentParams(
+      staffId: staffId ?? this.staffId,
+      serviceId: serviceId ?? this.serviceId,
+      branchId: branchId ?? this.branchId,
+      appointmentsTime: appointmentsTime ?? this.appointmentsTime,
+      notes: notes ?? this.notes,
+      voucherId: voucherId ?? this.voucherId,
+      feedback: feedback ?? this.feedback,
+    );
   }
 }

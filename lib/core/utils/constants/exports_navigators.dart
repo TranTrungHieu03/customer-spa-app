@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/screens/success_screen.dart';
 import 'package:spa_mobile/core/common/screens/web_view_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysing_image_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysis_result_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/basic_screen_image.dart';
@@ -32,10 +32,13 @@ import 'package:spa_mobile/features/product/presentation/screens/product_detail_
 import 'package:spa_mobile/features/product/presentation/screens/shipment_information_screen.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/presentation/screens/booking_detail_screen.dart';
-import 'package:spa_mobile/features/service/presentation/screens/booking_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/checkout_service_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/confirm_payment_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/feedback_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/payment_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/qr_code_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/select_specialist_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/select_time_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_history_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';

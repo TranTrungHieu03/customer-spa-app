@@ -71,6 +71,7 @@ import 'package:spa_mobile/features/service/domain/usecases/get_list_categories.
 import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';

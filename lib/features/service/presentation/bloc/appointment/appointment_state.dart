@@ -26,3 +26,9 @@ final class AppointmentError extends AppointmentState {
 
   const AppointmentError(this.message);
 }
+
+final class AppointmentCreateData extends AppointmentState {
+  final CreateAppointmentParams params;
+
+  const AppointmentCreateData(this.params);
+}

@@ -23,21 +23,3 @@ class GradientText extends StatelessWidget {
     );
   }
 }
-// GradientText(
-// '1',
-// style: Theme.of(context)
-//     .textTheme
-//     .displayLarge!
-//     .copyWith(
-// fontSize: 200, fontWeight: FontWeight.w900),
-// gradient: const LinearGradient(
-// colors: [
-// TColors.primary,
-// Colors.green,
-// TColors.primaryBackground
-// ],
-// // Màu gradient
-// begin: Alignment.topCenter,
-// end: Alignment.bottomCenter,
-// ),
-// ),

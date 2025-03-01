@@ -150,4 +150,17 @@ class THelperFunctions {
 
     return ans;
   }
+
+  static String getFirstLetterOfLastName(String fullName) {
+    List<String> parts = fullName.trim().split(' ');
+    if (parts.isNotEmpty) {
+      return parts.last[0].toUpperCase();
+    }
+    return "";
+  }
+
+  static String getLastName(String fullName) {
+    List<String> nameParts = fullName.trim().split(" ");
+    return nameParts.isNotEmpty ? nameParts.last.toLowerCase() : "";
+  }
 }

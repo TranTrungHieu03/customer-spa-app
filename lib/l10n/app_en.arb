@@ -160,5 +160,7 @@
   "fullPayment": "Full payment",
   "deposit30": "30% deposit",
   "continue_book": "Continue",
-  "history_book": "History booking"
+  "history_book": "History booking",
+  "add": "Add",
+  "confirm": "Confirm"
 }

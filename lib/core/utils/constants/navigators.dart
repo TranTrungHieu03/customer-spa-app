@@ -121,12 +121,8 @@ goSuccess(String title, String subTitle, VoidCallback onPressed, String image) a
               )));
 }
 
-goServiceBooking(ServiceModel service) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => BookingServiceScreen(service: service)));
-}
-
-goServiceCheckout(ServiceModel service) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: [service])));
+goServiceCheckout(List<ServiceModel> services) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: services)));
 }
 
 goVerify(String email, int statePage) async {
@@ -198,4 +194,32 @@ goRoutineDetail(String id) async {
       MaterialPageRoute(
         builder: (context) => RoutineDetailScreen(id: id),
       ));
+}
+
+goSelectTime(List<int> staffId, BranchModel branch) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => SelectTimeScreen(
+                staffId: staffId,
+                branch: branch,
+              )));
+}
+
+goSelectSpecialist(BranchModel branch) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => SelectSpecialistScreen(branch: branch)));
+}
+
+goReview(List<int> staffId, BranchModel branch) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => ConfirmPaymentScreen(
+                staffId: staffId,
+                branch: branch,
+              )));
+}
+
+goPayment(int id) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => PaymentScreen()));
 }

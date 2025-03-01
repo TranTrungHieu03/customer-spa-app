@@ -87,7 +87,7 @@ class TProductCardVertical extends StatelessWidget {
                         child: TProductTitleText(
                           title: productModel.productName,
                           smallSize: true,
-                          maxLines: 1,
+                          maxLines: 2,
                         ),
                       ),
                       const SizedBox(
