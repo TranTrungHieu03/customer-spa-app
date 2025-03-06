@@ -2,18 +2,30 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
-import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/list_appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
+import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
+import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
+import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/time_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 
 abstract class AppointmentRemoteDataSource {
-  Future<AppointmentModel> getAppointment(GetAppointmentParams params);
+  Future<OrderAppointmentModel> getAppointment(GetAppointmentParams params);
 
-  Future<List<AppointmentModel>> createAppointment(CreateAppointmentParams params);
+  Future<int> createAppointment(CreateAppointmentParams params);
 
-  Future<ListAppointmentModel> getHistoryBooking(GetListAppointmentParams params);
+  Future<String> payFull(PayFullParams params);
+
+  // Future<String> payDeposit(CreateAppointmentParams params);
+
+  Future<ListOrderAppointmentModel> getHistoryBooking(GetListAppointmentParams params);
+
+  Future<List<TimeModel>> getTimeSlots(GetTimeSlotByDateParams params);
 }
 
 class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
@@ -22,14 +34,14 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   AppointmentRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<List<AppointmentModel>> createAppointment(CreateAppointmentParams params) async {
+  Future<int> createAppointment(CreateAppointmentParams params) async {
     try {
       final response = await _apiService.postApi('/Appointments/create', params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        return (apiResponse.result!.data as List).map((e) => AppointmentModel.fromJson(e)).toList();
+        return apiResponse.result!.data;
       } else {
         throw AppException(apiResponse.result!.message!);
       }
@@ -40,14 +52,15 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   }
 
   @override
-  Future<AppointmentModel> getAppointment(GetAppointmentParams params) async {
+  Future<OrderAppointmentModel> getAppointment(GetAppointmentParams params) async {
     try {
-      final response = await _apiService.getApi('/Appointments/get-by-id/${params.id}');
+      final response = await _apiService.getApi('/Order/detail-booking?orderId=${params.id}');
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        return AppointmentModel.fromJson(apiResponse.result!.data!);
+        AppLogger.info(apiResponse.result!.data!);
+        return OrderAppointmentModel.fromJson(apiResponse.result!.data!);
       } else {
         throw AppException(apiResponse.result!.message!);
       }
@@ -58,14 +71,52 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   }
 
   @override
-  Future<ListAppointmentModel> getHistoryBooking(GetListAppointmentParams params) async {
+  Future<ListOrderAppointmentModel> getHistoryBooking(GetListAppointmentParams params) async {
     try {
-      final response = await _apiService.getApi('/Appointments/history-booking?page=${params.page}&status=${params.status}');
+      final response = await _apiService.getApi('/Order/history-booking?page=${params.page}&status=${params.status}');
 
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        return ListAppointmentModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
+        return ListOrderAppointmentModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      AppLogger.info(e.toString());
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<TimeModel>> getTimeSlots(GetTimeSlotByDateParams params) async {
+    try {
+      final response = await _apiService.getApi('/Staff/staff-busy-times?staffId=${params.staffId}&date=${params.date.toString()}');
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        if (apiResponse.result!.data == null) {
+          return [];
+        }
+        AppLogger.info(apiResponse.result!.data);
+        return (apiResponse.result!.data as List).map((x) => TimeModel.fromJson(x)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      AppLogger.info(e.toString());
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> payFull(PayFullParams params) async {
+    try {
+      final response = await _apiService.postApi('/Order/confirm-order-appointment', params.toJson());
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return apiResponse.result!.data;
       } else {
         throw AppException(apiResponse.result!.message!);
       }

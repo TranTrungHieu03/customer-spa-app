@@ -66,7 +66,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     size: 25,
                     backgroundColor: TColors.primaryBackground,
                   ),
-                  SizedBox(width: TSizes.sm,)
+                  SizedBox(
+                    width: TSizes.sm,
+                  )
                 ],
               ),
               body: SingleChildScrollView(
@@ -132,14 +134,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: THelperFunctions.screenWidth(context) * 0.7,
-                                ),
-                                child: TProductTitleText(
-                                  title: serviceData.name,
-                                  maxLines: 4,
-                                ),
+                              Text(
+                                serviceData.serviceCategory?.name ?? "",
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
                               TRoundedContainer(
                                 radius: 20,
@@ -163,6 +160,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                               )
                             ],
                           ),
+                          TProductTitleText(
+                            title: serviceData.name,
+                            maxLines: 4,
+                          ),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
@@ -184,7 +185,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                   Text(AppLocalizations.of(context)!.minutes)
                                 ],
                               ),
-                              TProductPriceText(price: serviceData.price.toString())
+                              TProductPriceText(
+                                price: serviceData.price.toString(),
+                                isLarge: true,
+                              )
                             ],
                           ),
                           const SizedBox(

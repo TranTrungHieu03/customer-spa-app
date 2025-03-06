@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:spa_mobile/core/common/bloc/web_view_bloc.dart';
+import 'package:spa_mobile/core/common/bloc/payment_payos/payos_bloc.dart';
+import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/core/network/network.dart';
@@ -72,13 +73,18 @@ import 'package:spa_mobile/features/service/domain/usecases/get_list_services.da
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
 
 import 'features/service/domain/usecases/get_list_branches.dart';
 

@@ -10,15 +10,15 @@ final class AppointmentInitial extends AppointmentState {}
 final class AppointmentLoading extends AppointmentState {}
 
 final class AppointmentLoaded extends AppointmentState {
-  final AppointmentModel appointment;
+  final OrderAppointmentModel appointment;
 
   const AppointmentLoaded(this.appointment);
 }
 
 final class AppointmentCreateSuccess extends AppointmentState {
-  final List<AppointmentModel> appointment;
+  final int id;
 
-  const AppointmentCreateSuccess(this.appointment);
+  const AppointmentCreateSuccess(this.id);
 }
 
 final class AppointmentError extends AppointmentState {

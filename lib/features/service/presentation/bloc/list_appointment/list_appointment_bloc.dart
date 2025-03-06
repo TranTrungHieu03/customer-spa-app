@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 
 part 'list_appointment_event.dart';

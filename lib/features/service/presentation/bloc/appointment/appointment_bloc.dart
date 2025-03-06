@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
-import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 
@@ -49,7 +49,17 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
       voucherId: event.params.voucherId,
     ));
     result.fold(
-      (failure) => emit(AppointmentError(failure.message)),
+      (failure) {
+        emit(AppointmentError(failure.message));
+        emit(AppointmentCreateData(CreateAppointmentParams(
+          staffId: event.params.staffId,
+          serviceId: event.params.serviceId,
+          branchId: event.params.branchId,
+          appointmentsTime: event.params.appointmentsTime,
+          notes: event.params.notes,
+          voucherId: event.params.voucherId,
+        )));
+      },
       (appointment) => emit(AppointmentCreateSuccess(appointment)),
     );
   }
@@ -66,19 +76,33 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           serviceId: event.serviceId,
           branchId: event.branchId,
           appointmentsTime: currentState.params.appointmentsTime,
+          totalMinutes: currentState.params.totalMinutes,
+          // Giữ nguyên giá trị totalMinutes
           notes: currentState.params.notes)));
       AppLogger.debug(CreateAppointmentParams(
               staffId: currentState.params.staffId,
               serviceId: event.serviceId,
               branchId: event.branchId,
               appointmentsTime: currentState.params.appointmentsTime,
+              totalMinutes: currentState.params.totalMinutes,
               notes: currentState.params.notes)
           .toJson());
     } else {
       emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: [], serviceId: event.serviceId, branchId: event.branchId, appointmentsTime: DateTime.now(), notes: "")));
+          staffId: [],
+          serviceId: event.serviceId,
+          branchId: event.branchId,
+          appointmentsTime: DateTime.now(),
+          totalMinutes: event.totalMinutes,
+          // Giá trị mặc định cho totalMinutes
+          notes: "")));
       AppLogger.debug(CreateAppointmentParams(
-              staffId: [], serviceId: event.serviceId, branchId: event.branchId, appointmentsTime: DateTime.now(), notes: "")
+              staffId: [],
+              serviceId: event.serviceId,
+              branchId: event.branchId,
+              appointmentsTime: DateTime.now(),
+              totalMinutes: event.totalMinutes,
+              notes: "")
           .toJson());
     }
   }
@@ -92,6 +116,8 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           serviceId: currentState.params.serviceId,
           branchId: currentState.params.branchId,
           appointmentsTime: currentState.params.appointmentsTime,
+          totalMinutes: currentState.params.totalMinutes,
+          // Giữ nguyên giá trị totalMinutes
           notes: currentState.params.notes)));
 
       AppLogger.debug(CreateAppointmentParams(
@@ -99,6 +125,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
               serviceId: currentState.params.serviceId,
               branchId: currentState.params.branchId,
               appointmentsTime: currentState.params.appointmentsTime,
+              totalMinutes: currentState.params.totalMinutes,
               notes: currentState.params.notes)
           .toJson());
     } else {
@@ -114,6 +141,8 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           serviceId: currentState.params.serviceId,
           branchId: currentState.params.branchId,
           appointmentsTime: event.appointmentTime,
+          totalMinutes: currentState.params.totalMinutes,
+          // Giữ nguyên giá trị totalMinutes
           notes: currentState.params.notes)));
     } else {
       emit(AppointmentError("Du lieu chua duoc dong nhat"));
@@ -128,12 +157,15 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
           serviceId: currentState.params.serviceId,
           branchId: currentState.params.branchId,
           appointmentsTime: currentState.params.appointmentsTime,
+          totalMinutes: currentState.params.totalMinutes,
+          // Giữ nguyên giá trị totalMinutes
           notes: event.note)));
       AppLogger.debug(CreateAppointmentParams(
               staffId: currentState.params.staffId,
               serviceId: currentState.params.serviceId,
               branchId: currentState.params.branchId,
               appointmentsTime: currentState.params.appointmentsTime,
+              totalMinutes: currentState.params.totalMinutes,
               notes: event.note)
           .toJson());
     } else {

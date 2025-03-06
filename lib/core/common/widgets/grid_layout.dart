@@ -23,7 +23,7 @@ class TGridLayout extends StatelessWidget {
     return GridView.builder(
       controller: controller,
       itemCount: itemCount,
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.all(TSizes.xs),
       shrinkWrap: true,
       physics: isScroll ? const AlwaysScrollableScrollPhysics() : const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

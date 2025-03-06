@@ -107,7 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   actions: [
                     TNotificationIcon(
                         onPressed: () {
-                          goWebView("https://pub.dev/packages");
                         },
                         iconColor: TColors.primary),
                     const SizedBox(

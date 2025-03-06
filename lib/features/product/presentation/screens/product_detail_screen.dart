@@ -85,7 +85,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   });
                                 },
                                 aspectRatio: 3 / 2),
-                            items: product.images
+                            items: product.images!
                                 .map((banner) => TRoundedImage(
                                       imageUrl: banner,
                                       applyImageRadius: false,

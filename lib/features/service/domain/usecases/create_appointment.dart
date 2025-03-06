@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
-import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/appointment_repository.dart';
 
 class CreateAppointment implements UseCase<Either, CreateAppointmentParams> {
@@ -10,7 +9,7 @@ class CreateAppointment implements UseCase<Either, CreateAppointmentParams> {
   CreateAppointment(this._appointmentRepository);
 
   @override
-  Future<Either<Failure, List<AppointmentModel>>> call(CreateAppointmentParams params) async {
+  Future<Either<Failure, int>> call(CreateAppointmentParams params) async {
     return await _appointmentRepository.createAppointment(params);
   }
 }
@@ -23,16 +22,17 @@ class CreateAppointmentParams {
   final String notes;
   final int voucherId;
   final String? feedback;
+  final int totalMinutes;
 
-  CreateAppointmentParams({
-    required this.staffId,
-    required this.serviceId,
-    required this.branchId,
-    required this.appointmentsTime,
-    required this.notes,
-    this.feedback,
-    this.voucherId = 0,
-  });
+  CreateAppointmentParams(
+      {required this.staffId,
+      required this.serviceId,
+      required this.branchId,
+      required this.appointmentsTime,
+      required this.notes,
+      this.feedback,
+      this.voucherId = 0,
+      this.totalMinutes = 0});
 
   // Phương thức toJson
   Map<String, dynamic> toJson() {
@@ -48,15 +48,15 @@ class CreateAppointmentParams {
   }
 
   // Phương thức copyWith
-  CreateAppointmentParams copyWith({
-    List<int>? staffId,
-    List<int>? serviceId,
-    int? branchId,
-    DateTime? appointmentsTime,
-    String? notes,
-    int? voucherId,
-    String? feedback,
-  }) {
+  CreateAppointmentParams copyWith(
+      {List<int>? staffId,
+      List<int>? serviceId,
+      int? branchId,
+      DateTime? appointmentsTime,
+      String? notes,
+      int? voucherId,
+      String? feedback,
+      int? totalMinutes}) {
     return CreateAppointmentParams(
       staffId: staffId ?? this.staffId,
       serviceId: serviceId ?? this.serviceId,
@@ -65,6 +65,7 @@ class CreateAppointmentParams {
       notes: notes ?? this.notes,
       voucherId: voucherId ?? this.voucherId,
       feedback: feedback ?? this.feedback,
+      totalMinutes: totalMinutes ?? this.totalMinutes,
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
-import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/appointment_repository.dart';
 
 class GetAppointment implements UseCase<Either, GetAppointmentParams> {
@@ -10,7 +10,7 @@ class GetAppointment implements UseCase<Either, GetAppointmentParams> {
   GetAppointment(this._appointmentRepository);
 
   @override
-  Future<Either<Failure, AppointmentModel>> call(GetAppointmentParams params) async {
+  Future<Either<Failure, OrderAppointmentModel>> call(GetAppointmentParams params) async {
     return await _appointmentRepository.getAppointment(params);
   }
 }

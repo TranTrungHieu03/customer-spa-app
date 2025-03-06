@@ -92,7 +92,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Iconsax.award,
                     title: AppLocalizations.of(context)!.rewards,
                     onTap: () {
-                      goWebView("https://pub.dev/packages/webview_flutter");
+                      // goWebView("https://pub.dev/packages/webview_flutter");
                     },
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),

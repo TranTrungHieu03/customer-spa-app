@@ -1,9 +1,11 @@
 import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/features/product/data/model/product_category_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_category_model.dart';
 import 'package:spa_mobile/features/product/domain/entities/product.dart';
 import 'package:spa_mobile/features/service/data/model/category_model.dart';
 
 class ProductModel extends Product {
-  final CategoryModel category;
+  final ProductCategoryModel category;
 
   ProductModel(
       {required super.productId,
@@ -36,8 +38,8 @@ class ProductModel extends Product {
       status: json['status'],
       categoryId: json['categoryId'],
       companyId: json['companyId'],
-      category: CategoryModel.fromJson(json['category']),
-      images: (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
+      category: ProductCategoryModel.fromJson(json['category']),
+      images: (json['images'] is List) ? (json['images'] as List).map((e) => e.toString()).toList() : [],
     );
   }
 
@@ -59,36 +61,36 @@ class ProductModel extends Product {
       'images': (images as List).map((e) => e.toString()).toList(),
     };
   }
-
-  Product copyWith(
-          {int? productId,
-          String? productName,
-          String? productDescription,
-          double? price,
-          double? volume,
-          int? quantity,
-          double? discount,
-          String? status,
-          String? dimension,
-          int? categoryId,
-          int? companyId,
-          String? skinTypeSuitable,
-          CategoryModel? category,
-          List<String>? images}) =>
-      ProductModel(
-        productId: productId ?? this.productId,
-        productName: productName ?? this.productName,
-        productDescription: productDescription ?? this.productDescription,
-        price: price ?? this.price,
-        quantity: quantity ?? this.quantity,
-        discount: discount ?? this.discount,
-        dimension: dimension ?? this.dimension,
-        volume: volume ?? this.volume,
-        skinTypeSuitable: skinTypeSuitable ?? this.skinTypeSuitable,
-        status: status ?? this.status,
-        categoryId: categoryId ?? this.categoryId,
-        companyId: companyId ?? this.companyId,
-        category: category ?? this.category,
-        images: images ?? List.from(this.images),
-      );
+  //
+  // Product copyWith(
+  //         {int? productId,
+  //         String? productName,
+  //         String? productDescription,
+  //         double? price,
+  //         double? volume,
+  //         int? quantity,
+  //         double? discount,
+  //         String? status,
+  //         String? dimension,
+  //         int? categoryId,
+  //         int? companyId,
+  //         String? skinTypeSuitable,
+  //         CategoryModel? category,
+  //         List<String>? images}) =>
+  //     ProductModel(
+  //       productId: productId ?? this.productId,
+  //       productName: productName ?? this.productName,
+  //       productDescription: productDescription ?? this.productDescription,
+  //       price: price ?? this.price,
+  //       quantity: quantity ?? this.quantity,
+  //       discount: discount ?? this.discount,
+  //       dimension: dimension ?? this.dimension,
+  //       volume: volume ?? this.volume,
+  //       skinTypeSuitable: skinTypeSuitable ?? this.skinTypeSuitable,
+  //       status: status ?? this.status,
+  //       categoryId: categoryId ?? this.categoryId,
+  //       companyId: companyId ?? this.companyId,
+  //       category: category ?? this.category,
+  //       images: images ?? List.from(this.images),
+  //     );
 }

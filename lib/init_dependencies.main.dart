@@ -73,8 +73,12 @@ Future<void> _initMenu() async {
   serviceLocator
     ..registerLazySingleton(() => NavigationBloc())
     ..registerLazySingleton(() => ImageBloc())
+    ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator()))
+    ..registerLazySingleton(() => PayosBloc())
     // ..registerLazySingleton(() => FormSkinBloc())
-    ..registerLazySingleton(() => WebViewBloc());
+    ..registerLazySingleton(() => WebViewBloc())
+    //usecase
+    ..registerLazySingleton(() => PayFull(serviceLocator()));
 }
 
 Future<void> _initProduct() async {
@@ -118,6 +122,7 @@ Future<void> _initService() async {
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
+    ..registerLazySingleton(() => StaffBloc(getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));
 }
@@ -149,10 +154,12 @@ Future<void> _initAppointment() async {
     ..registerLazySingleton(() => GetAppointment(serviceLocator()))
     ..registerLazySingleton(() => CreateAppointment(serviceLocator()))
     ..registerLazySingleton(() => GetListAppointment(serviceLocator()))
+    ..registerLazySingleton(() => GetTimeSlotByDate(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => AppointmentBloc(getAppointment: serviceLocator(), createAppointment: serviceLocator()))
-    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator()));
+    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator()))
+    ..registerLazySingleton(() => ListTimeBloc(getTimeSlotByDate: serviceLocator()));
 }
 
 Future<void> _initAiChat() async {

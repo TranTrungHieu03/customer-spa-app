@@ -85,7 +85,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Padding(
-            padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
+            padding: const EdgeInsets.all(TSizes.xs),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

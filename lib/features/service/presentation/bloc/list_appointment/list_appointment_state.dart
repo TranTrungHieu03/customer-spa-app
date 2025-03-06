@@ -8,9 +8,9 @@ sealed class ListAppointmentState {
 final class ListAppointmentInitial extends ListAppointmentState {}
 
 final class ListAppointmentLoaded extends ListAppointmentState {
-  final List<AppointmentModel> pending;
-  final List<AppointmentModel> completed;
-  final List<AppointmentModel> cancelled;
+  final List<OrderAppointmentModel> pending;
+  final List<OrderAppointmentModel> completed;
+  final List<OrderAppointmentModel> cancelled;
 
   final bool isLoadingMorePending;
   final bool isLoadingMoreCompleted;
@@ -33,9 +33,9 @@ final class ListAppointmentLoaded extends ListAppointmentState {
   });
 
   ListAppointmentLoaded copyWith({
-    List<AppointmentModel>? pending,
-    List<AppointmentModel>? completed,
-    List<AppointmentModel>? cancelled,
+    List<OrderAppointmentModel>? pending,
+    List<OrderAppointmentModel>? completed,
+    List<OrderAppointmentModel>? cancelled,
     bool? isLoadingMorePending,
     bool? isLoadingMoreCompleted,
     bool? isLoadingMoreCancelled,

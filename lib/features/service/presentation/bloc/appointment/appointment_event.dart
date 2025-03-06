@@ -26,8 +26,9 @@ final class UpdateCreateAppointmentDataEvent extends AppointmentEvent {
 final class UpdateCreateServiceIdAndBranchIdEvent extends AppointmentEvent {
   final List<int> serviceId;
   final int branchId;
+  final int totalMinutes;
 
-  UpdateCreateServiceIdAndBranchIdEvent({required this.serviceId, required this.branchId});
+  UpdateCreateServiceIdAndBranchIdEvent({required this.serviceId, required this.branchId, required this.totalMinutes});
 }
 
 final class UpdateCreateStaffIdEvent extends AppointmentEvent {
@@ -48,4 +49,4 @@ final class UpdateNoteEvent extends AppointmentEvent {
   UpdateNoteEvent({required this.note});
 }
 
-final class ClearAppointmentEvent extends AppointmentEvent{}
+final class ClearAppointmentEvent extends AppointmentEvent {}

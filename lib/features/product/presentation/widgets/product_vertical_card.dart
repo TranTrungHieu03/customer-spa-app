@@ -42,9 +42,9 @@ class TProductCardVertical extends StatelessWidget {
                 children: [
                   TRoundedImage(
                     width: width,
-                    imageUrl: productModel.images.isNotEmpty ? productModel.images[0] : TImages.product1,
+                    imageUrl: productModel.images!.isNotEmpty ? productModel.images![0] : TImages.product1,
                     applyImageRadius: true,
-                    isNetworkImage: productModel.images.isNotEmpty,
+                    isNetworkImage: productModel.images!.isNotEmpty,
                     fit: BoxFit.contain,
                   ),
                   // Positioned(

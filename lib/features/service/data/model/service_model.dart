@@ -1,16 +1,19 @@
+import 'package:spa_mobile/features/service/data/model/category_model.dart';
 import 'package:spa_mobile/features/service/domain/entities/service.dart';
 
 class ServiceModel extends Service {
-  const ServiceModel({
-    required super.serviceId,
-    required super.name,
-    required super.description,
-    required super.price,
-    required super.duration,
-    required super.status,
-    required super.images,
-    required super.steps,
-  });
+  final CategoryModel? serviceCategory;
+
+  const ServiceModel(
+      {required super.serviceId,
+      required super.name,
+      required super.description,
+      required super.price,
+      required super.duration,
+      required super.status,
+      required super.images,
+      required super.steps,
+      this.serviceCategory});
 
   // Factory method to parse JSON to Service object
   factory ServiceModel.fromJson(Map<String, dynamic> json) {
@@ -21,7 +24,8 @@ class ServiceModel extends Service {
         price: (json['price'] as num).toDouble(),
         duration: json['duration'] as String,
         status: json['status'] as String,
-        images: (json['images'] as List<dynamic>).map((e) => e.toString()).toList(),
+        serviceCategory: json['serviceCategory'] != null ? CategoryModel.fromJson(json['serviceCategory']) : null,
+        images: json['images'] is List ? (json['images'] as List<dynamic>).map((e) => e.toString()).toList() : [],
         steps: json['steps'] as String);
   }
 

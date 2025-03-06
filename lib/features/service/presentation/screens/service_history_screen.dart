@@ -69,7 +69,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                       ),
                       backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                       bottom: TTabBar(
-                          isScroll: false, tabs: ["Pending", "Done", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
+                          isScroll: false, tabs: ["Pending", "Completed", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
                 ];
               },
             ),

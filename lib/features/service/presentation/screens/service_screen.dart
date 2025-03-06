@@ -21,6 +21,8 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/service_horizontal_shimmer_card.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/service_horizotial_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_vertical_card.dart';
 import 'package:spa_mobile/init_dependencies.dart';
@@ -54,6 +56,7 @@ class ServiceScreen extends StatefulWidget {
 class _ServiceScreenState extends State<ServiceScreen> {
   late ScrollController _scrollController;
   int? selectedBranch;
+  int? previousBranch;
 
   @override
   void initState() {
@@ -68,6 +71,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
     final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
     setState(() {
       selectedBranch = branchId != null ? int.parse(branchId) : 0;
+      previousBranch = selectedBranch;
     });
 
     context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
@@ -159,17 +163,18 @@ class _ServiceScreenState extends State<ServiceScreen> {
                         );
                       }
                       return TRoundedContainer(
+                        backgroundColor: TColors.primaryBackground,
                         padding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "All Branches ",
+                              "Bộ lọc",
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             TRoundedIcon(
-                              icon: Iconsax.filter_tick,
+                              icon: Iconsax.setting_3,
                               onPressed: () {
                                 TSnackBar.warningSnackBar(context, message: "No branch available.");
                               },
@@ -187,10 +192,11 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   builder: (context, state) {
                     if (state is ListServiceLoading) {
                       return TGridLayout(
-                          crossAxisCount: 2,
+                          crossAxisCount: 1,
                           itemCount: 4,
+                          mainAxisExtent: 140,
                           itemBuilder: (context, _) {
-                            return const TServiceCardShimmer();
+                            return const TServiceHorizontalCardShimmer();
                           });
                     } else if (state is ListServiceEmpty) {
                       return const Center(
@@ -224,15 +230,18 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             child: TGridLayout(
                               controller: _scrollController,
                               itemCount: state.services.length + 2,
-                              crossAxisCount: 2,
+                              crossAxisCount: 1,
+                              mainAxisExtent: 140,
                               itemBuilder: (context, index) {
                                 if (index == state.services.length || index == state.services.length + 1) {
-                                  return state.isLoadingMore ? const TServiceCardShimmer() : const SizedBox.shrink();
+                                  return state.isLoadingMore ? const TServiceHorizontalCardShimmer() : const SizedBox.shrink();
+                                }else {
+                                  final service = state.services[index];
+                                  return TServiceHorizontalCard(
+                                    service: service,
+                                  );
                                 }
-                                final service = state.services[index];
-                                return TServiceCard(
-                                  service: service,
-                                );
+
                               },
                             ),
                           ));
@@ -368,13 +377,15 @@ class _ServiceScreenState extends State<ServiceScreen> {
         });
       },
     ).then((_) {
-      context.read<ListServiceBloc>().emit(
-            ListServiceLoading(
-              isLoadingMore: false,
-              services: [],
-              pagination: PaginationModel.isEmty(),
-            ),
-          );
+      if (selectedBranch != previousBranch)
+        context.read<ListServiceBloc>().emit(
+              ListServiceLoading(
+                isLoadingMore: false,
+                services: [],
+                pagination: PaginationModel.isEmty(),
+              ),
+            );
+      previousBranch = selectedBranch;
       context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
     });
   }

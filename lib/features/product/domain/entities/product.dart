@@ -11,11 +11,11 @@ class Product {
   final String status;
   final int categoryId;
   final int companyId;
-  final List<String> images;
+  final List<String>? images;
 
   Product({
     required this.skinTypeSuitable,
-    required this.images,
+    this.images,
     required this.volume,
     required this.dimension,
     required this.productId,

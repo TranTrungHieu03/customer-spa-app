@@ -82,15 +82,14 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
     //
     // TimeOfDay selectedTime = TimeOfDay.now();
 
-
     return BlocConsumer<AppointmentBloc, AppointmentState>(
       listener: (context, state) {
         if (state is AppointmentError) {
           TSnackBar.errorSnackBar(context, message: state.message);
         }
-        if (state is AppointmentCreateSuccess) {
-          goWebView("https://www.youtube.com");
-        }
+        // if (state is AppointmentCreateSuccess) {
+        //   // goWebView("https://www.youtube.com");
+        // }
       },
       builder: (context, state) {
         return Scaffold(
@@ -260,8 +259,10 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                           ? null
                           : () {
                               context.read<AppointmentBloc>().add(UpdateCreateServiceIdAndBranchIdEvent(
-                                  serviceId: services.map((x) => x.serviceId).toList(), branchId: selectedBranch ?? 1));
-                              goSelectSpecialist(branchInfo!);
+                                  serviceId: services.map((x) => x.serviceId).toList(),
+                                  branchId: selectedBranch ?? 1,
+                                  totalMinutes: services.fold(0, (sum, service) => sum + int.parse(service.duration))));
+                              goSelectSpecialist(branchInfo!, services.fold(0, (sum, service) => sum + int.parse(service.duration)));
                             },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

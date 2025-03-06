@@ -6,30 +6,15 @@ class Category extends Equatable {
   final String description;
 
   final String status;
-  final String imageUrl;
+  final String thumbnail;
 
   const Category({
     required this.categoryId,
     required this.name,
     required this.description,
     required this.status,
-    required this.imageUrl,
+    required this.thumbnail,
   });
-
-  Category copyWith({
-    int? categoryId,
-    String? name,
-    String? description,
-    String? status,
-    String? imageUrl,
-  }) =>
-      Category(
-        categoryId: categoryId ?? this.categoryId,
-        name: name ?? this.name,
-        description: description ?? this.description,
-        status: status ?? this.status,
-        imageUrl: imageUrl ?? this.imageUrl,
-      );
 
   @override
   // TODO: implement props

@@ -6,9 +6,9 @@ import 'package:spa_mobile/features/service/domain/entities/appointment.dart';
 class AppointmentModel extends Appointment {
   final UserModel? customer;
 
-  // final UserModel? staff;
+  final UserModel? staff;
   final BranchModel? branch;
-  final ServiceModel? service;
+  final ServiceModel service;
 
   const AppointmentModel({
     required super.customerId,
@@ -21,9 +21,12 @@ class AppointmentModel extends Appointment {
     required super.notes,
     required super.feedback,
     this.customer,
-    // this.staff,
+    this.staff,
     this.branch,
-    this.service,
+    required this.service,
+    required super.quantity,
+    required super.unitPrice,
+    required super.subTotal,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -38,41 +41,44 @@ class AppointmentModel extends Appointment {
       notes: json['notes'],
       feedback: json['feedback'],
       customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
-      // staff: json['staff'] != null ? UserModel.fromJson(json['staff']) : null,
+      staff: json['staff'] != null ? UserModel.fromJson(json['staff']['staffInfo']) : null,
       branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
-      service: json['service'] != null ? ServiceModel.fromJson(json['service']) : null,
+      service: ServiceModel.fromJson(json['service']),
+      quantity: json['quantity'] ?? 0,
+      unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0.0,
+      subTotal: (json['subTotal'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
-  Appointment copyWith({
-    int? customerId,
-    int? appointmentId,
-    // int? staffId,
-    int? serviceId,
-    int? branchId,
-    DateTime? appointmentsTime,
-    String? status,
-    String? notes,
-    String? feedback,
-    UserModel? customer,
-    UserModel? staff,
-    BranchModel? branch,
-    ServiceModel? service,
-  }) {
-    return AppointmentModel(
-      appointmentId: appointmentId ?? this.appointmentId,
-      customerId: customerId ?? this.customerId,
-      staffId: staffId ?? staffId,
-      serviceId: serviceId ?? this.serviceId,
-      branchId: branchId ?? this.branchId,
-      appointmentsTime: appointmentsTime ?? this.appointmentsTime,
-      status: status ?? this.status,
-      notes: notes ?? this.notes,
-      feedback: feedback ?? this.feedback,
-      customer: customer ?? this.customer,
-      // staff: staff ?? this.staff,
-      branch: branch ?? this.branch,
-      service: service ?? this.service,
-    );
-  }
+// Appointment copyWith({
+//   int? customerId,
+//   int? appointmentId,
+//   int? staffId,
+//   int? serviceId,
+//   int? branchId,
+//   DateTime? appointmentsTime,
+//   String? status,
+//   String? notes,
+//   String? feedback,
+//   UserModel? customer,
+//   UserModel? staff,
+//   BranchModel? branch,
+//   ServiceModel? service,
+// }) {
+//   return AppointmentModel(
+//     appointmentId: appointmentId ?? this.appointmentId,
+//     customerId: customerId ?? this.customerId,
+//     staffId: staffId ?? staffId,
+//     serviceId: serviceId ?? this.serviceId,
+//     branchId: branchId ?? this.branchId,
+//     appointmentsTime: appointmentsTime ?? this.appointmentsTime,
+//     status: status ?? this.status,
+//     notes: notes ?? this.notes,
+//     feedback: feedback ?? this.feedback,
+//     customer: customer ?? this.customer,
+//     // staff: staff ?? this.staff,
+//     branch: branch ?? this.branch,
+//     service: service ?? this.service,
+//   );
+// }
 }

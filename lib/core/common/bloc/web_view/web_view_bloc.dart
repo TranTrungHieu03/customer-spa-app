@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:spa_mobile/core/common/bloc/web_view_event.dart';
-import 'package:spa_mobile/core/common/bloc/web_view_state.dart';
+import 'package:spa_mobile/core/common/bloc/web_view/web_view_event.dart';
+import 'package:spa_mobile/core/common/bloc/web_view/web_view_state.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -23,7 +24,7 @@ class TServiceCard extends StatelessWidget {
       onTap: () => goServiceDetail(service.serviceId),
       child: TRoundedContainer(
         width: THelperFunctions.screenWidth(context) * 0.45,
-        height: 200,
+        height: 150,
         radius: 10,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -33,7 +34,7 @@ class TServiceCard extends StatelessWidget {
               imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
               isNetworkImage: service.images.isNotEmpty,
               width: THelperFunctions.screenWidth(context) * 0.45,
-              height: 150,
+              height: 120,
               fit: BoxFit.cover,
             ),
             Padding(
@@ -45,6 +46,21 @@ class TServiceCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (service.serviceCategory != null)
+                          ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: THelperFunctions.screenWidth(context) * 0.44,
+                              ),
+                              child: TRoundedContainer(
+                                padding: EdgeInsets.symmetric(horizontal: TSizes.xs, vertical: TSizes.xs * 0.5),
+                                backgroundColor: TColors.primary,
+                                child: Text(
+                                  service.serviceCategory?.name ?? "",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
+                                  maxLines: 1,
+                                ),
+                              )),
                         ConstrainedBox(
                             constraints: BoxConstraints(
                               maxWidth: THelperFunctions.screenWidth(context) * 0.44,
@@ -53,15 +69,6 @@ class TServiceCard extends StatelessWidget {
                               title: service.name,
                               smallSize: true,
                               maxLines: 2,
-                            )),
-                        ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: THelperFunctions.screenWidth(context) * 0.44,
-                            ),
-                            child: Text(
-                              service.description,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             )),
                         TProductPriceText(price: service.price.toString())
                       ],

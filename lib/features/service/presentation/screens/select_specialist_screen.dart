@@ -17,9 +17,10 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_st
 import 'package:spa_mobile/features/service/presentation/widgets/leave_booking.dart';
 
 class SelectSpecialistScreen extends StatefulWidget {
-  const SelectSpecialistScreen({super.key, required this.branch});
+  const SelectSpecialistScreen({super.key, required this.branch, required this.totalTime});
 
   final BranchModel branch;
+  final int totalTime;
 
   @override
   State<SelectSpecialistScreen> createState() => _SelectSpecialistScreenState();
@@ -44,10 +45,9 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-
-        return  FractionallySizedBox(
+        return FractionallySizedBox(
           heightFactor: 0.5,
-          child: TLeaveBooking( clearFn: () => context.read<AppointmentBloc>().add(ClearAppointmentEvent())),
+          child: TLeaveBooking(clearFn: () => context.read<AppointmentBloc>().add(ClearAppointmentEvent())),
         );
       },
     );
@@ -55,156 +55,251 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: TAppbar(
-        showBackArrow: false,
-        leadingIcon: Iconsax.arrow_left,
-        leadingOnPressed: () {
-          goSelectTime([selectedStaffId ?? 1], widget.branch );
-        },
-        actions: [
-          TRoundedIcon(
-            icon: Iconsax.scissor_1,
-            onPressed: () => _showModelLeave(context),
-          ),
-          const SizedBox(width: TSizes.md),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(TSizes.sm),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                "Select specialist",
-                style: Theme.of(context).textTheme.displaySmall ?? const TextStyle(),
-              ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: TAppbar(
+          showBackArrow: false,
+          leadingIcon: Iconsax.arrow_left,
+          leadingOnPressed: () {
+            goSelectTime([selectedStaffId ?? 1], widget.branch, widget.totalTime);
+          },
+          actions: [
+            TRoundedIcon(
+              icon: Iconsax.scissor_1,
+              onPressed: () => _showModelLeave(context),
             ),
-            const SizedBox(height: TSizes.md),
-            Expanded(
-              child: BlocBuilder<ListStaffBloc, ListStaffState>(
-                builder: (context, state) {
-                  if (state is ListStaffLoaded) {
-                    return BlocBuilder<AppointmentBloc, AppointmentState>(
-                      builder: (context, stateAppointment) {
-                       if (stateAppointment is AppointmentCreateData && stateAppointment.params.staffId.isNotEmpty){
-                         return TGridLayout(
-                           mainAxisExtent: 150,
-                           itemCount: state.listStaff.length,
-                           crossAxisCount: 2,
-                           itemBuilder: (context, index) {
-                             final staff = state.listStaff[index];
-                             final isSelected = stateAppointment.params.staffId[0]  == staff.staffId;
-
-                             return GestureDetector(
-                               onTap: () {
-                                 setState(() {
-                                   selectedStaffId = staff.staffId;
-                                 });
-
-                                 if (selectedStaffId != null) {
-                                   context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
-                                   goSelectTime([selectedStaffId ?? 1], widget.branch );
-                                 }
-                               },
-                               child: TRoundedContainer(
-                                 margin: const EdgeInsets.all(TSizes.xs),
-                                 padding: const EdgeInsets.all(TSizes.xs),
-                                 backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                                 borderColor: isSelected ? TColors.primary : Colors.transparent,
-                                 showBorder: true,
-                                 shadow: true,
-                                 child: Column(
-                                   mainAxisAlignment: MainAxisAlignment.center,
-                                   children: [
-                                     TRoundedContainer(
-                                       radius: 50,
-                                       width: 50,
-                                       height: 50,
-                                       backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                                       child: Center(
-                                         child: Text(
-                                           THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
-                                           style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                                         ),
-                                       ),
-                                     ),
-                                     const SizedBox(height: TSizes.xs),
-                                     Text(
-                                       staff.staffInfo.userName ?? "",
-                                       style: Theme.of(context).textTheme.bodyMedium,
-                                     ),
-                                   ],
-                                 ),
-                               ),
-                             );
-                           },
-                         );
-                       }
-                       return TGridLayout(
-                         mainAxisExtent: 150,
-                         itemCount: state.listStaff.length,
-                         crossAxisCount: 2,
-                         itemBuilder: (context, index) {
-                           final staff = state.listStaff[index];
-                           final isSelected = selectedStaffId == staff.staffId;
-
-                           return GestureDetector(
-                             onTap: () {
-                               setState(() {
-                                 selectedStaffId = staff.staffId;
-                               });
-
-                               if (selectedStaffId != null) {
-                                 context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
-                                 goSelectTime([selectedStaffId ?? 1], widget.branch);
-                               }
-                             },
-                             child: TRoundedContainer(
-                               margin: const EdgeInsets.all(TSizes.xs),
-                               padding: const EdgeInsets.all(TSizes.xs),
-                               backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                               borderColor: isSelected ? TColors.primary : Colors.transparent,
-                               showBorder: true,
-                               shadow: true,
-                               child: Column(
-                                 mainAxisAlignment: MainAxisAlignment.center,
-                                 children: [
-                                   TRoundedContainer(
-                                     radius: 50,
-                                     width: 50,
-                                     height: 50,
-                                     backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                                     child: Center(
-                                       child: Text(
-                                         THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
-                                         style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                                       ),
-                                     ),
-                                   ),
-                                   const SizedBox(height: TSizes.xs),
-                                   Text(
-                                     staff.staffInfo.userName ?? "",
-                                     style: Theme.of(context).textTheme.bodyMedium,
-                                   ),
-                                 ],
-                               ),
-                             ),
-                           );
-                         },
-                       );
-                      },
-                    );
-                  } else if (state is ListStaffLoading) {
-                    return const TLoader();
-                  }
-                  return const TErrorBody();
-                },
-              ),
-            ),
+            const SizedBox(width: TSizes.md),
           ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(TSizes.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  "Select specialist",
+                  style: Theme.of(context).textTheme.displaySmall ?? const TextStyle(),
+                ),
+              ),
+              const SizedBox(height: TSizes.md),
+              Expanded(
+                child: BlocBuilder<ListStaffBloc, ListStaffState>(
+                  builder: (context, state) {
+                    if (state is ListStaffLoaded) {
+                      return BlocBuilder<AppointmentBloc, AppointmentState>(
+                        builder: (context, stateAppointment) {
+                          if (stateAppointment is AppointmentCreateData && stateAppointment.params.staffId.isNotEmpty) {
+                            return TGridLayout(
+                              mainAxisExtent: 150,
+                              itemCount: state.listStaff.length + 1,
+                              crossAxisCount: 2,
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  final isSelected = selectedStaffId == 0;
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedStaffId = 0;
+                                      });
+
+                                      if (selectedStaffId != null) {
+                                        context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
+                                        goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime);
+                                      }
+                                    },
+                                    child: TRoundedContainer(
+                                      margin: const EdgeInsets.all(TSizes.xs),
+                                      padding: const EdgeInsets.all(TSizes.xs),
+                                      backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                                      borderColor: isSelected ? TColors.primary : Colors.transparent,
+                                      showBorder: true,
+                                      shadow: true,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          TRoundedContainer(
+                                            radius: 50,
+                                            width: 50,
+                                            height: 50,
+                                            backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                                            child: Center(
+                                              child: Text(
+                                                THelperFunctions.getFirstLetterOfLastName("Any"),
+                                                style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: TSizes.xs),
+                                          Text(
+                                            "Any specialist",
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  final staff = state.listStaff[index - 1];
+                                  final isSelected = stateAppointment.params.staffId[0] == staff.staffId;
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedStaffId = staff.staffId;
+                                      });
+
+                                      if (selectedStaffId != null) {
+                                        context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
+                                        goSelectTime([selectedStaffId ?? 1], widget.branch, widget.totalTime);
+                                      }
+                                    },
+                                    child: TRoundedContainer(
+                                      margin: const EdgeInsets.all(TSizes.xs),
+                                      padding: const EdgeInsets.all(TSizes.xs),
+                                      backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                                      borderColor: isSelected ? TColors.primary : Colors.transparent,
+                                      showBorder: true,
+                                      shadow: true,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          TRoundedContainer(
+                                            radius: 50,
+                                            width: 50,
+                                            height: 50,
+                                            backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                                            child: Center(
+                                              child: Text(
+                                                THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
+                                                style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: TSizes.xs),
+                                          Text(
+                                            staff.staffInfo.userName ?? "",
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            );
+                          }
+                          return TGridLayout(
+                            mainAxisExtent: 150,
+                            itemCount: state.listStaff.length + 1,
+                            crossAxisCount: 2,
+                            itemBuilder: (context, index) {
+                              if (index == 0) {
+                                final isSelected = selectedStaffId == 0;
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedStaffId = 0;
+                                    });
+
+                                    if (selectedStaffId != null) {
+                                      context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
+                                      goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime);
+                                    }
+                                  },
+                                  child: TRoundedContainer(
+                                    margin: const EdgeInsets.all(TSizes.xs),
+                                    padding: const EdgeInsets.all(TSizes.xs),
+                                    backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                                    borderColor: isSelected ? TColors.primary : Colors.transparent,
+                                    showBorder: true,
+                                    shadow: true,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        TRoundedContainer(
+                                          radius: 50,
+                                          width: 50,
+                                          height: 50,
+                                          backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                                          child: Center(
+                                            child: Text(
+                                              THelperFunctions.getFirstLetterOfLastName("Any"),
+                                              style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: TSizes.xs),
+                                        Text(
+                                          "Any specialist",
+                                          style: Theme.of(context).textTheme.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                final staff = state.listStaff[index - 1];
+                                final isSelected = selectedStaffId == staff.staffId;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedStaffId = staff.staffId;
+                                    });
+
+                                    if (selectedStaffId != null) {
+                                      context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 0]));
+                                      goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime);
+                                    }
+                                  },
+                                  child: TRoundedContainer(
+                                    margin: const EdgeInsets.all(TSizes.xs),
+                                    padding: const EdgeInsets.all(TSizes.xs),
+                                    backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                                    borderColor: isSelected ? TColors.primary : Colors.transparent,
+                                    showBorder: true,
+                                    shadow: true,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        TRoundedContainer(
+                                          radius: 50,
+                                          width: 50,
+                                          height: 50,
+                                          backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                                          child: Center(
+                                            child: Text(
+                                              THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
+                                              style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: TSizes.xs),
+                                        Text(
+                                          staff.staffInfo.userName ?? "",
+                                          style: Theme.of(context).textTheme.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
+                      );
+                    } else if (state is ListStaffLoading) {
+                      return const TLoader();
+                    }
+                    return const TErrorBody();
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
