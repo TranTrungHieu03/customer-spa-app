@@ -53,18 +53,18 @@ class _TCategoriesState extends State<TCategories> {
                       borderRadius: BorderRadius.circular(70),
                       boxShadow: isSelected
                           ? [
-                              BoxShadow(
-                                color: TColors.primary.withOpacity(0.5),
-                                blurRadius: 10,
-                                offset: const Offset(0, 3),
-                              ),
+                              // BoxShadow(
+                              //   color: TColors.primary.withOpacity(0.5),
+                              //   blurRadius: 10,
+                              //   offset: const Offset(0, 3),
+                              // ),
                             ]
                           : [],
                     ),
                     child: Center(
                       child: Text(
                         category.name,
-                        style: Theme.of(context).textTheme.titleLarge!.apply(color: isSelected ? TColors.white : TColors.black),
+                        style: Theme.of(context).textTheme.bodyLarge!.apply(color: isSelected ? TColors.white : TColors.black),
                       ),
                     ),
                   ),

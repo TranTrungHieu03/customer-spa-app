@@ -6,6 +6,7 @@ import 'package:spa_mobile/features/service/domain/repository/staff_repository.d
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff_by_list_id.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart';
 
 class StaffRepositoryImpl implements StaffRepository {
   final StaffRemoteDataSource _staffRemoteDataSource;
@@ -36,6 +37,16 @@ class StaffRepositoryImpl implements StaffRepository {
   Future<Either<Failure, StaffModel>> getSingleStaff(GetSingleStaffParams param) async {
     try {
       StaffModel response = await _staffRemoteDataSource.getSingleStaff(param);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<StaffModel>>> getStaffFreeInTime(GetStaffFreeInTimeParams param) async{
+    try {
+      List<StaffModel> response = await _staffRemoteDataSource.getStaffFreeInTime(param);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

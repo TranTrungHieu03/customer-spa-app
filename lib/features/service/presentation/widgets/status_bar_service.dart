@@ -16,6 +16,8 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_title.d
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/history_shimmer_card.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/order_horizontal_shimmer_card.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/order_horizontal_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_horizontal_shimmer_card.dart';
 
 class TStatusTabService extends StatefulWidget {
@@ -90,7 +92,7 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
                       },
                       itemBuilder: (context, index) {
                         if (index == orders.length) {
-                          return isLoading ? const TServiceHorizontalCardShimmer() : const SizedBox.shrink();
+                          return isLoading ? const TOrderHorizontalShimmer() : const SizedBox.shrink();
                         } else {
                           final order = orders[index];
                           return TRoundedContainer(
@@ -244,8 +246,9 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
               } else if (state is ListAppointmentLoading) {
                 return TGridLayout(
                     itemCount: 4,
+                    mainAxisExtent: 150,
                     itemBuilder: (_, __) {
-                      return const THistoryShimmerCard();
+                      return const TOrderHorizontalShimmer();
                     });
               }
               return const Center(child: Text('Do not have any order here!'));

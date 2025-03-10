@@ -28,4 +28,5 @@ class LocalStorageKey {
   static const String isLogin = 'is_login';
   static const String defaultBranch = 'default_branch';
   static const String branchInfo = 'branch_info';
+  static const String serviceCart = 'service_cart';
 }

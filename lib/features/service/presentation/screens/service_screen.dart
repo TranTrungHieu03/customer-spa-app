@@ -23,8 +23,6 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_horizontal_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_horizotial_card.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/service_shimmer_card.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/service_vertical_card.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperServiceScreen extends StatefulWidget {
@@ -74,7 +72,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
       previousBranch = selectedBranch;
     });
 
-    context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
+    context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0, 10));
   }
 
   @override
@@ -113,7 +111,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(width: TSizes.sm),
+              const SizedBox(height: TSizes.sm),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -211,7 +209,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               if (!currentState.isLoadingMore && currentState.pagination.page < currentState.pagination.totalPage) {
                                 context
                                     .read<ListServiceBloc>()
-                                    .add(GetListServicesEvent(currentState.pagination.page + 1, selectedBranch ?? 0));
+                                    .add(GetListServicesEvent(currentState.pagination.page + 1, selectedBranch ?? 0, 10));
                               }
                             }
                             return false;
@@ -225,7 +223,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                                       pagination: PaginationModel.isEmty(),
                                     ),
                                   );
-                              context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
+                              context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0, 10));
                             },
                             child: TGridLayout(
                               controller: _scrollController,
@@ -235,13 +233,12 @@ class _ServiceScreenState extends State<ServiceScreen> {
                               itemBuilder: (context, index) {
                                 if (index == state.services.length || index == state.services.length + 1) {
                                   return state.isLoadingMore ? const TServiceHorizontalCardShimmer() : const SizedBox.shrink();
-                                }else {
+                                } else {
                                   final service = state.services[index];
                                   return TServiceHorizontalCard(
                                     service: service,
                                   );
                                 }
-
                               },
                             ),
                           ));
@@ -386,7 +383,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
               ),
             );
       previousBranch = selectedBranch;
-      context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0));
+      context.read<ListServiceBloc>().add(GetListServicesEvent(1, selectedBranch ?? 0, 10));
     });
   }
 }

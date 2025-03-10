@@ -43,6 +43,20 @@ class ListServiceLoaded extends ListServiceState {
   }
 }
 
+class ListServiceLoadingForSelection extends ListServiceState {}
+
+class ListServiceLoadedForSelection extends ListServiceState {
+  final Map<int, List<ServiceModel>> groupedServices;
+  final List<CategoryModel> categories;
+  final int? selectedCategoryId;
+
+  const ListServiceLoadedForSelection({
+    required this.groupedServices,
+    required this.categories,
+    this.selectedCategoryId,
+  });
+}
+
 class ListServiceFailure extends ListServiceState {
   final String message;
 

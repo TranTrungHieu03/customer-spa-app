@@ -31,6 +31,7 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_st
 import 'package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/service_cart/service_cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
 import 'package:spa_mobile/firebase_options.dart';
 import 'package:spa_mobile/init_dependencies.dart';
@@ -58,7 +59,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
         BlocProvider(create: (_) => serviceLocator<ServiceBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListServiceBloc>()),
-        BlocProvider(create: (_) => serviceLocator<ListCategoryBloc>()),
+        // BlocProvider(create: (_) => serviceLocator<ListCategoryBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ImageBloc>()),
@@ -75,6 +76,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<PaymentBloc>()),
         BlocProvider(create: (_) => serviceLocator<PayosBloc>()),
         BlocProvider(create: (_) => serviceLocator<StaffBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ServiceCartBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
         create: (_) => languageProvider,

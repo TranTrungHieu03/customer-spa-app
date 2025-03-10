@@ -16,10 +16,12 @@ import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
+import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/payment_detail_service.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/qr_checkin.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key, required this.id, required this.isBack});
@@ -95,21 +97,37 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       children: [
                         Row(
                           children: [
-                            Text("Code: "),
-                            Text(order.orderCode.toString()),
+                            Text(
+                              "Order ref: #",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            Text(
+                              order.orderCode.toString(),
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            const Icon(Icons.payment, size: 16, color: Colors.green),
-                            const SizedBox(width: 4),
-                            if (order.statusPayment == "Pending")
-                              Text(
-                                "Pending",
-                                style: Theme.of(context).textTheme.bodySmall,
-                              )
-                          ],
+                        TRoundedIcon(
+                          icon: Icons.qr_code_scanner_rounded,
+                          color: TColors.primary,
+                          size: 30,
+                          onPressed: () => _showModelQR(context, order),
                         )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: TSizes.sm,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.payment, color: Colors.green),
+                        const SizedBox(width: TSizes.sm),
+                        if (order.statusPayment == "Pending")
+                          Text(
+                            "Pending",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          )
                       ],
                     ),
                     const SizedBox(
@@ -273,6 +291,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
           )
         ],
       ),
+    );
+  }
+
+  void _showModelQR(BuildContext context, OrderAppointmentModel order) {
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.6,
+          child: Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(TSizes.spacebtwSections),
+                  child: TQrCheckIn(id: order.orderId.toString(), time: DateTime.now())),
+            ],
+          ),
+        );
+      },
     );
   }
 }

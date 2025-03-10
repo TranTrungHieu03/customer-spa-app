@@ -20,6 +20,7 @@ class GetListService implements UseCase<Either, GetListServiceParams> {
 class GetListServiceParams {
   final int page;
   final int branchId;
+  final int pageSize;
 
-  GetListServiceParams(this.page, this.branchId);
+  GetListServiceParams(this.page, this.branchId, this.pageSize);
 }

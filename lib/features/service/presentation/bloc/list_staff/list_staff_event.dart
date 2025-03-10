@@ -14,3 +14,9 @@ class GetSingleStaffEvent extends ListStaffEvent {
 
   GetSingleStaffEvent({required this.staffId});
 }
+
+class GetStaffFreeInTimeEvent extends ListStaffEvent {
+  final GetStaffFreeInTimeParams params;
+
+  GetStaffFreeInTimeEvent({required this.params});
+}

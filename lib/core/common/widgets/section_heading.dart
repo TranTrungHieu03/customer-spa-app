@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 
 class TSectionHeading extends StatelessWidget {
@@ -18,11 +17,7 @@ class TSectionHeading extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context)
-              .textTheme
-              .headlineSmall!
-              .apply(color: textColor ?? (THelperFunctions.isDarkMode(context) ? TColors.white : TColors.black))
-              .copyWith(fontWeight: FontWeight.w800),
+          style: Theme.of(context).textTheme.titleLarge,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

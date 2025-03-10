@@ -105,10 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   actions: [
-                    TNotificationIcon(
-                        onPressed: () {
-                        },
-                        iconColor: TColors.primary),
+                    TNotificationIcon(onPressed: () {}, iconColor: TColors.primary),
                     const SizedBox(
                       width: TSizes.md,
                     ),
@@ -229,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // goSelectSpecialist();
+                      goSelectServices();
                     },
                     child: Text("QR CODE"),
                   ),

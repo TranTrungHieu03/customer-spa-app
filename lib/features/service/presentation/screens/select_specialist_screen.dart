@@ -17,10 +17,11 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_st
 import 'package:spa_mobile/features/service/presentation/widgets/leave_booking.dart';
 
 class SelectSpecialistScreen extends StatefulWidget {
-  const SelectSpecialistScreen({super.key, required this.branch, required this.totalTime});
+  const SelectSpecialistScreen({super.key, required this.branch, required this.totalTime, required this.serviceId});
 
   final BranchModel branch;
   final int totalTime;
+  final List<int> serviceId;
 
   @override
   State<SelectSpecialistScreen> createState() => _SelectSpecialistScreenState();
@@ -62,7 +63,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
           showBackArrow: false,
           leadingIcon: Iconsax.arrow_left,
           leadingOnPressed: () {
-            goSelectTime([selectedStaffId ?? 1], widget.branch, widget.totalTime);
+            goSelectTime([selectedStaffId ?? 1], widget.branch, widget.totalTime, widget.serviceId);
           },
           actions: [
             TRoundedIcon(
@@ -107,7 +108,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
 
                                       if (selectedStaffId != null) {
                                         context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
-                                        goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime);
+                                        goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime, widget.serviceId);
                                       }
                                     },
                                     child: TRoundedContainer(
@@ -153,7 +154,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
 
                                       if (selectedStaffId != null) {
                                         context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
-                                        goSelectTime([selectedStaffId ?? 1], widget.branch, widget.totalTime);
+                                        goSelectTime([selectedStaffId ?? 1], widget.branch, widget.totalTime, widget.serviceId);
                                       }
                                     },
                                     child: TRoundedContainer(
@@ -173,14 +174,14 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                             backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
                                             child: Center(
                                               child: Text(
-                                                THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
+                                                THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
                                                 style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
                                               ),
                                             ),
                                           ),
                                           const SizedBox(height: TSizes.xs),
                                           Text(
-                                            staff.staffInfo.userName ?? "",
+                                            staff.staffInfo?.userName ?? "",
                                             style: Theme.of(context).textTheme.bodyMedium,
                                           ),
                                         ],
@@ -206,7 +207,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
 
                                     if (selectedStaffId != null) {
                                       context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 1]));
-                                      goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime);
+                                      goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime, widget.serviceId);
                                     }
                                   },
                                   child: TRoundedContainer(
@@ -252,7 +253,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
 
                                     if (selectedStaffId != null) {
                                       context.read<AppointmentBloc>().add(UpdateCreateStaffIdEvent(staffId: [selectedStaffId ?? 0]));
-                                      goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime);
+                                      goSelectTime([selectedStaffId ?? 0], widget.branch, widget.totalTime, widget.serviceId);
                                     }
                                   },
                                   child: TRoundedContainer(
@@ -272,14 +273,14 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                           backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
                                           child: Center(
                                             child: Text(
-                                              THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
+                                              THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
                                               style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
                                             ),
                                           ),
                                         ),
                                         const SizedBox(height: TSizes.xs),
                                         Text(
-                                          staff.staffInfo.userName ?? "",
+                                          staff.staffInfo?.userName ?? "",
                                           style: Theme.of(context).textTheme.bodyMedium,
                                         ),
                                       ],

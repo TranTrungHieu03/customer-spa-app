@@ -192,9 +192,7 @@ goRedirectPayment(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => RedirectScreen(id: id)));
 }
 
-goQrCode(String id, DateTime time) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => QrCodeScreen(id: id, time: time)));
-}
+
 
 goCart(bool isProduct) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen(isProduct: isProduct)));
@@ -208,22 +206,30 @@ goRoutineDetail(String id) async {
       ));
 }
 
-goSelectTime(List<int> staffId, BranchModel branch, int totalTime) async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => SelectTimeScreen(staffId: staffId, branch: branch, totalTime: totalTime)));
+goSelectTime(List<int> staffId, BranchModel branch, int totalTime, List<int> serviceId) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => SelectTimeScreen(
+                staffId: staffId,
+                branch: branch,
+                totalTime: totalTime,
+                serviceId: serviceId,
+              )));
 }
 
-goSelectSpecialist(BranchModel branch, int totalTime) async {
+goSelectSpecialist(BranchModel branch, int totalTime, List<int> serviceId) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => SelectSpecialistScreen(
                 branch: branch,
                 totalTime: totalTime,
+                serviceId: serviceId,
               )));
 }
 
-goReview(List<int> staffId, BranchModel branch, int totalTime) async {
+goReview(List<int> staffId, BranchModel branch, int totalTime, List<int> serviceId) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
@@ -231,6 +237,7 @@ goReview(List<int> staffId, BranchModel branch, int totalTime) async {
                 staffId: staffId,
                 branch: branch,
                 totalTime: totalTime,
+                serviceId: serviceId,
               )));
 }
 
@@ -242,3 +249,12 @@ goReview(List<int> staffId, BranchModel branch, int totalTime) async {
 //                 id: id,
 //               )));
 // }
+goSelectServices() async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider<ListCategoryBloc>(
+                create: (_) => ListCategoryBloc(getListCategories: serviceLocator()),
+                child: const SelectServiceScreen(),
+              )));
+}

@@ -37,7 +37,7 @@ class ServiceRemoteDataSrcImpl extends ServiceRemoteDataSrc {
   @override
   Future<ListServiceModel> getServices(GetListServiceParams param) async {
     try {
-      final response = await _apiServices.getApi('/Service/get-all-services?page=${param.page}');
+      final response = await _apiServices.getApi('/Service/get-all-services?page=${param.page}&pageSize=${param.pageSize}');
 
       final apiResponse = ApiResponse.fromJson(response);
 
@@ -54,8 +54,8 @@ class ServiceRemoteDataSrcImpl extends ServiceRemoteDataSrc {
   @override
   Future<ListServiceModel> getServicesByBranch(GetListServiceParams param) async {
     try {
-      final response =
-          await _apiServices.getApi('/Service/get-all-services-for-branch?branchId=${param.branchId}&page=${param.page}&pageSize=10');
+      final response = await _apiServices
+          .getApi('/Service/get-all-services-for-branch?branchId=${param.branchId}&page=${param.page}&pageSize=${param.pageSize}');
 
       final apiResponse = ApiResponse.fromJson(response);
 

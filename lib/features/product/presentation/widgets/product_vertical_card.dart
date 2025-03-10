@@ -105,10 +105,11 @@ class TProductCardVertical extends StatelessWidget {
               children: [
                 //Price
                 Padding(
-                  padding: const EdgeInsets.all(TSizes.sm),
+                  padding: const EdgeInsets.all(TSizes.xs),
                   child: TProductPriceText(price: productModel.price.toString()),
                 ),
                 Container(
+                  padding: EdgeInsets.all(0),
                   decoration: const BoxDecoration(
                     color: TColors.primary,
                     borderRadius: BorderRadius.only(

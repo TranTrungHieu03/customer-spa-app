@@ -102,144 +102,153 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
             ),
             body: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(TSizes.sm),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        BlocConsumer<ListBranchesBloc, ListBranchesState>(
-                          listener: (context, state) {
-                            if (state is ListBranchesError) {
-                              TSnackBar.errorSnackBar(context, message: state.message);
-                            }
-                          },
-                          builder: (context, state) {
-                            if (state is ListBranchesLoaded) {
-                              return TRoundedContainer(
-                                padding: const EdgeInsets.all(TSizes.sm),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Branch",
-                                      style: Theme.of(context).textTheme.titleMedium,
-                                    ),
-                                    const SizedBox(
-                                      width: TSizes.sm,
-                                    ),
-                                    Expanded(
-                                        child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          branchInfo?.branchName ?? "Vui lòng chọn chi nhánh",
-                                          style: Theme.of(context).textTheme.bodyMedium,
-                                        ),
-                                        Text(
-                                          branchInfo?.branchAddress ?? "",
-                                          style: Theme.of(context).textTheme.bodySmall,
-                                        ),
-                                      ],
-                                    )),
-                                    TRoundedIcon(
-                                      icon: Iconsax.edit,
-                                      onPressed: () {
-                                        _showModalAddress(context, state.branches);
-                                      },
-                                    )
-                                  ],
+                SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(TSizes.sm),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BlocConsumer<ListBranchesBloc, ListBranchesState>(
+                            listener: (context, state) {
+                              if (state is ListBranchesError) {
+                                TSnackBar.errorSnackBar(context, message: state.message);
+                              }
+                            },
+                            builder: (context, state) {
+                              if (state is ListBranchesLoaded) {
+                                return TRoundedContainer(
+                                  padding: const EdgeInsets.all(TSizes.sm),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Branch",
+                                        style: Theme.of(context).textTheme.titleLarge,
+                                      ),
+                                      const SizedBox(
+                                        width: TSizes.sm,
+                                      ),
+                                      Expanded(
+                                          child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            branchInfo?.branchName ?? "Vui lòng chọn chi nhánh",
+                                            style: Theme.of(context).textTheme.bodyMedium,
+                                          ),
+                                          Text(
+                                            branchInfo?.branchAddress ?? "",
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                        ],
+                                      )),
+                                      TRoundedIcon(
+                                        icon: Iconsax.edit,
+                                        onPressed: () {
+                                          _showModalAddress(context, state.branches);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          ),
+                          const SizedBox(
+                            height: TSizes.md,
+                          ),
+                          Text(
+                            AppLocalizations.of(context)!.service + "  (${services.length})",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(
+                            height: TSizes.md,
+                          ),
+                          ListView.builder(
+                            itemCount: services.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final service = services[index];
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: TSizes.md),
+                                child: TRoundedContainer(
+                                  shadow: true,
+                                  padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.md),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          TRoundedImage(
+                                            applyImageRadius: true,
+                                            imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
+                                            isNetworkImage: service.images.isNotEmpty,
+                                            width: THelperFunctions.screenWidth(context) * 0.4,
+                                            height: THelperFunctions.screenWidth(context) * 0.2,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          const SizedBox(width: TSizes.sm),
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  ConstrainedBox(
+                                                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
+                                                    child: TProductTitleText(
+                                                      title: service.name,
+                                                      smallSize: true,
+                                                      maxLines: 2,
+                                                    ),
+                                                  ),
+                                                  ConstrainedBox(
+                                                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          AppLocalizations.of(context)!.duration + ": ",
+                                                          style: Theme.of(context).textTheme.labelLarge,
+                                                        ),
+                                                        Text(service.duration),
+                                                        Text(AppLocalizations.of(context)!.minutes)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  ConstrainedBox(
+                                                      constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
+                                                      child: TProductPriceText(price: service.price.toString())),
+                                                ],
+                                              ),
+                                              const Align(alignment: Alignment.topRight, child: Text("x1"))
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
-                        const SizedBox(
-                          height: TSizes.md,
-                        ),
-                        Text(
-                          AppLocalizations.of(context)!.service + "  (${services.length})",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(
-                          height: TSizes.md,
-                        ),
-                        ListView.builder(
-                          itemCount: services.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final service = services[index];
-
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: TSizes.md),
-                              child: TRoundedContainer(
-                                shadow: true,
-                                padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.md),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        TRoundedImage(
-                                          applyImageRadius: true,
-                                          imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
-                                          isNetworkImage: service.images.isNotEmpty,
-                                          width: THelperFunctions.screenWidth(context) * 0.4,
-                                          height: THelperFunctions.screenWidth(context) * 0.2,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        const SizedBox(width: TSizes.sm),
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                ConstrainedBox(
-                                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
-                                                  child: TProductTitleText(
-                                                    title: service.name,
-                                                    smallSize: true,
-                                                    maxLines: 2,
-                                                  ),
-                                                ),
-                                                ConstrainedBox(
-                                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        AppLocalizations.of(context)!.duration + ": ",
-                                                        style: Theme.of(context).textTheme.labelLarge,
-                                                      ),
-                                                      Text(service.duration),
-                                                      Text(AppLocalizations.of(context)!.minutes)
-                                                    ],
-                                                  ),
-                                                ),
-                                                ConstrainedBox(
-                                                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
-                                                    child: TProductPriceText(price: service.price.toString())),
-                                              ],
-                                            ),
-                                            const Align(alignment: Alignment.topRight, child: Text("x1"))
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(
-                          height: TSizes.md,
-                        ),
-                        TPaymentDetailService(price: total.toString(), total: total.toString()),
-                      ],
+                            },
+                          ),
+                          const SizedBox(
+                            height: TSizes.md,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [OutlinedButton(onPressed: () {}, child: Text("Add"))],
+                          ),
+                          const SizedBox(
+                            height: TSizes.md,
+                          ),
+                          TPaymentDetailService(price: total.toString(), total: total.toString()),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -262,7 +271,8 @@ class _CheckoutServiceScreenState extends State<CheckoutServiceScreen> {
                                   serviceId: services.map((x) => x.serviceId).toList(),
                                   branchId: selectedBranch ?? 1,
                                   totalMinutes: services.fold(0, (sum, service) => sum + int.parse(service.duration))));
-                              goSelectSpecialist(branchInfo!, services.fold(0, (sum, service) => sum + int.parse(service.duration)));
+                              goSelectSpecialist(branchInfo!, services.fold(0, (sum, service) => sum + int.parse(service.duration)),
+                                  services.map((x) => x.serviceId).toList());
                             },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,

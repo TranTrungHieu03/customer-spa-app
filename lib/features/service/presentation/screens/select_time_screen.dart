@@ -17,18 +17,21 @@ import "package:spa_mobile/core/utils/constants/exports_navigators.dart";
 import "package:spa_mobile/core/utils/constants/sizes.dart";
 import "package:spa_mobile/features/service/data/model/time_model.dart";
 import "package:spa_mobile/features/service/domain/usecases/get_single_staff.dart";
+import "package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart";
 import "package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart";
 import "package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart";
+import "package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart";
 import "package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart";
 import "package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart";
 import "package:spa_mobile/features/service/presentation/widgets/leave_booking.dart";
 
 class SelectTimeScreen extends StatefulWidget {
-  const SelectTimeScreen({super.key, required this.staffId, required this.branch, required this.totalTime});
+  const SelectTimeScreen({super.key, required this.staffId, required this.branch, required this.totalTime, required this.serviceId});
 
   final List<int> staffId;
   final BranchModel branch;
   final int totalTime;
+  final List<int> serviceId;
 
   @override
   State<SelectTimeScreen> createState() => _SelectTimeScreenState();
@@ -193,7 +196,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
         appBar: TAppbar(
           showBackArrow: false,
           leadingIcon: Iconsax.arrow_left,
-          leadingOnPressed: () => goSelectSpecialist(widget.branch, widget.totalTime),
+          leadingOnPressed: () => goSelectSpecialist(widget.branch, widget.totalTime, widget.serviceId),
           actions: [
             TRoundedIcon(
               icon: Iconsax.scissor_1,
@@ -222,7 +225,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                 height: TSizes.sm,
               ),
               GestureDetector(
-                onTap: () => goSelectSpecialist(widget.branch, widget.totalTime),
+                onTap: () => goSelectSpecialist(widget.branch, widget.totalTime, widget.serviceId),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -262,7 +265,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                                   backgroundColor: TColors.primaryBackground,
                                   child: Center(
                                     child: Text(
-                                      THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
+                                      THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
                                     ),
                                   ),
@@ -271,7 +274,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                                 ConstrainedBox(
                                   constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
                                   child: Text(
-                                    staff.staffInfo.fullName ?? "",
+                                    staff.staffInfo?.fullName ?? "",
                                     style: Theme.of(context).textTheme.labelMedium,
                                   ),
                                 ),
@@ -458,7 +461,16 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                             return GestureDetector(
                               onTap: () {
                                 context.read<AppointmentBloc>().add(UpdateCreateTimeEvent(appointmentTime: slot.startTime));
-                                goReview(widget.staffId, widget.branch, widget.totalTime);
+
+                                if (widget.staffId.contains(0)) {
+                                  context.read<ListStaffBloc>().add(GetStaffFreeInTimeEvent(
+                                      params: GetStaffFreeInTimeParams(
+                                          branchId: widget.branch.branchId,
+                                          serviceId: widget.serviceId.first,
+                                          startTime: slot.startTime.toString())));
+                                }
+
+                                goReview(widget.staffId, widget.branch, widget.totalTime, widget.serviceId);
                               },
                               child: TRoundedContainer(
                                 padding: const EdgeInsets.all(TSizes.md),

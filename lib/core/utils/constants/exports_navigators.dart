@@ -32,13 +32,13 @@ import 'package:spa_mobile/features/product/presentation/screens/history_screen.
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/shipment_information_screen.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/screens/booking_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/checkout_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/confirm_payment_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/feedback_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/payment_screen.dart';
-import 'package:spa_mobile/features/service/presentation/screens/qr_code_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/select_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/select_specialist_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/select_time_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';

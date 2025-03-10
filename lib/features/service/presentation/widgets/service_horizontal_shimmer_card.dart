@@ -14,6 +14,7 @@ class TServiceHorizontalCardShimmer extends StatelessWidget {
       height: 140,
       radius: 10,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TShimmerEffect(

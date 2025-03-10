@@ -92,7 +92,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     icon: Iconsax.award,
                     title: AppLocalizations.of(context)!.rewards,
                     onTap: () {
-                      // goWebView("https://pub.dev/packages/webview_flutter");
                     },
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
@@ -107,7 +106,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       children: [
                         Text(
                           languageProvider.getLanguageName(languageProvider.locale.languageCode),
-                          style: Theme.of(context).textTheme.bodySmall,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(
                           width: TSizes.sm,
@@ -147,7 +146,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           size: 24,
                           color: TColors.black,
                         ),
-                        title: Text(AppLocalizations.of(context)!.logout, style: Theme.of(context).textTheme.titleSmall),
+                        title: Text(AppLocalizations.of(context)!.logout, style: Theme.of(context).textTheme.titleMedium),
                         trailing: null,
                         onTap: () {
                           context.read<AuthBloc>().add(LogoutEvent());

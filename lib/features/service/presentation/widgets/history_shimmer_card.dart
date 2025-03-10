@@ -45,8 +45,9 @@ class THistoryShimmerCard extends StatelessWidget {
             ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const Spacer(),
+              // const Spacer(),
               TShimmerEffect(
                 width: THelperFunctions.screenWidth(context) * 0.3,
                 height: TSizes.shimmerMd,

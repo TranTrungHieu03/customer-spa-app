@@ -60,15 +60,15 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               appBar: const TAppbar(
                 showBackArrow: true,
                 actions: [
-                  TRoundedIcon(
-                    icon: Iconsax.shopping_bag,
-                    color: TColors.primary,
-                    size: 25,
-                    backgroundColor: TColors.primaryBackground,
-                  ),
-                  SizedBox(
-                    width: TSizes.sm,
-                  )
+                  // TRoundedIcon(
+                  //   icon: Iconsax.shopping_bag,
+                  //   color: TColors.primary,
+                  //   size: 25,
+                  //   backgroundColor: TColors.primaryBackground,
+                  // ),
+                  // SizedBox(
+                  //   width: TSizes.sm,
+                  // )
                 ],
               ),
               body: SingleChildScrollView(
@@ -220,30 +220,30 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               ),
               bottomNavigationBar: Row(
                 children: [
-                  Expanded(
-                      flex: 2,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          height: 55,
-                          decoration: const BoxDecoration(color: TColors.primaryBackground),
-                          padding: const EdgeInsets.all(TSizes.sm / 2),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Iconsax.shopping_cart,
-                                color: TColors.primary,
-                              ),
-                              Text(
-                                AppLocalizations.of(context)!.addToCart,
-                                style: Theme.of(context).textTheme.labelMedium,
-                              )
-                            ],
-                          ),
-                        ),
-                      )),
+                  // Expanded(
+                  //     flex: 2,
+                  //     child: GestureDetector(
+                  //       onTap: () {},
+                  //       child: Container(
+                  //         height: 55,
+                  //         decoration: const BoxDecoration(color: TColors.primaryBackground),
+                  //         padding: const EdgeInsets.all(TSizes.sm / 2),
+                  //         child: Column(
+                  //           mainAxisAlignment: MainAxisAlignment.end,
+                  //           crossAxisAlignment: CrossAxisAlignment.center,
+                  //           children: [
+                  //             const Icon(
+                  //               Iconsax.shopping_cart,
+                  //               color: TColors.primary,
+                  //             ),
+                  //             Text(
+                  //               AppLocalizations.of(context)!.addToCart,
+                  //               style: Theme.of(context).textTheme.labelMedium,
+                  //             )
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     )),
                   Expanded(
                     flex: 3,
                     child: GestureDetector(

@@ -100,7 +100,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 const SizedBox(
                   height: TSizes.sm,
                 ),
-                const SizedBox(height: 40, child: TCategories()),
+                // const SizedBox(height: 40, child: TCategories()),
                 const SizedBox(
                   height: TSizes.spacebtwItems,
                 ),

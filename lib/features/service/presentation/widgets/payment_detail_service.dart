@@ -15,7 +15,7 @@ class TPaymentDetailService extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppLocalizations.of(context)!.payment_details, style: Theme.of(context).textTheme.titleMedium),
+        Text(AppLocalizations.of(context)!.payment_details, style: Theme.of(context).textTheme.titleLarge),
         Column(
           children: [
             Row(
@@ -45,7 +45,7 @@ class TPaymentDetailService extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyLarge),
+                Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.labelLarge),
                 TProductPriceText(
                   price: total,
                   isLarge: true,

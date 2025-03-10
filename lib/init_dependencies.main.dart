@@ -75,7 +75,7 @@ Future<void> _initMenu() async {
     ..registerLazySingleton(() => ImageBloc())
     ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator()))
     ..registerLazySingleton(() => PayosBloc())
-    // ..registerLazySingleton(() => FormSkinBloc())
+    ..registerLazySingleton(() => ServiceCartBloc())
     ..registerLazySingleton(() => WebViewBloc())
     //usecase
     ..registerLazySingleton(() => PayFull(serviceLocator()));
@@ -118,12 +118,13 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetListBranches(serviceLocator()))
     ..registerLazySingleton(() => GetListStaff(serviceLocator()))
     ..registerLazySingleton(() => GetSingleStaff(serviceLocator()))
+    ..registerLazySingleton(() => GetStaffFreeInTime(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
     ..registerLazySingleton(() => StaffBloc(getSingleStaff: serviceLocator()))
-    ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getSingleStaff: serviceLocator()))
+    ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getStaffFreeInTime: serviceLocator()))
     ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));
 }
 

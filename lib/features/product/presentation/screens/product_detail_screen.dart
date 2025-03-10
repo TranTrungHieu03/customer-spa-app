@@ -58,7 +58,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 showBackArrow: true,
                 actions: [
                   TRoundedIcon(
-                    icon: Iconsax.shopping_bag,
+                    icon: Iconsax.shopping_cart,
                     size: 30,
                     onPressed: () => goCart(true),
                   )

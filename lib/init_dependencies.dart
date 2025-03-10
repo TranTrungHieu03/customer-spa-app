@@ -73,6 +73,7 @@ import 'package:spa_mobile/features/service/domain/usecases/get_list_services.da
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
@@ -84,6 +85,7 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_st
 import 'package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/service_cart/service_cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
 
 import 'features/service/domain/usecases/get_list_branches.dart';

@@ -15,7 +15,7 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
   @override
   Future<List<CategoryModel>> getListCategories() async {
     try {
-      final response = await _apiServices.getApi('/Category/get-all-categories?page=1&pageSize=20');
+      final response = await _apiServices.getApi('/ServiceCategory/search?page=1&pageSize=100');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return apiResponse.result!.data != null && apiResponse.result!.data is List
