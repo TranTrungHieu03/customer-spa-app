@@ -13,18 +13,18 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_price.d
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 class TProductCardVertical extends StatelessWidget {
-  const TProductCardVertical({super.key, required this.productModel});
+  const TProductCardVertical({super.key, required this.productModel, required this.width});
 
+  final double width;
   final ProductModel productModel;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final width = THelperFunctions.screenWidth(context) * 0.4;
     return GestureDetector(
       onTap: () => goProductDetail(productModel.productId),
       child: Container(
-        width: width,
+        width: width + 19,
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
             boxShadow: [TShadowStyle.verticalProductShadow],

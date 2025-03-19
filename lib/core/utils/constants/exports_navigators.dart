@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/screens/payment_web_view.dart';
 import 'package:spa_mobile/core/common/screens/redirect_screen.dart';

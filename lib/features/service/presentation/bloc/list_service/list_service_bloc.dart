@@ -20,6 +20,7 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
     on<GetListServicesForSelectionEvent>(_onGetListServicesSelection);
     on<GetListServiceChangeBranchEvent>(_onGetListServiceChangeBranch);
     on<SelectCategoryEvent>(_onSelectCategory);
+    on<RefreshListServiceEvent>(_onRefreshListServiceEvent);
   }
 
   Future<void> _onGetListServices(GetListServicesEvent event, Emitter<ListServiceState> emit) async {
@@ -62,6 +63,7 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
       emit(ListServiceLoadedForSelection(
         groupedServices: groupedServices,
         categories: categories,
+        services: services
       ));
     });
   }
@@ -98,7 +100,17 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
         categories: currentState.categories,
         groupedServices: currentState.groupedServices,
         selectedCategoryId: event.categoryId,
+        services: currentState.services
       ));
     }
+  }
+  Future<void> _onRefreshListServiceEvent(RefreshListServiceEvent event, Emitter<ListServiceState> emit) async {
+    emit(
+      ListServiceLoading(
+        isLoadingMore: false,
+        services: [],
+        pagination: PaginationModel.isEmty(),
+      ),
+    );
   }
 }

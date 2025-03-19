@@ -18,21 +18,22 @@ class CreateAppointmentParams {
   final List<int> staffId;
   final List<int> serviceId;
   final int branchId;
-  final DateTime appointmentsTime;
+  final List<DateTime> appointmentsTime;
   final String notes;
   final int voucherId;
   final String? feedback;
   final int totalMinutes;
 
-  CreateAppointmentParams(
-      {required this.staffId,
-      required this.serviceId,
-      required this.branchId,
-      required this.appointmentsTime,
-      required this.notes,
-      this.feedback,
-      this.voucherId = 0,
-      this.totalMinutes = 0});
+  CreateAppointmentParams({
+    required this.staffId,
+    required this.serviceId,
+    required this.branchId,
+    required this.appointmentsTime,
+    required this.notes,
+    this.feedback,
+    this.voucherId = 0,
+    this.totalMinutes = 0,
+  });
 
   // Phương thức toJson
   Map<String, dynamic> toJson() {
@@ -40,23 +41,25 @@ class CreateAppointmentParams {
       'staffId': staffId,
       'serviceId': serviceId,
       'branchId': branchId,
-      'appointmentsTime': appointmentsTime.toIso8601String(), // Chuyển DateTime thành chuỗi ISO 8601
+      'appointmentsTime': appointmentsTime.map((e) => e.toIso8601String()).toList(),
       'notes': notes,
       'voucherId': voucherId,
       'feedback': feedback,
+      'totalMinutes': totalMinutes,
     };
   }
 
   // Phương thức copyWith
-  CreateAppointmentParams copyWith(
-      {List<int>? staffId,
-      List<int>? serviceId,
-      int? branchId,
-      DateTime? appointmentsTime,
-      String? notes,
-      int? voucherId,
-      String? feedback,
-      int? totalMinutes}) {
+  CreateAppointmentParams copyWith({
+    List<int>? staffId,
+    List<int>? serviceId,
+    int? branchId,
+    List<DateTime>? appointmentsTime,
+    String? notes,
+    int? voucherId,
+    String? feedback,
+    int? totalMinutes,
+  }) {
     return CreateAppointmentParams(
       staffId: staffId ?? this.staffId,
       serviceId: serviceId ?? this.serviceId,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
@@ -23,14 +24,14 @@ class ProductListView extends StatelessWidget {
         ),
         const SizedBox(height: TSizes.sm),
         SizedBox(
-          height: 250,
+          height: 290,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: products.length,
             separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
             itemBuilder: (context, index) {
               final product = products[index];
-              return TProductCardVertical(productModel: product);
+              return TProductCardVertical(productModel: product,width: THelperFunctions.screenWidth(context) * 0.4,);
             },
           ),
         ),

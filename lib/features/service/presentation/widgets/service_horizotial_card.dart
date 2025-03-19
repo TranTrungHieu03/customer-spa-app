@@ -3,7 +3,6 @@ import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
@@ -20,7 +19,7 @@ class TServiceHorizontalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => goServiceDetail(service.serviceId),
+      // onTap: () => goServiceDetail(service.serviceId),
       child: TRoundedContainer(
         width: THelperFunctions.screenWidth(context) * 0.9,
         height: 150,

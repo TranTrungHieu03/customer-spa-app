@@ -21,10 +21,10 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     on<GetAppointmentEvent>(_onGetAppointmentEvent);
     on<CreateAppointmentEvent>(_onCreateAppointmentEvent);
     on<ResetAppointmentEvent>(_onResetAppointmentEvent);
-    on<UpdateCreateServiceIdAndBranchIdEvent>(_onUpdateServiceAndBranchDataEvent);
-    on<UpdateCreateStaffIdEvent>(_onUpdateStaffIdDataEvent);
-    on<UpdateCreateTimeEvent>(_onUpdateTimeDataEvent);
-    on<UpdateNoteEvent>(_onUpdateNoteDataEvent);
+    // on<UpdateCreateServiceIdAndBranchIdEvent>(_onUpdateServiceAndBranchDataEvent);
+    // on<UpdateCreateStaffIdEvent>(_onUpdateStaffIdDataEvent);
+    // on<UpdateCreateTimeEvent>(_onUpdateTimeDataEvent);
+    // on<UpdateNoteEvent>(_onUpdateNoteDataEvent);
     on<ClearAppointmentEvent>(_onClearAppointmentEvent);
   }
 
@@ -68,110 +68,110 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     emit(AppointmentInitial());
   }
 
-  Future<void> _onUpdateServiceAndBranchDataEvent(UpdateCreateServiceIdAndBranchIdEvent event, Emitter<AppointmentState> emit) async {
-    final currentState = state;
-    if (currentState is AppointmentCreateData) {
-      emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: currentState.params.staffId,
-          serviceId: event.serviceId,
-          branchId: event.branchId,
-          appointmentsTime: currentState.params.appointmentsTime,
-          totalMinutes: currentState.params.totalMinutes,
-          // Giữ nguyên giá trị totalMinutes
-          notes: currentState.params.notes)));
-      AppLogger.debug(CreateAppointmentParams(
-              staffId: currentState.params.staffId,
-              serviceId: event.serviceId,
-              branchId: event.branchId,
-              appointmentsTime: currentState.params.appointmentsTime,
-              totalMinutes: currentState.params.totalMinutes,
-              notes: currentState.params.notes)
-          .toJson());
-    } else {
-      emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: [],
-          serviceId: event.serviceId,
-          branchId: event.branchId,
-          appointmentsTime: DateTime.now(),
-          totalMinutes: event.totalMinutes,
-          // Giá trị mặc định cho totalMinutes
-          notes: "")));
-      AppLogger.debug(CreateAppointmentParams(
-              staffId: [],
-              serviceId: event.serviceId,
-              branchId: event.branchId,
-              appointmentsTime: DateTime.now(),
-              totalMinutes: event.totalMinutes,
-              notes: "")
-          .toJson());
-    }
-  }
-
-  Future<void> _onUpdateStaffIdDataEvent(UpdateCreateStaffIdEvent event, Emitter<AppointmentState> emit) async {
-    final currentState = state;
-    if (currentState is AppointmentCreateData) {
-      AppLogger.debug(event.staffId);
-      emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: event.staffId,
-          serviceId: currentState.params.serviceId,
-          branchId: currentState.params.branchId,
-          appointmentsTime: currentState.params.appointmentsTime,
-          totalMinutes: currentState.params.totalMinutes,
-          // Giữ nguyên giá trị totalMinutes
-          notes: currentState.params.notes)));
-
-      AppLogger.debug(CreateAppointmentParams(
-              staffId: event.staffId,
-              serviceId: currentState.params.serviceId,
-              branchId: currentState.params.branchId,
-              appointmentsTime: currentState.params.appointmentsTime,
-              totalMinutes: currentState.params.totalMinutes,
-              notes: currentState.params.notes)
-          .toJson());
-    } else {
-      emit(AppointmentError("Du lieu chua duoc dong nhat"));
-    }
-  }
-
-  Future<void> _onUpdateTimeDataEvent(UpdateCreateTimeEvent event, Emitter<AppointmentState> emit) async {
-    final currentState = state;
-    if (currentState is AppointmentCreateData) {
-      emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: currentState.params.staffId,
-          serviceId: currentState.params.serviceId,
-          branchId: currentState.params.branchId,
-          appointmentsTime: event.appointmentTime,
-          totalMinutes: currentState.params.totalMinutes,
-          // Giữ nguyên giá trị totalMinutes
-          notes: currentState.params.notes)));
-    } else {
-      emit(AppointmentError("Du lieu chua duoc dong nhat"));
-    }
-  }
-
-  Future<void> _onUpdateNoteDataEvent(UpdateNoteEvent event, Emitter<AppointmentState> emit) async {
-    final currentState = state;
-    if (currentState is AppointmentCreateData) {
-      emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: currentState.params.staffId,
-          serviceId: currentState.params.serviceId,
-          branchId: currentState.params.branchId,
-          appointmentsTime: currentState.params.appointmentsTime,
-          totalMinutes: currentState.params.totalMinutes,
-          // Giữ nguyên giá trị totalMinutes
-          notes: event.note)));
-      AppLogger.debug(CreateAppointmentParams(
-              staffId: currentState.params.staffId,
-              serviceId: currentState.params.serviceId,
-              branchId: currentState.params.branchId,
-              appointmentsTime: currentState.params.appointmentsTime,
-              totalMinutes: currentState.params.totalMinutes,
-              notes: event.note)
-          .toJson());
-    } else {
-      emit(AppointmentError("Du lieu chua duoc dong nhat"));
-    }
-  }
+  // Future<void> _onUpdateServiceAndBranchDataEvent(UpdateCreateServiceIdAndBranchIdEvent event, Emitter<AppointmentState> emit) async {
+  //   final currentState = state;
+  //   if (currentState is AppointmentCreateData) {
+  //     emit(AppointmentCreateData(CreateAppointmentParams(
+  //         staffId: currentState.params.staffId,
+  //         serviceId: event.serviceId,
+  //         branchId: event.branchId,
+  //         appointmentsTime: currentState.params.appointmentsTime,
+  //         totalMinutes: currentState.params.totalMinutes,
+  //         // Giữ nguyên giá trị totalMinutes
+  //         notes: currentState.params.notes)));
+  //     AppLogger.debug(CreateAppointmentParams(
+  //             staffId: currentState.params.staffId,
+  //             serviceId: event.serviceId,
+  //             branchId: event.branchId,
+  //             appointmentsTime: currentState.params.appointmentsTime,
+  //             totalMinutes: currentState.params.totalMinutes,
+  //             notes: currentState.params.notes)
+  //         .toJson());
+  //   } else {
+  //     emit(AppointmentCreateData(CreateAppointmentParams(
+  //         staffId: [],
+  //         serviceId: event.serviceId,
+  //         branchId: event.branchId,
+  //         appointmentsTime: DateTime.now(),
+  //         totalMinutes: event.totalMinutes,
+  //         // Giá trị mặc định cho totalMinutes
+  //         notes: "")));
+  //     AppLogger.debug(CreateAppointmentParams(
+  //             staffId: [],
+  //             serviceId: event.serviceId,
+  //             branchId: event.branchId,
+  //             appointmentsTime: DateTime.now(),
+  //             totalMinutes: event.totalMinutes,
+  //             notes: "")
+  //         .toJson());
+  //   }
+  // }
+  //
+  // Future<void> _onUpdateStaffIdDataEvent(UpdateCreateStaffIdEvent event, Emitter<AppointmentState> emit) async {
+  //   final currentState = state;
+  //   if (currentState is AppointmentCreateData) {
+  //     AppLogger.debug(event.staffId);
+  //     emit(AppointmentCreateData(CreateAppointmentParams(
+  //         staffId: event.staffId,
+  //         serviceId: currentState.params.serviceId,
+  //         branchId: currentState.params.branchId,
+  //         appointmentsTime: currentState.params.appointmentsTime,
+  //         totalMinutes: currentState.params.totalMinutes,
+  //         // Giữ nguyên giá trị totalMinutes
+  //         notes: currentState.params.notes)));
+  //
+  //     AppLogger.debug(CreateAppointmentParams(
+  //             staffId: event.staffId,
+  //             serviceId: currentState.params.serviceId,
+  //             branchId: currentState.params.branchId,
+  //             appointmentsTime: currentState.params.appointmentsTime,
+  //             totalMinutes: currentState.params.totalMinutes,
+  //             notes: currentState.params.notes)
+  //         .toJson());
+  //   } else {
+  //     emit(AppointmentError("Du lieu chua duoc dong nhat"));
+  //   }
+  // }
+  //
+  // Future<void> _onUpdateTimeDataEvent(UpdateCreateTimeEvent event, Emitter<AppointmentState> emit) async {
+  //   final currentState = state;
+  //   if (currentState is AppointmentCreateData) {
+  //     emit(AppointmentCreateData(CreateAppointmentParams(
+  //         staffId: currentState.params.staffId,
+  //         serviceId: currentState.params.serviceId,
+  //         branchId: currentState.params.branchId,
+  //         appointmentsTime: event.appointmentTime,
+  //         totalMinutes: currentState.params.totalMinutes,
+  //         // Giữ nguyên giá trị totalMinutes
+  //         notes: currentState.params.notes)));
+  //   } else {
+  //     emit(AppointmentError("Du lieu chua duoc dong nhat"));
+  //   }
+  // }
+  //
+  // Future<void> _onUpdateNoteDataEvent(UpdateNoteEvent event, Emitter<AppointmentState> emit) async {
+  //   final currentState = state;
+  //   if (currentState is AppointmentCreateData) {
+  //     emit(AppointmentCreateData(CreateAppointmentParams(
+  //         staffId: currentState.params.staffId,
+  //         serviceId: currentState.params.serviceId,
+  //         branchId: currentState.params.branchId,
+  //         appointmentsTime: currentState.params.appointmentsTime,
+  //         totalMinutes: currentState.params.totalMinutes,
+  //         // Giữ nguyên giá trị totalMinutes
+  //         notes: event.note)));
+  //     AppLogger.debug(CreateAppointmentParams(
+  //             staffId: currentState.params.staffId,
+  //             serviceId: currentState.params.serviceId,
+  //             branchId: currentState.params.branchId,
+  //             appointmentsTime: currentState.params.appointmentsTime,
+  //             totalMinutes: currentState.params.totalMinutes,
+  //             notes: event.note)
+  //         .toJson());
+  //   } else {
+  //     emit(AppointmentError("Du lieu chua duoc dong nhat"));
+  //   }
+  // }
 
   Future<void> _onClearAppointmentEvent(ClearAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentInitial());

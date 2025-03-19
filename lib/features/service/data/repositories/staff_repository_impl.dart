@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/features/service/data/datasources/staff_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/model/staff_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_service_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/staff_repository.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff_by_list_id.dart';
@@ -14,9 +15,9 @@ class StaffRepositoryImpl implements StaffRepository {
   const StaffRepositoryImpl(this._staffRemoteDataSource);
 
   @override
-  Future<Either<Failure, List<StaffModel>>> getListStaff(GetListStaffParams params) async {
+  Future<Either<Failure, List<StaffServiceModel>>> getListStaff(GetListStaffParams params) async {
     try {
-      List<StaffModel> response = await _staffRemoteDataSource.getStaffs(params);
+      List<StaffServiceModel> response = await _staffRemoteDataSource.getStaffs(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));
@@ -44,9 +45,9 @@ class StaffRepositoryImpl implements StaffRepository {
   }
 
   @override
-  Future<Either<Failure, List<StaffModel>>> getStaffFreeInTime(GetStaffFreeInTimeParams param) async{
+  Future<Either<Failure, List<StaffServiceModel>>> getStaffFreeInTime(GetStaffFreeInTimeParams param) async {
     try {
-      List<StaffModel> response = await _staffRemoteDataSource.getStaffFreeInTime(param);
+      List<StaffServiceModel> response = await _staffRemoteDataSource.getStaffFreeInTime(param);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

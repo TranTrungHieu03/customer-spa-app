@@ -15,5 +15,6 @@ class AcneModel extends Acne {
     );
   }
 
-  Map<String, dynamic> toJson() => {"rectangle": List<dynamic>.from(rectangle.map((x) => x.toJson())), "length": length};
+  Map<String, dynamic> toJson() =>
+      {"rectangle": rectangle.isNotEmpty ? List<dynamic>.from(rectangle.map((x) => x.toJson())) : [], "length": length};
 }

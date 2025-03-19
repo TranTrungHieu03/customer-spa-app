@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -18,13 +19,14 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/related_service.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_detail_shimmer.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
-  const ServiceDetailScreen({super.key, required this.serviceId});
+  const ServiceDetailScreen({super.key, required this.serviceId, required this.branchId, required this.controller});
 
   final int serviceId;
+  final int branchId;
+  final AppointmentDataController controller;
 
   @override
   State<ServiceDetailScreen> createState() => _ServiceDetailScreenState();
@@ -210,8 +212,8 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Text("Related Service", style: Theme.of(context).textTheme.bodyLarge),
-                          const TRelatedService()
+                          // Text("Related Service", style: Theme.of(context).textTheme.bodyLarge),
+                          // const TRelatedService()
                         ],
                       ),
                     )
@@ -247,7 +249,11 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   Expanded(
                     flex: 3,
                     child: GestureDetector(
-                      onTap: () => goServiceCheckout([serviceData]),
+                      onTap: () {
+                        widget.controller.updateServiceIds([widget.serviceId]);
+                        widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
+                        goSelectSpecialist(widget.branchId, widget.controller);
+                      },
                       child: Container(
                         height: 55,
                         decoration: const BoxDecoration(

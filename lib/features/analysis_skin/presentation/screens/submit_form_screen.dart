@@ -40,14 +40,12 @@ class _SubmitFormScreenState extends State<SubmitFormScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(TSizes.sm),
-        child: Column(
-          children: [
-            const Spacer(),
-            BlocConsumer<SkinAnalysisBloc, SkinAnalysisState>(builder: (context, state) {
-              if (state is SkinAnalysisLoading) {
-                return const TLoader();
-              } else if (state is SkinAnalysisInitial) {
-                return SizedBox(
+        child: BlocConsumer<SkinAnalysisBloc, SkinAnalysisState>(builder: (context, state) {
+          if (state is SkinAnalysisInitial) {
+            return Column(
+              children: [
+                const Spacer(),
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
@@ -61,19 +59,20 @@ class _SubmitFormScreenState extends State<SubmitFormScreen> {
                       AppLocalizations.of(context)!.submit.toUpperCase(),
                     ),
                   ),
-                );
-              } else if (state is SkinAnalysisLoaded) {
-                return SizedBox.shrink();
-              }
-              return const SizedBox.shrink();
-            }, listener: (context, state) {
-              if (state is SkinAnalysisError) {
-                TSnackBar.errorSnackBar(context, message: state.message);
-                goHome();
-              }
-            }),
-          ],
-        ),
+                ),
+                if (state is SkinAnalysisLoading) const TLoader()
+              ],
+            );
+          } else if (state is SkinAnalysisLoaded) {
+            return const SizedBox.shrink();
+          }
+          return const SizedBox.shrink();
+        }, listener: (context, state) {
+          if (state is SkinAnalysisError) {
+            TSnackBar.errorSnackBar(context, message: state.message);
+            goHome();
+          }
+        }),
       ),
     );
   }

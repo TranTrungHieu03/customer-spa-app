@@ -81,10 +81,10 @@ class _SettingScreenState extends State<SettingScreen> {
               padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
               child: Column(
                 children: [
-                  TSectionHeading(
-                    title: AppLocalizations.of(context)!.account_settings,
-                    showActionButton: false,
-                  ),
+                  // TSectionHeading(
+                  //   title: AppLocalizations.of(context)!.account_settings,
+                  //   showActionButton: false,
+                  // ),
                   const SizedBox(
                     height: TSizes.spacebtwItems,
                   ),
@@ -124,6 +124,12 @@ class _SettingScreenState extends State<SettingScreen> {
                   TSettingsMenuTile(
                     icon: Iconsax.bookmark,
                     title: AppLocalizations.of(context)!.appointment,
+                    onTap: () => goServiceHistory(),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  ),
+                  TSettingsMenuTile(
+                    icon: Iconsax.pet,
+                    title:  "Gói liệu trình",
                     onTap: () => goServiceHistory(),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),

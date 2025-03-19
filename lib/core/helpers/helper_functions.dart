@@ -152,6 +152,9 @@ class THelperFunctions {
   }
 
   static String getFirstLetterOfLastName(String fullName) {
+    if (fullName.isEmpty) {
+      return "";
+    }
     List<String> parts = fullName.trim().split(' ');
     if (parts.isNotEmpty) {
       return parts.last[0].toUpperCase();

@@ -31,3 +31,5 @@ class SelectCategoryEvent extends ListServiceEvent {
 
   SelectCategoryEvent(this.categoryId);
 }
+
+class RefreshListServiceEvent extends ListServiceEvent {}

@@ -6,10 +6,10 @@ import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/categories.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_banner.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_card_shimmer.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_vertical_card.dart';
@@ -138,6 +138,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         }
                         return TProductCardVertical(
                           productModel: state.products[index],
+                          width: THelperFunctions.screenWidth(context) * 0.4,
                         );
                       },
                     );

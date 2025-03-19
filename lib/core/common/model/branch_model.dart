@@ -3,18 +3,19 @@ import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 
 class BranchModel extends Branch {
   final UserModel? managerBranch;
+  final double? distance;
 
-  const BranchModel({
-    required super.branchId,
-    required super.branchName,
-    required super.branchAddress,
-    required super.branchPhone,
-    required super.longAddress,
-    required super.latAddress,
-    required super.status,
-    required super.managerId,
-    this.managerBranch,
-  });
+  const BranchModel(
+      {required super.branchId,
+      required super.branchName,
+      required super.branchAddress,
+      required super.branchPhone,
+      required super.longAddress,
+      required super.latAddress,
+      required super.status,
+      required super.managerId,
+      this.managerBranch,
+      this.distance});
 
   factory BranchModel.fromJson(Map<String, dynamic> json) {
     return BranchModel(
@@ -26,6 +27,7 @@ class BranchModel extends Branch {
       latAddress: json['latAddress'],
       status: json['status'],
       managerId: json['managerId'],
+      distance: json['distance'] ?? 0,
       managerBranch: json['managerBranch'] != null ? UserModel.fromJson(json['managerBranch']) : null,
     );
   }
@@ -44,6 +46,19 @@ class BranchModel extends Branch {
     };
   }
 
+  Map<String, dynamic> isEmpty() {
+    return {
+      'branchId': "",
+      'branchName': "",
+      'branchAddress': "",
+      'branchPhone': "",
+      'longAddress': "",
+      'latAddress': "",
+      'status': "",
+      'managerId': "",
+    };
+  }
+
   Branch copyWith({
     int? branchId,
     String? branchName,
@@ -54,6 +69,7 @@ class BranchModel extends Branch {
     String? status,
     int? managerId,
     UserModel? managerBranch,
+    double? distance,
   }) {
     return BranchModel(
       branchId: branchId ?? this.branchId,
@@ -65,6 +81,7 @@ class BranchModel extends Branch {
       status: status ?? this.status,
       managerId: managerId ?? this.managerId,
       managerBranch: managerBranch ?? this.managerBranch,
+      distance: distance ?? this.distance,
     );
   }
 }

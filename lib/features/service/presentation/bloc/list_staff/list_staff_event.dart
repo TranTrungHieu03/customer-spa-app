@@ -4,9 +4,9 @@ part of 'list_staff_bloc.dart';
 sealed class ListStaffEvent {}
 
 class GetListStaffEvent extends ListStaffEvent {
-  final int id;
+  final GetListStaffParams params;
 
-  GetListStaffEvent({required this.id});
+  GetListStaffEvent({required this.params});
 }
 
 class GetSingleStaffEvent extends ListStaffEvent {

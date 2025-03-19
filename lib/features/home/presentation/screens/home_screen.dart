@@ -168,6 +168,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: TSizes.sm,
                   ),
 
+                  Text("Lịch hẹn sắp tới", style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(
+                    height: TSizes.sm,
+                  ),
                   Text(AppLocalizations.of(context)!.bannerTitle, style: Theme.of(context).textTheme.titleLarge),
                   const TBanner(),
                   const SizedBox(
@@ -226,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      goSelectServices();
+                      // goSelectServices();
                     },
                     child: Text("QR CODE"),
                   ),

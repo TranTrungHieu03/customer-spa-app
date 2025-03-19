@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
@@ -19,8 +20,10 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/screens/select_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_horizontal_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_horizotial_card.dart';
 import 'package:spa_mobile/init_dependencies.dart';
@@ -33,14 +36,24 @@ class WrapperServiceScreen extends StatefulWidget {
 }
 
 class _WrapperServiceScreenState extends State<WrapperServiceScreen> {
+  final appointmentController = AppointmentDataController();
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ListServiceBloc>(
-      create: (context) => ListServiceBloc(
-        getListService: serviceLocator(),
+    // return BlocProvider<ListServiceBloc>(
+    //   create: (context) => ListServiceBloc(
+    //     getListService: serviceLocator(),
+    //   ),
+    //   child: const ServiceScreen(),
+    // );
+    return MultiBlocProvider(providers: [
+      BlocProvider<ListServiceBloc>(
+        create: (context) => ListServiceBloc(
+          getListService: serviceLocator(),
+        ),
       ),
-      child: const ServiceScreen(),
-    );
+      BlocProvider<ListCategoryBloc>(create: (context) => ListCategoryBloc(getListCategories: serviceLocator())),
+    ], child: AppointmentData(controller: AppointmentDataController(), child: const SelectServiceScreen()));
   }
 }
 

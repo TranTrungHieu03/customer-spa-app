@@ -101,13 +101,25 @@ goProfile() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const ProfileScreen()));
 }
 
-goServiceDetail(int id) async {
+// goServiceDetail(int id) async {
+//   Navigator.push(
+//       navigatorKey.currentContext!,
+//       MaterialPageRoute(
+//           builder: (context) => ServiceDetailScreen(
+//                 serviceId: id,
+//
+//               )));
+// }
+
+goServiceDetailBooking(int id, int branchId, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => ServiceDetailScreen(
-                serviceId: id,
-              )));
+            serviceId: id,
+            branchId: branchId,
+            controller: controller,
+          )));
 }
 
 goBookingDetail(int id, {bool isBack = false}) async {
@@ -128,10 +140,10 @@ goSuccess(String title, String subTitle, VoidCallback onPressed, String image) a
                 image: image,
               )));
 }
-
-goServiceCheckout(List<ServiceModel> services) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: services)));
-}
+//
+// goServiceCheckout(List<ServiceModel> services) async {
+//   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutServiceScreen(services: services)));
+// }
 
 goVerify(String email, int statePage) async {
   Navigator.push(
@@ -192,8 +204,6 @@ goRedirectPayment(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => RedirectScreen(id: id)));
 }
 
-
-
 goCart(bool isProduct) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen(isProduct: isProduct)));
 }
@@ -206,38 +216,32 @@ goRoutineDetail(String id) async {
       ));
 }
 
-goSelectTime(List<int> staffId, BranchModel branch, int totalTime, List<int> serviceId) async {
+goSelectTime(List<int> staffIds, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => SelectTimeScreen(
-                staffId: staffId,
-                branch: branch,
-                totalTime: totalTime,
-                serviceId: serviceId,
+                staffIds: staffIds,
+                controller: controller,
               )));
 }
 
-goSelectSpecialist(BranchModel branch, int totalTime, List<int> serviceId) async {
+goSelectSpecialist(int branchId, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => SelectSpecialistScreen(
-                branch: branch,
-                totalTime: totalTime,
-                serviceId: serviceId,
+                branchId: branchId,
+                controller: controller,
               )));
 }
 
-goReview(List<int> staffId, BranchModel branch, int totalTime, List<int> serviceId) async {
+goReview(AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => ConfirmPaymentScreen(
-                staffId: staffId,
-                branch: branch,
-                totalTime: totalTime,
-                serviceId: serviceId,
+                controller: controller,
               )));
 }
 

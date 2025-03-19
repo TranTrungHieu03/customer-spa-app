@@ -1,37 +1,33 @@
+import "dart:math";
+
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import "package:iconsax/iconsax.dart";
 import "package:intl/intl.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:spa_mobile/core/common/model/branch_model.dart";
+import "package:spa_mobile/core/common/inherited/appointment_data.dart";
 import "package:spa_mobile/core/common/widgets/appbar.dart";
 import "package:spa_mobile/core/common/widgets/grid_layout.dart";
 import "package:spa_mobile/core/common/widgets/loader.dart";
 import "package:spa_mobile/core/common/widgets/rounded_container.dart";
 import "package:spa_mobile/core/common/widgets/rounded_icon.dart";
-import "package:spa_mobile/core/common/widgets/shimmer.dart";
 import "package:spa_mobile/core/helpers/helper_functions.dart";
 import "package:spa_mobile/core/logger/logger.dart";
 import "package:spa_mobile/core/utils/constants/colors.dart";
 import "package:spa_mobile/core/utils/constants/exports_navigators.dart";
 import "package:spa_mobile/core/utils/constants/sizes.dart";
 import "package:spa_mobile/features/service/data/model/time_model.dart";
-import "package:spa_mobile/features/service/domain/usecases/get_single_staff.dart";
-import "package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart";
 import "package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart";
 import "package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart";
-import "package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart";
 import "package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart";
-import "package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart";
 import "package:spa_mobile/features/service/presentation/widgets/leave_booking.dart";
 
 class SelectTimeScreen extends StatefulWidget {
-  const SelectTimeScreen({super.key, required this.staffId, required this.branch, required this.totalTime, required this.serviceId});
+  const SelectTimeScreen({super.key, required this.staffIds, required this.controller});
 
-  final List<int> staffId;
-  final BranchModel branch;
-  final int totalTime;
-  final List<int> serviceId;
+  final List<int> staffIds;
+  final AppointmentDataController controller;
 
   @override
   State<SelectTimeScreen> createState() => _SelectTimeScreenState();
@@ -63,8 +59,6 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   List<TimeModel> availableTimeSlots = [];
 
   void generateAvailableTimeSlots() {
-    AppLogger.info(bookedSlots.map((slot) => slot.toJson()).toList());
-
     final workDayStart = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 9, 0);
     final workDayEnd = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 21, 0);
 
@@ -72,7 +66,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     DateTime currentStart = workDayStart;
 
     while (true) {
-      final slotEnd = currentStart.add(Duration(minutes: widget.totalTime));
+      final slotEnd = currentStart.add(Duration(minutes: widget.controller.totalDuration));
 
       if (slotEnd.isAfter(workDayEnd)) break;
 
@@ -96,10 +90,8 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   void initState() {
     super.initState();
     _loadLanguageAndInit();
-    if (widget.staffId[0] != 0) {
-      context.read<StaffBloc>().add(GetStaffInfoEvent(GetSingleStaffParams(staffId: widget.staffId[0])));
-    }
-    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffId[0], date: selectedDate)));
+    if (widget.staffIds[0] != 0) {}
+    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffIds[0], date: selectedDate)));
 
     generateAvailableTimeSlots();
   }
@@ -159,8 +151,10 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                 setState(() {
                   selectedDate = date;
                 });
-                if (widget.staffId[0] != 0) {
-                  context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffId[0], date: date)));
+                if (widget.staffIds[0] != 0) {
+                  context
+                      .read<ListTimeBloc>()
+                      .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds[0], date: date)));
                 }
                 _scrollToSelectedDate();
               },
@@ -190,13 +184,22 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = widget.controller;
+    final isChooseDiffSpecialist = widget.staffIds.map((x) {
+      return x != controller.staffIds[0];
+    }).contains(true);
+    final isAllAny = widget.staffIds.map((x) {
+      return x == 0;
+    }).contains(false);
+    AppLogger.info(controller.staffIds);
+    AppLogger.info(isChooseDiffSpecialist);
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
         appBar: TAppbar(
           showBackArrow: false,
           leadingIcon: Iconsax.arrow_left,
-          leadingOnPressed: () => goSelectSpecialist(widget.branch, widget.totalTime, widget.serviceId),
+          leadingOnPressed: () => goSelectSpecialist(controller.branchId, controller),
           actions: [
             TRoundedIcon(
               icon: Iconsax.scissor_1,
@@ -225,144 +228,90 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                 height: TSizes.sm,
               ),
               GestureDetector(
-                onTap: () => goSelectSpecialist(widget.branch, widget.totalTime, widget.serviceId),
+                onTap: () => goSelectSpecialist(controller.branchId, controller),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    BlocBuilder<StaffBloc, StaffState>(
-                      builder: (context, state) {
-                        if (state is StaffLoaded) {
-                          final staff = state.staff;
-                          // final staffs = state.listStaff;
-                          // if (staffs.length == 1) {
-                          if (widget.staffId[0] == 0) {
-                            return TRoundedContainer(
-                              radius: TSizes.lg,
-                              padding: const EdgeInsets.all(TSizes.sm),
-                              child: Row(
-                                children: [
-                                  Text("Any specialist", style: Theme.of(context).textTheme.bodyMedium),
-                                  const SizedBox(
-                                    width: TSizes.sm,
-                                  ),
-                                  const Icon(
-                                    Iconsax.arrow_down_1,
-                                    size: 15,
-                                  )
-                                ],
+                    if (!isChooseDiffSpecialist)
+                      TRoundedContainer(
+                        radius: TSizes.lg,
+                        padding: const EdgeInsets.all(TSizes.sm),
+                        child: Row(
+                          children: [
+                            TRoundedContainer(
+                              radius: 35,
+                              width: 35,
+                              height: 35,
+                              backgroundColor: TColors.primaryBackground,
+                              child: Center(
+                                child: Text(
+                                  THelperFunctions.getFirstLetterOfLastName(
+                                      !isAllAny ? "Any" : widget.controller.staff[0]?.staffInfo?.userName ?? ""),
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                                ),
                               ),
-                            );
-                          }
-                          return TRoundedContainer(
-                            radius: TSizes.lg,
-                            padding: const EdgeInsets.all(TSizes.sm),
-                            child: Row(
-                              children: [
-                                TRoundedContainer(
-                                  radius: 35,
-                                  width: 35,
-                                  height: 35,
-                                  backgroundColor: TColors.primaryBackground,
-                                  child: Center(
-                                    child: Text(
-                                      THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: TSizes.xs),
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
-                                  child: Text(
-                                    staff.staffInfo?.fullName ?? "",
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: TSizes.xs,
-                                ),
-                                const Icon(
-                                  Iconsax.arrow_down_1,
-                                  size: 15,
-                                )
-                              ],
                             ),
-                          );
-                          // }
-                          // else if (staffs.length > 1) {
-                          //     AppLogger.debug("Length !=1");
-                          //     return TRoundedContainer(
-                          //       radius: TSizes.lg,
-                          //       height: 50,
-                          //       padding: const EdgeInsets.all(TSizes.sm),
-                          //       child: Row(
-                          //         children: [
-                          //           SizedBox(
-                          //             height: 50,
-                          //             child: ListView.builder(
-                          //               shrinkWrap: true,
-                          //               scrollDirection: Axis.horizontal,
-                          //               itemCount: state.listStaff.length,
-                          //               itemBuilder: (context, index) {
-                          //                 final staff = state.listStaff[index];
-                          //                 return TRoundedContainer(
-                          //                   radius: 35,
-                          //                   width: 35,
-                          //                   height: 35,
-                          //                   backgroundColor: TColors.primaryBackground,
-                          //                   child: Center(
-                          //                     child: Text(
-                          //                       THelperFunctions.getFirstLetterOfLastName(staff.staffInfo.userName),
-                          //                       style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
-                          //                     ),
-                          //                   ),
-                          //                 );
-                          //               },
-                          //             ),
-                          //           ),
-                          //           const SizedBox(
-                          //             width: TSizes.sm,
-                          //           ),
-                          //           ConstrainedBox(
-                          //             constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
-                          //             child: Text(
-                          //               "Multi specialists",
-                          //               style: Theme.of(context).textTheme.labelMedium,
-                          //             ),
-                          //           ),
-                          //           const SizedBox(
-                          //             width: TSizes.xs,
-                          //           ),
-                          //           const Icon(
-                          //             Iconsax.arrow_down_1,
-                          //             size: 15,
-                          //           )
-                          //         ],
-                          //       ),
-                          //     );
-                          //   }
-                          //   return const SizedBox.shrink();
-                        } else if (state is StaffLoading) {
-                          return const TShimmerEffect(width: TSizes.shimmerXl, height: TSizes.shimmerSm);
-                        }
-                        return TRoundedContainer(
-                          radius: TSizes.lg,
-                          padding: const EdgeInsets.all(TSizes.sm),
-                          child: Row(
-                            children: [
-                              Text("Any specialist", style: Theme.of(context).textTheme.bodyMedium),
-                              const SizedBox(
-                                width: TSizes.sm,
+                            const SizedBox(width: TSizes.xs),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
+                              child: Text(
+                                !isAllAny ? "Any Specialist" : widget.controller.staff[0]?.staffInfo?.userName ?? "",
+                                style: Theme.of(context).textTheme.labelLarge,
                               ),
-                              const Icon(
-                                Iconsax.arrow_down_1,
-                                size: 15,
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                            ),
+                            const SizedBox(
+                              width: TSizes.sm,
+                            ),
+                            const Icon(
+                              Iconsax.arrow_down_1,
+                              size: 15,
+                            )
+                          ],
+                        ),
+                      ),
+                    if (isChooseDiffSpecialist)
+                      TRoundedContainer(
+                        radius: TSizes.lg,
+                        padding: const EdgeInsets.all(TSizes.sm),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Multiple Specialist", style: Theme.of(context).textTheme.labelLarge),
+                            const SizedBox(
+                              width: TSizes.sm,
+                            ),
+                            Row(
+                              children: List.generate(
+                                min(3, controller.staffIds.length), // Show max 3 items
+                                (index) {
+                                  final isAny = controller.staffIds[index] == 0;
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: index < min(3, controller.staffIds.length) - 1 ? TSizes.xs : 0),
+                                    child: TRoundedContainer(
+                                      radius: 35,
+                                      width: 35,
+                                      height: 35,
+                                      backgroundColor: TColors.primaryBackground,
+                                      child: Center(
+                                        child: Text(
+                                          THelperFunctions.getFirstLetterOfLastName(
+                                              isAny ? "A" : widget.controller.staff[index]?.staffInfo?.userName ?? ""),
+                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: TSizes.xs),
+                            const Icon(
+                              Iconsax.arrow_down_1,
+                              size: 15,
+                            )
+                          ],
+                        ),
+                      ),
                     TRoundedIcon(
                       icon: Iconsax.calendar_1,
                       borderRadius: 10,
@@ -393,7 +342,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                           selectedDate = DateTime.parse(item['date']!);
                           context
                               .read<ListTimeBloc>()
-                              .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffId[0], date: selectedDate)));
+                              .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds[0], date: selectedDate)));
                         });
 
                         _scrollToSelectedDate();
@@ -458,23 +407,41 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                           isScroll: true,
                           itemBuilder: (context, index) {
                             final slot = availableTimeSlots[index];
+                            final isSelected = selectedTime == slot.startTime.toString();
                             return GestureDetector(
                               onTap: () {
-                                context.read<AppointmentBloc>().add(UpdateCreateTimeEvent(appointmentTime: slot.startTime));
+                                final listTimes = <DateTime>[];
+                                // If user choose different specialist, we don't need to check staff free time
+                                DateTime currentTime = slot.startTime;
 
-                                if (widget.staffId.contains(0)) {
-                                  context.read<ListStaffBloc>().add(GetStaffFreeInTimeEvent(
-                                      params: GetStaffFreeInTimeParams(
-                                          branchId: widget.branch.branchId,
-                                          serviceId: widget.serviceId.first,
-                                          startTime: slot.startTime.toString())));
+                                for (int i = 0; i < controller.services.length; i++) {
+                                  if (i == 0) {
+                                    listTimes.add(currentTime);
+                                  }
+
+                                  currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
+
+                                  if (i < controller.services.length - 1) {
+                                    listTimes.add(currentTime);
+                                  }
                                 }
 
-                                goReview(widget.staffId, widget.branch, widget.totalTime, widget.serviceId);
+                                AppLogger.info(listTimes);
+                                controller.updateTimeStart(listTimes);
+                                setState(() {
+                                  selectedTime = slot.startTime.toString();
+                                });
+                                // if (listTimes.length == 1) {
+                                goReview(controller);
+                                // }
                               },
                               child: TRoundedContainer(
-                                padding: const EdgeInsets.all(TSizes.md),
+                                padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),
+                                backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                                borderColor: isSelected ? TColors.primary : Colors.transparent,
                                 width: double.infinity,
+                                showBorder: true,
+                                shadow: true,
                                 child: Row(
                                   children: [
                                     Text(DateFormat('HH:mm').format(slot.startTime)),
@@ -501,6 +468,19 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                   ),
                 ),
               )
+            ],
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(TSizes.sm),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    goReview(controller);
+                  },
+                  child: Text(AppLocalizations.of(context)!.continue_book))
             ],
           ),
         ),

@@ -86,7 +86,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
               if (state is AppointmentLoaded) {
                 final order = state.appointment;
 
-                final totalTime = order.appointments.fold(0, (sum, x) => sum + int.parse(x.service?.duration ?? "0"));
+                var totalTime = order.appointments.fold(0, (sum, x) => sum + int.parse(x.service?.duration ?? "0"));
+                if (order.appointments.length > 1) {
+                  totalTime = totalTime + (order.appointments.length - 1) * 5;
+                }
                 final totalPrice = order.appointments.fold(0.0, (sum, x) => sum + x.subTotal);
                 totalAmount = order.totalAmount;
                 return Column(
@@ -191,11 +194,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         Text(
                           "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime).toString()} - "
                           "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
+                        ),
+                        const Spacer(),
+                        TRoundedIcon(
+                          icon: Iconsax.info_circle,
+                          color: TColors.darkerGrey,
+                          onPressed: () => _showModelTimeInfo(context),
                         )
                       ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.md,
                     ),
                     Divider(
                       color: dark ? TColors.darkGrey : TColors.grey,
@@ -311,6 +317,33 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Padding(
                   padding: const EdgeInsets.all(TSizes.spacebtwSections),
                   child: TQrCheckIn(id: order.orderId.toString(), time: DateTime.now())),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showModelTimeInfo(BuildContext context) {
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.2,
+          child: Column(
+            children: [
+              Padding(
+                  padding: const EdgeInsets.all(TSizes.spacebtwSections),
+                  child: Text(
+                    "Giữa mỗi dịch vụ được khấu hao 5 phút để chuẩn bị cho dịch vụ tiếp theo",
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )),
             ],
           ),
         );

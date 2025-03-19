@@ -5,6 +5,8 @@ import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/core/network/network.dart';
+import 'package:spa_mobile/core/network/third_party_api_services.dart';
+import 'package:spa_mobile/core/network/third_party_api_services.dart';
 import 'package:spa_mobile/core/utils/service/auth_service.dart';
 import 'package:spa_mobile/features/analysis_skin/data/datasources/skin_analysis_remote_data_source.dart';
 import 'package:spa_mobile/features/analysis_skin/data/repositories/skin_analysis_repository_impl.dart';

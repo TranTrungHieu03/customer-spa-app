@@ -182,7 +182,12 @@ class SkinHealthModel {
         eyeFinelines: BlackheadModel(value: 0, confidence: 0),
         glabellaWrinkle: BlackheadModel(value: 0, confidence: 0),
         nasolabialFold: BlackheadModel(value: 0, confidence: 0),
-        skinType: SkinTypeModel(skinType: -1, details: []),
+        skinType: SkinTypeModel(skinType: -1, details: [
+          BlackheadModel(value: 0, confidence: 0),
+          BlackheadModel(value: 0, confidence: 0),
+          BlackheadModel(value: 0, confidence: 0),
+          BlackheadModel(value: 0, confidence: 0)
+        ]),
         poresForehead: BlackheadModel(value: 0, confidence: 0),
         poresLeftCheek: BlackheadModel(value: 0, confidence: 0),
         poresRightCheek: BlackheadModel(value: 0, confidence: 0),

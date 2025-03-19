@@ -20,3 +20,18 @@ String formatDate(DateTime date) {
   final DateFormat formatter = DateFormat('HH:mm dd/MM/yyyy');
   return formatter.format(date);
 }
+
+String formatDuration(int totalMinutes) {
+  final hours = totalMinutes ~/ 60;
+  final minutes = totalMinutes % 60;
+
+  String result = '';
+  if (hours > 0) result += '$hours giờ';
+  if (minutes > 0) {
+    if (result.isNotEmpty) result += ' ';
+    result += '$minutes phút';
+  }
+
+  return result.isNotEmpty ? result : '0 phút';
+}
+

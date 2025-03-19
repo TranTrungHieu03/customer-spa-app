@@ -49,10 +49,12 @@ class ListServiceLoadedForSelection extends ListServiceState {
   final Map<int, List<ServiceModel>> groupedServices;
   final List<CategoryModel> categories;
   final int? selectedCategoryId;
+  final List<ServiceModel> services;
 
   const ListServiceLoadedForSelection({
     required this.groupedServices,
     required this.categories,
+    required this.services,
     this.selectedCategoryId,
   });
 }

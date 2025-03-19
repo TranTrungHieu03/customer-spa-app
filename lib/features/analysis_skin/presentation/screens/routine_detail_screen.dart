@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -44,6 +45,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             return Padding(
               padding: const EdgeInsets.all(TSizes.sm),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     routine.name,
@@ -75,6 +77,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                 ],
               ),
             );
+          } else if (state is RoutineLoading) {
+            return const TLoader();
           }
           return const TErrorBody();
         },

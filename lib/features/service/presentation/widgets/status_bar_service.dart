@@ -15,10 +15,7 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_price.d
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/history_shimmer_card.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/order_horizontal_shimmer_card.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/order_horizontal_shimmer_card.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/service_horizontal_shimmer_card.dart';
 
 class TStatusTabService extends StatefulWidget {
   const TStatusTabService({super.key, required this.status});
@@ -49,7 +46,7 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
     return BlocProvider.value(
       value: context.read<ListAppointmentBloc>(),
       child: Padding(
-        padding: const EdgeInsets.all(TSizes.sm),
+        padding: const EdgeInsets.symmetric(vertical: TSizes.lg),
         child: Expanded(
           child: BlocBuilder<ListAppointmentBloc, ListAppointmentState>(
             builder: (context, state) {
@@ -71,6 +68,7 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
                 if (orders.isEmpty) {
                   return const Center(child: Text('Do not have any order here!'));
                 }
+
                 return NotificationListener<ScrollNotification>(
                   onNotification: (scrollNotification) {
                     if (scrollNotification is ScrollEndNotification && _scrollController.position.extentAfter < 100) {
@@ -95,19 +93,58 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
                           return isLoading ? const TOrderHorizontalShimmer() : const SizedBox.shrink();
                         } else {
                           final order = orders[index];
+                          var totalTime = order.appointments.fold(0, (sum, x) => sum + int.parse(x.service?.duration ?? "0"));
+                          if (order.appointments.length > 1) {
+                            totalTime = totalTime + (order.appointments.length - 1) * 5;
+                          }
                           return TRoundedContainer(
                             padding: const EdgeInsets.all(TSizes.sm),
                             child: GestureDetector(
                               onTap: () => goBookingDetail(orders[index].orderId, isBack: true),
                               child: Column(
                                 children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Iconsax.calendar_1,
+                                        color: TColors.primary,
+                                      ),
+                                      const SizedBox(
+                                        width: TSizes.sm,
+                                      ),
+                                      Text(
+                                        DateFormat('EEEE, dd MMMM yyyy', lgCode).format(order.appointments[0].appointmentsTime).toString(),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: TSizes.sm,
+                                  ),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Iconsax.clock,
+                                        color: TColors.primary,
+                                      ),
+                                      const SizedBox(
+                                        width: TSizes.sm,
+                                      ),
+                                      Text(
+                                        "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime).toString()} - "
+                                        "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: TSizes.sm,
+                                  ),
                                   TGridLayout(
                                       itemCount: orders[index].appointments.length,
-                                      mainAxisExtent: 120,
+                                      mainAxisExtent: 50,
                                       crossAxisCount: 1,
                                       itemBuilder: (context, indexItem) {
                                         final appointment = order.appointments[indexItem];
-                                        final totalTime = order.appointments.fold(0, (sum, x) => sum + int.parse(x.service.duration));
+
                                         return Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,43 +159,6 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Row(
-                                                      children: [
-                                                        const Icon(
-                                                          Iconsax.calendar_1,
-                                                          color: TColors.primary,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: TSizes.sm,
-                                                        ),
-                                                        Text(
-                                                          DateFormat('EEEE, dd MMMM yyyy', lgCode)
-                                                              .format(appointment.appointmentsTime)
-                                                              .toString(),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: TSizes.sm,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        const Icon(
-                                                          Iconsax.clock,
-                                                          color: TColors.primary,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: TSizes.sm,
-                                                        ),
-                                                        Text(
-                                                          "${DateFormat('HH:mm', lgCode).format(appointment.appointmentsTime).toString()} - "
-                                                          "${DateFormat('HH:mm', lgCode).format(appointment.appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: TSizes.sm,
-                                                    ),
                                                     Row(
                                                       children: [
                                                         Expanded(
@@ -180,6 +180,7 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
                                                         Text(AppLocalizations.of(context)!.minutes)
                                                       ],
                                                     ),
+
                                                   ],
                                                 ),
                                               ),

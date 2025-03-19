@@ -34,7 +34,7 @@ class WrapperFormCollectData extends StatelessWidget {
 }
 
 class FormCollectDataScreen extends StatefulWidget {
-  const FormCollectDataScreen({super.key, required this.skinHealth,required this.isFromAI});
+  const FormCollectDataScreen({super.key, required this.skinHealth, required this.isFromAI});
 
   final bool isFromAI;
   final SkinHealthModel skinHealth;
@@ -176,7 +176,13 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     child: formSkinType.answer,
                                     answerValue: values.skinType.skinType,
                                     onChanged: (newValue) {
-                                      final newFormData = values.copyWith(skinType: SkinTypeModel(skinType: newValue.first, details: []));
+                                      final newFormData = values.copyWith(
+                                          skinType: SkinTypeModel(skinType: newValue.first, details: [
+                                        BlackheadModel(value: 0, confidence: 0),
+                                        BlackheadModel(value: 0, confidence: 0),
+                                        BlackheadModel(value: 0, confidence: 0),
+                                        BlackheadModel(value: 0, confidence: 0)
+                                      ]));
                                       context.read<FormDataSkinBloc>().add(
                                             UpdateSkinHealthEvent(newFormData),
                                           );
@@ -190,6 +196,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     child: formSkinColor.answer,
                                     answerValue: values.skinColor.value,
                                     onChanged: (newValue) {
+                                      AppLogger.info(newValue);
                                       final newFormData = values.copyWith(skinColor: BlackheadModel(value: newValue.first, confidence: 0));
                                       context.read<FormDataSkinBloc>().add(
                                             UpdateSkinHealthEvent(newFormData),
@@ -211,9 +218,9 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                         closedComedones: newValue.contains("closedComedones")
                                             ? AcneModel(rectangle: values.closedComedones.rectangle, length: 1)
                                             : AcneModel(rectangle: values.closedComedones.rectangle, length: 0),
-                                        blackhead: newValue.contains("blackhead")
+                                        blackhead: newValue.contains("blackHead")
                                             ? BlackheadModel(value: 1, confidence: values.blackhead.confidence)
-                                            : BlackheadModel(value: 10, confidence: values.blackhead.confidence),
+                                            : BlackheadModel(value: 0, confidence: values.blackhead.confidence),
                                       );
                                       context.read<FormDataSkinBloc>().add(
                                             UpdateSkinHealthEvent(newFormData),
@@ -237,7 +244,9 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                           eyePouch: newValue.contains("eyePouch")
                                               ? BlackheadModel(value: 1, confidence: values.eyePouch.confidence)
                                               : BlackheadModel(value: 0, confidence: values.eyePouch.confidence));
-
+                                      context.read<FormDataSkinBloc>().add(
+                                            UpdateSkinHealthEvent(newFormData),
+                                          );
                                       AppLogger.info("After copyWith: ${newFormData.toJson()}");
                                     },
                                   ),

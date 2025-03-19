@@ -21,7 +21,7 @@ class TServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => goServiceDetail(service.serviceId),
+      // onTap: () => goServiceDetail(service.serviceId),
       child: TRoundedContainer(
         width: THelperFunctions.screenWidth(context) * 0.45,
         height: 150,

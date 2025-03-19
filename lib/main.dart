@@ -24,9 +24,7 @@ import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
@@ -58,7 +56,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
         BlocProvider(create: (_) => serviceLocator<ServiceBloc>()),
-        BlocProvider(create: (_) => serviceLocator<ListServiceBloc>()),
+        // BlocProvider(create: (_) => serviceLocator<ListServiceBloc>()),
         // BlocProvider(create: (_) => serviceLocator<ListCategoryBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProductBloc>()),
