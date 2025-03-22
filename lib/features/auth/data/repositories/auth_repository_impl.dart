@@ -89,7 +89,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final String email = user?.email ?? '';
       final String userName = user?.displayName ?? '';
       final String imageUrl = user?.photoURL ?? '';
-      final String phone = user?.phoneNumber ?? '';
+      final String phone = user?.phoneNumber ?? '0823982388';
 
       AppLogger.info("$email $userName $phone");
 

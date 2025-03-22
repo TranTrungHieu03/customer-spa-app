@@ -204,8 +204,8 @@ goRedirectPayment(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => RedirectScreen(id: id)));
 }
 
-goCart(bool isProduct) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen(isProduct: isProduct)));
+goCart() async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen()));
 }
 
 goRoutineDetail(String id) async {

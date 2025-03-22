@@ -50,13 +50,19 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
     if (widget.controller.services.length > 1) {
       totalTime = totalTime + (widget.controller.services.length - 1) * 5;
     }
-    final isChooseDiffSpecialist = widget.controller.staffIds.map((x) {
-      return x != widget.controller.staffIds[0];
-    }).contains(true);
-    final isAllAny = widget.controller.staffIds.map((x) {
+    // check if choose different specialist between services
+    // final isChooseDiffSpecialist = widget.controller.staffIds.map((x) {
+    //   return x != widget.controller.staffIds[0];
+    // }).contains(true);
+    // //check if all specialist is anyone
+    // final isHaveSpecific = widget.controller.staffIds.map((x) {
+    //   return x == 0;
+    // }).contains(false);
+    //check if have any specialist is anyone
+    final isHaveAny = widget.controller.staffIds.map((x) {
       return x == 0;
-    }).contains(false);
-    if (!isChooseDiffSpecialist && !isAllAny) {
+    }).contains(true);
+    if (isHaveAny) {
       context.read<ListStaffBloc>().add(GetStaffFreeInTimeEvent(
           params: GetStaffFreeInTimeParams(
               branchId: widget.controller.branchId, serviceIds: widget.controller.serviceIds, startTimes: widget.controller.time)));
@@ -146,15 +152,16 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
           body: SingleChildScrollView(
             child: BlocConsumer<ListStaffBloc, ListStaffState>(
               listener: (context, state) {
-                AppLogger.info(state);
                 if (state is ListStaffLoaded) {
-                  if (widget.controller.staffIds.contains(0)) {
+                  AppLogger.info(widget.controller.staffIds.every((x) => x == 0));
+                  if (widget.controller.staffIds.every((x) => x == 0)) {
                     final listStaffFreeIntersection = state.intersectionStaff;
                     final List<int> indexAnySpec =
                         widget.controller.staffIds.asMap().entries.where((entry) => entry.value == 0).map((entry) => entry.key).toList();
                     if (listStaffFreeIntersection.isNotEmpty) {
                       for (int index in indexAnySpec) {
                         widget.controller.addStaffId(index, listStaffFreeIntersection[0].staffId);
+                        widget.controller.addStaff(index, listStaffFreeIntersection[0]);
                       }
                       AppLogger.debug("StaffIds: ${widget.controller.staffIds}");
                     } else {
@@ -163,8 +170,19 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           widget.controller.staffIds.asMap().entries.where((entry) => entry.value == 0).map((entry) => entry.key).toList();
                       for (int index in indexAnySpec) {
                         widget.controller.addStaffId(index, listStaffFree[index].staffs[0].staffId);
+                        widget.controller.addStaff(index, listStaffFree[index].staffs[0]);
                       }
+                      AppLogger.debug("StaffIds: ${widget.controller.staffIds}");
                     }
+                  } else {
+                    final listStaffFree = (context.read<ListStaffBloc>().state as ListStaffLoaded).listStaff;
+                    final List<int> indexAnySpec =
+                        widget.controller.staffIds.asMap().entries.where((entry) => entry.value == 0).map((entry) => entry.key).toList();
+                    for (int index in indexAnySpec) {
+                      widget.controller.addStaffId(index, listStaffFree[index].staffs[0].staffId);
+                      widget.controller.addStaff(index, listStaffFree[index].staffs[0]);
+                    }
+                    AppLogger.debug("StaffIds: ${widget.controller.staffIds}");
                   }
                 } else if (state is ListStaffError) {
                   TSnackBar.errorSnackBar(context, message: state.message);

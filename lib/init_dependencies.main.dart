@@ -5,7 +5,7 @@ final serviceLocator = GetIt.instance;
 Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
   serviceLocator.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api", authService: serviceLocator<AuthService>()));
+      () => NetworkApiService(baseUrl: "https://solaceapix.ddnsking.com/api", authService: serviceLocator<AuthService>()));
   serviceLocator.registerLazySingleton<ThirdPartyApiServices>(() => ThirdPartyApiServices(baseUrl: "https://rsapi.goong.io/Direction"));
 
   //on boarding

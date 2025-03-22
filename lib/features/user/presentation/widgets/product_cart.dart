@@ -46,7 +46,10 @@ class TProductCart extends StatelessWidget {
                     ),
                   ),
                 ),
-                child: TProductCartItem(index: index), // Pass the index to TProductCart
+                child: Padding(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  child: TProductCartItem(index: index),
+                ), // Pass the index to TProductCart
               );
             },
             separatorBuilder: (_, __) {
@@ -72,21 +75,21 @@ class TProductCart extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                     Column(
-                       mainAxisSize: MainAxisSize.min,
-                       children: [
-                         Checkbox(
-                           value: state.isAllSelected,
-                           onChanged: (bool? newValue) {
-                             context.read<CheckboxCartCubit>().toggleSelectAll(newValue ?? false);
-                           },
-                         ),
-                         Text(
-                           AppLocalizations.of(context)!.all,
-                           style: Theme.of(context).textTheme.bodyMedium,
-                         ),
-                       ],
-                     ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Checkbox(
+                          value: state.isAllSelected,
+                          onChanged: (bool? newValue) {
+                            context.read<CheckboxCartCubit>().toggleSelectAll(newValue ?? false);
+                          },
+                        ),
+                        Text(
+                          AppLocalizations.of(context)!.all,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
                     const Spacer(),
                     Row(
                       children: [
