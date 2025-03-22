@@ -20,6 +20,7 @@ import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.d
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/product_banner.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/service_categories.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -165,6 +166,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text("Sản phẩm đề xuất", style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(
+                    height: TSizes.spacebtwItems,
+                  ),
+                  const TProductBanner(),
+                  const SizedBox(
                     height: TSizes.sm,
                   ),
 
@@ -236,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      // goSelectTime();
+                      goCart();
                     },
                     child: Text("Statistics"),
                   )

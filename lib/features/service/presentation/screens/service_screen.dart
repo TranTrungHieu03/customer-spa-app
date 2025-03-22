@@ -113,10 +113,6 @@ class _ServiceScreenState extends State<ServiceScreen> {
               icon: Iconsax.search_normal,
               onPressed: () => goSearch(),
             ),
-            TRoundedIcon(
-              icon: Iconsax.shopping_bag,
-              onPressed: () => goCart(false),
-            ),
           ],
         ),
         body: Padding(

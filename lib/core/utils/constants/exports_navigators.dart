@@ -45,7 +45,7 @@ import 'package:spa_mobile/features/service/presentation/screens/select_time_scr
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_history_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';
-import 'package:spa_mobile/features/user/presentation/screens/cart_screen.dart';
+import 'package:spa_mobile/features/product/presentation/screens/cart_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 

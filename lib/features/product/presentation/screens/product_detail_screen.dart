@@ -60,7 +60,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   TRoundedIcon(
                     icon: Iconsax.shopping_cart,
                     size: 30,
-                    onPressed: () => goCart(true),
+                    onPressed: () => goCart(),
                   )
                 ],
               ),
@@ -193,7 +193,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Icon(
-                                Iconsax.bag_tick,
+                                Iconsax.shopping_cart4,
                                 color: TColors.primary,
                               ),
                               Text(

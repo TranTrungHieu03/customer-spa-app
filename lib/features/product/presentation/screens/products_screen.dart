@@ -8,9 +8,9 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_banner.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_card_shimmer.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_vertical_card.dart';
 import 'package:spa_mobile/init_dependencies.dart';
@@ -69,9 +69,10 @@ class _ProductsScreenState extends State<ProductsScreen> {
           'Product',
           style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
         ),
-        actions: const [
+        actions: [
           TRoundedIcon(
-            icon: Iconsax.shopping_bag,
+            icon: Iconsax.shopping_cart,
+            onPressed: () => goCart(),
             size: 30,
           )
         ],
@@ -89,22 +90,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Luxury of Skincare",
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(
-                  "Curated for You",
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(
-                  height: TSizes.sm,
-                ),
-                // const SizedBox(height: 40, child: TCategories()),
-                const SizedBox(
-                  height: TSizes.spacebtwItems,
-                ),
-                const TProductBanner(),
                 const SizedBox(
                   height: TSizes.spacebtwSections,
                 ),

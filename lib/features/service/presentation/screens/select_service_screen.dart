@@ -57,11 +57,6 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     _loadLocalData();
 
     // Initial data loading
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ListServiceBloc>().add(
-        GetListServicesForSelectionEvent(1, selectedBranch ?? 1, 100),
-      );
-    });
   }
 
   Future<void> _loadLocalData() async {
@@ -78,6 +73,11 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
         });
       }
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ListServiceBloc>().add(
+            GetListServicesForSelectionEvent(1, selectedBranch ?? 1, 100),
+          );
+    });
   }
 
   void _initTabController(int tabCount) {
@@ -246,7 +246,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(), // Ensure smooth scrolling physics
+        physics: const AlwaysScrollableScrollPhysics(), 
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.white,
@@ -310,21 +310,21 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
             ],
             bottom: _isScrolled
                 ? PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(
-                height: 1,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: TColors.darkGrey.withOpacity(0.3),
-                      blurRadius: 1,
-                      offset: const Offset(0, 3),
+                    preferredSize: const Size.fromHeight(1),
+                    child: Container(
+                      height: 1,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: TColors.darkGrey.withOpacity(0.3),
+                            blurRadius: 1,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            )
+                  )
                 : null,
           ),
           SliverPersistentHeader(
@@ -364,8 +364,8 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                     category.name,
                                     textAlign: TextAlign.center,
                                     style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                      color: _tabController!.index == state.categories.indexOf(category) ? TColors.white : TColors.dark,
-                                    ),
+                                          color: _tabController!.index == state.categories.indexOf(category) ? TColors.white : TColors.dark,
+                                        ),
                                   ),
                                 ),
                               ),
@@ -394,7 +394,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                        (context, index) {
+                    (context, index) {
                       final category = state.categories[index];
                       final services = state.groupedServices[category.categoryId] ?? [];
 
