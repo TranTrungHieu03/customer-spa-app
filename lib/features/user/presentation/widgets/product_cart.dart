@@ -8,14 +8,19 @@ import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
-import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_model.dart';
+import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cubit.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 class TProductCart extends StatelessWidget {
-  const TProductCart({super.key});
+  final List<ProductCartModel> products;
+
+  const TProductCart({super.key, required this.products});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +29,12 @@ class TProductCart extends StatelessWidget {
       child: Scaffold(
         body: ListView.separated(
             itemBuilder: (context, index) {
+              final productCart = products[index];
               return Dismissible(
                 key: Key(index.toString()),
                 direction: DismissDirection.endToStart,
                 onDismissed: (direction) {
+                  context.read<CartBloc>().add(RemoveProductFromCartEvent(id: productCart.productId));
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Item deleted')),
                   );
@@ -48,7 +55,10 @@ class TProductCart extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(TSizes.sm),
-                  child: TProductCartItem(index: index),
+                  child: TProductCartItem(
+                    index: index,
+                    product: productCart.product,
+                  ),
                 ), // Pass the index to TProductCart
               );
             },
@@ -57,7 +67,7 @@ class TProductCart extends StatelessWidget {
                 height: TSizes.sm,
               );
             },
-            itemCount: 6),
+            itemCount: products.length),
         bottomNavigationBar: BlocBuilder<CheckboxCartCubit, CheckboxCartState>(
           builder: (context, state) {
             if (state is CheckboxCartInitial) {
@@ -133,10 +143,12 @@ class TProductCart extends StatelessWidget {
 
 class TProductCartItem extends StatelessWidget {
   final int index;
+  final ProductModel product;
 
   const TProductCartItem({
     super.key,
     required this.index,
+    required this.product,
   });
 
   @override
@@ -167,7 +179,7 @@ class TProductCartItem extends StatelessWidget {
                           width: TSizes.spacebtwItems / 2,
                         ),
                         Text(
-                          "Innisfree",
+                          product.category.name,
                           style: Theme.of(context).textTheme.titleLarge,
                         )
                       ],
@@ -188,7 +200,7 @@ class TProductCartItem extends StatelessWidget {
                           },
                         ),
                         TRoundedImage(
-                          imageUrl: TImages.product3,
+                          imageUrl: product.images!.isNotEmpty ? product.images![0] : TImages.product1,
                           applyImageRadius: true,
                           isNetworkImage: true,
                           onPressed: () => {},
@@ -208,13 +220,12 @@ class TProductCartItem extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TProductTitleText(
-                                  title: TProductDetail.name,
+                                  title: product.productName,
                                   maxLines: 2,
                                   smallSize: true,
                                 ),
                                 TProductPriceText(
-                                  price: TProductDetail.price,
-                                  currencySign: '₫',
+                                  price: product.price.toString(),
                                 ),
                                 const SizedBox(
                                   height: TSizes.spacebtwItems / 2,
@@ -248,6 +259,12 @@ class TProductCartItem extends StatelessWidget {
                                           if (number <= 0 || number >= 1000) {
                                             return "Số phải lớn hơn 0 và nhỏ hơn 1000.";
                                           }
+                                          if (number == 0) {
+                                            context.read<CartBloc>().add(RemoveProductFromCartEvent(id: product.productId.toString()));
+                                            return null;
+                                          }
+                                          context.read<CartBloc>().add(AddProductToCartEvent(
+                                              params: AddProductCartParams(productId: product.productId, quantity: number, operation: 0)));
                                           return null;
                                         },
                                         textAlign: TextAlign.center,

@@ -11,6 +11,7 @@ import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_card_shimmer.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_vertical_card.dart';
@@ -85,131 +86,140 @@ class _ProductsScreenState extends State<ProductsScreen> {
             TSnackBar.errorSnackBar(context, message: state.message);
           }
         },
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              controller: _scrollController,
-              child: Padding(
-                padding: const EdgeInsets.all(TSizes.xs),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: TSizes.spacebtwSections,
-                    ),
-                    const SizedBox(
-                      height: TSizes.spacebtwSections,
-                    ),
-                    BlocBuilder<ListProductBloc, ListProductState>(builder: (context, state) {
-                      if (state is ListProductLoading) {
-                        return TGridLayout(
-                          itemCount: 4,
-                          crossAxisCount: 2,
-                          isScroll: false,
-                          itemBuilder: (context, index) {
-                            return const TProductCardShimmer();
-                          },
-                        );
-                      } else if (state is ListProductEmpty) {
-                        return const Center(
-                          child: Text('No product available.', style: TextStyle(fontSize: 16)),
-                        );
-                      } else if (state is ListProductLoaded) {
-                        return TGridLayout(
-                          crossAxisCount: 2,
-                          itemCount: state.products.length + 2,
-                          mainAxisExtent: 290,
-                          isScroll: false,
-                          itemBuilder: (context, index) {
-                            if (index == state.products.length || index == state.products.length + 1) {
-                              return state.isLoadingMore ? const TProductCardShimmer() : const SizedBox();
-                            }
-                            return TProductCardVertical(
-                              productModel: state.products[index],
-                              width: THelperFunctions.screenWidth(context) * 0.4,
-                            );
-                          },
-                        );
-                      } else if (state is ListProductFailure) {
-                        return const TErrorBody();
-                      }
-                      return const SizedBox.shrink();
-                    }),
-                  ],
+        child: BlocListener<CartBloc, CartState>(
+          listener: (context, state) {
+            if (state is CartSuccess) {
+              TSnackBar.successSnackBar(context, message: state.message);
+            } else if (state is CartError) {
+              TSnackBar.errorSnackBar(context, message: state.message);
+            }
+          },
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.all(TSizes.xs),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: TSizes.spacebtwSections,
+                      ),
+                      const SizedBox(
+                        height: TSizes.spacebtwSections,
+                      ),
+                      BlocBuilder<ListProductBloc, ListProductState>(builder: (context, state) {
+                        if (state is ListProductLoading) {
+                          return TGridLayout(
+                            itemCount: 4,
+                            crossAxisCount: 2,
+                            isScroll: false,
+                            itemBuilder: (context, index) {
+                              return const TProductCardShimmer();
+                            },
+                          );
+                        } else if (state is ListProductEmpty) {
+                          return const Center(
+                            child: Text('No product available.', style: TextStyle(fontSize: 16)),
+                          );
+                        } else if (state is ListProductLoaded) {
+                          return TGridLayout(
+                            crossAxisCount: 2,
+                            itemCount: state.products.length + 2,
+                            mainAxisExtent: 290,
+                            isScroll: false,
+                            itemBuilder: (context, index) {
+                              if (index == state.products.length || index == state.products.length + 1) {
+                                return state.isLoadingMore ? const TProductCardShimmer() : const SizedBox();
+                              }
+                              return TProductCardVertical(
+                                productModel: state.products[index],
+                                width: THelperFunctions.screenWidth(context) * 0.4,
+                              );
+                            },
+                          );
+                        } else if (state is ListProductFailure) {
+                          return const TErrorBody();
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 0,
-              right: 0,
-              left: 0,
-              child: Container(
-                padding: const EdgeInsets.all(TSizes.sm),
-                color: TColors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () => _showSortBottomSheet(context),
-                      child: TRoundedContainer(
-                        padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
-                        backgroundColor: TColors.primaryBackground,
-                        radius: 20,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              "Sap xep",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            const SizedBox(
-                              width: TSizes.xs,
-                            ),
-                            const Icon(
-                              Iconsax.arrow_down_1,
-                              size: 16,
-                              weight: 20,
-                            ),
-                          ],
+              Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  color: TColors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () => _showSortBottomSheet(context),
+                        child: TRoundedContainer(
+                          padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
+                          backgroundColor: TColors.primaryBackground,
+                          radius: 20,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Sap xep",
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              const SizedBox(
+                                width: TSizes.xs,
+                              ),
+                              const Icon(
+                                Iconsax.arrow_down_1,
+                                size: 16,
+                                weight: 20,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: TSizes.lg,
-                    ),
-                    GestureDetector(
-                      onTap: () => _showFilterBottomSheet(context),
-                      child: TRoundedContainer(
-                        padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
-                        backgroundColor: TColors.primaryBackground,
-                        radius: 20,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Bo loc",
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            const SizedBox(
-                              width: TSizes.xs,
-                            ),
-                            const Icon(
-                              Iconsax.arrow_down_1,
-                              size: 16,
-                              weight: 20,
-                            ),
-                          ],
+                      const SizedBox(
+                        width: TSizes.lg,
+                      ),
+                      GestureDetector(
+                        onTap: () => _showFilterBottomSheet(context),
+                        child: TRoundedContainer(
+                          padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
+                          backgroundColor: TColors.primaryBackground,
+                          radius: 20,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Bo loc",
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              const SizedBox(
+                                width: TSizes.xs,
+                              ),
+                              const Icon(
+                                Iconsax.arrow_down_1,
+                                size: 16,
+                                weight: 20,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

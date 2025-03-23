@@ -1,12 +1,14 @@
-import 'package:spa_mobile/features/product/data/model/product_model.dart';
+import 'package:dartz/dartz.dart';
+import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
 
 abstract class CartRepository {
-  Future<int> addProductToCart(AddProductCartParams product);
+  const CartRepository();
 
-  Future<void> removeProductFromCart(ProductModel product);
+  Future<Either<Failure, String>> addProductToCart(AddProductCartParams product);
 
-  Future<void> clearCart();
+  Future<Either<Failure, String>> removeProductFromCart(String product);
 
-  Future<List<ProductModel>> getCartProducts();
+  Future<Either<Failure, List<ProductCartModel>>> getCartProducts();
 }

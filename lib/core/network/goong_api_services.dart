@@ -4,17 +4,24 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/base_api_services.dart';
 
-class ThirdPartyApiServices implements BaseApiServices {
+class GoongApiService implements BaseApiServices {
   final Dio _dio;
 
-  ThirdPartyApiServices({required String baseUrl})
+  GoongApiService({required String baseUrl, required String key})
       : _dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
+            queryParameters: {"apiKey": key},
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ),
         );
+
+  @override
+  Future deleteApi(String url) {
+    // TODO: implement deleteApi
+    throw UnimplementedError();
+  }
 
   @override
   Future<dynamic> getApi(String url) async {
@@ -51,17 +58,12 @@ class ThirdPartyApiServices implements BaseApiServices {
 
   @override
   Future postApi(String url, data) {
+    // TODO: implement postApi
     throw UnimplementedError();
   }
 
   @override
-  Future deleteApi(String url) {
-    // TODO: implement deleteApi
-    throw UnimplementedError();
-  }
-
-  @override
-  Future putApi(String url, dynamic data) {
+  Future putApi(String url, data) {
     // TODO: implement putApi
     throw UnimplementedError();
   }

@@ -1,38 +1,64 @@
-import 'package:spa_mobile/features/product/data/model/product_model.dart';
+import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/network/network.dart';
+import 'package:spa_mobile/core/response/api_response.dart';
+import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
 
 abstract class CartRemoteDataSource {
-  Future<int> addProductToCart(AddProductCartParams product);
+  Future<String> addProductToCart(AddProductCartParams params);
 
-  Future<void> removeProductFromCart(ProductModel product);
+  Future<String> removeProductFromCart(String id);
 
-  Future<void> clearCart();
-
-  Future<List<ProductModel>> getCartProducts();
+  Future<List<ProductCartModel>> getCartProducts();
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
+  final NetworkApiService _apiServices;
+
+  CartRemoteDataSourceImpl(this._apiServices);
+
   @override
-  Future<int> addProductToCart(product) async {
-    // TODO: implement addProductToCart
-    throw UnimplementedError();
+  Future<String> addProductToCart(params) async {
+    try {
+      final response = await _apiServices.postApi('/Cart', params.toJson());
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return (apiResponse.result!.data);
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
   }
 
   @override
-  Future<void> clearCart() {
-    // TODO: implement clearCart
-    throw UnimplementedError();
+  Future<List<ProductCartModel>> getCartProducts() async {
+    try {
+      final response = await _apiServices.getApi('/Cart');
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((e) => ProductCartModel.fromJson(e)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
   }
 
   @override
-  Future<List<ProductModel>> getCartProducts() {
-    // TODO: implement getCartProducts
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> removeProductFromCart(product) {
-    // TODO: implement removeProductFromCart
-    throw UnimplementedError();
+  Future<String> removeProductFromCart(id) async {
+    try {
+      final response = await _apiServices.deleteApi('/Cart/$id');
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return (apiResponse.result!.data);
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
   }
 }

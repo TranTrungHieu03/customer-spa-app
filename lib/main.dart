@@ -11,6 +11,7 @@ import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/services/notification.dart';
+import 'package:spa_mobile/core/services/permission.dart';
 import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/form_skin/form_skin_bloc.dart';
@@ -21,6 +22,7 @@ import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
@@ -44,6 +46,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await NotificationService.init();
+  await PermissionService().getCurrentLocation();
   tz.initializeTimeZones();
   // Initialize LanguageProvider
   final languageProvider = LanguageProvider();
@@ -75,6 +78,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<PayosBloc>()),
         BlocProvider(create: (_) => serviceLocator<StaffBloc>()),
         BlocProvider(create: (_) => serviceLocator<ServiceCartBloc>()),
+        BlocProvider(create: (_) => serviceLocator<CartBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
         create: (_) => languageProvider,

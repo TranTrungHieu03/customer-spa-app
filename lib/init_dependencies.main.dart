@@ -6,7 +6,9 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
   serviceLocator.registerLazySingleton<NetworkApiService>(
       () => NetworkApiService(baseUrl: "https://solaceapix.ddnsking.com/api", authService: serviceLocator<AuthService>()));
-  serviceLocator.registerLazySingleton<ThirdPartyApiServices>(() => ThirdPartyApiServices(baseUrl: "https://rsapi.goong.io/Direction"));
+  serviceLocator.registerLazySingleton<GoongApiService>(() => GoongApiService(baseUrl: "https://rsapi.goong.io/", key: ""));
+  serviceLocator
+      .registerLazySingleton<GhnApiService>(() => GhnApiService(baseUrl: "https://online-gateway.ghn.vn/shiip/public-api/v2/", key: ""));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -88,16 +90,23 @@ Future<void> _initProduct() async {
 
     //data src
     ..registerFactory<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<CartRemoteDataSource>(() => CartRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<ProductRepository>(
         () => ProductRepositoryImpl(serviceLocator<ProductRemoteDataSource>(), serviceLocator<ConnectionChecker>()))
+    ..registerFactory<CartRepository>(() => CartRepositoryImpl(serviceLocator<CartRemoteDataSource>()))
     //use case
     ..registerLazySingleton(() => GetListProducts(serviceLocator()))
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetCart(serviceLocator()))
+    ..registerLazySingleton(() => AddProductCart(serviceLocator()))
+    ..registerLazySingleton(() => RemoveProductCart(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
+    ..registerLazySingleton(
+        () => CartBloc(addProductCart: serviceLocator(), getProductCart: serviceLocator(), removeProductCart: serviceLocator()))
     ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
 }
 
