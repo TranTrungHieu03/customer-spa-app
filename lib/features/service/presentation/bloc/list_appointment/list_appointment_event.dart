@@ -12,14 +12,3 @@ final class GetListAppointmentEvent extends ListAppointmentEvent {
   const GetListAppointmentEvent({required super.page, required super.title});
 }
 
-final class GetListAppointmentDoneEvent extends ListAppointmentEvent {
-  GetListAppointmentDoneEvent({required super.page, required super.title});
-}
-
-final class GetListAppointmentUpcomingEvent extends ListAppointmentEvent {
-  GetListAppointmentUpcomingEvent({required super.page, required super.title});
-}
-
-final class GetListAppointmentCancelEvent extends ListAppointmentEvent {
-  GetListAppointmentCancelEvent({required super.page, required super.title});
-}

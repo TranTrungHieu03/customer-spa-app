@@ -38,10 +38,18 @@ import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit
 import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/home/data/datasources/ai_chat_remote_data_source.dart';
+import 'package:spa_mobile/features/home/data/datasources/chat_remote_data_source.dart';
 import 'package:spa_mobile/features/home/data/repositories/ai_chat_reposotory_impl.dart';
+import 'package:spa_mobile/features/home/data/repositories/chat_repository_impl.dart';
 import 'package:spa_mobile/features/home/domain/repositories/ai_chat_repository.dart';
+import 'package:spa_mobile/features/home/domain/repositories/chat_repository.dart';
+import 'package:spa_mobile/features/home/domain/usecases/connect_hub.dart';
+import 'package:spa_mobile/features/home/domain/usecases/disconnect_hub.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_ai_chat.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_message.dart';
+import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/chat/chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/product/data/datasources/product_remote_data_src.dart';
 import 'package:spa_mobile/features/product/data/repositories/product_repository_impl.dart';
@@ -77,6 +85,7 @@ import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.d
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';

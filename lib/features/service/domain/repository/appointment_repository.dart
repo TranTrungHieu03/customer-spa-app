@@ -7,6 +7,7 @@ import 'package:spa_mobile/features/service/domain/usecases/create_appointment.d
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 
 abstract class AppointmentRepository {
@@ -14,7 +15,7 @@ abstract class AppointmentRepository {
 
   Future<Either<Failure, String>> payFull(PayFullParams params);
 
-  // Future<Either<Failure, String>> payDeposit(CreateAppointmentParams params);
+  Future<Either<Failure, String>> payDeposit(PayDepositParams params);
 
   Future<Either<Failure, ListOrderAppointmentModel>> getHistoryBooking(GetListAppointmentParams params);
 

@@ -26,7 +26,7 @@ class TStatusTabService extends StatefulWidget {
   _TStatusTabServiceState createState() => _TStatusTabServiceState();
 }
 
-class _TStatusTabServiceState extends State<TStatusTabService> {
+class _TStatusTabServiceState extends State<TStatusTabService> with AutomaticKeepAliveClientMixin {
   List<OrderAppointmentModel> orders = [];
   PaginationModel pagination = PaginationModel.isEmty();
   bool isLoading = false;
@@ -180,7 +180,6 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
                                                         Text(AppLocalizations.of(context)!.minutes)
                                                       ],
                                                     ),
-
                                                   ],
                                                 ),
                                               ),
@@ -267,6 +266,10 @@ class _TStatusTabServiceState extends State<TStatusTabService> {
     _scrollController = ScrollController();
     context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(page: 1, title: widget.status));
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 class HighlightedDate extends StatelessWidget {

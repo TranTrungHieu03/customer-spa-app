@@ -9,6 +9,7 @@ import 'package:spa_mobile/features/service/domain/usecases/create_appointment.d
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 
 class AppointmentRepositoryImpl extends AppointmentRepository {
@@ -60,6 +61,16 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   Future<Either<Failure, String>> payFull(PayFullParams params) async {
     try {
       String response = await _appointmentRemoteDataSource.payFull(params);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> payDeposit(PayDepositParams params) async {
+    try {
+      String response = await _appointmentRemoteDataSource.payDeposit(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

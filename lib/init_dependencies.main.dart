@@ -74,11 +74,12 @@ Future<void> _initMenu() async {
   serviceLocator
     ..registerLazySingleton(() => NavigationBloc())
     ..registerLazySingleton(() => ImageBloc())
-    ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator()))
+    ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator(), payDeposit: serviceLocator()))
     ..registerLazySingleton(() => PayosBloc())
     ..registerLazySingleton(() => ServiceCartBloc())
     ..registerLazySingleton(() => WebViewBloc())
     //usecase
+    ..registerLazySingleton(() => PayDeposit(serviceLocator()))
     ..registerLazySingleton(() => PayFull(serviceLocator()));
 }
 
@@ -168,15 +169,29 @@ Future<void> _initAiChat() async {
   serviceLocator
     //data src
     ..registerFactory<AiChatRemoteDataSource>(() => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<ChatRemoteDataSource>(() => SignalRChatRemoteDataSource(hubUrl: " "))
     //repo
     ..registerFactory<AiChatRepository>(() => AiChatRepositoryImpl(
           serviceLocator<AiChatRemoteDataSource>(),
         ))
+    ..registerFactory<ChatRepository>(() => ChatRepositoryImpl(
+          serviceLocator<ChatRemoteDataSource>(),
+        ))
     //use case
     ..registerLazySingleton(() => GetAiChat(serviceLocator()))
+    ..registerLazySingleton(() => SendMessage(serviceLocator()))
+    ..registerLazySingleton(() => ConnectHub(serviceLocator()))
+    ..registerLazySingleton(() => DisconnectHub(serviceLocator()))
+    ..registerLazySingleton(() => GetMessages(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()));
+    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()))
+    ..registerLazySingleton(() => ChatBloc(
+          getMessages: serviceLocator(),
+          sendMessage: serviceLocator(),
+          connect: serviceLocator(),
+          disconnect: serviceLocator(),
+        ));
 }
 
 Future<void> _initSkinAnalysis() async {
