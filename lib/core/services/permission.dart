@@ -5,13 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionService {
-  // Singleton pattern
-  static final PermissionService _instance = PermissionService._internal();
-
-  factory PermissionService() => _instance;
-
-  PermissionService._internal();
-
+  PermissionService();
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   // Initialize notification plugin

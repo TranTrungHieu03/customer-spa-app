@@ -6,7 +6,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
   serviceLocator.registerLazySingleton<NetworkApiService>(
       () => NetworkApiService(baseUrl: "https://solaceapix.ddnsking.com/api", authService: serviceLocator<AuthService>()));
-  serviceLocator.registerLazySingleton<GoongApiService>(() => GoongApiService(baseUrl: "https://rsapi.goong.io/", key: ""));
+  serviceLocator.registerLazySingleton<GoongApiService>(
+      () => GoongApiService(baseUrl: "https://rsapi.goong.io/", key: "58y8peA3QXjke7sqZK4DYCiaRvcCbh6Jaffw5qCI"));
   serviceLocator
       .registerLazySingleton<GhnApiService>(() => GhnApiService(baseUrl: "https://online-gateway.ghn.vn/shiip/public-api/v2/", key: ""));
 
@@ -17,7 +18,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<LocalStorage>(() => LocalStorage());
   //internet
   serviceLocator.registerFactory(() => InternetConnection());
-
+//permissions
+  serviceLocator.registerLazySingleton(() => PermissionService());
   //core
   serviceLocator.registerLazySingleton<ConnectionChecker>(() => ConnectionCheckerImpl(serviceLocator()));
 
@@ -91,20 +93,27 @@ Future<void> _initProduct() async {
     //data src
     ..registerFactory<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<CartRemoteDataSource>(() => CartRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<LocationRemoteDataSource>(() => LocationRemoteDataSourceImpl(
+          serviceLocator<PermissionService>(),
+          serviceLocator<GoongApiService>(),
+        ))
     //repo
     ..registerFactory<ProductRepository>(
         () => ProductRepositoryImpl(serviceLocator<ProductRemoteDataSource>(), serviceLocator<ConnectionChecker>()))
     ..registerFactory<CartRepository>(() => CartRepositoryImpl(serviceLocator<CartRemoteDataSource>()))
+    ..registerFactory<LocationRepository>(() => LocationRepositoryImpl(serviceLocator<LocationRemoteDataSource>()))
     //use case
     ..registerLazySingleton(() => GetListProducts(serviceLocator()))
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
     ..registerLazySingleton(() => GetCart(serviceLocator()))
     ..registerLazySingleton(() => AddProductCart(serviceLocator()))
     ..registerLazySingleton(() => RemoveProductCart(serviceLocator()))
+    ..registerLazySingleton(() => GetDistance(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
+    ..registerLazySingleton(() => NearestBranchBloc(getDistance: serviceLocator()))
     ..registerLazySingleton(
         () => CartBloc(addProductCart: serviceLocator(), getProductCart: serviceLocator(), removeProductCart: serviceLocator()))
     ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());

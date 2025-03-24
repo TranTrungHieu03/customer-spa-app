@@ -223,6 +223,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _authRemoteDataSource.logout();
       await LocalStorage.saveData(LocalStorageKey.isLogin, "false");
+      await LocalStorage.saveData(LocalStorageKey.isCompletedOnBoarding, "false");
       await LocalStorage.removeData(LocalStorageKey.userKey);
       await _authService.removeToken();
       return right("Logout success");

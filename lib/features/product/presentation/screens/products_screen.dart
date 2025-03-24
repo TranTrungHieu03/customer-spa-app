@@ -156,7 +156,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   padding: const EdgeInsets.all(TSizes.sm),
                   color: TColors.white,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       GestureDetector(
                         onTap: () => _showSortBottomSheet(context),
@@ -184,9 +184,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: TSizes.lg,
-                      ),
+
                       GestureDetector(
                         onTap: () => _showFilterBottomSheet(context),
                         child: TRoundedContainer(
@@ -200,6 +198,34 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             children: [
                               Text(
                                 "Bo loc",
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              const SizedBox(
+                                width: TSizes.xs,
+                              ),
+                              const Icon(
+                                Iconsax.arrow_down_1,
+                                size: 16,
+                                weight: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: () => _showFilterBottomSheet(context),
+                        child: TRoundedContainer(
+                          padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
+                          backgroundColor: TColors.primaryBackground,
+                          radius: 20,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Chi nhánh",
                                 style: Theme.of(context).textTheme.labelLarge,
                               ),
                               const SizedBox(

@@ -11,7 +11,7 @@ class GoongApiService implements BaseApiServices {
       : _dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
-            queryParameters: {"apiKey": key},
+            queryParameters: {"api_key": key},
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ),
@@ -26,6 +26,7 @@ class GoongApiService implements BaseApiServices {
   @override
   Future<dynamic> getApi(String url) async {
     dynamic responseJson;
+
     try {
       final response = await _dio.get(url);
       responseJson = response.data;

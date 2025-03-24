@@ -9,6 +9,7 @@ import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
 import 'package:spa_mobile/core/common/cubit/user/app_user_cubit.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/services/notification.dart';
 import 'package:spa_mobile/core/services/permission.dart';
@@ -19,9 +20,9 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
@@ -70,6 +71,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<FormSkinBloc>()),
         BlocProvider(create: (_) => serviceLocator<WebViewBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListBranchesBloc>()),
+        BlocProvider(create: (_) => serviceLocator<NearestBranchBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListStaffBloc>()),
         BlocProvider(create: (_) => serviceLocator<SkinAnalysisBloc>()),
         BlocProvider(create: (_) => serviceLocator<RoutineBloc>()),
@@ -118,11 +120,9 @@ class _MyAppState extends State<MyApp> {
           home: FutureBuilder(
               future: _getStartScreen(context),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const TLoader();
-                } else {
-                  return const OnBoardingScreen();
-                }
+                // if (snapshot.connectionState == ConnectionState.waiting) {
+                return const TLoader();
+                // } //
               }),
         );
       },
@@ -132,6 +132,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getStartScreen(BuildContext context) async {
     final isLogin = await LocalStorage.getData(LocalStorageKey.isLogin);
     final isCompletedOnBoarding = await LocalStorage.getData(LocalStorageKey.isCompletedOnBoarding);
+    AppLogger.info('login: $isLogin');
+    AppLogger.info('onboarding: $isCompletedOnBoarding');
     if (isLogin == 'true') {
       goHome();
     } else if (isCompletedOnBoarding == 'true') {

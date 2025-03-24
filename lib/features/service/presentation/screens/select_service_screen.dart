@@ -61,12 +61,13 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
 
   Future<void> _loadLocalData() async {
     final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
-
+    AppLogger.debug(branchId);
     if (mounted) {
       if (int.parse(branchId) == 0) {
         TSnackBar.warningSnackBar(context, message: "Vui lòng chọn chi nhánh để tiếp tục.");
       } else {
         branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
+        AppLogger.debug(branchInfo);
         setState(() {
           selectedBranch = int.parse(branchId);
           previousBranch = selectedBranch;
@@ -246,7 +247,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(), 
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.white,
