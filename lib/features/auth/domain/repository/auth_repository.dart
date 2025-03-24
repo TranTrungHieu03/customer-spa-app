@@ -7,6 +7,7 @@ import 'package:spa_mobile/features/auth/domain/usecases/resend_otp.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/verify_otp.dart';
+import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
 
 abstract class AuthRepository {
   const AuthRepository();
@@ -28,6 +29,8 @@ abstract class AuthRepository {
   Future<Either<Failure, String>> resendOtp(ResendOtpParams params);
 
   Future<Either<Failure, UserModel>> getUserInfo();
+
+  Future<Either<Failure, UserModel>> updateProfile(UpdateProfileParams params);
 
   Future<Either<Failure, String>> logout();
 }

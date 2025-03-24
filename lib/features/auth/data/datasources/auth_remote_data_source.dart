@@ -11,6 +11,7 @@ import 'package:spa_mobile/features/auth/domain/usecases/resend_otp.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/reset_password.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/sign_up.dart';
 import 'package:spa_mobile/features/auth/domain/usecases/verify_otp.dart';
+import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
 
 abstract class AuthRemoteDataSource {
   Future<String> login(LoginParams params);
@@ -30,6 +31,8 @@ abstract class AuthRemoteDataSource {
   Future<String> resendOtp(ResendOtpParams params);
 
   Future<UserModel> getUserInfo();
+
+  Future<UserModel> updateProfile(UpdateProfileParams params);
 
   Future<void> logout();
 }
@@ -191,6 +194,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> logout() async {
     try {
       _apiServices.clearTokenCache();
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<UserModel> updateProfile(UpdateProfileParams params) async {
+    try {
+      final response = await _apiServices.postApi('/Auth/update-user-info', await params.toFormData());
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return UserModel.fromJson(apiResponse.result!.data!);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
     } catch (e) {
       throw AppException(e.toString());
     }

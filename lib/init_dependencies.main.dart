@@ -52,6 +52,7 @@ Future<void> _initAuth() async {
     ..registerFactory(() => LoginWithGoogle(serviceLocator()))
     ..registerFactory(() => LoginWithFacebook(serviceLocator()))
     ..registerFactory(() => Logout(serviceLocator()))
+    ..registerFactory(() => UpdateProfile(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => AuthBloc(
@@ -66,6 +67,7 @@ Future<void> _initAuth() async {
           getUserInformation: serviceLocator(),
           logout: serviceLocator(),
         ))
+    ..registerLazySingleton(() => ProfileBloc(updateProfile: serviceLocator(), getUserInformation: serviceLocator()))
     //cubit
     ..registerLazySingleton<PasswordCubit>(() => PasswordCubit())
     ..registerLazySingleton<PasswordConfirmCubit>(() => PasswordConfirmCubit())
@@ -109,11 +111,13 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => AddProductCart(serviceLocator()))
     ..registerLazySingleton(() => RemoveProductCart(serviceLocator()))
     ..registerLazySingleton(() => GetDistance(serviceLocator()))
+    ..registerLazySingleton(() => GetAddressAutoComplete(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
     ..registerLazySingleton(() => NearestBranchBloc(getDistance: serviceLocator()))
+    ..registerLazySingleton(() => AddressBloc(addressAutoComplete: serviceLocator()))
     ..registerLazySingleton(
         () => CartBloc(addProductCart: serviceLocator(), getProductCart: serviceLocator(), removeProductCart: serviceLocator()))
     ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());

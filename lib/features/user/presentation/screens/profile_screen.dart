@@ -11,8 +11,12 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
-import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/address/address_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/widgets/autofill_address.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/profile_item.dart';
+import 'package:spa_mobile/init_dependencies.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -33,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _initializeControllers();
-    context.read<AuthBloc>().add(GetUserInformationEvent());
+    context.read<ProfileBloc>().add(GetUserInfoEvent());
   }
 
   void _initializeControllers() {
@@ -75,26 +79,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         showBackArrow: true,
       ),
-      body: BlocListener<AuthBloc, AuthState>(
+      body: BlocListener<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is AuthFailure) {
+          if (state is ProfileError) {
             TSnackBar.errorSnackBar(context, message: state.message);
             goLoginNotBack();
           }
         },
-        child: BlocBuilder<AuthBloc, AuthState>(
+        child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            if (state is AuthLoading) {
+            if (state is ProfileLoading) {
               return const TLoader();
-            } else if (state is AuthLoaded) {
-              _updateControllers(state.user);
+            } else if (state is ProfileLoaded) {
+              _updateControllers(state.userInfo);
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(TSizes.defaultSpace),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProfilePictureSection(state.user.avatar),
+                      _buildProfilePictureSection(state.userInfo.avatar),
                       const SizedBox(height: TSizes.md),
                       TProfileItem(
                         label: AppLocalizations.of(context)!.fullName,
@@ -112,6 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         label: AppLocalizations.of(context)!.email,
                         icon: Iconsax.direct_right,
                         controller: emailController,
+                        isEdit: false,
                       ),
                       const SizedBox(height: TSizes.sm),
                       TProfileItem(
@@ -126,10 +131,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         controller: cityController,
                       ),
                       const SizedBox(height: TSizes.sm),
-                      TProfileItem(
-                        label: AppLocalizations.of(context)!.address,
-                        icon: Iconsax.home,
-                        controller: addressController,
+                      GestureDetector(
+                        onTap: () => _showModalEditAddress(context, addressController),
+                        child: TProfileItem(
+                          label: AppLocalizations.of(context)!.address,
+                          icon: Iconsax.home,
+                          controller: addressController,
+                          isEdit: false,
+                        ),
                       ),
                       const SizedBox(height: TSizes.md),
                       _buildActionButtons(context),
@@ -145,25 +154,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showModalEditAddress(BuildContext context, TextEditingController addressController) {
+    // final addressBloc = context.read<AddressBloc>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
+      ),
+      builder: (BuildContext context) {
+        return BlocProvider(
+          create: (context) => serviceLocator<AddressBloc>(),
+          child: FractionallySizedBox(
+            heightFactor: 0.8,
+            child: AutofillAddress(addressController: addressController),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildProfilePictureSection(String? avatar) {
     return SizedBox(
-      width: double.infinity,
-      child: Column(
-        children: [
-          TCircularImage(
-            image: avatar ?? TImages.avatar,
-            isNetworkImage: avatar != null,
-            width: 80.0,
-            height: 80.0,
-            padding: TSizes.sm,
-          ),
-          TextButton(
-            onPressed: () {},
-            child: Text(AppLocalizations.of(context)!.changeAvatar),
-          ),
-        ],
-      ),
-    );
+        width: double.infinity,
+        child: Column(
+          children: [
+            TCircularImage(
+              image: avatar ?? TImages.avatar,
+              isNetworkImage: avatar != null,
+              width: 80.0,
+              height: 80.0,
+              padding: TSizes.sm,
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Text(AppLocalizations.of(context)!.changeAvatar),
+            ),
+          ],
+        ));
   }
 
   Widget _buildActionButtons(BuildContext context) {
@@ -184,7 +213,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(width: TSizes.md),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            if (context.read<ProfileBloc>().state is ProfileLoaded) {
+              final updatedUser = (context.read<ProfileBloc>().state as ProfileLoaded).userInfo.copyWith(
+                    fullName: fullNameController.text.trim(),
+                    email: emailController.text.trim(),
+                    phoneNumber: phoneController.text.trim(),
+                    city: cityController.text.trim(),
+                    userName: userNameController.text.trim(),
+                    address: addressController.text.trim(),
+                  );
+              context.read<ProfileBloc>().add(UpdateUserProfileEvent(UpdateProfileParams(updatedUser, "")));
+            }
+          },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
           ),

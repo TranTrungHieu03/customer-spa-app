@@ -49,6 +49,7 @@ import 'package:spa_mobile/features/home/domain/repositories/chat_repository.dar
 import 'package:spa_mobile/features/home/domain/repositories/location_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/connect_hub.dart';
 import 'package:spa_mobile/features/home/domain/usecases/disconnect_hub.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_address_auto_complete.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_ai_chat.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_message.dart';
@@ -110,6 +111,9 @@ import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bl
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service_cart/service_cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
+import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/address/address_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';
 
 import 'features/service/domain/usecases/get_list_branches.dart';
 

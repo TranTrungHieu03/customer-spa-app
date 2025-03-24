@@ -3,11 +3,12 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class TProfileItem extends StatelessWidget {
-  const TProfileItem({super.key, required this.label, required this.icon, required this.controller});
+  const TProfileItem({super.key, required this.label, required this.icon, required this.controller, this.isEdit = true});
 
   final String label;
   final IconData icon;
   final TextEditingController controller;
+  final bool isEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,7 @@ class TProfileItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(5.0),
             ),
           ),
+          enabled: isEdit,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ],

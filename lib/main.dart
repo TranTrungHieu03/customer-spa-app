@@ -34,6 +34,7 @@ import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bl
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service_cart/service_cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';
 import 'package:spa_mobile/firebase_options.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -60,7 +61,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
         BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
         BlocProvider(create: (_) => serviceLocator<ServiceBloc>()),
-        // BlocProvider(create: (_) => serviceLocator<ListServiceBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ProfileBloc>()),
         // BlocProvider(create: (_) => serviceLocator<ListCategoryBloc>()),
         BlocProvider(create: (_) => serviceLocator<ListProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProductBloc>()),
