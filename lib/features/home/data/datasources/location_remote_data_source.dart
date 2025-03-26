@@ -53,9 +53,7 @@ class LocationRemoteDataSourceImpl extends LocationRemoteDataSource {
   @override
   Future<List<AddressModel>> getAddressAutoComplete(GetAddressAutoCompleteParams params) async {
     try {
-      final location = await _permissionService.getCurrentLocation();
-      final response =
-          await _apiService.getApi('Place/autocomplete?input=${params.input}&location=${location?.latitude},${location?.longitude}');
+      final response = await _apiService.getApi('Place/autocomplete?input=${params.input}&more_compound=true');
 
       return (response['predictions'] as List).map((x) => AddressModel.fromJson(x)).toList();
     } catch (e) {

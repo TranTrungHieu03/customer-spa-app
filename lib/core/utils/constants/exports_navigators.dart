@@ -26,6 +26,7 @@ import 'package:spa_mobile/features/auth/presentation/screens/sign_up_screen.dar
 import 'package:spa_mobile/features/auth/presentation/screens/verify_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/screens/chat_ai_screen.dart';
+import 'package:spa_mobile/features/home/presentation/screens/chat_list_screen.dart';
 import 'package:spa_mobile/features/home/presentation/screens/search_screen.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
@@ -47,6 +48,7 @@ import 'package:spa_mobile/features/service/presentation/screens/service_history
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/cart_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
+import 'package:spa_mobile/features/user/presentation/screens/setting_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 part 'navigators.dart';

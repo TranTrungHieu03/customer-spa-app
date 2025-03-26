@@ -124,8 +124,9 @@ class TProductCardVertical extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      context.read<CartBloc>().add(AddProductToCartEvent(
-                          params: AddProductCartParams(productId: productModel.productId, quantity: 1, operation: 0)));
+                      context
+                          .read<CartBloc>()
+                          .add(AddProductToCartEvent(params: AddProductCartParams(userId: 0, productId: 1, quantity: 1, operation: 0)));
                     },
                     child: const SizedBox(
                       width: TSizes.iconLg * 1.2,

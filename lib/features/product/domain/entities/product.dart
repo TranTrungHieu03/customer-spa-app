@@ -9,6 +9,7 @@ class Product {
   final String dimension;
   final double discount;
   final String status;
+  final String brand;
   final int categoryId;
   final int companyId;
   final List<String>? images;
@@ -19,6 +20,7 @@ class Product {
     required this.volume,
     required this.dimension,
     required this.productId,
+    required this.brand,
     required this.productName,
     required this.productDescription,
     required this.price,

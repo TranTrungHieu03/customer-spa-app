@@ -5,13 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/home/data/models/address_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_address_auto_complete.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/address/address_bloc.dart';
 
 class AutofillAddress extends StatefulWidget {
-  const AutofillAddress({super.key, required this.addressController});
+  const AutofillAddress({super.key, required this.addressSubController, required this.update});
 
-  final TextEditingController addressController;
+  final Function(AddressModel) update;
+  final TextEditingController addressSubController;
 
   @override
   State<AutofillAddress> createState() => _AutofillAddressState();
@@ -30,7 +32,14 @@ class _AutofillAddressState extends State<AutofillAddress> {
   void _onAddressChanged(String address) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-      context.read<AddressBloc>().add(GetListAddressEvent(GetAddressAutoCompleteParams(address)));
+      try {
+        // Thử add event
+        context.read<AddressBloc>().add(GetListAddressEvent(GetAddressAutoCompleteParams(address)));
+      } catch (e) {
+        // Nếu Bloc bị đóng, tạo lại Bloc
+        context.read<AddressBloc>().close();
+        context.read<AddressBloc>().add(GetListAddressEvent(GetAddressAutoCompleteParams(address)));
+      }
     });
   }
 
@@ -41,11 +50,19 @@ class _AutofillAddressState extends State<AutofillAddress> {
       child: Column(
         children: [
           TextField(
-            controller: widget.addressController,
+            controller: widget.addressSubController,
             decoration: InputDecoration(
               hintText: 'Address',
               contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.md),
               prefixIcon: const TRoundedIcon(icon: Iconsax.home_2),
+              suffixIcon: widget.addressSubController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        widget.addressSubController.clear();
+                      },
+                    )
+                  : null,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(5.0),
               ),
@@ -60,11 +77,15 @@ class _AutofillAddressState extends State<AutofillAddress> {
                 shrinkWrap: true,
                 itemCount: suggestions.length,
                 itemBuilder: (context, index) {
-                  final address = suggestions[index];
+                  final addressModel = suggestions[index];
                   return ListTile(
-                    title: Text(address.fullAddress),
+                    title: Text(addressModel.fullAddress),
                     onTap: () {
-                      widget.addressController.text = address.fullAddress;
+                      // if (widget.addressSubController.text.isNotEmpty) {
+                      widget.addressSubController.text = addressModel.fullAddress;
+                      widget.update(addressModel);
+                      // }
+                      context.read<AddressBloc>().add(RefreshAddressEvent());
                       Navigator.of(context).pop();
                     },
                   );

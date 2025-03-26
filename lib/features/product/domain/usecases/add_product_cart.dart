@@ -12,7 +12,7 @@ class AddProductCart implements UseCase<Either, AddProductCartParams> {
 
   @override
   Future<Either<Failure, String>> call(AddProductCartParams params) async {
-    if (kDebugMode){
+    if (kDebugMode) {
       AppLogger.info(params);
     }
     return await _repository.addProductToCart(params);
@@ -23,22 +23,11 @@ class AddProductCartParams {
   final int productId;
   final int quantity;
   final int operation;
+  final int userId;
 
-  AddProductCartParams({required this.productId, required this.quantity, required this.operation});
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is AddProductCartParams && other.productId == productId && other.quantity == quantity && other.operation == operation;
-  }
-
-  @override
-  int get hashCode {
-    return productId.hashCode ^ quantity.hashCode ^ operation.hashCode;
-  }
+  AddProductCartParams({required this.productId, required this.quantity, required this.operation, required this.userId});
 
   Map<String, dynamic> toJson() {
-    return {'productId': productId, 'quantity': quantity, 'operation': operation};
+    return {'productBranchId': productId, 'quantity': quantity, 'operation': operation, 'userId': userId};
   }
 }

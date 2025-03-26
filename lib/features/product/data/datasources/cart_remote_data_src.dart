@@ -3,13 +3,15 @@ import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_cart.dart';
+import 'package:spa_mobile/features/product/domain/usecases/remove_product_cart.dart';
 
 abstract class CartRemoteDataSource {
   Future<String> addProductToCart(AddProductCartParams params);
 
-  Future<String> removeProductFromCart(String id);
+  Future<String> removeProductFromCart(RemoveProductCartParams params);
 
-  Future<List<ProductCartModel>> getCartProducts();
+  Future<List<ProductCartModel>> getCartProducts(GetCartParams params);
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
@@ -20,7 +22,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   @override
   Future<String> addProductToCart(params) async {
     try {
-      final response = await _apiServices.postApi('/Cart', params.toJson());
+      final response = await _apiServices.postApi('/Cart/add-cart', params.toJson());
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return (apiResponse.result!.data);
@@ -33,9 +35,9 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<List<ProductCartModel>> getCartProducts() async {
+  Future<List<ProductCartModel>> getCartProducts(params) async {
     try {
-      final response = await _apiServices.getApi('/Cart');
+      final response = await _apiServices.getApi('/Cart/get-cart/${params.userId}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((e) => ProductCartModel.fromJson(e)).toList();
@@ -48,9 +50,9 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<String> removeProductFromCart(id) async {
+  Future<String> removeProductFromCart(params) async {
     try {
-      final response = await _apiServices.deleteApi('/Cart/$id');
+      final response = await _apiServices.deleteApi('/Cart/${params.userId}/${params.productId}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return (apiResponse.result!.data);

@@ -179,7 +179,7 @@ class TProductCartItem extends StatelessWidget {
                           width: TSizes.spacebtwItems / 2,
                         ),
                         Text(
-                          product.category.name,
+                          product.brand,
                           style: Theme.of(context).textTheme.titleLarge,
                         )
                       ],
@@ -264,7 +264,8 @@ class TProductCartItem extends StatelessWidget {
                                             return null;
                                           }
                                           context.read<CartBloc>().add(AddProductToCartEvent(
-                                              params: AddProductCartParams(productId: product.productId, quantity: number, operation: 0)));
+                                              params: AddProductCartParams(
+                                                  userId: 0, productId: product.productId, quantity: number, operation: 0)));
                                           return null;
                                         },
                                         textAlign: TextAlign.center,

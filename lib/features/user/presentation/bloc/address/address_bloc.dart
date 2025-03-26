@@ -13,6 +13,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       : _addressAutoComplete = addressAutoComplete,
         super(AddressInitial()) {
     on<GetListAddressEvent>(_onGetAddress);
+    on<RefreshAddressEvent>(_onRefreshAddress);
   }
 
   Future<void> _onGetAddress(
@@ -25,5 +26,12 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       (failure) => emit(AddressError(failure.message)),
       (list) => emit(AddressLoaded(list)),
     );
+  }
+
+  Future<void> _onRefreshAddress(
+    RefreshAddressEvent event,
+    Emitter<AddressState> emit,
+  ) async {
+    emit(AddressInitial());
   }
 }

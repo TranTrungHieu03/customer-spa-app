@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:spa_mobile/core/usecase/usecase.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_cart.dart';
@@ -30,11 +34,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     emit(CartLoading());
-    final result = await _getProductCart.call(NoParams());
-    result.fold(
-      (failure) => emit(CartError(message: failure.message)),
-      (products) => emit(CartLoaded(products: products)),
-    );
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    int userId;
+    if (jsonDecode(userJson) != null) {
+      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+      final result = await _getProductCart.call(GetCartParams(userId));
+      result.fold(
+        (failure) => emit(CartError(message: failure.message)),
+        (products) => emit(CartLoaded(products: products)),
+      );
+    } else {
+      goLoginNotBack();
+    }
   }
 
   Future<void> _onAddProduct(
@@ -42,12 +53,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     emit(CartLoading());
-    final result = await _addProductCart
-        .call(AddProductCartParams(productId: event.params.productId, quantity: event.params.quantity, operation: event.params.operation));
-    result.fold(
-      (failure) => emit(CartError(message: failure.message)),
-      (message) => emit(CartSuccess(message: message)),
-    );
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    int userId;
+    if (jsonDecode(userJson) != null) {
+      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+      final result = await _addProductCart.call(AddProductCartParams(
+          userId: userId, productId: event.params.productId, quantity: event.params.quantity, operation: event.params.operation));
+      result.fold(
+        (failure) => emit(CartError(message: failure.message)),
+        (message) => emit(CartSuccess(message: message)),
+      );
+    } else {
+      goLoginNotBack();
+    }
   }
 
   Future<void> _onRemoveProduct(
@@ -55,10 +73,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     emit(CartLoading());
-    final result = await _removeProductCart(event.id);
-    result.fold(
-      (failure) => emit(CartError(message: failure.message)),
-      (message) => emit(CartSuccess(message: message)),
-    );
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    int userId;
+    if (jsonDecode(userJson) != null) {
+      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+      final result = await _removeProductCart(RemoveProductCartParams(userId: userId, productId: event.id));
+      result.fold(
+        (failure) => emit(CartError(message: failure.message)),
+        (message) => emit(CartSuccess(message: message)),
+      );
+    } else {
+      goLoginNotBack();
+    }
   }
 }

@@ -99,7 +99,7 @@
   "back": "Quay lại",
   "save": "Lưu",
   "changeAvatar": "Thay đổi hình đại diện",
-  "solaceChat": "Hỏi đáp cùng Solace",
+  "solaceChat": "Hỏi đáp cùng SolaceSmart",
   "analysisImage": "Quét da thông minh",
   "analysisData": "Phân tích qua biểu mẫu",
   "next": "Tiếp tục",
@@ -159,8 +159,9 @@
   "step": "Các bước",
   "fullPayment": "Thanh toán đủ",
   "deposit30": "Cọc 30%",
-  "continue_book":"Tiếp tục",
+  "continue_book": "Tiếp tục",
   "history_book": "Lịch sử đặt lịch",
   "add": "Thêm",
-  "confirm": "Xác nhận"
+  "confirm": "Xác nhận",
+  "solaceConnect": "Kết nối với Solace"
 }

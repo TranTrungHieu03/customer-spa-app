@@ -65,6 +65,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
+    _loadLocalData();
     context.read<ListProductBloc>().add(GetListProductsEvent(1));
   }
 

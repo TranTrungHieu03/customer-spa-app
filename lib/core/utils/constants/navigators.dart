@@ -22,6 +22,12 @@ goForgotPassword() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
 }
 
+goSetting() async {
+  navigatorKey.currentContext!.read<NavigationBloc>().add(ChangeSelectedIndexEvent(3));
+  Navigator.pushAndRemoveUntil(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const NavigationMenu()), (Route<dynamic> route) => false);
+}
+
 goProductDetail(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ProductDetailScreen(productId: id)));
 }
@@ -116,10 +122,10 @@ goServiceDetailBooking(int id, int branchId, AppointmentDataController controlle
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => ServiceDetailScreen(
-            serviceId: id,
-            branchId: branchId,
-            controller: controller,
-          )));
+                serviceId: id,
+                branchId: branchId,
+                controller: controller,
+              )));
 }
 
 goBookingDetail(int id, {bool isBack = false}) async {
@@ -245,14 +251,6 @@ goReview(AppointmentDataController controller) async {
               )));
 }
 
-// goPayment(int id) async {
-//   Navigator.push(
-//       navigatorKey.currentContext!,
-//       MaterialPageRoute(
-//           builder: (context) => PaymentScreen(
-//                 id: id,
-//               )));
-// }
 goSelectServices() async {
   Navigator.push(
       navigatorKey.currentContext!,
@@ -261,4 +259,8 @@ goSelectServices() async {
                 create: (_) => ListCategoryBloc(getListCategories: serviceLocator()),
                 child: const SelectServiceScreen(),
               )));
+}
+
+goChatList() async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ChatListScreen()));
 }

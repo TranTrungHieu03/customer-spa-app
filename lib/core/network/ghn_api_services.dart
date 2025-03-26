@@ -7,11 +7,11 @@ import 'package:spa_mobile/core/network/base_api_services.dart';
 class GhnApiService implements BaseApiServices {
   final Dio _dio;
 
-  GhnApiService({required String baseUrl, required String key})
+  GhnApiService({required String baseUrl, required String token, required String shopId})
       : _dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
-            queryParameters: {"apiKey": key},
+            headers: {"token": token, "shopId": shopId},
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ),
@@ -57,9 +57,32 @@ class GhnApiService implements BaseApiServices {
   }
 
   @override
-  Future postApi(String url, data) {
-    // TODO: implement postApi
-    throw UnimplementedError();
+  Future postApi(String url, data) async {
+    if (kDebugMode) {
+      AppLogger.debug(data);
+    }
+
+    dynamic responseJson;
+    try {
+      final Response response = await _dio.post(
+        url,
+        data: data,
+      );
+      responseJson = response.data;
+      if (kDebugMode) {
+        AppLogger.debug(responseJson);
+      }
+      return responseJson;
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        AppLogger.error(e);
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        return responseJson['message'];
+      } else {
+        _handleDioException(e);
+      }
+    }
   }
 
   @override

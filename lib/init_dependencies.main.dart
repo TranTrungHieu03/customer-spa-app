@@ -5,11 +5,11 @@ final serviceLocator = GetIt.instance;
 Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
   serviceLocator.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(baseUrl: "https://solaceapix.ddnsking.com/api", authService: serviceLocator<AuthService>()));
+      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api", authService: serviceLocator<AuthService>()));
   serviceLocator.registerLazySingleton<GoongApiService>(
       () => GoongApiService(baseUrl: "https://rsapi.goong.io/", key: "58y8peA3QXjke7sqZK4DYCiaRvcCbh6Jaffw5qCI"));
-  serviceLocator
-      .registerLazySingleton<GhnApiService>(() => GhnApiService(baseUrl: "https://online-gateway.ghn.vn/shiip/public-api/v2/", key: ""));
+  serviceLocator.registerLazySingleton<GhnApiService>(() => GhnApiService(
+      baseUrl: "https://online-gateway.ghn.vn/", token: "e79a5ca7-014e-11f0-a9a7-7e45b9a2ff31", shopId: "3838500"));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -37,10 +37,11 @@ Future<void> _initAuth() async {
   //datasource
   serviceLocator
     ..registerFactory<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<GHNRemoteDataSource>(() => GHNRemoteDataSourceImpl(serviceLocator()))
     //repository
     ..registerFactory<AuthRepository>(() =>
         AuthRepositoryImpl(serviceLocator<AuthRemoteDataSource>(), serviceLocator<ConnectionChecker>(), serviceLocator<AuthService>()))
-
+    ..registerFactory<GHNRepository>(() => GHNRepositoryImpl(serviceLocator<GHNRemoteDataSource>()))
     //use cases
     ..registerFactory(() => Login(serviceLocator()))
     ..registerFactory(() => SignUp(serviceLocator()))
@@ -53,6 +54,10 @@ Future<void> _initAuth() async {
     ..registerFactory(() => LoginWithFacebook(serviceLocator()))
     ..registerFactory(() => Logout(serviceLocator()))
     ..registerFactory(() => UpdateProfile(serviceLocator()))
+    ..registerFactory(() => GetProvince(serviceLocator()))
+    ..registerFactory(() => GetDistrict(serviceLocator()))
+    ..registerFactory(() => GetWard(serviceLocator()))
+    ..registerFactory(() => GetFeeShipping(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => AuthBloc(
@@ -67,7 +72,13 @@ Future<void> _initAuth() async {
           getUserInformation: serviceLocator(),
           logout: serviceLocator(),
         ))
-    ..registerLazySingleton(() => ProfileBloc(updateProfile: serviceLocator(), getUserInformation: serviceLocator()))
+    ..registerLazySingleton(() => ProfileBloc(
+          getDistrict: serviceLocator(),
+          updateProfile: serviceLocator(),
+          getUserInformation: serviceLocator(),
+          getProvince: serviceLocator(),
+          getWard: serviceLocator(),
+        ))
     //cubit
     ..registerLazySingleton<PasswordCubit>(() => PasswordCubit())
     ..registerLazySingleton<PasswordConfirmCubit>(() => PasswordConfirmCubit())
@@ -191,7 +202,7 @@ Future<void> _initAiChat() async {
   serviceLocator
     //data src
     ..registerFactory<AiChatRemoteDataSource>(() => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
-    ..registerFactory<ChatRemoteDataSource>(() => SignalRChatRemoteDataSource(hubUrl: " "))
+    ..registerFactory<ChatRemoteDataSource>(() => SignalRChatRemoteDataSource(hubUrl: "https://solaceapi.ddnsking.com/chat"))
     //repo
     ..registerFactory<AiChatRepository>(() => AiChatRepositoryImpl(
           serviceLocator<AiChatRemoteDataSource>(),

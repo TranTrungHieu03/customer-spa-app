@@ -1,24 +1,27 @@
 import 'package:spa_mobile/core/common/entities/user.dart';
 
 class UserModel extends User {
-  const UserModel({
-    required super.userId,
-    required super.userName,
-    super.fullName,
-    required super.email,
-    super.avatar,
-    super.gender,
-    super.city,
-    super.address,
-    super.birthDate,
-    super.phoneNumber,
-    super.status,
-    super.bonusPoint,
-    super.typeLogin,
-  });
+  const UserModel(
+      {required super.userId,
+      required super.userName,
+      super.fullName,
+      required super.email,
+      super.avatar,
+      super.gender,
+      super.city,
+      super.address,
+      super.birthDate,
+      super.phoneNumber,
+      super.status,
+      super.bonusPoint,
+      super.typeLogin,
+      super.district,
+      super.wardCode});
 
   UserModel copyWith({
     int? userId,
+    int? district,
+    int? wardCode,
     String? userName,
     String? fullName,
     String? email,
@@ -46,6 +49,8 @@ class UserModel extends User {
       status: status ?? this.status,
       bonusPoint: bonusPoint ?? this.bonusPoint,
       typeLogin: typeLogin ?? this.typeLogin,
+      district: district ?? this.district,
+      wardCode: wardCode ?? this.wardCode,
     );
   }
 
@@ -64,24 +69,27 @@ class UserModel extends User {
       'status': status,
       'bonusPoint': bonusPoint,
       'typeLogin': typeLogin,
+      'district': district,
+      'wardCode': wardCode
     };
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      userId: json['userId'],
-      userName: json['userName'],
-      fullName: json['fullName'],
-      email: json['email'],
-      avatar: json['avatar'],
-      gender: json['gender'],
-      city: json['city'],
-      address: json['address'],
-      birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
-      phoneNumber: json['phoneNumber'],
-      status: json['status'],
-      bonusPoint: json['bonusPoint'],
-      typeLogin: json['typeLogin'],
-    );
+        userId: json['userId'],
+        userName: json['userName'],
+        fullName: json['fullName'],
+        email: json['email'],
+        avatar: json['avatar'],
+        gender: json['gender'],
+        city: json['city'],
+        address: json['address'],
+        birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
+        phoneNumber: json['phoneNumber'],
+        status: json['status'],
+        bonusPoint: json['bonusPoint'],
+        typeLogin: json['typeLogin'],
+        district: json['district'],
+        wardCode: json['wardCode']);
   }
 }
