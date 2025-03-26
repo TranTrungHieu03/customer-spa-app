@@ -37,13 +37,14 @@ jobs:
 
       - name: 🔑 Decode Keystore
         run: |
+          mkdir -p android/app/
           echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
 
       - name: 🔑 Setup signing configs
         run: |
-          echo "storeFile=android/app/upload-keystore.jks" > android/key.properties
+          echo "storeFile=upload-keystore.jks" > android/key.properties
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
@@ -51,6 +52,11 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: 🔍 Debug Keystore & Signing Configs
+        run: |
+          ls -lah android/app/
+          cat android/key.properties
 
       - name: 🚀 Build APK & AAB
         run: flutter build appbundle --release
@@ -60,5 +66,5 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON }}
           packageName: "hieutt.customer.app"
-          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: internal
