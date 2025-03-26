@@ -264,3 +264,10 @@ goSelectServices() async {
 goChatList() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ChatListScreen()));
 }
+
+goRoutines() async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperRoutineScreen()));
+}
+goRoutineStep(int id) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperBookRoutineScreen(id: id)));
+}

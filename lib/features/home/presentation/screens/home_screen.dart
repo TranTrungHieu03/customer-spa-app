@@ -259,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      goCart();
+                      goRoutines();
                     },
                     child: Text("Statistics"),
                   )

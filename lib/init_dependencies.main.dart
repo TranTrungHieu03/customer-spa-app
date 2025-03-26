@@ -8,8 +8,8 @@ Future<void> initDependencies() async {
       () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api", authService: serviceLocator<AuthService>()));
   serviceLocator.registerLazySingleton<GoongApiService>(
       () => GoongApiService(baseUrl: "https://rsapi.goong.io/", key: "58y8peA3QXjke7sqZK4DYCiaRvcCbh6Jaffw5qCI"));
-  serviceLocator.registerLazySingleton<GhnApiService>(() => GhnApiService(
-      baseUrl: "https://online-gateway.ghn.vn/", token: "e79a5ca7-014e-11f0-a9a7-7e45b9a2ff31", shopId: "3838500"));
+  serviceLocator.registerLazySingleton<GhnApiService>(
+      () => GhnApiService(baseUrl: "https://online-gateway.ghn.vn/", token: "e79a5ca7-014e-11f0-a9a7-7e45b9a2ff31", shopId: "3838500"));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -231,17 +231,25 @@ Future<void> _initSkinAnalysis() async {
   serviceLocator
     //data src
     ..registerFactory<SkinAnalysisRemoteDataSource>(() => SkinAnalysisRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<RoutineRemoteDataSource>(() => RoutineRemoteDateSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<SkinAnalysisRepository>(() => SkinAnalysisRepositoryImpl(
           serviceLocator<SkinAnalysisRemoteDataSource>(),
+        ))
+    ..registerFactory<RoutineRepository>(() => RoutineRepositoryImpl(
+          serviceLocator<RoutineRemoteDataSource>(),
         ))
 
     //use case
     ..registerLazySingleton(() => SkinAnalysisViaImage(serviceLocator()))
     ..registerLazySingleton(() => SkinAnalysisViaForm(serviceLocator()))
     ..registerLazySingleton(() => GetRoutineDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetListRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetRoutineStep(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
+    ..registerLazySingleton(() => ListRoutineBloc(getListRoutine: serviceLocator()))
+    ..registerLazySingleton(() => ListRoutineStepBloc(getRoutineStep: serviceLocator()))
     ..registerLazySingleton(() => RoutineBloc(getRoutineDetail: serviceLocator()));
 }

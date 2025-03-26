@@ -384,6 +384,24 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
               ),
             ),
           ),
+          SliverToBoxAdapter(
+              child: SizedBox(
+            height: 50,
+            child: GestureDetector(
+                onTap: () => goRoutines(),
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Xem các gói liệu trình", style: Theme.of(context).textTheme.titleLarge),
+                      const SizedBox(
+                        width: TSizes.sm,
+                      ),
+                      const Icon(Iconsax.arrow_right_1)
+                    ],
+                  ),
+                )),
+          )),
           BlocBuilder<ListServiceBloc, ListServiceState>(
             builder: (context, state) {
               if (state is ListServiceLoadingForSelection) {
@@ -505,7 +523,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
               return const SliverToBoxAdapter(child: SizedBox());
             },
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 200))
+          SliverToBoxAdapter(
+              child: SizedBox(
+            height: 200,
+          ))
         ],
       ),
       bottomNavigationBar: BlocBuilder<ListServiceBloc, ListServiceState>(

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_card_routine.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_vertical_card.dart';
 
 class ProductListView extends StatelessWidget {
   final List<ProductModel> products;
@@ -15,23 +14,25 @@ class ProductListView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Products Recommended",
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: TColors.primary,
-          ),
-        ),
+        Text("Sản phẩm (${products.length})", style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: TSizes.sm),
-        SizedBox(
-          height: 290,
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: TSizes.xs),
+          color: Colors.white,
+          height: 310,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: products.length,
             separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
             itemBuilder: (context, index) {
               final product = products[index];
-              return TProductCardVertical(productModel: product,width: THelperFunctions.screenWidth(context) * 0.4,);
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: TSizes.sm),
+                child: TProductCardRoutine(
+                  productModel: product,
+                  width: THelperFunctions.screenWidth(context) * 0.45,
+                ),
+              );
             },
           ),
         ),

@@ -140,26 +140,26 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                 serviceData.serviceCategory?.name ?? "",
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
-                              TRoundedContainer(
-                                radius: 20,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(TSizes.sm),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Iconsax.star,
-                                        color: Colors.yellow,
-                                      ),
-                                      const SizedBox(
-                                        width: TSizes.sm,
-                                      ),
-                                      Text(TProductDetail.rate)
-                                    ],
-                                  ),
-                                ),
-                              )
+                              // TRoundedContainer(
+                              //   radius: 20,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(TSizes.sm),
+                              //     child: Row(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         const Icon(
+                              //           Iconsax.star,
+                              //           color: Colors.yellow,
+                              //         ),
+                              //         const SizedBox(
+                              //           width: TSizes.sm,
+                              //         ),
+                              //         Text(TProductDetail.rate)
+                              //       ],
+                              //     ),
+                              //   ),
+                              // )
                             ],
                           ),
                           TProductTitleText(
