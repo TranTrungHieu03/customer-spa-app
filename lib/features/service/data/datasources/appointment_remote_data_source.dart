@@ -2,9 +2,6 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
-import 'package:spa_mobile/features/service/data/model/list_appointment_model.dart';
-import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
-import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
 import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/time_model.dart';
@@ -12,6 +9,7 @@ import 'package:spa_mobile/features/service/domain/usecases/create_appointment.d
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 
 abstract class AppointmentRemoteDataSource {
@@ -21,7 +19,7 @@ abstract class AppointmentRemoteDataSource {
 
   Future<String> payFull(PayFullParams params);
 
-  // Future<String> payDeposit(CreateAppointmentParams params);
+  Future<String> payDeposit(PayDepositParams params);
 
   Future<ListOrderAppointmentModel> getHistoryBooking(GetListAppointmentParams params);
 
@@ -112,6 +110,24 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   Future<String> payFull(PayFullParams params) async {
     try {
       final response = await _apiService.postApi('/Order/confirm-order-appointment', params.toJson());
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return apiResponse.result!.data;
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      AppLogger.info(e.toString());
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> payDeposit(PayDepositParams params) async {
+    try {
+      final response = await _apiService.postApi('/Order/confirm-order-deposit', params.toJson());
 
       final apiResponse = ApiResponse.fromJson(response);
 

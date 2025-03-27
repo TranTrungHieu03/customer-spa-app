@@ -5,12 +5,16 @@ import 'package:iconsax/iconsax.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/on_boarding_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/widgets/language_dropdown.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -23,91 +27,113 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final PageController _pageController = PageController();
 
   @override
+  void initState() {
+    super.initState();
+    context.read<ListBranchesBloc>().add(GetListBranchesEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => OnboardingBloc(),
       child: Scaffold(
         appBar: const TAppbar(),
-        body: BlocListener<OnboardingBloc, OnboardingState>(
+        body: BlocListener<NearestBranchBloc, NearestBranchState>(
           listener: (context, state) {
-            if (state is OnboardingPageChanged) {
-              _pageController.animateToPage(
-                state.pageIndex,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-              );
+            if (state is NearestBranchError) {
+              AppLogger.debug(state.message);
             }
           },
-          child: Stack(
-            children: [
-              BlocBuilder<OnboardingBloc, OnboardingState>(
-                builder: (context, state) {
-                  return PageView(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      context.read<OnboardingBloc>().add(OnPageChangedEvent(index));
-                    },
-                    children: [
-                      OnBoardingPage(
-                        title: AppLocalizations.of(context)!.page1Title,
-                        image: TImages.page1,
-                        subTitle: AppLocalizations.of(context)!.page1Sub,
-                      ),
-                      OnBoardingPage(
-                        title: AppLocalizations.of(context)!.page2Title,
-                        image: TImages.page1,
-                        subTitle: AppLocalizations.of(context)!.page2Sub,
-                      ),
-                      OnBoardingPage(
-                        title: AppLocalizations.of(context)!.page3Title,
-                        image: TImages.page1,
-                        subTitle: AppLocalizations.of(context)!.page3Sub,
-                      ),
-                    ],
+          child: BlocListener<ListBranchesBloc, ListBranchesState>(
+            listener: (context, state) {
+              if (state is ListBranchesLoaded) {
+                context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches), isFirst: true));
+              }
+            },
+            child: BlocListener<OnboardingBloc, OnboardingState>(
+              listener: (context, state) {
+                if (state is OnboardingPageChanged) {
+                  _pageController.animateToPage(
+                    state.pageIndex,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
                   );
-                },
-              ),
-              const OnBoardingDotNavigation(),
-              const Positioned(
-                right: TSizes.md,
-                left: 0,
-                top: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    LanguageDropdown(),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(TSizes.sm),
-                  width: THelperFunctions.screenWidth(context),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                              onPressed: () => goSignUp(),
-                              child: Text(
-                                AppLocalizations.of(context)!.get_started.toUpperCase(),
-                              ))),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                }
+              },
+              child: Stack(
+                children: [
+                  BlocBuilder<OnboardingBloc, OnboardingState>(
+                    builder: (context, state) {
+                      return PageView(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          context.read<OnboardingBloc>().add(OnPageChangedEvent(index));
+                        },
                         children: [
-                          TextButton(
-                              onPressed: () => goLoginNotBack(),
-                              child: Text(
-                                AppLocalizations.of(context)!.has_account,
-                              ))
+                          OnBoardingPage(
+                            title: AppLocalizations.of(context)!.page1Title,
+                            image: TImages.page1,
+                            subTitle: AppLocalizations.of(context)!.page1Sub,
+                          ),
+                          OnBoardingPage(
+                            title: AppLocalizations.of(context)!.page2Title,
+                            image: TImages.page1,
+                            subTitle: AppLocalizations.of(context)!.page2Sub,
+                          ),
+                          OnBoardingPage(
+                            title: AppLocalizations.of(context)!.page3Title,
+                            image: TImages.page1,
+                            subTitle: AppLocalizations.of(context)!.page3Sub,
+                          ),
                         ],
-                      )
-                    ],
+                      );
+                    },
                   ),
-                ),
-              )
-            ],
+                  OnBoardingDotNavigation(
+                    pageController: _pageController,
+                  ),
+                  const Positioned(
+                    right: TSizes.md,
+                    left: 0,
+                    top: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        LanguageDropdown(),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(TSizes.sm),
+                      width: THelperFunctions.screenWidth(context),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                  onPressed: () => goSignUp(),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.get_started.toUpperCase(),
+                                  ))),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () => goLoginNotBack(),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.has_account,
+                                  ))
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -193,7 +219,9 @@ class OnboardingSkip extends StatelessWidget {
 }
 
 class OnBoardingDotNavigation extends StatelessWidget {
-  const OnBoardingDotNavigation({super.key});
+  const OnBoardingDotNavigation({required this.pageController, super.key});
+
+  final PageController pageController;
 
   @override
   Widget build(BuildContext context) {
@@ -204,13 +232,13 @@ class OnBoardingDotNavigation extends StatelessWidget {
       right: 0,
       child: BlocBuilder<OnboardingBloc, OnboardingState>(
         builder: (context, state) {
-          final currentIndex = state is OnboardingPageChanged ? state.pageIndex : 0;
+          // final currentIndex = state is OnboardingPageChanged ? state.pageIndex : 0;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SmoothPageIndicator(
-                controller: PageController(initialPage: currentIndex),
+                controller: pageController,
                 count: 3,
                 effect: ExpandingDotsEffect(activeDotColor: !dark ? TColors.dark : TColors.light, dotHeight: 6),
               ),

@@ -271,4 +271,69 @@ class NetworkApiService implements BaseApiServices {
 
     return newFormData;
   }
+
+  @override
+  Future deleteApi(String url) async {
+    dynamic responseJson;
+    try {
+      final response = await _dio.delete(url);
+      responseJson = returnResponse(response);
+
+      if (kDebugMode) {
+        AppLogger.debug(responseJson);
+      }
+      return responseJson;
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.badResponse) {
+        return returnResponse(e.response!);
+      } else {
+        _handleDioException(e);
+      }
+    }
+  }
+
+  @override
+  Future putApi(String url, dynamic data) async {
+    if (kDebugMode) {
+      AppLogger.debug(data);
+    }
+
+    dynamic responseJson;
+    try {
+      AppLogger.debug("1######### ${data is FormData}");
+      if (data is FormData) {
+        AppLogger.debug("FormData fields: ${data.fields}");
+        AppLogger.debug("FormData files: ${data.files}");
+        for (final file in data.files) {
+          final String key = file.key;
+          final MultipartFile multipartFile = file.value;
+
+          AppLogger.debug("File Field Key: $key");
+          AppLogger.debug("File Name: ${multipartFile.filename}");
+          AppLogger.debug("File Content-Type: ${multipartFile.contentType}");
+          AppLogger.debug("File Length: ${multipartFile.length}");
+        }
+      }
+
+      final Response response = await _dio.put(
+        url,
+        data: data,
+        options: data is FormData ? Options(headers: {'Content-Type': 'multipart/form-data'}) : null,
+      );
+      responseJson = returnResponse(response);
+      if (kDebugMode) {
+        AppLogger.debug(responseJson);
+      }
+      return responseJson;
+    } on DioException catch (e) {
+      if (kDebugMode) {
+        AppLogger.error(e);
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        return returnResponse(e.response!);
+      } else {
+        _handleDioException(e);
+      }
+    }
+  }
 }

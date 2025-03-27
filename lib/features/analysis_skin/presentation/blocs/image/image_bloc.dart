@@ -15,6 +15,11 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
   ImageBloc() : super(ImageInitial()) {
     on<PickImageEvent>(_onPickImage);
     on<ValidateImageEvent>(_onValidateImage);
+    on<RefreshImageEvent>(_onRefreshImage);
+  }
+
+  Future<void> _onRefreshImage(RefreshImageEvent event, Emitter<ImageState> emit) async {
+    emit(ImageInitial());
   }
 
   Future<void> _onPickImage(PickImageEvent event, Emitter<ImageState> emit) async {

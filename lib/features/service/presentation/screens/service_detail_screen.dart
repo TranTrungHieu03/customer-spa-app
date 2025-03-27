@@ -6,15 +6,14 @@ import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
-import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
@@ -140,26 +139,26 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                 serviceData.serviceCategory?.name ?? "",
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
-                              TRoundedContainer(
-                                radius: 20,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(TSizes.sm),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Iconsax.star,
-                                        color: Colors.yellow,
-                                      ),
-                                      const SizedBox(
-                                        width: TSizes.sm,
-                                      ),
-                                      Text(TProductDetail.rate)
-                                    ],
-                                  ),
-                                ),
-                              )
+                              // TRoundedContainer(
+                              //   radius: 20,
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.all(TSizes.sm),
+                              //     child: Row(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         const Icon(
+                              //           Iconsax.star,
+                              //           color: Colors.yellow,
+                              //         ),
+                              //         const SizedBox(
+                              //           width: TSizes.sm,
+                              //         ),
+                              //         Text(TProductDetail.rate)
+                              //       ],
+                              //     ),
+                              //   ),
+                              // )
                             ],
                           ),
                           TProductTitleText(
@@ -251,6 +250,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     child: GestureDetector(
                       onTap: () {
                         widget.controller.updateServiceIds([widget.serviceId]);
+                        widget.controller.updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
                         widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
                         goSelectSpecialist(widget.branchId, widget.controller);
                       },

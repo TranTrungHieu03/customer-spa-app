@@ -99,7 +99,7 @@
   "back": "Back",
   "save": "Save",
   "changeAvatar": "Change Avatar",
-  "solaceChat": "Solace Chatbox",
+  "solaceChat": "Solace Chatbot",
   "analysisImage": "Smart Skin Scan",
   "analysisData": "Analysis via Form",
   "next": "Next",
@@ -162,5 +162,6 @@
   "continue_book": "Continue",
   "history_book": "History booking",
   "add": "Add",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "solaceConnect": "Solace Connect"
 }

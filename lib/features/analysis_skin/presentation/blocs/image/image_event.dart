@@ -10,3 +10,4 @@ final class ValidateImageEvent extends ImageEvent {
 
   ValidateImageEvent(this.image);
 }
+final class RefreshImageEvent extends ImageEvent {}

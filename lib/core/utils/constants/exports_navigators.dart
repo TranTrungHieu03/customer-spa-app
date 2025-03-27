@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/screens/payment_web_view.dart';
 import 'package:spa_mobile/core/common/screens/redirect_screen.dart';
@@ -11,8 +12,10 @@ import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.d
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysing_image_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysis_result_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/basic_screen_image.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/book_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_detail_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/routines_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit.dart';
@@ -26,8 +29,10 @@ import 'package:spa_mobile/features/auth/presentation/screens/sign_up_screen.dar
 import 'package:spa_mobile/features/auth/presentation/screens/verify_screen.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/screens/chat_ai_screen.dart';
+import 'package:spa_mobile/features/home/presentation/screens/chat_list_screen.dart';
 import 'package:spa_mobile/features/home/presentation/screens/search_screen.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dart';
+import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/history_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';
@@ -47,6 +52,7 @@ import 'package:spa_mobile/features/service/presentation/screens/service_history
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/cart_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
+import 'package:spa_mobile/features/user/presentation/screens/setting_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 part 'navigators.dart';

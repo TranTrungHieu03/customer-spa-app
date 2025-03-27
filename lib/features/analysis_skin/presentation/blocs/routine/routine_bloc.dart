@@ -15,7 +15,7 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
     on<GetRoutineDetailEvent>(_onGetRoutineDetailEvent);
   }
 
-  Future<void> _onGetRoutineDetailEvent(GetRoutineDetailEvent event, Emitter<RoutineState> state) async {
+  Future<void> _onGetRoutineDetailEvent(GetRoutineDetailEvent event, Emitter<RoutineState> emit) async {
     emit(RoutineLoading());
     final result = await _getRoutineDetail(event.params);
     result.fold(

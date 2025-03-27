@@ -17,6 +17,7 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
@@ -126,7 +127,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       children: [
                         const Icon(Icons.payment, color: Colors.green),
                         const SizedBox(width: TSizes.sm),
-                        if (order.statusPayment == "Pending")
+                        if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
                           Text(
                             "Pending",
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -256,12 +257,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       color: dark ? TColors.darkGrey : TColors.grey,
                       thickness: 0.5,
                     ),
-                    if (order.statusPayment == "Pending")
+                    if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
                       Text(
                         "Payment Methods",
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                    if (order.statusPayment == "Pending")
+                    const SizedBox(
+                      height: TSizes.sm,
+                    ),
+                    if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
                       TPaymentSelection(
                         total: order.totalAmount,
                         onOptionChanged: handlePaymentOptionChange,
@@ -283,10 +287,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
           if (isPaid)
             ElevatedButton(
                 onPressed: () {
-                  context.read<PaymentBloc>().add(PayFullEvent(PayFullParams(
-                      totalAmount: totalAmount.toString(),
-                      orderId: widget.id,
-                      request: RequestPayOsModel(returnUrl: "success", cancelUrl: "cancel"))));
+                  if (_selectedPaymentOption == PaymentOption.full) {
+                    context.read<PaymentBloc>().add(PayFullEvent(PayFullParams(
+                        totalAmount: totalAmount.toString(),
+                        orderId: widget.id,
+                        request: RequestPayOsModel(returnUrl: "success", cancelUrl: "cancel"))));
+                  } else {
+                    context.read<PaymentBloc>().add(PayDepositEvent(PayDepositParams(
+                        totalAmount: totalAmount.toString(),
+                        orderId: widget.id,
+                        percent: 30,
+                        request: RequestPayOsModel(returnUrl: "success", cancelUrl: "cancel"))));
+                  }
                   goRedirectPayment(
                     widget.id,
                   );

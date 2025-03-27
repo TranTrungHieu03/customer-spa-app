@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
-import 'package:spa_mobile/core/utils/constants/product_detail.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 import 'product_price.dart';
@@ -13,10 +14,15 @@ import 'product_price.dart';
 class TProductCheckout extends StatelessWidget {
   const TProductCheckout({
     super.key,
+    required this.products, required this.controller,
   });
+
+  final List<ProductQuantity> products;
+  final PurchasingDataController controller;
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
       decoration: BoxDecoration(
@@ -33,73 +39,90 @@ class TProductCheckout extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Iconsax.shop),
-              const SizedBox(
-                width: TSizes.spacebtwItems / 2,
-              ),
-              Text(
-                "Innisfree",
-                style: Theme.of(context).textTheme.titleLarge,
-              )
-            ],
-          ),
-          SizedBox(
-              width: THelperFunctions.screenWidth(context),
-              child: const Divider(
-                thickness: 0.2,
-              )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TRoundedImage(
-                imageUrl: TImages.product3,
-                applyImageRadius: true,
-                isNetworkImage: true,
-                onPressed: () => {},
-                border: Border.all(
-                  color: Colors.grey.withOpacity(0.5),
-                  width: 1,
-                ),
-                width: THelperFunctions.screenWidth(context) * 0.28,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: TSizes.sm),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: THelperFunctions.screenWidth(context) * 0.6,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) {
+              return const Divider();
+            },
+            itemBuilder: (context, index) {
+              final product = products[index].product;
+              return Column(
+                children: [
+                  Row(
                     children: [
-                      TProductTitleText(
-                        title: TProductDetail.name,
-                        maxLines: 2,
-                        smallSize: true,
+                      const Icon(Iconsax.shop),
+                      const SizedBox(
+                        width: TSizes.spacebtwItems / 2,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TProductPriceText(
-                            price: TProductDetail.price,
-                            currencySign: '₫',
-                          ),
-                          Text(
-                            "x1",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          )
-                        ],
+                      Text(
+                        product.brand,
+                        style: Theme.of(context).textTheme.titleLarge,
                       )
                     ],
                   ),
-                ),
-              )
-            ],
+                  SizedBox(
+                      width: THelperFunctions.screenWidth(context),
+                      child: const Divider(
+                        thickness: 0.2,
+                      )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TRoundedImage(
+                        imageUrl: product.images!.isNotEmpty ? product.images![0] : TImages.product1,
+                        applyImageRadius: true,
+                        isNetworkImage: product.images!.isNotEmpty,
+                        onPressed: () => {},
+                        border: Border.all(
+                          color: Colors.grey.withOpacity(0.5),
+                          width: 1,
+                        ),
+                        width: THelperFunctions.screenWidth(context) * 0.28,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: TSizes.sm),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TProductTitleText(
+                                title: product.productName,
+                                maxLines: 2,
+                                smallSize: true,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  TProductPriceText(
+                                    price: product.price.toString(),
+                                  ),
+                                  Text(
+                                    'x${products[index].quantity.toString()}',
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              );
+            },
+            itemCount: products.length,
           ),
           const SizedBox(
-            height: TSizes.sm,
+            height: TSizes.lg,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

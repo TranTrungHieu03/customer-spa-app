@@ -5,6 +5,7 @@ import 'package:spa_mobile/features/product/data/datasources/product_remote_data
 import 'package:spa_mobile/features/product/data/model/list_product_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource _productRemoteDataSource;
@@ -25,7 +26,7 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, ListProductModel>> getProducts(int page) async {
+  Future<Either<Failure, ListProductModel>> getProducts(GetListProductParams page) async {
     try {
       ListProductModel result = await _productRemoteDataSource.getProducts(page);
 

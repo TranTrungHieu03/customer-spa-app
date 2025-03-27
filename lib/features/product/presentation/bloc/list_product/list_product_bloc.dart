@@ -2,16 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
-import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
 
 part 'list_product_event.dart';
 part 'list_product_state.dart';
 
 class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
-  final ProductRepository _productRepository;
+  final GetListProducts _getListProducts;
 
-  ListProductBloc(this._productRepository) : super(ListProductInitial()) {
+  ListProductBloc({required GetListProducts getListProducts})
+      : _getListProducts = getListProducts,
+        super(ListProductInitial()) {
     on<GetListProductsEvent>(_onGetListProductsEvent);
+    on<RefreshListProductEvent>(_onRefreshListProductsEvent);
   }
 
   Future<void> _onGetListProductsEvent(GetListProductsEvent event, Emitter<ListProductState> emit) async {
@@ -21,7 +24,7 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
     }
     if (currentState is ListProductLoaded) {
       emit(currentState.copyWith(isLoadingMore: true));
-      final result = await _productRepository.getProducts(event.page);
+      final result = await _getListProducts(event.params);
       result.fold(
         (failure) => emit(ListProductFailure(failure.message)),
         (result) => emit(ListProductLoaded(
@@ -32,7 +35,7 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
       );
     } else {
       emit(const ListProductLoading(isLoadingMore: false));
-      final result = await _productRepository.getProducts(event.page);
+      final result = await _getListProducts(event.params);
       result.fold(
         (failure) => emit(ListProductFailure(failure.message)),
         (result) {
@@ -47,5 +50,9 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
         },
       );
     }
+  }
+
+  Future<void> _onRefreshListProductsEvent(RefreshListProductEvent event, Emitter<ListProductState> emit) async {
+    emit(const ListProductLoading());
   }
 }

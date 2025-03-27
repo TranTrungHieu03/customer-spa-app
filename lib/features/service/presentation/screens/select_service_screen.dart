@@ -9,6 +9,7 @@ import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/sliver_delegate.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
@@ -18,6 +19,8 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
@@ -55,18 +58,19 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     super.initState();
     _scrollController.addListener(_onScroll);
     _loadLocalData();
-
+    context.read<ListBranchesBloc>().add(GetListBranchesEvent());
     // Initial data loading
   }
 
   Future<void> _loadLocalData() async {
     final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
-
+    AppLogger.debug(branchId);
     if (mounted) {
       if (int.parse(branchId) == 0) {
         TSnackBar.warningSnackBar(context, message: "Vui lòng chọn chi nhánh để tiếp tục.");
       } else {
         branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
+        AppLogger.debug(branchInfo);
         setState(() {
           selectedBranch = int.parse(branchId);
           previousBranch = selectedBranch;
@@ -246,7 +250,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
-        physics: const AlwaysScrollableScrollPhysics(), 
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.white,
@@ -293,8 +297,11 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                           icon: Iconsax.filter,
                           size: 16,
                           onPressed: () {
-                            context.read<ListBranchesBloc>().add(GetListBranchesEvent());
-                            _showFilterModel(context);
+                            final state = context.read<ListBranchesBloc>().state;
+                            if (state is ListBranchesLoaded) {
+                              context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
+                              _showFilterModel(context, state.branches);
+                            }
                           },
                         ),
                       const SizedBox(width: TSizes.xs),
@@ -378,6 +385,23 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                   },
                 ),
               ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 50,
+              child: GestureDetector(
+                  onTap: () => goRoutines(),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Xem các gói liệu trình", style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(width: TSizes.sm),
+                        const Icon(Iconsax.arrow_right_1)
+                      ],
+                    ),
+                  )),
             ),
           ),
           BlocBuilder<ListServiceBloc, ListServiceState>(
@@ -501,7 +525,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
               return const SliverToBoxAdapter(child: SizedBox());
             },
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 200))
+          SliverToBoxAdapter(
+              child: SizedBox(
+            height: 200,
+          ))
         ],
       ),
       bottomNavigationBar: BlocBuilder<ListServiceBloc, ListServiceState>(
@@ -588,8 +615,8 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     );
   }
 
-  void _showFilterModel(BuildContext context) {
-    List<BranchModel> listBranches = [];
+  void _showFilterModel(BuildContext context, List<BranchModel> branchesState) {
+    List<BranchModel> listBranches = branchesState;
     void updateServices() {
       context.read<ListServiceBloc>().add(RefreshListServiceEvent());
       previousBranch = selectedBranch;
@@ -629,32 +656,6 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: TSizes.sm),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(TSizes.xs / 4),
-                      //   child: Row(
-                      //     children: [
-                      //       Radio<int>(
-                      //         value: 0,
-                      //         activeColor: TColors.primary,
-                      //         groupValue: selectedBranch,
-                      //         onChanged: (value) {
-                      //           setState(() {
-                      //             selectedBranch = value;
-                      //           });
-                      //         },
-                      //       ),
-                      //       ConstrainedBox(
-                      //         constraints: BoxConstraints(
-                      //           maxWidth: THelperFunctions.screenWidth(context) * 0.6,
-                      //         ),
-                      //         child: Text(
-                      //           "Tất cả chi nhánh",
-                      //           style: Theme.of(context).textTheme.bodyMedium,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                       ListView.builder(
                         shrinkWrap: true,
                         itemCount: branches.length,
@@ -679,11 +680,23 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                 ),
                                 ConstrainedBox(
                                   constraints: BoxConstraints(
-                                    maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                                    maxWidth: THelperFunctions.screenWidth(context) * 0.7,
                                   ),
-                                  child: Text(
-                                    branch.branchName,
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  child: Wrap(
+                                    children: [
+                                      Text(
+                                        branch.branchName,
+                                        style: Theme.of(context).textTheme.bodyMedium,
+                                      ),
+                                      BlocBuilder<NearestBranchBloc, NearestBranchState>(builder: (context, distanceState) {
+                                        if (distanceState is NearestBranchLoaded) {
+                                          return Text(' (${distanceState.branches[index].distance.text})');
+                                        } else if (distanceState is NearestBranchLoading) {
+                                          return const TShimmerEffect(width: TSizes.shimmerSm, height: TSizes.shimmerSx);
+                                        }
+                                        return const SizedBox();
+                                      })
+                                    ],
                                   ),
                                 ),
                               ],

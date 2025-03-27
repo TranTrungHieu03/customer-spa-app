@@ -5,8 +5,11 @@ final serviceLocator = GetIt.instance;
 Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<AuthService>(() => AuthService());
   serviceLocator.registerLazySingleton<NetworkApiService>(
-      () => NetworkApiService(baseUrl: "https://solaceapix.ddnsking.com/api", authService: serviceLocator<AuthService>()));
-  serviceLocator.registerLazySingleton<ThirdPartyApiServices>(() => ThirdPartyApiServices(baseUrl: "https://rsapi.goong.io/Direction"));
+      () => NetworkApiService(baseUrl: "https://solaceapi.ddnsking.com/api", authService: serviceLocator<AuthService>()));
+  serviceLocator.registerLazySingleton<GoongApiService>(
+      () => GoongApiService(baseUrl: "https://rsapi.goong.io/", key: "58y8peA3QXjke7sqZK4DYCiaRvcCbh6Jaffw5qCI"));
+  serviceLocator.registerLazySingleton<GhnApiService>(
+      () => GhnApiService(baseUrl: "https://online-gateway.ghn.vn/", token: "e79a5ca7-014e-11f0-a9a7-7e45b9a2ff31", shopId: "3838500"));
 
   //on boarding
   serviceLocator.registerLazySingleton(() => OnboardingBloc());
@@ -15,7 +18,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<LocalStorage>(() => LocalStorage());
   //internet
   serviceLocator.registerFactory(() => InternetConnection());
-
+//permissions
+  serviceLocator.registerLazySingleton(() => PermissionService());
   //core
   serviceLocator.registerLazySingleton<ConnectionChecker>(() => ConnectionCheckerImpl(serviceLocator()));
 
@@ -33,10 +37,11 @@ Future<void> _initAuth() async {
   //datasource
   serviceLocator
     ..registerFactory<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<GHNRemoteDataSource>(() => GHNRemoteDataSourceImpl(serviceLocator()))
     //repository
     ..registerFactory<AuthRepository>(() =>
         AuthRepositoryImpl(serviceLocator<AuthRemoteDataSource>(), serviceLocator<ConnectionChecker>(), serviceLocator<AuthService>()))
-
+    ..registerFactory<GHNRepository>(() => GHNRepositoryImpl(serviceLocator<GHNRemoteDataSource>()))
     //use cases
     ..registerFactory(() => Login(serviceLocator()))
     ..registerFactory(() => SignUp(serviceLocator()))
@@ -48,6 +53,11 @@ Future<void> _initAuth() async {
     ..registerFactory(() => LoginWithGoogle(serviceLocator()))
     ..registerFactory(() => LoginWithFacebook(serviceLocator()))
     ..registerFactory(() => Logout(serviceLocator()))
+    ..registerFactory(() => UpdateProfile(serviceLocator()))
+    ..registerFactory(() => GetProvince(serviceLocator()))
+    ..registerFactory(() => GetDistrict(serviceLocator()))
+    ..registerFactory(() => GetWard(serviceLocator()))
+    ..registerFactory(() => GetFeeShipping(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => AuthBloc(
@@ -62,6 +72,13 @@ Future<void> _initAuth() async {
           getUserInformation: serviceLocator(),
           logout: serviceLocator(),
         ))
+    ..registerLazySingleton(() => ProfileBloc(
+          getDistrict: serviceLocator(),
+          updateProfile: serviceLocator(),
+          getUserInformation: serviceLocator(),
+          getProvince: serviceLocator(),
+          getWard: serviceLocator(),
+        ))
     //cubit
     ..registerLazySingleton<PasswordCubit>(() => PasswordCubit())
     ..registerLazySingleton<PasswordConfirmCubit>(() => PasswordConfirmCubit())
@@ -74,11 +91,12 @@ Future<void> _initMenu() async {
   serviceLocator
     ..registerLazySingleton(() => NavigationBloc())
     ..registerLazySingleton(() => ImageBloc())
-    ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator()))
+    ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator(), payDeposit: serviceLocator()))
     ..registerLazySingleton(() => PayosBloc())
     ..registerLazySingleton(() => ServiceCartBloc())
     ..registerLazySingleton(() => WebViewBloc())
     //usecase
+    ..registerLazySingleton(() => PayDeposit(serviceLocator()))
     ..registerLazySingleton(() => PayFull(serviceLocator()));
 }
 
@@ -87,17 +105,37 @@ Future<void> _initProduct() async {
 
     //data src
     ..registerFactory<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<CartRemoteDataSource>(() => CartRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<OrderRemoteDataSource>(() => OrderRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<LocationRemoteDataSource>(() => LocationRemoteDataSourceImpl(
+          serviceLocator<PermissionService>(),
+          serviceLocator<GoongApiService>(),
+        ))
     //repo
     ..registerFactory<ProductRepository>(
         () => ProductRepositoryImpl(serviceLocator<ProductRemoteDataSource>(), serviceLocator<ConnectionChecker>()))
+    ..registerFactory<CartRepository>(() => CartRepositoryImpl(serviceLocator<CartRemoteDataSource>()))
+    ..registerFactory<LocationRepository>(() => LocationRepositoryImpl(serviceLocator<LocationRemoteDataSource>()))
+    ..registerFactory<OrderRepository>(() => OrderRepositoryImpl(serviceLocator<OrderRemoteDataSource>()))
     //use case
     ..registerLazySingleton(() => GetListProducts(serviceLocator()))
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetCart(serviceLocator()))
+    ..registerLazySingleton(() => AddProductCart(serviceLocator()))
+    ..registerLazySingleton(() => RemoveProductCart(serviceLocator()))
+    ..registerLazySingleton(() => GetDistance(serviceLocator()))
+    ..registerLazySingleton(() => GetAddressAutoComplete(serviceLocator()))
+    ..registerLazySingleton(() => CreateOrder(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
-    ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
-    ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
+    ..registerLazySingleton(() => OrderBloc(createOrder: serviceLocator()))
+    ..registerLazySingleton(() => ListProductBloc(getListProducts: serviceLocator()))
+    ..registerLazySingleton(() => NearestBranchBloc(getDistance: serviceLocator()))
+    ..registerLazySingleton(() => AddressBloc(addressAutoComplete: serviceLocator()))
+    ..registerLazySingleton(
+        () => CartBloc(addProductCart: serviceLocator(), getProductCart: serviceLocator(), removeProductCart: serviceLocator()))
+    ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit([]));
 }
 
 Future<void> _initService() async {
@@ -168,32 +206,54 @@ Future<void> _initAiChat() async {
   serviceLocator
     //data src
     ..registerFactory<AiChatRemoteDataSource>(() => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<ChatRemoteDataSource>(() => SignalRChatRemoteDataSource(hubUrl: "https://solaceapi.ddnsking.com/chat"))
     //repo
     ..registerFactory<AiChatRepository>(() => AiChatRepositoryImpl(
           serviceLocator<AiChatRemoteDataSource>(),
         ))
+    ..registerFactory<ChatRepository>(() => ChatRepositoryImpl(
+          serviceLocator<ChatRemoteDataSource>(),
+        ))
     //use case
     ..registerLazySingleton(() => GetAiChat(serviceLocator()))
+    ..registerLazySingleton(() => SendMessage(serviceLocator()))
+    ..registerLazySingleton(() => ConnectHub(serviceLocator()))
+    ..registerLazySingleton(() => DisconnectHub(serviceLocator()))
+    ..registerLazySingleton(() => GetMessages(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()));
+    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()))
+    ..registerLazySingleton(() => ChatBloc(
+          getMessages: serviceLocator(),
+          sendMessage: serviceLocator(),
+          connect: serviceLocator(),
+          disconnect: serviceLocator(),
+        ));
 }
 
 Future<void> _initSkinAnalysis() async {
   serviceLocator
     //data src
     ..registerFactory<SkinAnalysisRemoteDataSource>(() => SkinAnalysisRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<RoutineRemoteDataSource>(() => RoutineRemoteDateSourceImpl(serviceLocator<NetworkApiService>()))
     //repo
     ..registerFactory<SkinAnalysisRepository>(() => SkinAnalysisRepositoryImpl(
           serviceLocator<SkinAnalysisRemoteDataSource>(),
+        ))
+    ..registerFactory<RoutineRepository>(() => RoutineRepositoryImpl(
+          serviceLocator<RoutineRemoteDataSource>(),
         ))
 
     //use case
     ..registerLazySingleton(() => SkinAnalysisViaImage(serviceLocator()))
     ..registerLazySingleton(() => SkinAnalysisViaForm(serviceLocator()))
     ..registerLazySingleton(() => GetRoutineDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetListRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetRoutineStep(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
+    ..registerLazySingleton(() => ListRoutineBloc(getListRoutine: serviceLocator()))
+    ..registerLazySingleton(() => ListRoutineStepBloc(getRoutineStep: serviceLocator()))
     ..registerLazySingleton(() => RoutineBloc(getRoutineDetail: serviceLocator()));
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/styles/shadow_styles.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
@@ -9,6 +11,8 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
+import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
@@ -21,10 +25,10 @@ class TProductCardVertical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final controller = PurchasingData.of(context);
     return GestureDetector(
-      onTap: () => goProductDetail(productModel.productId),
       child: Container(
-        width: width + 19,
+        width: width + 10,
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
             boxShadow: [TShadowStyle.verticalProductShadow],
@@ -72,32 +76,35 @@ class TProductCardVertical extends StatelessWidget {
 
             //details
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: TSizes.sm),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: width,
+            GestureDetector(
+              onTap: () => goProductDetail(productModel.productBranchId, controller),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: TSizes.sm),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: width,
+                          ),
+                          child: TProductTitleText(
+                            title: productModel.productName,
+                            smallSize: true,
+                            maxLines: 2,
+                          ),
                         ),
-                        child: TProductTitleText(
-                          title: productModel.productName,
-                          smallSize: true,
-                          maxLines: 2,
+                        const SizedBox(
+                          height: TSizes.spacebtwItems / 2,
                         ),
-                      ),
-                      const SizedBox(
-                        height: TSizes.spacebtwItems / 2,
-                      ),
-                      // TBrandTitleWithVerifiedIcon(title: 'Nike'),
-                    ],
+                        // TBrandTitleWithVerifiedIcon(title: 'Nike'),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Spacer(),
             Row(
@@ -106,10 +113,11 @@ class TProductCardVertical extends StatelessWidget {
                 //Price
                 Padding(
                   padding: const EdgeInsets.all(TSizes.xs),
-                  child: TProductPriceText(price: productModel.price.toString()),
+                  child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: width * 0.85), child: TProductPriceText(price: productModel.price.toString())),
                 ),
                 Container(
-                  padding: EdgeInsets.all(0),
+                  padding: const EdgeInsets.all(0),
                   decoration: const BoxDecoration(
                     color: TColors.primary,
                     borderRadius: BorderRadius.only(
@@ -117,13 +125,19 @@ class TProductCardVertical extends StatelessWidget {
                       bottomRight: Radius.circular(TSizes.productImageRadius),
                     ),
                   ),
-                  child: const SizedBox(
-                    width: TSizes.iconLg * 1.2,
-                    height: TSizes.iconLg * 1.2,
-                    child: Center(
-                      child: Icon(
-                        Iconsax.add,
-                        color: TColors.white,
+                  child: GestureDetector(
+                    onTap: () {
+                      context.read<CartBloc>().add(AddProductToCartEvent(
+                          params: AddProductCartParams(userId: 0, productId: productModel.productBranchId, quantity: 1, operation: 0)));
+                    },
+                    child: const SizedBox(
+                      width: TSizes.iconLg * 1.2,
+                      height: TSizes.iconLg * 1.2,
+                      child: Center(
+                        child: Icon(
+                          Iconsax.add,
+                          color: TColors.white,
+                        ),
                       ),
                     ),
                   ),

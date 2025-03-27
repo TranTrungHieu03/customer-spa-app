@@ -10,9 +10,10 @@ class ProductCategoryModel extends ProductCategory {
       name: json['name'] as String,
       description: json['description'] as String,
       status: json['status'] as String,
-      imageUrl: json['imageUrl'] as String,
+      imageUrl: json['imageUrl'] ?? "",
     );
   }
+
   Map<String, dynamic> toJson() {
     return {
       'categoryId': categoryId,

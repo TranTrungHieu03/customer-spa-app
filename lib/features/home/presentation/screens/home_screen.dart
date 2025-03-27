@@ -130,27 +130,45 @@ class _HomeScreenState extends State<HomeScreen> {
                       return TRoundedContainer(
                         child: Padding(
                           padding: const EdgeInsets.all(TSizes.sm),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          child: Column(
                             children: [
-                              TFlashAction(
-                                title: AppLocalizations.of(context)!.solaceChat,
-                                iconData: Iconsax.message,
-                                onPressed: () => goChat(),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  TFlashAction(
+                                    title: AppLocalizations.of(context)!.solaceChat,
+                                    iconData: Iconsax.message,
+                                    onPressed: () => goChat(),
+                                  ),
+                                  TFlashAction(
+                                    title: AppLocalizations.of(context)!.analysisImage,
+                                    iconData: Iconsax.scan,
+                                    onPressed: () {
+                                      context.read<ImageBloc>().add(PickImageEvent());
+                                    },
+                                  ),
+                                  TFlashAction(
+                                    title: AppLocalizations.of(context)!.analysisData,
+                                    iconData: Iconsax.document_1,
+                                    onPressed: () => goFormData(SkinHealthModel.empty(), false),
+                                  )
+                                ],
                               ),
-                              TFlashAction(
-                                title: AppLocalizations.of(context)!.analysisImage,
-                                iconData: Iconsax.scan,
-                                onPressed: () {
-                                  context.read<ImageBloc>().add(PickImageEvent());
-                                },
+                              const SizedBox(
+                                height: TSizes.sm,
                               ),
-                              TFlashAction(
-                                title: AppLocalizations.of(context)!.analysisData,
-                                iconData: Iconsax.document_1,
-                                onPressed: () => goFormData(SkinHealthModel.empty(), false),
-                              )
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  TFlashAction(
+                                    title: AppLocalizations.of(context)!.solaceConnect,
+                                    iconData: Iconsax.message_2,
+                                    onPressed: () => goChatList(),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -241,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      goCart();
+                      goRoutines();
                     },
                     child: Text("Statistics"),
                   )
