@@ -61,7 +61,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           userId: userId, productId: event.params.productId, quantity: event.params.quantity, operation: event.params.operation));
       result.fold(
         (failure) => emit(CartError(message: failure.message)),
-        (message) => emit(CartSuccess(message: message)),
+        (product) {
+          emit(CartSuccess(message: "Thêm vào giỏ hàng thành công"));
+          emit(CartLoaded(products: product));
+        },
       );
     } else {
       goLoginNotBack();

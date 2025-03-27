@@ -56,9 +56,16 @@ class _TProfileItemState extends State<TProfileItem> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
             ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
           ),
           enabled: widget.isEdit,
-          style: Theme.of(context).textTheme.bodyMedium,
+          readOnly: !widget.isEdit,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: widget.isEdit ? null : Colors.grey,
+              ),
         ),
       ],
     );

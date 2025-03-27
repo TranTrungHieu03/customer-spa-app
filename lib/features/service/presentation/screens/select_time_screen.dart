@@ -193,6 +193,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     }).contains(false);
     AppLogger.info(controller.staffIds);
     AppLogger.info(isChooseDiffSpecialist);
+    AppLogger.info(controller.services[0].duration);
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(

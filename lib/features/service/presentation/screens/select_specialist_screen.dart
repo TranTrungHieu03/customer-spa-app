@@ -127,6 +127,8 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                     selectedStaffId = 0;
                                   });
                                   // controller.updateStaffIds(0);
+                                  controller.updateStaffIds(0);
+                                  // controller.updateStaff({});
                                   goSelectTime([0], controller);
                                   // if (selectedStaffId != null) {
                                   //   goSelectTime([selectedStaffId ?? 0], controller);
@@ -350,11 +352,11 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-                ElevatedButton(
-                    onPressed: () {
-                      goSelectTime(controller.staffIds, controller);
-                    },
-                    child: Text(AppLocalizations.of(context)!.continue_book))
+              ElevatedButton(
+                  onPressed: () {
+                    goSelectTime(controller.staffIds, controller);
+                  },
+                  child: Text(AppLocalizations.of(context)!.continue_book))
             ],
           ),
         ),

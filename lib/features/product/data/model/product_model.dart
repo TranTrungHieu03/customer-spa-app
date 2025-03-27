@@ -13,11 +13,14 @@ class ProductModel extends Product {
       required super.dimension,
       required super.brand,
       required super.quantity,
+      required super.branchId,
       required super.discount,
       required super.status,
       required super.categoryId,
       required this.category,
       required super.companyId,
+      required super.productBranchId,
+      required super.stockQuantity,
       required super.volume,
       required super.images});
 
@@ -36,6 +39,9 @@ class ProductModel extends Product {
       status: json['status'],
       categoryId: json['categoryId'],
       companyId: json['companyId'],
+      branchId: json['brandId'] ?? 0,
+      stockQuantity: json['stockQuantity'] ?? 10,
+      productBranchId: json['productBranchId'] ?? 0,
       category: ProductCategoryModel.fromJson(json['category']),
       images: (json['images'] is List) ? (json['images'] as List).map((e) => e.toString()).toList() : [],
     );

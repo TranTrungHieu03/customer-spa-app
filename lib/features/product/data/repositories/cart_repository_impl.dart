@@ -13,9 +13,9 @@ class CartRepositoryImpl implements CartRepository {
   CartRepositoryImpl(this._cartDataSource);
 
   @override
-  Future<Either<Failure, String>> addProductToCart(AddProductCartParams params) async {
+  Future<Either<Failure, List<ProductCartModel>>> addProductToCart(AddProductCartParams params) async {
     try {
-      String result = await _cartDataSource.addProductToCart(params);
+      List<ProductCartModel> result = await _cartDataSource.addProductToCart(params);
       return right(result);
     } on AppException catch (e) {
       return left(ApiFailure(

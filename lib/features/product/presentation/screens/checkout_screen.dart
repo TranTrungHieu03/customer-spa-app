@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
@@ -12,7 +13,9 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_checkou
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  const CheckoutScreen({super.key, required this.controller});
+
+  final PurchasingDataController controller;
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -21,6 +24,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
+    final products = widget.controller.products;
     return Scaffold(
         appBar: TAppbar(
           showBackArrow: true,
@@ -29,22 +33,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
-        body: const Padding(
-          padding: EdgeInsets.all(TSizes.defaultSpace / 2),
+        body: Padding(
+          padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                TContactInformation(),
-                SizedBox(
+                const TContactInformation(),
+                const SizedBox(
                   height: TSizes.md,
                 ),
-                TProductCheckout(),
-                SizedBox(
+                TProductCheckout(
+                  products: products,
+                  controller: widget.controller,
+                ),
+                const SizedBox(
                   height: TSizes.md,
                 ),
                 TPaymentMethod(),
-                SizedBox(
+                const SizedBox(
                   height: TSizes.md,
                 ),
                 TPaymentDetail()

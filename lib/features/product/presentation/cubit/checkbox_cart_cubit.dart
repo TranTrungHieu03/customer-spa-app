@@ -1,29 +1,39 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'package:equatable/equatable.dart';
 
 part 'checkbox_cart_state.dart';
 
 class CheckboxCartCubit extends Cubit<CheckboxCartState> {
-  CheckboxCartCubit()
+  CheckboxCartCubit(List<int> productIds)
       : super(CheckboxCartInitial(
-            itemStates: const {'0': false, '1': false, '2': false, '3': false, '4': false, '5': false}, isAllSelected: false));
+    itemStates: productIds.map((id) => CartState(id: id, status: false)).toList(),
+    isAllSelected: false,
+  ));
 
-  void toggleItemCheckbox(String id, bool value) {
-    if (state is CheckboxCartInitial) {
-      final currentState = state as CheckboxCartInitial;
-      final updateItemStates = Map<String, bool>.from(currentState.itemStates)..[id] = value;
+  // ✅ Hàm bật/tắt checkbox của từng sản phẩm
+  void toggleItemCheckbox(int id, bool value) {
+    final currentState = state as CheckboxCartInitial;
 
-      final isAllSelected = updateItemStates.values.every((isChecked) => isChecked);
+    final updatedItems = currentState.itemStates.map((item) {
+      if (item.id == id) {
+        return CartState(id: item.id, status: value); // Cập nhật giá trị mới
+      }
+      return item;
+    }).toList();
 
-      emit(currentState.copyWith(itemStates: updateItemStates, isAllSelected: isAllSelected));
-    }
+    final isAllSelected = updatedItems.every((item) => item.status);
+
+    emit(currentState.copyWith(itemStates: updatedItems, isAllSelected: isAllSelected));
   }
 
+  // ✅ Hàm chọn tất cả sản phẩm
   void toggleSelectAll(bool value) {
-    if (state is CheckboxCartInitial) {
-      final currentState = state as CheckboxCartInitial;
-      final updatedItemStates = currentState.itemStates.map((key, _) => MapEntry(key, value));
-      emit(currentState.copyWith(itemStates: updatedItemStates, isAllSelected: value));
-    }
+    final currentState = state as CheckboxCartInitial;
+
+    final updatedItems = currentState.itemStates
+        .map((item) => CartState(id: item.id, status: value))
+        .toList();
+
+    emit(currentState.copyWith(itemStates: updatedItems, isAllSelected: value));
   }
 }

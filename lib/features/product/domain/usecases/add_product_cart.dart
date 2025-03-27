@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
+import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/cart_repository.dart';
 
 class AddProductCart implements UseCase<Either, AddProductCartParams> {
@@ -11,7 +12,7 @@ class AddProductCart implements UseCase<Either, AddProductCartParams> {
   AddProductCart(this._repository);
 
   @override
-  Future<Either<Failure, String>> call(AddProductCartParams params) async {
+  Future<Either<Failure, List<ProductCartModel>>> call(AddProductCartParams params) async {
     if (kDebugMode) {
       AppLogger.info(params);
     }

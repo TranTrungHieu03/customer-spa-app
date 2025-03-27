@@ -51,6 +51,7 @@ class _AutofillAddressState extends State<AutofillAddress> {
         children: [
           TextField(
             controller: widget.addressSubController,
+            autofocus: true,
             decoration: InputDecoration(
               hintText: 'Address',
               contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.md),
@@ -81,10 +82,8 @@ class _AutofillAddressState extends State<AutofillAddress> {
                   return ListTile(
                     title: Text(addressModel.fullAddress),
                     onTap: () {
-                      // if (widget.addressSubController.text.isNotEmpty) {
                       widget.addressSubController.text = addressModel.fullAddress;
                       widget.update(addressModel);
-                      // }
                       context.read<AddressBloc>().add(RefreshAddressEvent());
                       Navigator.of(context).pop();
                     },

@@ -42,26 +42,49 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Future<void> _onUpdateProfile(UpdateUserProfileEvent event, Emitter<ProfileState> emit) async {
     emit(ProfileLoading());
     UserModel userInfo = event.params.userInfo;
-    if (event.isChangeAddress) {
-      final address = event.addressModel;
-      final provinceRs = await _getProvince(NoParams());
 
-      provinceRs.fold((failure) => emit(ProfileError("Không tìm thấy tỉnh/thành phố")), (data) async {
-        final List<ProvinceModel> provinceList = data;
+    if (event.isChangeAddress) {
+      try {
+        final address = event.addressModel;
+
+        // 🔹 Lấy danh sách tỉnh/thành phố
+        final provinceRs = await _getProvince(NoParams());
+        final List<ProvinceModel> provinceList = provinceRs.fold(
+          (failure) => throw Exception("Không tìm thấy tỉnh/thành phố"),
+          (data) => data,
+        );
+
         final selectedProvince = provinceList.firstWhere((x) => x.nameExtension.contains(address.province));
+
+        // 🔹 Lấy danh sách quận/huyện
         final districtRs = await _getDistrict(GetDistrictParams(selectedProvince.provinceId));
-        districtRs.fold((failure) => emit(ProfileError("Không tìm thấy quận/huyện")), (dataDistrict) async {
-          final List<DistrictModel> districtList = dataDistrict;
-          final selectedDistrict = districtList.firstWhere((x) => x.nameExtension.contains(address.district));
-          final communeRs = await _getWard(GetWardParams(selectedDistrict.districtId));
-          communeRs.fold((failure) => emit(ProfileError("Không tìm thấy phường/xã")), (dataCommune) async {
-            final List<WardModel> communeList = dataCommune;
-            final selectedCommune = communeList.firstWhere((x) => x.nameExtension.contains(address.commune));
-            userInfo = userInfo.copyWith(district: selectedDistrict.districtId, wardCode: int.parse(selectedCommune.wardCode));
-          });
-        });
-      });
+        final List<DistrictModel> districtList = districtRs.fold(
+          (failure) => throw Exception("Không tìm thấy quận/huyện"),
+          (data) => data,
+        );
+
+        final selectedDistrict = districtList.firstWhere((x) => x.nameExtension.contains(address.district));
+
+        // 🔹 Lấy danh sách phường/xã
+        final communeRs = await _getWard(GetWardParams(selectedDistrict.districtId));
+        final List<WardModel> communeList = communeRs.fold(
+          (failure) => throw Exception("Không tìm thấy phường/xã"),
+          (data) => data,
+        );
+
+        final selectedCommune = communeList.firstWhere((x) => x.nameExtension.contains(address.commune));
+
+        // 🔹 Cập nhật thông tin user
+        userInfo = userInfo.copyWith(
+          district: selectedDistrict.districtId,
+          wardCode: int.parse(selectedCommune.wardCode),
+        );
+      } catch (e) {
+        emit(ProfileError(e.toString())); // Xuất lỗi đúng lúc
+        return;
+      }
     }
+
     AppLogger.info(userInfo.district);
     final result = await _updateProfile(UpdateProfileParams(userInfo, event.params.newAvatarFilePath));
     result.fold((failure) => emit(ProfileError(failure)), (data) => emit(ProfileLoaded(data)));

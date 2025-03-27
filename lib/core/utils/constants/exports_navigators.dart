@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/screens/payment_web_view.dart';
 import 'package:spa_mobile/core/common/screens/redirect_screen.dart';
@@ -31,6 +32,7 @@ import 'package:spa_mobile/features/home/presentation/screens/chat_ai_screen.dar
 import 'package:spa_mobile/features/home/presentation/screens/chat_list_screen.dart';
 import 'package:spa_mobile/features/home/presentation/screens/search_screen.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dart';
+import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/history_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';

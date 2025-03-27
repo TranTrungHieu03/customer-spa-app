@@ -1,5 +1,7 @@
 class Product {
   final int productId;
+  final int productBranchId;
+  final int stockQuantity;
   final String productName;
   final String productDescription;
   final String skinTypeSuitable;
@@ -12,11 +14,15 @@ class Product {
   final String brand;
   final int categoryId;
   final int companyId;
+  final int branchId;
   final List<String>? images;
 
   Product({
     required this.skinTypeSuitable,
     this.images,
+    required this.branchId,
+    required this.productBranchId,
+    required this.stockQuantity,
     required this.volume,
     required this.dimension,
     required this.productId,

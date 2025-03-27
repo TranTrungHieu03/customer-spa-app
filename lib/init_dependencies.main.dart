@@ -106,6 +106,7 @@ Future<void> _initProduct() async {
     //data src
     ..registerFactory<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<CartRemoteDataSource>(() => CartRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<OrderRemoteDataSource>(() => OrderRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<LocationRemoteDataSource>(() => LocationRemoteDataSourceImpl(
           serviceLocator<PermissionService>(),
           serviceLocator<GoongApiService>(),
@@ -115,6 +116,7 @@ Future<void> _initProduct() async {
         () => ProductRepositoryImpl(serviceLocator<ProductRemoteDataSource>(), serviceLocator<ConnectionChecker>()))
     ..registerFactory<CartRepository>(() => CartRepositoryImpl(serviceLocator<CartRemoteDataSource>()))
     ..registerFactory<LocationRepository>(() => LocationRepositoryImpl(serviceLocator<LocationRemoteDataSource>()))
+    ..registerFactory<OrderRepository>(() => OrderRepositoryImpl(serviceLocator<OrderRemoteDataSource>()))
     //use case
     ..registerLazySingleton(() => GetListProducts(serviceLocator()))
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
@@ -123,15 +125,17 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => RemoveProductCart(serviceLocator()))
     ..registerLazySingleton(() => GetDistance(serviceLocator()))
     ..registerLazySingleton(() => GetAddressAutoComplete(serviceLocator()))
+    ..registerLazySingleton(() => CreateOrder(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
-    ..registerLazySingleton(() => ListProductBloc(serviceLocator()))
+    ..registerLazySingleton(() => OrderBloc(createOrder: serviceLocator()))
+    ..registerLazySingleton(() => ListProductBloc(getListProducts: serviceLocator()))
     ..registerLazySingleton(() => NearestBranchBloc(getDistance: serviceLocator()))
     ..registerLazySingleton(() => AddressBloc(addressAutoComplete: serviceLocator()))
     ..registerLazySingleton(
         () => CartBloc(addProductCart: serviceLocator(), getProductCart: serviceLocator(), removeProductCart: serviceLocator()))
-    ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit());
+    ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit([]));
 }
 
 Future<void> _initService() async {

@@ -8,7 +8,7 @@ import 'package:spa_mobile/features/product/domain/usecases/remove_product_cart.
 abstract class CartRepository {
   const CartRepository();
 
-  Future<Either<Failure, String>> addProductToCart(AddProductCartParams product);
+  Future<Either<Failure, List<ProductCartModel>>> addProductToCart(AddProductCartParams product);
 
   Future<Either<Failure, String>> removeProductFromCart(RemoveProductCartParams product);
 

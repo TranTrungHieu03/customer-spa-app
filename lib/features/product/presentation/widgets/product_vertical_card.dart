@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/styles/shadow_styles.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
@@ -24,9 +25,10 @@ class TProductCardVertical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final controller = PurchasingData.of(context);
     return GestureDetector(
       child: Container(
-        width: width + 19,
+        width: width + 10,
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
             boxShadow: [TShadowStyle.verticalProductShadow],
@@ -75,7 +77,7 @@ class TProductCardVertical extends StatelessWidget {
             //details
 
             GestureDetector(
-              onTap: () => goProductDetail(productModel.productId),
+              onTap: () => goProductDetail(productModel.productBranchId, controller),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -111,7 +113,8 @@ class TProductCardVertical extends StatelessWidget {
                 //Price
                 Padding(
                   padding: const EdgeInsets.all(TSizes.xs),
-                  child: TProductPriceText(price: productModel.price.toString()),
+                  child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: width * 0.85), child: TProductPriceText(price: productModel.price.toString())),
                 ),
                 Container(
                   padding: const EdgeInsets.all(0),
@@ -124,9 +127,8 @@ class TProductCardVertical extends StatelessWidget {
                   ),
                   child: GestureDetector(
                     onTap: () {
-                      context
-                          .read<CartBloc>()
-                          .add(AddProductToCartEvent(params: AddProductCartParams(userId: 0, productId: 1, quantity: 1, operation: 0)));
+                      context.read<CartBloc>().add(AddProductToCartEvent(
+                          params: AddProductCartParams(userId: 0, productId: productModel.productBranchId, quantity: 1, operation: 0)));
                     },
                     child: const SizedBox(
                       width: TSizes.iconLg * 1.2,

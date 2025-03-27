@@ -7,7 +7,7 @@ import 'package:spa_mobile/features/product/domain/usecases/get_cart.dart';
 import 'package:spa_mobile/features/product/domain/usecases/remove_product_cart.dart';
 
 abstract class CartRemoteDataSource {
-  Future<String> addProductToCart(AddProductCartParams params);
+  Future<List<ProductCartModel>> addProductToCart(AddProductCartParams params);
 
   Future<String> removeProductFromCart(RemoveProductCartParams params);
 
@@ -20,12 +20,12 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   CartRemoteDataSourceImpl(this._apiServices);
 
   @override
-  Future<String> addProductToCart(params) async {
+  Future<List<ProductCartModel>> addProductToCart(params) async {
     try {
       final response = await _apiServices.postApi('/Cart/add-cart', params.toJson());
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
-        return (apiResponse.result!.data);
+        return (apiResponse.result!.data as List).map((e) => ProductCartModel.fromJson(e)).toList();
       } else {
         throw AppException(apiResponse.result!.message);
       }

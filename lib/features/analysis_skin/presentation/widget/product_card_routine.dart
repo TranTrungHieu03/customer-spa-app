@@ -4,7 +4,6 @@ import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
@@ -55,7 +54,7 @@ class TProductCardRoutine extends StatelessWidget {
             //details
 
             GestureDetector(
-              onTap: () => goProductDetail(productModel.productId),
+              // onTap: () => goProductDetail(productModel.productId),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -74,7 +73,6 @@ class TProductCardRoutine extends StatelessWidget {
                             maxLines: 2,
                           ),
                         ),
-
                       ],
                     ),
                   ),

@@ -43,8 +43,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     AppLogger.info(model.commune);
     setState(() {
       addressModel = model;
+      addressController.text = model.fullAddress;
     });
-    addressController.text = model.fullAddress;
+    //
   }
 
   @override
@@ -71,6 +72,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     cityController.text = user.city ?? "";
     userNameController.text = user.userName;
     addressController.text = user.address ?? "";
+  }
+
+  void showModalEditAddress(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.8,
+          child: AutofillAddress(
+            addressSubController: addressController,
+            update: (AddressModel selectedAddress) {
+              // Update the original controller with the selected address
+              addressController.text = selectedAddress.fullAddress;
+              // Call the original update function
+              _updateAddress(selectedAddress);
+            },
+          ),
+        );
+      },
+    ).then((_) {});
   }
 
   @override
@@ -102,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         listener: (context, state) {
           if (state is ProfileError) {
             TSnackBar.errorSnackBar(context, message: state.message);
-            goLoginNotBack();
+            // goLoginNotBack();
           }
         },
         child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -151,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: TSizes.sm),
                       GestureDetector(
-                        onTap: () => _showModalEditAddress(context, addressController, _updateAddress),
+                        onTap: () => showModalEditAddress(context),
                         child: TProfileItem(
                           label: AppLocalizations.of(context)!.address,
                           icon: Iconsax.home,
@@ -180,6 +205,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onPressed: () {
                               AppLogger.info(addressController.text);
                               AppLogger.info(addressModel.district);
+                              AppLogger.info(addressModel.province);
+                              AppLogger.info(addressModel.commune);
+                              AppLogger.info(addressModel.fullAddress);
 
                               if (context.read<ProfileBloc>().state is ProfileLoaded) {
                                 final isChangeAddress =
@@ -190,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       phoneNumber: phoneController.text.trim(),
                                       city: cityController.text.trim(),
                                       userName: userNameController.text.trim(),
-                                      address: addressModel.fullAddress.isEmpty ? addressModel.fullAddress : addressController.text.trim(),
+                                      address: isChangeAddress ? addressModel.fullAddress : addressController.text.trim(),
                                     );
                                 if (context.read<ImageBloc>().state is ImagePicked) {
                                   context.read<ProfileBloc>().add(
@@ -231,34 +259,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
-  }
-
-  void _showModalEditAddress(BuildContext context, TextEditingController addressController, Function(AddressModel) update) {
-    // final addressBloc = context.read<AddressBloc>();
-    final TextEditingController addressSubController = TextEditingController(text: addressController.text);
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
-      ),
-      builder: (BuildContext context) {
-        return FractionallySizedBox(
-          heightFactor: 0.8,
-          child: AutofillAddress(
-            addressSubController: addressSubController,
-            update: update,
-          ),
-        );
-      },
-    ).whenComplete(() {
-      if (addressSubController.text != '') {
-        AppLogger.info(addressSubController.text);
-        addressController = addressSubController;
-        AppLogger.info(addressController.text);
-      }
-    });
   }
 
   Widget _buildProfilePictureSection(String? avatar) {

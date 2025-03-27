@@ -28,8 +28,9 @@ goSetting() async {
       navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const NavigationMenu()), (Route<dynamic> route) => false);
 }
 
-goProductDetail(int id) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ProductDetailScreen(productId: id)));
+goProductDetail(int id, PurchasingDataController controller) async {
+  Navigator.push(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ProductDetailScreen(productId: id, controller: controller)));
 }
 
 goSetPassword(String email) async {
@@ -76,8 +77,8 @@ goLoginNotBack() async {
       (Route<dynamic> route) => false);
 }
 
-goCheckout() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const CheckoutScreen()));
+goCheckout(PurchasingDataController controller) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutScreen(controller: controller)));
 }
 
 goShipmentInfo() async {
@@ -210,8 +211,8 @@ goRedirectPayment(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => RedirectScreen(id: id)));
 }
 
-goCart() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen()));
+goCart(PurchasingDataController controller) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CartScreen(controller: controller)));
 }
 
 goRoutineDetail(String id) async {
@@ -268,6 +269,7 @@ goChatList() async {
 goRoutines() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperRoutineScreen()));
 }
+
 goRoutineStep(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperBookRoutineScreen(id: id)));
 }

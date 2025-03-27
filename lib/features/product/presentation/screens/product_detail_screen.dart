@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -21,8 +22,9 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_price.d
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  const ProductDetailScreen({super.key, required this.productId});
+  const ProductDetailScreen({super.key, required this.productId, required this.controller});
 
+  final PurchasingDataController controller;
   final int productId;
 
   @override
@@ -60,7 +62,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   TRoundedIcon(
                     icon: Iconsax.shopping_cart,
                     size: 30,
-                    onPressed: () => goCart(),
+                    onPressed: () => goCart(widget.controller),
                   )
                 ],
               ),
@@ -208,7 +210,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     flex: 3,
                     child: GestureDetector(
                       onTap: () {
-                        goCheckout();
+                        // goCheckout();
                       },
                       child: Container(
                         height: 55,

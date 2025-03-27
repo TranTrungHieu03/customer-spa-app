@@ -4,7 +4,9 @@ part of 'list_product_bloc.dart';
 sealed class ListProductEvent {}
 
 class GetListProductsEvent extends ListProductEvent {
-  final int page;
+  final GetListProductParams params;
 
-  GetListProductsEvent(this.page);
+  GetListProductsEvent(this.params);
 }
+
+class RefreshListProductEvent extends ListProductEvent {}

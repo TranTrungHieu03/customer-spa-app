@@ -58,7 +58,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     super.initState();
     _scrollController.addListener(_onScroll);
     _loadLocalData();
-
+    context.read<ListBranchesBloc>().add(GetListBranchesEvent());
     // Initial data loading
   }
 
@@ -297,8 +297,11 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                           icon: Iconsax.filter,
                           size: 16,
                           onPressed: () {
-                            context.read<ListBranchesBloc>().add(GetListBranchesEvent());
-                            _showFilterModel(context);
+                            final state = context.read<ListBranchesBloc>().state;
+                            if (state is ListBranchesLoaded) {
+                              context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
+                              _showFilterModel(context, state.branches);
+                            }
                           },
                         ),
                       const SizedBox(width: TSizes.xs),
@@ -385,23 +388,22 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
             ),
           ),
           SliverToBoxAdapter(
-              child: SizedBox(
-            height: 50,
-            child: GestureDetector(
-                onTap: () => goRoutines(),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text("Xem các gói liệu trình", style: Theme.of(context).textTheme.titleLarge),
-                      const SizedBox(
-                        width: TSizes.sm,
-                      ),
-                      const Icon(Iconsax.arrow_right_1)
-                    ],
-                  ),
-                )),
-          )),
+            child: SizedBox(
+              height: 50,
+              child: GestureDetector(
+                  onTap: () => goRoutines(),
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("Xem các gói liệu trình", style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(width: TSizes.sm),
+                        const Icon(Iconsax.arrow_right_1)
+                      ],
+                    ),
+                  )),
+            ),
+          ),
           BlocBuilder<ListServiceBloc, ListServiceState>(
             builder: (context, state) {
               if (state is ListServiceLoadingForSelection) {
@@ -613,8 +615,8 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     );
   }
 
-  void _showFilterModel(BuildContext context) {
-    List<BranchModel> listBranches = [];
+  void _showFilterModel(BuildContext context, List<BranchModel> branchesState) {
+    List<BranchModel> listBranches = branchesState;
     void updateServices() {
       context.read<ListServiceBloc>().add(RefreshListServiceEvent());
       previousBranch = selectedBranch;
@@ -643,7 +645,6 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
             child: BlocBuilder<ListBranchesBloc, ListBranchesState>(
               builder: (context, state) {
                 if (state is ListBranchesLoaded) {
-                  context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
                   final branches = state.branches;
                   listBranches = branches;
                   return Column(
