@@ -26,6 +26,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         super(CartInitial()) {
     on<GetCartProductsEvent>(_onGetCart);
     on<AddProductToCartEvent>(_onAddProduct);
+    on<UpdateProductToCartEvent>(_onUpdateProduct);
     on<RemoveProductFromCartEvent>(_onRemoveProduct);
   }
 
@@ -64,6 +65,29 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         (product) {
           emit(CartSuccess(message: "Thêm vào giỏ hàng thành công"));
           emit(CartLoaded(products: product));
+        },
+      );
+    } else {
+      goLoginNotBack();
+    }
+  }
+
+  Future<void> _onUpdateProduct(
+    UpdateProductToCartEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    // emit(CartUpdateLoading());
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    int userId;
+    if (jsonDecode(userJson) != null) {
+      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+      final result = await _addProductCart.call(AddProductCartParams(
+          userId: userId, productId: event.params.productId, quantity: event.params.quantity, operation: event.params.operation));
+      result.fold(
+        (failure) => emit(CartError(message: failure.message)),
+        (product) {
+          // emit(CartSuccess(message: "Thêm vào giỏ hàng thành công"));
+          // emit(CartLoaded(products: product));
         },
       );
     } else {

@@ -9,6 +9,12 @@ class AddProductToCartEvent extends CartEvent {
   AddProductToCartEvent({required this.params});
 }
 
+class UpdateProductToCartEvent extends CartEvent {
+  final AddProductCartParams params;
+
+  UpdateProductToCartEvent({required this.params});
+}
+
 class RemoveProductFromCartEvent extends CartEvent {
   final String id;
 

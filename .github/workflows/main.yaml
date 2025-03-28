@@ -53,11 +53,11 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
-      - name: 🔍 Debug Keystore & Signing Configs
-        run: |
-          ls -lah android/app/
-          cat android/key.properties
-          keytool -list -v -keystore android/app/upload-keystore.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}"
+#      - name: 🔍 Debug Keystore & Signing Configs
+#        run: |
+#          ls -lah android/app/
+#          cat android/key.properties
+#          keytool -list -v -keystore android/app/upload-keystore.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}"
 
 
       - name: 🚀 Build APK & AAB

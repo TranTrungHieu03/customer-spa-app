@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -39,7 +41,7 @@ class TProductCart extends StatelessWidget {
                 direction: DismissDirection.endToStart,
                 onDismissed: (direction) {
                   context.read<CartBloc>().add(RemoveProductFromCartEvent(id: productCart.product.productBranchId.toString()));
-                  TSnackBar.successSnackBar(context, message: "Xóa sản phẩm thaành công");
+                  TSnackBar.successSnackBar(context, message: "Xóa sản phẩm thành công");
                 },
                 background: Container(
                   color: Colors.redAccent.withOpacity(0.8),
@@ -59,6 +61,7 @@ class TProductCart extends StatelessWidget {
                   padding: const EdgeInsets.all(TSizes.sm),
                   child: TProductCartItem(
                     index: index,
+                    quantity: productCart.quantity,
                     product: productCart.product,
                   ),
                 ), // Pass the index to TProductCart
@@ -164,11 +167,13 @@ class TProductCart extends StatelessWidget {
 class TProductCartItem extends StatefulWidget {
   final int index;
   final ProductModel product;
+  final int quantity;
 
   const TProductCartItem({
     super.key,
     required this.index,
     required this.product,
+    required this.quantity,
   });
 
   @override
@@ -177,17 +182,18 @@ class TProductCartItem extends StatefulWidget {
 
 class _TProductCartItemState extends State<TProductCartItem> {
   late TextEditingController _quantityController;
-  bool _isEditing = false;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    _quantityController = TextEditingController(text: "1");
+    _quantityController = TextEditingController(text: widget.quantity.toString());
   }
 
   @override
   void dispose() {
     _quantityController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -197,8 +203,8 @@ class _TProductCartItemState extends State<TProductCartItem> {
       setState(() {
         currentQuantity++;
         _quantityController.text = currentQuantity.toString();
-        _isEditing = true;
       });
+      onChangeQuantity();
     } else {
       TSnackBar.warningSnackBar(context, message: "Số lượng không đượt vượt quá ${widget.product.stockQuantity}");
     }
@@ -211,23 +217,26 @@ class _TProductCartItemState extends State<TProductCartItem> {
       setState(() {
         currentQuantity--;
         _quantityController.text = currentQuantity.toString();
-        _isEditing = true;
       });
+      onChangeQuantity();
     } else {
       TSnackBar.warningSnackBar(context, message: "Bạn có chắc muốn xóa sản phẩm này");
     }
+  }
+
+  void onChangeQuantity() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 1000), () {
+      _saveQuantity();
+    });
   }
 
   void _saveQuantity() {
     int? quantity = int.tryParse(_quantityController.text);
     if (quantity != null && quantity > 0 && quantity < 1000) {
       // Add event to update cart quantity
-      context.read<CartBloc>().add(AddProductToCartEvent(
-          params: AddProductCartParams(userId: 0, productId: widget.product.productId, quantity: quantity, operation: 0)));
-
-      setState(() {
-        _isEditing = false;
-      });
+      context.read<CartBloc>().add(UpdateProductToCartEvent(
+          params: AddProductCartParams(userId: 0, productId: widget.product.productBranchId, quantity: quantity, operation: 2)));
     } else {
       // Show error if quantity is invalid
       ScaffoldMessenger.of(context).showSnackBar(
@@ -341,11 +350,6 @@ class _TProductCartItemState extends State<TProductCartItem> {
                                       isDense: true,
                                       contentPadding: EdgeInsets.all(TSizes.sm),
                                     ),
-                                    onTap: () {
-                                      setState(() {
-                                        _isEditing = true;
-                                      });
-                                    },
                                     onChanged: (value) {
                                       setState(() {
                                         // Validate input doesn't exceed stock quantity
@@ -356,7 +360,8 @@ class _TProductCartItemState extends State<TProductCartItem> {
                                           _quantityController.text = widget.product.stockQuantity.toString();
                                           parsedValue = widget.product.stockQuantity;
                                         }
-                                        _isEditing = true;
+                                        onChangeQuantity();
+                                        // _isEditing = true;
                                       });
                                     },
                                   ),
@@ -372,15 +377,15 @@ class _TProductCartItemState extends State<TProductCartItem> {
                                     height: 40,
                                   ),
                                 ),
-                                if (_isEditing)
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.save,
-                                      size: 25,
-                                      color: TColors.primary,
-                                    ),
-                                    onPressed: _saveQuantity,
-                                  )
+                                // if (_isEditing)
+                                //   IconButton(
+                                //     icon: const Icon(
+                                //       Icons.save,
+                                //       size: 25,
+                                //       color: TColors.primary,
+                                //     ),
+                                //     onPressed: _saveQuantity,
+                                //   )
                               ],
                             )
                           ],
