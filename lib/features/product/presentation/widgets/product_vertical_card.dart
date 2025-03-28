@@ -26,6 +26,7 @@ class TProductCardVertical extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = PurchasingData.of(context);
+
     return GestureDetector(
       child: Container(
         width: width + 10,
@@ -116,31 +117,36 @@ class TProductCardVertical extends StatelessWidget {
                   child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: width * 0.85), child: TProductPriceText(price: productModel.price.toString())),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(0),
-                  decoration: const BoxDecoration(
-                    color: TColors.primary,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(TSizes.cardRadiusMd),
-                      bottomRight: Radius.circular(TSizes.productImageRadius),
-                    ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      context.read<CartBloc>().add(AddProductToCartEvent(
-                          params: AddProductCartParams(userId: 0, productId: productModel.productBranchId, quantity: 1, operation: 0)));
-                    },
-                    child: const SizedBox(
-                      width: TSizes.iconLg * 1.2,
-                      height: TSizes.iconLg * 1.2,
-                      child: Center(
-                        child: Icon(
-                          Iconsax.add,
-                          color: TColors.white,
+                BlocBuilder<CartBloc, CartState>(
+                  builder: (context, state) {
+                    return Container(
+                      padding: const EdgeInsets.all(0),
+                      decoration: BoxDecoration(
+                        color: (state is CartLoading) ? TColors.primaryBackground : TColors.primary,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(TSizes.cardRadiusMd),
+                          bottomRight: Radius.circular(TSizes.productImageRadius),
                         ),
                       ),
-                    ),
-                  ),
+                      child: GestureDetector(
+                        onTap: () {
+
+                          context.read<CartBloc>().add(AddProductToCartEvent(
+                              params: AddProductCartParams(userId: 0, productId: productModel.productBranchId, quantity: 1, operation: 0)));
+                        },
+                        child: const SizedBox(
+                          width: TSizes.iconLg * 1.2,
+                          height: TSizes.iconLg * 1.2,
+                          child: Center(
+                            child: Icon(
+                              Iconsax.add,
+                              color: TColors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 )
               ],
             )

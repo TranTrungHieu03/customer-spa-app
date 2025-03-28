@@ -38,6 +38,8 @@ class WrapperProductsScreen extends StatefulWidget {
 }
 
 class _WrapperProductsScreenState extends State<WrapperProductsScreen> {
+  final PurchasingDataController controller = PurchasingDataController();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -47,7 +49,7 @@ class _WrapperProductsScreenState extends State<WrapperProductsScreen> {
         ),
       ],
       child: PurchasingData(
-        controller: PurchasingDataController(),
+        controller: controller,
         child: const ProductsScreen(),
       ),
     );
@@ -64,6 +66,7 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen> {
   late ScrollController _scrollController;
   late GetListProductParams params;
+  late PurchasingDataController controller;
 
 //branch
   int? selectedBranch;
@@ -119,27 +122,25 @@ class _ProductsScreenState extends State<ProductsScreen> {
         });
       }
     }
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    AppLogger.info(userJson);
+    if (jsonDecode(userJson) != null) {
+      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+    } else {
+      goLoginNotBack();
+    }
     params = GetListProductParams.empty(selectedBranch ?? 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ListProductBloc>().add(GetListProductsEvent(
           GetListProductParams(brand: "", page: 1, branchId: selectedBranch ?? 1, categoryId: 0, minPrice: -1, maxPrice: -1, sortBy: "")));
+      controller = PurchasingData.of(context)
+        ..updateBranchId(selectedBranch ?? 1)
+        ..updateUserId(userId ?? 0);
     });
-    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
-
-    if (jsonDecode(userJson) != null) {
-      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = PurchasingData.of(context)
-      ..updateBranchId(selectedBranch ?? 1)
-      ..updateUserId(userId ?? 0);
-    if (userId == null) {
-      goLoginNotBack();
-    }
-
     return Scaffold(
       backgroundColor: TColors.white,
       appBar: TAppbar(

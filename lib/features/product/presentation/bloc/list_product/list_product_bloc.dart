@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
 
@@ -23,6 +24,7 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
       return;
     }
     if (currentState is ListProductLoaded) {
+      AppLogger.info("go here");
       emit(currentState.copyWith(isLoadingMore: true));
       final result = await _getListProducts(event.params);
       result.fold(

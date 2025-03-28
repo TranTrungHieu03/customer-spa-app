@@ -4,15 +4,16 @@ import 'package:spa_mobile/features/product/domain/entities/product_cart.dart';
 class ProductCartModel extends ProductCart {
   final ProductModel product;
 
-  const ProductCartModel({required this.product, required super.productCartId, required super.quantity, required super.stockQuantity});
+
+  const ProductCartModel({required this.product, required super.productCartId, required super.quantity});
 
   factory ProductCartModel.fromJson(Map<String, dynamic> json) {
     return ProductCartModel(
       product: ProductModel.fromJson(json['product']),
       productCartId: json['productCartId'],
-      // quantity: json['quantity'] ?? 1,
-      quantity: 1,
-      stockQuantity: json['stockQuantity'],
+      quantity: json['quantity'],
+      // quantity: 1,
+      // stockQuantity: json['stockQuantity'],
     );
   }
 

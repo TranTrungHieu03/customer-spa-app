@@ -49,8 +49,10 @@ goSetPassword(String email) async {
 
 goHome() async {
   navigatorKey.currentContext!.read<NavigationBloc>().add(ChangeSelectedIndexEvent(0));
-  Navigator.pushAndRemoveUntil(
-      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const NavigationMenu()), (Route<dynamic> route) => false);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Navigator.pushAndRemoveUntil(
+        navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const NavigationMenu()), (Route<dynamic> route) => false);
+  });
 }
 
 goLogin() async {

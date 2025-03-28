@@ -40,7 +40,7 @@ class ProductModel extends Product {
       categoryId: json['categoryId'],
       companyId: json['companyId'],
       branchId: json['brandId'] ?? 0,
-      stockQuantity: json['stockQuantity'] ?? 10,
+      stockQuantity: json['stockQuantity'] ?? 0,
       productBranchId: json['productBranchId'] ?? 0,
       category: ProductCategoryModel.fromJson(json['category']),
       images: (json['images'] is List) ? (json['images'] as List).map((e) => e.toString()).toList() : [],
