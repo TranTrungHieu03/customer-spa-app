@@ -18,4 +18,14 @@ class BranchRepositoryImpl implements BranchRepository {
       return left(ApiFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, BranchModel>> getBranchDetail(params) async {
+    try {
+      BranchModel response = await _branchRemoteDataSrc.getBranchDetail(params);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
 }

@@ -27,6 +27,8 @@ import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dar
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_card_shimmer.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_vertical_card.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_branch_detail.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
@@ -47,6 +49,7 @@ class _WrapperProductsScreenState extends State<WrapperProductsScreen> {
         BlocProvider<ListProductBloc>(
           create: (context) => ListProductBloc(getListProducts: serviceLocator()),
         ),
+        BlocProvider<BranchBloc>(create: (_) => BranchBloc(getBranchDetail: serviceLocator())),
       ],
       child: PurchasingData(
         controller: controller,
@@ -72,7 +75,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   int? selectedBranch;
   int? previousBranch;
   BranchModel? branchInfo;
-  int? userId;
+  UserModel? userId;
 
   @override
   void initState() {
@@ -111,8 +114,13 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
     AppLogger.debug(branchId);
     if (mounted) {
-      if (int.parse(branchId) == 0) {
-        TSnackBar.warningSnackBar(context, message: "Vui lòng chọn chi nhánh để tiếp tục.");
+      if (branchId == "") {
+        // TSnackBar.warningSnackBar(context, message: "Vui lòng chọn chi nhánh để tiếp tục.");
+        setState(() {
+          selectedBranch = 1;
+          previousBranch = selectedBranch;
+        });
+        context.read<BranchBloc>().add(GetBranchDetailEvent(GetBranchDetailParams(1)));
       } else {
         branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
         AppLogger.debug(branchInfo);
@@ -125,9 +133,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
     final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
     AppLogger.info(userJson);
     if (jsonDecode(userJson) != null) {
-      userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+      userId = UserModel.fromJson(jsonDecode(userJson));
     } else {
       goLoginNotBack();
+    }
+    if (userId?.district == 0 || userId?.wardCode == 0) {
+      TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
     }
     params = GetListProductParams.empty(selectedBranch ?? 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -135,7 +146,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
           GetListProductParams(brand: "", page: 1, branchId: selectedBranch ?? 1, categoryId: 0, minPrice: -1, maxPrice: -1, sortBy: "")));
       controller = PurchasingData.of(context)
         ..updateBranchId(selectedBranch ?? 1)
-        ..updateUserId(userId ?? 0);
+        ..updateUser(userId);
     });
   }
 

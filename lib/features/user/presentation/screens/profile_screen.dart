@@ -8,7 +8,6 @@ import 'package:spa_mobile/core/common/widgets/circular_image.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -17,7 +16,7 @@ import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/data/models/address_model.dart';
 import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';
-import 'package:spa_mobile/features/user/presentation/widgets/autofill_address.dart';
+import 'package:spa_mobile/features/user/presentation/widgets/address_input.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/profile_item.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -35,17 +34,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController userNameController;
   late TextEditingController addressController;
   late AddressModel addressModel;
+  late String districtId;
+  late String wardCode;
 
-  void _updateAddress(AddressModel model) {
-    AppLogger.info("updated address");
-    AppLogger.info(model.district);
-    AppLogger.info(model.province);
-    AppLogger.info(model.commune);
-    setState(() {
-      addressModel = model;
-      addressController.text = model.fullAddress;
-    });
-    //
+  void _updateAddress(String address, String dtId, String wdCode) {
+    addressController.text = address;
+    districtId = dtId;
+    wardCode = wdCode;
   }
 
   @override
@@ -72,6 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     cityController.text = user.city ?? "";
     userNameController.text = user.userName;
     addressController.text = user.address ?? "";
+    districtId = user.district.toString();
+    wardCode = user.wardCode.toString();
   }
 
   void showModalEditAddress(BuildContext context) {
@@ -82,18 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
       ),
       builder: (BuildContext context) {
-        return FractionallySizedBox(
-          heightFactor: 0.8,
-          child: AutofillAddress(
-            addressSubController: addressController,
-            update: (AddressModel selectedAddress) {
-              // Update the original controller with the selected address
-              addressController.text = selectedAddress.fullAddress;
-              // Call the original update function
-              _updateAddress(selectedAddress);
-            },
-          ),
-        );
+        return FractionallySizedBox(heightFactor: 0.9, child: AddressInput(update: _updateAddress));
       },
     ).then((_) {});
   }
@@ -168,12 +154,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Iconsax.call,
                         controller: phoneController,
                       ),
-                      const SizedBox(height: TSizes.sm),
-                      TProfileItem(
-                        label: AppLocalizations.of(context)!.city,
-                        icon: Iconsax.building,
-                        controller: cityController,
-                      ),
+                      // const SizedBox(height: TSizes.sm),
+                      // TProfileItem(
+                      //   label: AppLocalizations.of(context)!.city,
+                      //   icon: Iconsax.building,
+                      //   controller: cityController,
+                      // ),
                       const SizedBox(height: TSizes.sm),
                       GestureDetector(
                         onTap: () => showModalEditAddress(context),
@@ -203,39 +189,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(width: TSizes.md),
                           ElevatedButton(
                             onPressed: () {
-                              AppLogger.info(addressController.text);
-                              AppLogger.info(addressModel.district);
-                              AppLogger.info(addressModel.province);
-                              AppLogger.info(addressModel.commune);
-                              AppLogger.info(addressModel.fullAddress);
-
                               if (context.read<ProfileBloc>().state is ProfileLoaded) {
-                                final isChangeAddress =
-                                    (context.read<ProfileBloc>().state as ProfileLoaded).userInfo.address != addressModel.fullAddress;
                                 final updatedUser = (context.read<ProfileBloc>().state as ProfileLoaded).userInfo.copyWith(
-                                      fullName: fullNameController.text.trim(),
-                                      email: emailController.text.trim(),
-                                      phoneNumber: phoneController.text.trim(),
-                                      city: cityController.text.trim(),
-                                      userName: userNameController.text.trim(),
-                                      address: isChangeAddress ? addressModel.fullAddress : addressController.text.trim(),
-                                    );
+                                    fullName: fullNameController.text.trim(),
+                                    email: emailController.text.trim(),
+                                    phoneNumber: phoneController.text.trim(),
+                                    city: cityController.text.trim(),
+                                    userName: userNameController.text.trim(),
+                                    address: addressController.text.trim(),
+                                    district: int.parse(districtId),
+                                    wardCode: int.parse(wardCode));
                                 if (context.read<ImageBloc>().state is ImagePicked) {
                                   context.read<ProfileBloc>().add(
                                         UpdateUserProfileEvent(
-                                            params: UpdateProfileParams(
-                                              updatedUser,
-                                              (context.read<ImageBloc>().state as ImagePicked).image.path,
-                                            ),
-                                            isChangeAddress: isChangeAddress,
-                                            addressModel: addressModel),
+                                          params: UpdateProfileParams(
+                                            updatedUser,
+                                            (context.read<ImageBloc>().state as ImagePicked).image.path,
+                                          ),
+                                        ),
                                       );
                                   context.read<ImageBloc>().add(RefreshImageEvent());
                                 } else {
                                   context.read<ProfileBloc>().add(UpdateUserProfileEvent(
-                                      params: UpdateProfileParams(updatedUser, ""),
-                                      isChangeAddress: isChangeAddress,
-                                      addressModel: addressModel));
+                                        params: UpdateProfileParams(updatedUser, ""),
+                                      ));
                                 }
                               }
                             },
@@ -331,33 +308,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(width: TSizes.md),
         ElevatedButton(
           onPressed: () {
-            AppLogger.info(addressController.text);
-            AppLogger.info(addressModel.district);
-
             if (context.read<ProfileBloc>().state is ProfileLoaded) {
-              final isChangeAddress = (context.read<ProfileBloc>().state as ProfileLoaded).userInfo.address != addressController.text;
               final updatedUser = (context.read<ProfileBloc>().state as ProfileLoaded).userInfo.copyWith(
-                    fullName: fullNameController.text.trim(),
-                    email: emailController.text.trim(),
-                    phoneNumber: phoneController.text.trim(),
-                    city: cityController.text.trim(),
-                    userName: userNameController.text.trim(),
-                    address: addressController.text.trim(),
-                  );
+                  fullName: fullNameController.text.trim(),
+                  email: emailController.text.trim(),
+                  phoneNumber: phoneController.text.trim(),
+                  city: cityController.text.trim(),
+                  userName: userNameController.text.trim(),
+                  address: addressController.text.trim(),
+                  district: int.parse(districtId),
+                  wardCode: int.parse(wardCode));
               if (context.read<ImageBloc>().state is ImagePicked) {
                 context.read<ProfileBloc>().add(
                       UpdateUserProfileEvent(
-                          params: UpdateProfileParams(
-                            updatedUser,
-                            (context.read<ImageBloc>().state as ImagePicked).image.path,
-                          ),
-                          isChangeAddress: isChangeAddress,
-                          addressModel: addressModel),
+                        params: UpdateProfileParams(
+                          updatedUser,
+                          (context.read<ImageBloc>().state as ImagePicked).image.path,
+                        ),
+                      ),
                     );
                 context.read<ImageBloc>().add(RefreshImageEvent());
               } else {
                 context.read<ProfileBloc>().add(UpdateUserProfileEvent(
-                    params: UpdateProfileParams(updatedUser, ""), isChangeAddress: isChangeAddress, addressModel: addressModel));
+                      params: UpdateProfileParams(updatedUser, ""),
+                    ));
               }
             }
           },

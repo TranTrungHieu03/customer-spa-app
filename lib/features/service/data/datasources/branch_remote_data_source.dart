@@ -2,10 +2,12 @@ import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_branch_detail.dart';
 
 abstract class BranchRemoteDataSource {
   Future<List<BranchModel>> getBranches();
 
+  Future<BranchModel> getBranchDetail(GetBranchDetailParams params);
 // Future<double> getDistance(double lat, double long);
 }
 
@@ -25,6 +27,23 @@ class BranchRemoteDataSourceImpl implements BranchRemoteDataSource {
 
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((e) => BranchModel.fromJson(e)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<BranchModel> getBranchDetail(GetBranchDetailParams params) async {
+    try {
+      final response = await _apiService.getApi('/Branch/get-by-id/${params.id}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return BranchModel.fromJson(apiResponse.result!.data);
       } else {
         throw AppException(apiResponse.result!.message!);
       }

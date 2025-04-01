@@ -43,47 +43,47 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     emit(ProfileLoading());
     UserModel userInfo = event.params.userInfo;
 
-    if (event.isChangeAddress) {
-      try {
-        final address = event.addressModel;
-
-        // 🔹 Lấy danh sách tỉnh/thành phố
-        final provinceRs = await _getProvince(NoParams());
-        final List<ProvinceModel> provinceList = provinceRs.fold(
-          (failure) => throw Exception("Không tìm thấy tỉnh/thành phố"),
-          (data) => data,
-        );
-
-        final selectedProvince = provinceList.firstWhere((x) => x.nameExtension.contains(address.province));
-
-        // 🔹 Lấy danh sách quận/huyện
-        final districtRs = await _getDistrict(GetDistrictParams(selectedProvince.provinceId));
-        final List<DistrictModel> districtList = districtRs.fold(
-          (failure) => throw Exception("Không tìm thấy quận/huyện"),
-          (data) => data,
-        );
-
-        final selectedDistrict = districtList.firstWhere((x) => x.nameExtension.contains(address.district));
-
-        // 🔹 Lấy danh sách phường/xã
-        final communeRs = await _getWard(GetWardParams(selectedDistrict.districtId));
-        final List<WardModel> communeList = communeRs.fold(
-          (failure) => throw Exception("Không tìm thấy phường/xã"),
-          (data) => data,
-        );
-
-        final selectedCommune = communeList.firstWhere((x) => x.nameExtension.contains(address.commune));
-
-        // 🔹 Cập nhật thông tin user
-        userInfo = userInfo.copyWith(
-          district: selectedDistrict.districtId,
-          wardCode: int.parse(selectedCommune.wardCode),
-        );
-      } catch (e) {
-        emit(ProfileError(e.toString())); // Xuất lỗi đúng lúc
-        return;
-      }
-    }
+    // if (event.isChangeAddress) {
+    //   try {
+    //     final address = event.addressModel;
+    //
+    //     // 🔹 Lấy danh sách tỉnh/thành phố
+    //     final provinceRs = await _getProvince(NoParams());
+    //     final List<ProvinceModel> provinceList = provinceRs.fold(
+    //       (failure) => throw Exception("Không tìm thấy tỉnh/thành phố"),
+    //       (data) => data,
+    //     );
+    //
+    //     final selectedProvince = provinceList.firstWhere((x) => x.nameExtension.contains(address.province));
+    //
+    //     // 🔹 Lấy danh sách quận/huyện
+    //     final districtRs = await _getDistrict(GetDistrictParams(selectedProvince.provinceId));
+    //     final List<DistrictModel> districtList = districtRs.fold(
+    //       (failure) => throw Exception("Không tìm thấy quận/huyện"),
+    //       (data) => data,
+    //     );
+    //
+    //     final selectedDistrict = districtList.firstWhere((x) => x.nameExtension.contains(address.district));
+    //
+    //     // 🔹 Lấy danh sách phường/xã
+    //     final communeRs = await _getWard(GetWardParams(selectedDistrict.districtId));
+    //     final List<WardModel> communeList = communeRs.fold(
+    //       (failure) => throw Exception("Không tìm thấy phường/xã"),
+    //       (data) => data,
+    //     );
+    //
+    //     final selectedCommune = communeList.firstWhere((x) => x.nameExtension.contains(address.commune));
+    //
+    //     // 🔹 Cập nhật thông tin user
+    //     userInfo = userInfo.copyWith(
+    //       district: selectedDistrict.districtId,
+    //       wardCode: int.parse(selectedCommune.wardCode),
+    //     );
+    //   } catch (e) {
+    //     emit(ProfileError(e.toString())); // Xuất lỗi đúng lúc
+    //     return;
+    //   }
+    // }
 
     AppLogger.info(userInfo.district);
     final result = await _updateProfile(UpdateProfileParams(userInfo, event.params.newAvatarFilePath));

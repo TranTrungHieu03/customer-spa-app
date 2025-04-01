@@ -10,7 +10,6 @@ import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
-import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/sliver_delegate.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
@@ -22,6 +21,8 @@ import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_branch_detail.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/screens/service_detail_screen.dart';
@@ -66,8 +67,12 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     final branchId = await LocalStorage.getData(LocalStorageKey.defaultBranch);
     AppLogger.debug(branchId);
     if (mounted) {
-      if (int.parse(branchId) == 0) {
-        TSnackBar.warningSnackBar(context, message: "Vui lòng chọn chi nhánh để tiếp tục.");
+      if (branchId == "") {
+        setState(() {
+          selectedBranch = 1;
+          previousBranch = selectedBranch;
+        });
+        context.read<BranchBloc>().add(GetBranchDetailEvent(GetBranchDetailParams(1)));
       } else {
         branchInfo = BranchModel.fromJson(json.decode(await LocalStorage.getData(LocalStorageKey.branchInfo)));
         AppLogger.debug(branchInfo);
@@ -272,22 +277,46 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     children: [
                       Flexible(
                         fit: FlexFit.tight,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              branchInfo?.branchName ?? "",
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            if (!_isScrolled)
-                              Text(
-                                branchInfo?.branchAddress ?? "",
-                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 10),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                          ],
+                        child: BlocBuilder<BranchBloc, BranchState>(
+                          builder: (context, state) {
+                            if (state is BranchLoaded) {
+                              final branch = state.branchModel;
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    branch.branchName,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  if (!_isScrolled)
+                                    Text(
+                                      branch.branchAddress,
+                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 10),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    ),
+                                ],
+                              );
+                            }
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  branchInfo?.branchName ?? "",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (!_isScrolled)
+                                  Text(
+                                    branchInfo?.branchAddress ?? "",
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 10),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                              ],
+                            );
+                          },
                         ),
                       ),
                       if (!_isScrolled)
@@ -714,6 +743,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                               if (selectedBranch != null) {
                                 await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
                                 if (selectedBranch != 0) {
+                                  AppLogger.info(jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
                                   await LocalStorage.saveData(
                                       LocalStorageKey.branchInfo, jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
                                 }

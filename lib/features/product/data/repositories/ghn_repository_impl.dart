@@ -6,8 +6,10 @@ import 'package:spa_mobile/features/product/data/model/district_model.dart';
 import 'package:spa_mobile/features/product/data/model/province_model.dart';
 import 'package:spa_mobile/features/product/data/model/ward_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/ghn_repositoty.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_available_service.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_district.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_fee_shipping.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_lead_time.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_ward.dart';
 
 class GHNRepositoryImpl implements GHNRepository {
@@ -55,6 +57,30 @@ class GHNRepositoryImpl implements GHNRepository {
   Future<Either<Failure, List<WardModel>>> getWard(GetWardParams params) async {
     try {
       List<WardModel> result = await _ghnRemoteDataSource.getWard(params);
+      return right(result);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> getLeadTime(GetLeadTimeParams params) async {
+    try {
+      String result = await _ghnRemoteDataSource.getLeadTime(params);
+      return right(result);
+    } on AppException catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> getAvailableService(GetAvailableServiceParams params) async {
+    try {
+      int result = await _ghnRemoteDataSource.getAvailableService(params);
       return right(result);
     } on AppException catch (e) {
       return left(ApiFailure(

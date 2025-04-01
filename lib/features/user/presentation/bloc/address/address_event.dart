@@ -10,3 +10,17 @@ class GetListAddressEvent extends AddressEvent {
 
   GetListAddressEvent(this.params);
 }
+
+class GetListProvinceEvent extends AddressEvent {}
+
+class GetListDistrictEvent extends AddressEvent {
+  final GetDistrictParams params;
+
+  GetListDistrictEvent(this.params);
+}
+
+class GetListCommuneEvent extends AddressEvent {
+  final GetWardParams params;
+
+  GetListCommuneEvent(this.params);
+}

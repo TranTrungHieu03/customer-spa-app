@@ -20,6 +20,7 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_service/list_service_bloc.dart';
@@ -52,6 +53,7 @@ class _WrapperServiceScreenState extends State<WrapperServiceScreen> {
           getListService: serviceLocator(),
         ),
       ),
+      BlocProvider<BranchBloc>(create: (_) => BranchBloc(getBranchDetail: serviceLocator())),
       BlocProvider<ListCategoryBloc>(create: (context) => ListCategoryBloc(getListCategories: serviceLocator())),
     ], child: AppointmentData(controller: AppointmentDataController(), child: const SelectServiceScreen()));
   }
@@ -331,7 +333,7 @@ class _ServiceScreenState extends State<ServiceScreen> {
                             groupValue: selectedBranch,
                             onChanged: (value) {
                               AppLogger.info('Selected branch: $selectedBranch ${selectedBranch == value}');
-
+                              context.read<BranchBloc>().add(RefreshBranchEvent());
                               setState(() {
                                 selectedBranch = value;
                               });

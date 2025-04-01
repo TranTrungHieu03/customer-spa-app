@@ -5,10 +5,10 @@ sealed class ProfileEvent {}
 
 class UpdateUserProfileEvent extends ProfileEvent {
   final UpdateProfileParams params;
-  final bool isChangeAddress;
-  final AddressModel addressModel;
 
-  UpdateUserProfileEvent({required this.params, this.isChangeAddress = false, required this.addressModel});
+  UpdateUserProfileEvent({
+    required this.params,
+  });
 }
 
 class GetUserInfoEvent extends ProfileEvent {}

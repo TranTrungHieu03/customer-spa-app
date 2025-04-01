@@ -126,13 +126,18 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => GetDistance(serviceLocator()))
     ..registerLazySingleton(() => GetAddressAutoComplete(serviceLocator()))
     ..registerLazySingleton(() => CreateOrder(serviceLocator()))
+    ..registerLazySingleton(() => GetAvailableService(serviceLocator()))
+    ..registerLazySingleton(() => GetLeadTime(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => OrderBloc(createOrder: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(getListProducts: serviceLocator()))
     ..registerLazySingleton(() => NearestBranchBloc(getDistance: serviceLocator()))
-    ..registerLazySingleton(() => AddressBloc(addressAutoComplete: serviceLocator()))
+    ..registerLazySingleton(
+        () => ShipFeeBloc(getLeadTime: serviceLocator(), getFeeShipping: serviceLocator(), getAvailableService: serviceLocator()))
+    ..registerLazySingleton(() => AddressBloc(
+        addressAutoComplete: serviceLocator(), getDistrict: serviceLocator(), getWard: serviceLocator(), getProvince: serviceLocator()))
     ..registerLazySingleton(
         () => CartBloc(addProductCart: serviceLocator(), getProductCart: serviceLocator(), removeProductCart: serviceLocator()))
     ..registerLazySingleton<CheckboxCartCubit>(() => CheckboxCartCubit([]));
@@ -158,10 +163,12 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetListStaff(serviceLocator()))
     ..registerLazySingleton(() => GetSingleStaff(serviceLocator()))
     ..registerLazySingleton(() => GetStaffFreeInTime(serviceLocator()))
+    ..registerLazySingleton(() => GetBranchDetail(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
+    ..registerLazySingleton(() => BranchBloc(getBranchDetail: serviceLocator()))
     ..registerLazySingleton(() => StaffBloc(getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getStaffFreeInTime: serviceLocator()))
     ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));

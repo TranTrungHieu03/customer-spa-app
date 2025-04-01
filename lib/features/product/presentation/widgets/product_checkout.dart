@@ -1,28 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
+import 'package:spa_mobile/core/common/widgets/shimmer.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_available_service.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_fee_shipping.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_lead_time.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/ship_fee/ship_fee_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 import 'product_price.dart';
 
-class TProductCheckout extends StatelessWidget {
+class TProductCheckout extends StatefulWidget {
   const TProductCheckout({
     super.key,
-    required this.products, required this.controller,
+    required this.products,
+    required this.controller,
   });
 
   final List<ProductQuantity> products;
   final PurchasingDataController controller;
 
   @override
-  Widget build(BuildContext context) {
+  State<TProductCheckout> createState() => _TProductCheckoutState();
+}
 
+class _TProductCheckoutState extends State<TProductCheckout> {
+  @override
+  Widget build(BuildContext context) {
+    final products = widget.products;
+    final controller = widget.controller;
+    final branch = widget.controller.branch;
+    final shipment = widget.controller.shipment;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
       decoration: BoxDecoration(
@@ -175,12 +195,87 @@ class TProductCheckout extends StatelessWidget {
             height: TSizes.sm,
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(AppLocalizations.of(context)!.shipping_carrier, style: Theme.of(context).textTheme.bodyMedium),
-              Text("Giao hàng nhanh", style: Theme.of(context).textTheme.bodyLarge),
             ],
+          ),
+          const SizedBox(
+            height: TSizes.sm,
+          ),
+          BlocListener<ShipFeeBloc, ShipFeeState>(
+            listener: (context, state) {
+              if (state is ShipFeeError) {
+                TSnackBar.errorSnackBar(context, message: state.message);
+              }
+              if (state is ShipFeeLoadedServiceId) {
+                widget.controller.updateServiceGHN(state.serviceId);
+                context.read<ShipFeeBloc>().add(GetLeadTimeEvent(GetLeadTimeParams(
+                      fromDistrictId: branch!.district,
+                      fromWardCode: branch.wardCode.toString(),
+                      toDistrictId: int.parse(shipment.districtId),
+                      toWardCode: shipment.wardCode,
+                      serviceId: state.serviceId,
+                    )));
+              }
+              if (state is ShipFeeLoaded && state.leadTime.isNotEmpty && state.fee == 0) {
+                controller.updateExpectedDate(state.leadTime);
+                context.read<ShipFeeBloc>().add(GetShipFeeEvent(GetFeeShippingParams(
+                      fromDistrictId: branch!.district,
+                      fromWardCode: branch.wardCode.toString(),
+                      serviceId: widget.controller.serviceGHN,
+                      toDistrictId: int.parse(shipment.districtId),
+                      toWardCode: shipment.wardCode,
+                      height: 50,
+                      length: 50,
+                      weight: widget.products.fold<int>(0, (x, y) => x + y.product.volume.toInt()),
+                      width: 50,
+                    )));
+              }
+              if (state is ShipFeeLoaded && state.fee != 0) {
+                controller.updateShippingCost(state.fee);
+                controller.updateTotalPrice(widget.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) + state.fee);
+              }
+            },
+            child: BlocBuilder<ShipFeeBloc, ShipFeeState>(
+              builder: (context, state) {
+                if (state is ShipFeeLoaded && state.fee != 0) {
+                  AppLogger.info(DateTime.parse(state.leadTime).toLocal());
+                  return TRoundedContainer(
+                    borderColor: Colors.greenAccent,
+                    padding: EdgeInsets.all(TSizes.sm),
+                    backgroundColor: Colors.greenAccent.withOpacity(0.4),
+                    showBorder: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Giao hàng nhanh", style: Theme.of(context).textTheme.bodyLarge),
+                            TProductPriceText(price: state.fee.toString()),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Đảm bảo nhận hàng vào ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(state.leadTime).toUtc().toLocal())}.",
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                } else if (state is ShipFeeLoading) {
+                  return const TLoader();
+                }
+                return const SizedBox();
+              },
+            ),
           ),
           const Divider(),
           Row(
@@ -188,8 +283,17 @@ class TProductCheckout extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(AppLocalizations.of(context)!.total_amount, style: Theme.of(context).textTheme.bodyMedium),
-              const TProductPriceText(
-                price: "550",
+              BlocBuilder<ShipFeeBloc, ShipFeeState>(
+                builder: (context, state) {
+                  if (state is ShipFeeLoaded && state.fee != 0) {
+                    return TProductPriceText(
+                      price: (widget.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) + state.fee).toString(),
+                    );
+                  } else if (state is ShipFeeLoaded && state.fee == 0) {
+                    return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
+                  }
+                  return const SizedBox();
+                },
               )
             ],
           ),
@@ -199,6 +303,26 @@ class TProductCheckout extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return; // Đảm bảo widget vẫn còn tồn tại
+      final branch = widget.controller.branch;
+      final shipment = widget.controller.shipment;
+
+      if (branch == null || shipment.districtId == "0") {
+        return;
+      }
+
+      final shipFeeBloc = context.read<ShipFeeBloc>();
+      if (!shipFeeBloc.isClosed) {
+        shipFeeBloc.add(GetAvailableServiceEvent(
+            GetAvailableServiceParams(shopId: 3838500, fromDistrict: branch.district, toDistrict: int.parse(shipment.districtId))));
+      }
+    });
   }
 }
 

@@ -14,6 +14,8 @@ class BranchModel extends Branch {
       required super.latAddress,
       required super.status,
       required super.managerId,
+      required super.district,
+      required super.wardCode,
       this.managerBranch,
       this.distance});
 
@@ -27,6 +29,8 @@ class BranchModel extends Branch {
       latAddress: json['latAddress'],
       status: json['status'],
       managerId: json['managerId'],
+      district: json['district'] ?? 0,
+      wardCode: json['wardCode'] ?? 0,
       distance: json['distance'] ?? 0,
       managerBranch: json['managerBranch'] != null ? UserModel.fromJson(json['managerBranch']) : null,
     );
@@ -43,6 +47,8 @@ class BranchModel extends Branch {
       'status': status,
       'managerId': managerId,
       'managerBranch': managerBranch?.toJson(),
+      'district': district,
+      'wardCode': wardCode,
     };
   }
 
@@ -56,6 +62,8 @@ class BranchModel extends Branch {
       'latAddress': "",
       'status': "",
       'managerId': "",
+      'district': "",
+      'wardCode': ""
     };
   }
 
@@ -68,7 +76,8 @@ class BranchModel extends Branch {
     String? latAddress,
     String? status,
     int? managerId,
-    UserModel? managerBranch,
+    int? district,
+    int? wardCode,
     double? distance,
   }) {
     return BranchModel(
@@ -82,6 +91,8 @@ class BranchModel extends Branch {
       managerId: managerId ?? this.managerId,
       managerBranch: managerBranch ?? this.managerBranch,
       distance: distance ?? this.distance,
+      district: district ?? this.district,
+      wardCode: wardCode ?? this.wardCode,
     );
   }
 }

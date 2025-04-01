@@ -17,7 +17,6 @@ class GetFeeShippingParams {
   final int fromDistrictId;
   final String fromWardCode;
   final int serviceId;
-  final dynamic serviceTypeId;
   final int toDistrictId;
   final String toWardCode;
   final int height;
@@ -29,7 +28,6 @@ class GetFeeShippingParams {
     required this.fromDistrictId,
     required this.fromWardCode,
     required this.serviceId,
-    required this.serviceTypeId,
     required this.toDistrictId,
     required this.toWardCode,
     required this.height,
@@ -42,7 +40,6 @@ class GetFeeShippingParams {
         "from_district_id": fromDistrictId,
         "from_ward_code": fromWardCode,
         "service_id": serviceId,
-        "service_type_id": serviceTypeId,
         "to_district_id": toDistrictId,
         "to_ward_code": toWardCode,
         "height": height,

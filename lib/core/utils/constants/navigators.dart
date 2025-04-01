@@ -83,8 +83,13 @@ goCheckout(PurchasingDataController controller) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutScreen(controller: controller)));
 }
 
-goShipmentInfo() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const ShipmentInformationScreen()));
+goShipmentInfo(PurchasingDataController controller) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => ShipmentInformationScreen(
+                controller: controller,
+              )));
 }
 
 goServiceHistory() async {
@@ -274,4 +279,12 @@ goRoutines() async {
 
 goRoutineStep(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperBookRoutineScreen(id: id)));
+}
+
+goCheckoutRoutine() async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const CheckoutRoutineScreen()));
+}
+
+goSelectRoutineTime() async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const SelectRoutineTimeScreen()));
 }

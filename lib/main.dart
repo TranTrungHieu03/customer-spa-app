@@ -27,6 +27,7 @@ import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dar
 import 'package:spa_mobile/features/product/presentation/bloc/order/order_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart';

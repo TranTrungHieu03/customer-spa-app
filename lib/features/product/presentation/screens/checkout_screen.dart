@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/shimmer.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/order/order_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/ship_fee/ship_fee_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_checkout.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
+import 'package:spa_mobile/init_dependencies.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key, required this.controller});
@@ -33,40 +43,82 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             style: Theme.of(context).textTheme.headlineMedium,
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                const TContactInformation(),
-                const SizedBox(
-                  height: TSizes.md,
+        body: MultiBlocProvider(
+          providers: [
+            BlocProvider<ShipFeeBloc>(
+                create: (context) =>
+                    ShipFeeBloc(getLeadTime: serviceLocator(), getFeeShipping: serviceLocator(), getAvailableService: serviceLocator())),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
+            child: SingleChildScrollView(
+              child: BlocListener<OrderBloc, OrderState>(
+                listener: (context, state) {
+                  if (state is OrderError) {
+                    TSnackBar.errorSnackBar(context, message: state.message);
+                  }
+                  if (state is OrderSuccess) {
+                    goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
+                        () => goFeedback(), TImages.success);
+                    context.read<CartBloc>().add(RemoveProductFromCartEvent(id: widget.controller.products[0].productBranchId.toString()));
+                  }
+                },
+                child: BlocBuilder<OrderBloc, OrderState>(
+                  builder: (context, state) {
+                    return Stack(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            TContactInformation(controller: widget.controller),
+                            const SizedBox(
+                              height: TSizes.md,
+                            ),
+                            TProductCheckout(
+                              products: products,
+                              controller: widget.controller,
+                            ),
+                            const SizedBox(
+                              height: TSizes.md,
+                            ),
+                            TPaymentMethod(
+                              controller: widget.controller,
+                            ),
+                            const SizedBox(
+                              height: TSizes.md,
+                            ),
+                            TPaymentDetail(
+                              controller: widget.controller,
+                            )
+                          ],
+                        ),
+                        if (state is OrderLoading) const TLoader()
+                      ],
+                    );
+                  },
                 ),
-                TProductCheckout(
-                  products: products,
-                  controller: widget.controller,
-                ),
-                const SizedBox(
-                  height: TSizes.md,
-                ),
-                TPaymentMethod(),
-                const SizedBox(
-                  height: TSizes.md,
-                ),
-                TPaymentDetail()
-              ],
+              ),
             ),
           ),
         ),
-        bottomNavigationBar: const TBottomCheckout());
+        bottomNavigationBar: TBottomCheckout(
+          controller: widget.controller,
+        ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 }
 
 class TPaymentDetail extends StatelessWidget {
   const TPaymentDetail({
     super.key,
+    required this.controller,
   });
+
+  final PurchasingDataController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +138,8 @@ class TPaymentDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(AppLocalizations.of(context)!.total_order_amount, style: Theme.of(context).textTheme.bodyMedium),
-                  const TProductPriceText(
-                    price: "550",
+                  TProductPriceText(
+                    price: (controller.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity)).toString(),
                     isLarge: true,
                   )
                 ],
@@ -97,10 +149,18 @@ class TPaymentDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(AppLocalizations.of(context)!.shipping_fee, style: Theme.of(context).textTheme.bodyMedium),
-                  const TProductPriceText(
-                    price: "50",
-                    isLarge: true,
-                  )
+                  BlocBuilder<ShipFeeBloc, ShipFeeState>(
+                    builder: (context, state) {
+                      if (state is ShipFeeLoaded && state.fee != 0) {
+                        return TProductPriceText(
+                          price: (state.fee).toString(),
+                        );
+                      } else if (state is ShipFeeLoaded && state.fee == 0) {
+                        return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                 ],
               ),
               Row(
@@ -108,9 +168,19 @@ class TPaymentDetail extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyMedium),
-                  const TProductPriceText(
-                    price: "500",
-                  )
+                  BlocBuilder<ShipFeeBloc, ShipFeeState>(
+                    builder: (context, state) {
+                      if (state is ShipFeeLoaded && state.fee != 0) {
+                        return TProductPriceText(
+                          price: (controller.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) + state.fee)
+                              .toString(),
+                        );
+                      } else if (state is ShipFeeLoaded && state.fee == 0) {
+                        return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                 ],
               ),
             ],
@@ -124,7 +194,10 @@ class TPaymentDetail extends StatelessWidget {
 class TPaymentMethod extends StatelessWidget {
   const TPaymentMethod({
     super.key,
+    required this.controller,
   });
+
+  final PurchasingDataController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -187,10 +260,14 @@ class TPaymentMethod extends StatelessWidget {
 class TContactInformation extends StatelessWidget {
   const TContactInformation({
     super.key,
+    required this.controller,
   });
+
+  final PurchasingDataController controller;
 
   @override
   Widget build(BuildContext context) {
+    final user = controller.user;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.md * 2 / 3),
       decoration: BoxDecoration(
@@ -218,7 +295,7 @@ class TContactInformation extends StatelessWidget {
                       maxWidth: THelperFunctions.screenWidth(context) * 0.5,
                     ),
                     child: Text(
-                      "Tran Trung Hieu",
+                      user?.fullName ?? "",
                       style: Theme.of(context).textTheme.titleLarge,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -229,7 +306,7 @@ class TContactInformation extends StatelessWidget {
                   SizedBox(
                     width: THelperFunctions.screenWidth(context) * 0.3,
                     child: Text(
-                      "0837 394 311",
+                      user?.phoneNumber ?? "",
                       style: Theme.of(context).textTheme.bodySmall,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -239,7 +316,7 @@ class TContactInformation extends StatelessWidget {
               SizedBox(
                 width: THelperFunctions.screenWidth(context) * 0.8,
                 child: Text(
-                  "147 Hoang Huu Nam, Tan Phu, Thu Duc, HCM",
+                  user?.address ?? "",
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               )
@@ -251,7 +328,7 @@ class TContactInformation extends StatelessWidget {
             size: 20,
             height: 30,
             onPressed: () {
-              goShipmentInfo();
+              goShipmentInfo(controller);
             },
           )
         ],
@@ -263,66 +340,77 @@ class TContactInformation extends StatelessWidget {
 class TBottomCheckout extends StatelessWidget {
   const TBottomCheckout({
     super.key,
+    required this.controller,
   });
+
+  final PurchasingDataController controller;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 2,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.totalPayment,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(
-              width: TSizes.sm / 2,
-            ),
-            const TProductPriceText(price: "5000"),
-            const SizedBox(width: TSizes.md),
-            ElevatedButton(
-              onPressed: () {
-                // => goSuccess(
-                //     AppLocalizations.of(context)!.paymentSuccessTitle,
-                //     AppLocalizations.of(context)!.paymentSuccessSubTitle,
-                //         () => goFeedback(),
-                //     TImages.success)
-                // context.read<AppointmentBloc>().add(
-                //   CreateAppointmentEvent(
-                //     CreateAppointmentParams(
-                //       customerId: 1,
-                //       staffId: 1,
-                //       serviceId: service.serviceId,
-                //       branchId: 1,
-                //       appointmentsTime: DateTime.now(),
-                //       notes: "",
-                //     ),
-                //   ),
-                // );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+    return BlocProvider(
+      create: (context) => OrderBloc(createOrder: serviceLocator()),
+      child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 2,
+                spreadRadius: 1,
               ),
-              child: Text(
-                AppLocalizations.of(context)!.order,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: TSizes.md,
-                    ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Text(
+              //   AppLocalizations.of(context)!.totalPayment,
+              //   style: Theme.of(context).textTheme.bodyMedium,
+              // ),
+              // const SizedBox(
+              //   width: TSizes.sm / 2,
+              // ),
+              // BlocBuilder<ShipFeeBloc, ShipFeeState>(
+              //   builder: (context, state) {
+              //     if (state is ShipFeeLoaded && state.fee != 0) {
+              //       return TProductPriceText(
+              //         price: (controller.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) + state.fee).toString(),
+              //       );
+              //     } else if (state is ShipFeeLoaded && state.fee == 0) {
+              //       return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
+              //     }
+              //     return const SizedBox();
+              //   },
+              // ),
+              const SizedBox(width: TSizes.md),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<OrderBloc>().add(CreateOrderEvent(CreateOrderParams(
+                      userId: controller.user!.userId,
+                      totalAmount: controller.totalPrice,
+                      voucherId: null,
+                      paymentMethod: "PayOs",
+                      products: controller.products,
+                      estimatedDeliveryDate: controller.expectedDate,
+                      shippingCost: controller.shippingCost.toDouble(),
+                      recipientAddress: controller.shipment.address,
+                      recipientName: controller.shipment.name,
+                      recipientPhone: controller.shipment.phoneNumber)));
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.order,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.white,
+                        fontSize: TSizes.md,
+                      ),
+                ),
               ),
-            ),
-          ],
-        ));
+            ],
+          )),
+    );
   }
 }
