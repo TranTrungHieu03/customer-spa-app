@@ -79,7 +79,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: BlocListener<AppointmentBloc, AppointmentState>(
           listener: (context, state) {
             if (state is AppointmentLoaded) {
-              isPaid = state.appointment.statusPayment == "Pending";
+              setState(() {
+                isPaid = state.appointment.statusPayment == "Paid";
+              });
             }
           },
           child: BlocBuilder<AppointmentBloc, AppointmentState>(
@@ -129,7 +131,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const SizedBox(width: TSizes.sm),
                         if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
                           Text(
-                            "Pending",
+                            "Đang chờ thanh toán",
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        if (order.statusPayment == "Paid")
+                          Text(
+                            "Đã thanh toán",
                             style: Theme.of(context).textTheme.bodyMedium,
                           )
                       ],
@@ -284,20 +291,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
       bottomNavigationBar: Row(
         children: [
           const Spacer(),
-          if (isPaid)
+          if (!isPaid)
             ElevatedButton(
                 onPressed: () {
                   if (_selectedPaymentOption == PaymentOption.full) {
                     context.read<PaymentBloc>().add(PayFullEvent(PayFullParams(
                         totalAmount: totalAmount.toString(),
                         orderId: widget.id,
-                        request: RequestPayOsModel(returnUrl: "success", cancelUrl: "cancel"))));
+                        request: RequestPayOsModel(returnUrl: "/success", cancelUrl: "/cancel"))));
                   } else {
                     context.read<PaymentBloc>().add(PayDepositEvent(PayDepositParams(
                         totalAmount: totalAmount.toString(),
                         orderId: widget.id,
                         percent: 30,
-                        request: RequestPayOsModel(returnUrl: "success", cancelUrl: "cancel"))));
+                        request: RequestPayOsModel(returnUrl: "/success", cancelUrl: "/cancel"))));
                   }
                   goRedirectPayment(
                     widget.id,

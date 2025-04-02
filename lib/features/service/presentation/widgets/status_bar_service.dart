@@ -59,6 +59,10 @@ class _TStatusTabServiceState extends State<TStatusTabService> with AutomaticKee
                   orders = state.completed;
                   pagination = state.paginationCompleted;
                   isLoading = state.isLoadingMoreCompleted;
+                } else if (widget.status == "arrived") {
+                  orders = state.arrived;
+                  pagination = state.paginationArrived;
+                  isLoading = state.isLoadingMoreArrived;
                 } else {
                   orders = state.cancelled;
                   pagination = state.paginationCancelled;

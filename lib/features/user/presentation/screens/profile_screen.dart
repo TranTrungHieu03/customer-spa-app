@@ -14,6 +14,8 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/data/models/address_model.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
 import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/address_input.dart';
@@ -114,6 +116,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (state is ProfileError) {
             TSnackBar.errorSnackBar(context, message: state.message);
             // goLoginNotBack();
+          }
+          if (state is ProfileLoaded) {
+            context.read<UserChatBloc>().add(GetUserChatInfoEvent(GetUserChatInfoParams(state.userInfo.userId)));
           }
         },
         child: BlocBuilder<ProfileBloc, ProfileState>(

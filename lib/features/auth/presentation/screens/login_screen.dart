@@ -16,6 +16,8 @@ import 'package:spa_mobile/features/auth/domain/usecases/login.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
             } else if (state is AuthFailure) {
               TSnackBar.errorSnackBar(context, message: state.message);
             } else if (state is AuthLoaded) {
+              context.read<UserChatBloc>().add(GetUserChatInfoEvent(GetUserChatInfoParams(state.user.userId)));
               goHome();
             }
           },

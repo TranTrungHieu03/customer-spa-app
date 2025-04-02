@@ -23,11 +23,11 @@ import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/order/order_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart';
@@ -65,7 +65,7 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<ServiceBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProfileBloc>()),
         BlocProvider(create: (_) => serviceLocator<AddressBloc>()),
-        // BlocProvider(create: (_) => serviceLocator<ListProductBloc>()),
+        BlocProvider(create: (_) => serviceLocator<UserChatBloc>()),
         BlocProvider(create: (_) => serviceLocator<ProductBloc>()),
         BlocProvider(create: (_) => serviceLocator<ImageBloc>()),
         BlocProvider(create: (_) => serviceLocator<NavigationBloc>()),

@@ -149,12 +149,14 @@ Future<void> _initService() async {
     ..registerFactory<ServiceRemoteDataSrc>(() => ServiceRemoteDataSrcImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<BranchRemoteDataSource>(() => BranchRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<StaffRemoteDataSource>(() => StaffRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<HubRemoteDataSource>(() => HubRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
 
     //repo
     ..registerFactory<ServiceRepository>(
         () => ServiceRepositoryImpl(serviceLocator<ServiceRemoteDataSrc>(), serviceLocator<ConnectionChecker>()))
     ..registerFactory<BranchRepository>(() => BranchRepositoryImpl(serviceLocator<BranchRemoteDataSource>()))
     ..registerFactory<StaffRepository>(() => StaffRepositoryImpl(serviceLocator<StaffRemoteDataSource>()))
+    ..registerFactory<HubRepository>(() => HubRepositoryImpl(serviceLocator<HubRemoteDataSource>()))
 
     //use case
     ..registerLazySingleton(() => GetListService(serviceLocator()))
@@ -164,11 +166,13 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetSingleStaff(serviceLocator()))
     ..registerLazySingleton(() => GetStaffFreeInTime(serviceLocator()))
     ..registerLazySingleton(() => GetBranchDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetUserChatInfo(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
     ..registerLazySingleton(() => BranchBloc(getBranchDetail: serviceLocator()))
+    ..registerLazySingleton(() => UserChatBloc(getUserChatInfo: serviceLocator()))
     ..registerLazySingleton(() => StaffBloc(getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getStaffFreeInTime: serviceLocator()))
     ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));

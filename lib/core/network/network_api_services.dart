@@ -29,9 +29,14 @@ class NetworkApiService implements BaseApiServices {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          _cachedToken = _cachedToken ??= await authService.getToken();
+          AppLogger.info(options.path);
+          if (options.path != '/register' && options.path != '/login' && options.path != '/first-step') {
+            _cachedToken = _cachedToken ??= await authService.getToken();
+            options.headers['Authorization'] = 'Bearer $_cachedToken';
+          }
+          // _cachedToken = _cachedToken ??= await authService.getToken();
 
-          options.headers['Authorization'] = 'Bearer $_cachedToken';
+          // options.headers['Authorization'] = 'Bearer $_cachedToken';
           if (options.data is! FormData) {
             options.headers['Content-Type'] = 'application/json';
           }
@@ -180,6 +185,8 @@ class NetworkApiService implements BaseApiServices {
     } on DioException catch (e) {
       if (kDebugMode) {
         AppLogger.error(e);
+        AppLogger.error(e.error);
+        AppLogger.error(e.message);
       }
       if (e.type == DioExceptionType.badResponse) {
         return returnResponse(e.response!);
@@ -227,16 +234,17 @@ class NetworkApiService implements BaseApiServices {
           return response.data;
         }
       case 401:
-        throw UnauthorisedException(response.data.toString());
+      // throw UnauthorisedException(response.data.toString());
       case 500:
       case 404:
-        throw BadRequestException(response.data.toString());
+        // throw BadRequestException(response.data['message']);
+        return response.data;
       default:
         throw FetchDataException('Error occurred while communicating with server');
     }
   }
 
-  void clearTokenCache() {
+  void clearTokenCache() async {
     _cachedToken = null;
     if (kDebugMode) {
       AppLogger.info("==> Token cache cleared");
