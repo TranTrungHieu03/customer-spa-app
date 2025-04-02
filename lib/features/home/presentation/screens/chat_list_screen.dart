@@ -1,5 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
+import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
 
 // Model to represent a chat conversation
 class ChatConversation {
@@ -24,6 +34,9 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
+  UserChatModel? userChatModel;
+  late int userId;
+
   // Sample chat conversations (In a real app, this would come from a backend/state management)
   final List<ChatConversation> conversations = [
     ChatConversation(
@@ -44,6 +57,42 @@ class _ChatListScreenState extends State<ChatListScreen> {
     ),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadLocalData();
+    _loadListChat();
+  }
+
+  void _loadListChat() {}
+
+  void _loadLocalData() async {
+    final jsonUserChat = await LocalStorage.getData(LocalStorageKey.userChat);
+
+    if (jsonUserChat != null && jsonUserChat.isNotEmpty) {
+      try {
+        userChatModel = UserChatModel.fromJson(jsonDecode(jsonUserChat));
+        setState(() {});
+      } catch (e) {
+        debugPrint('Lỗi parsing userChatModel: $e');
+        goLoginNotBack();
+      }
+      return;
+    }
+
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    if (userJson != null && userJson.isNotEmpty) {
+      try {
+        userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+        context.read<UserChatBloc>().add(GetUserChatInfoEvent(GetUserChatInfoParams(userId)));
+      } catch (e) {
+        goLoginNotBack();
+      }
+    } else {
+      goLoginNotBack();
+    }
+  }
+
   // Format timestamp to show relative time
   String _formatTimestamp(DateTime timestamp) {
     final now = DateTime.now();
@@ -58,6 +107,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.info(userChatModel?.id);
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: true,

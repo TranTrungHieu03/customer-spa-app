@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
@@ -27,6 +28,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((e) => ProductCartModel.fromJson(e)).toList();
       } else {
+        AppLogger.info(apiResponse.result!.message);
         throw AppException(apiResponse.result!.message);
       }
     } catch (e) {

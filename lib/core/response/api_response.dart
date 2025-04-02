@@ -29,7 +29,9 @@ class ApiResponse<T> {
       status: json['success'] ? Status.completed : Status.error,
       result: json['result'] != null
           ? Result<T>(
-              data: json['result']['data'], message: json['result']['message'] ?? json['message'], pagination: json['result']['pagination'])
+              data: json['result']['data'] ?? json['result'],
+              message: json['result']['message'] ?? json['message'],
+              pagination: json['result']['pagination'])
           : null,
       success: json['success'] ?? false,
     );

@@ -122,7 +122,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                           alignment: Alignment.centerRight,
                           child: ElevatedButton(
                               onPressed: () {
-                                goRoutineStep(routine.skincareRoutineId);
+                                goSelectRoutineTime();
                               },
                               child: const Text("Book"))),
                     )

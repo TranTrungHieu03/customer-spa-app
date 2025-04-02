@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/common/entities/user.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 
 class UserModel extends User {
   const UserModel(
@@ -89,7 +90,7 @@ class UserModel extends User {
         status: json['status'],
         bonusPoint: json['bonusPoint'],
         typeLogin: json['typeLogin'],
-        district: json['district'],
-        wardCode: json['wardCode']);
+        district: json['district'] ?? 0,
+        wardCode: json['wardCode'] ?? 0);
   }
 }

@@ -4,13 +4,13 @@ class Ward extends Equatable {
   final String wardCode;
   final int districtId;
   final String wardName;
-  final List<String> nameExtension;
+  // final List<String> nameExtension;
 
   const Ward({
     required this.wardCode,
     required this.districtId,
     required this.wardName,
-    required this.nameExtension,
+    // required this.nameExtension,
   });
 
   @override

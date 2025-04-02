@@ -71,7 +71,7 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   @override
   Future<ListOrderAppointmentModel> getHistoryBooking(GetListAppointmentParams params) async {
     try {
-      final response = await _apiService.getApi('/Order/history-booking?page=${params.page}&status=${params.status}');
+      final response = await _apiService.getApi('/Order/history-booking?page=${params.page}&status=${params.status}&orderType=appointment');
 
       final apiResponse = ApiResponse.fromJson(response);
 

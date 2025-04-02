@@ -48,25 +48,21 @@ class _TProfileItemState extends State<TProfileItem> {
           height: TSizes.sm / 2,
         ),
         TextField(
-          controller: _controller,
-          decoration: InputDecoration(
-            hintText: widget.label,
-            contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-            prefixIcon: TRoundedIcon(icon: widget.icon),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-          ),
-          enabled: widget.isEdit,
-          readOnly: !widget.isEdit,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: widget.isEdit ? null : Colors.grey,
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: widget.label,
+              contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+              prefixIcon: TRoundedIcon(icon: widget.icon),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0),
               ),
-        ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+            ),
+            enabled: widget.isEdit,
+            style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }

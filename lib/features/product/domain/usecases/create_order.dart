@@ -18,13 +18,27 @@ class ProductQuantity {
 
 class CreateOrderParams {
   final int userId;
-  final int voucherId;
+  final int? voucherId;
   final double totalAmount;
   final String paymentMethod;
   final List<ProductQuantity> products;
+  final double shippingCost;
+  final String estimatedDeliveryDate;
+  final String recipientName;
+  final String recipientAddress;
+  final String recipientPhone;
 
   const CreateOrderParams(
-      {required this.userId, required this.totalAmount, required this.voucherId, required this.paymentMethod, required this.products});
+      {required this.userId,
+      required this.totalAmount,
+      required this.voucherId,
+      required this.paymentMethod,
+      required this.products,
+      required this.estimatedDeliveryDate,
+      required this.shippingCost,
+      required this.recipientAddress,
+      required this.recipientName,
+      required this.recipientPhone});
 
   Map<String, dynamic> toJson() {
     return {
@@ -33,6 +47,11 @@ class CreateOrderParams {
       "totalAmount": totalAmount,
       "paymentMethod": paymentMethod,
       "products": products.map((p) => p.toJson()).toList(),
+      "estimatedDeliveryDate": estimatedDeliveryDate,
+      "shippingCost": shippingCost,
+      "recipientAddress": recipientAddress,
+      "recipientName": recipientName,
+      "recipientPhone": recipientPhone
     };
   }
 }

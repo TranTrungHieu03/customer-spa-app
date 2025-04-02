@@ -49,6 +49,9 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                       status: "pending",
                     ),
                     TStatusTabService(
+                      status: "arrived",
+                    ),
+                    TStatusTabService(
                       status: "completed",
                     ),
                     TStatusTabService(
@@ -69,7 +72,8 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                       ),
                       backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                       bottom: TTabBar(
-                          isScroll: false, tabs: ["Pending", "Completed", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
+                          isScroll: true,
+                          tabs: ["Pending", "Completed", "Arrived", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
                 ];
               },
             ),

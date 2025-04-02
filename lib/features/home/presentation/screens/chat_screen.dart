@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/chat/chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/chat_message_list.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/chat_type_message.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key}) : super(key: key);
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
 
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatScreenState extends State<ChatScreen> {
   ScrollController chatListScrollController = ScrollController();
   TextEditingController messageTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return BlocProvider(
+    return BlocProvider<ChatBloc>(
       create: (context) =>
           ChatBloc(getMessages: serviceLocator(), sendMessage: serviceLocator(), connect: serviceLocator(), disconnect: serviceLocator())
             ..add(ChatConnectEvent()),
@@ -38,7 +39,7 @@ class _ChatPageState extends State<ChatPage> {
                   } else if (state is ChatError) {
                     return Center(child: Text(state.error));
                   } else if (state is ChatLoading) {
-                    return Center(child: CircularProgressIndicator());
+                    return const TLoader();
                   }
                   return Container();
                 },

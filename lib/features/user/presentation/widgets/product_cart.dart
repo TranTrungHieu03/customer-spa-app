@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
+import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
@@ -25,66 +27,49 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_title.d
 class TProductCart extends StatelessWidget {
   final PurchasingDataController controller;
   final List<ProductCartModel> products;
+  final List<BranchModel> branches;
 
-  const TProductCart({super.key, required this.controller, required this.products});
+  const TProductCart({super.key, required this.controller, required this.products, required this.branches});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => CheckboxCartCubit(products.map((x) => x.product.productBranchId).toList()),
+      create: (_) => CheckboxCartCubit(products),
       child: Scaffold(
-        body: ListView.separated(
-            itemBuilder: (context, index) {
-              final productCart = products[index];
-              return Dismissible(
-                key: Key(index.toString()),
-                direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-                  context.read<CartBloc>().add(RemoveProductFromCartEvent(id: productCart.product.productBranchId.toString()));
-                  TSnackBar.successSnackBar(context, message: "Xóa sản phẩm thành công");
+        body: BlocBuilder<CheckboxCartCubit, CheckboxCartState>(
+          builder: (context, state) {
+            if (state is CheckboxCartInitial) {
+              return ListView.separated(
+                itemCount: state.branchGroups.length,
+                separatorBuilder: (_, __) => const SizedBox(height: TSizes.md),
+                itemBuilder: (context, groupIndex) {
+                  final branchGroup = state.branchGroups[groupIndex];
+                  return _buildBranchGroup(
+                      context, branchGroup, branches.firstWhere((x) => x.branchId == branchGroup.branchId).branchName, state);
                 },
-                background: Container(
-                  color: Colors.redAccent.withOpacity(0.8),
-                  child: const Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Icon(
-                        Iconsax.shop_remove,
-                        color: Colors.white,
-                        size: TSizes.lg,
-                      ),
-                    ),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(TSizes.sm),
-                  child: TProductCartItem(
-                    index: index,
-                    quantity: productCart.quantity,
-                    product: productCart.product,
-                  ),
-                ), // Pass the index to TProductCart
               );
-            },
-            separatorBuilder: (_, __) {
-              return const SizedBox(
-                height: TSizes.sm,
-              );
-            },
-            itemCount: products.length),
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
         bottomNavigationBar: BlocBuilder<CheckboxCartCubit, CheckboxCartState>(
           builder: (context, state) {
             if (state is CheckboxCartInitial) {
-              final selectedProducts = products.where((product) {
-                final cartState = state.itemStates.firstWhere(
-                  (item) => item.id == product.product.productBranchId,
-                );
-                return cartState.status;
-              }).toList();
+              // Collect all selected product IDs
+              final List<int> selectedProductIds = [];
+              for (var group in state.branchGroups) {
+                for (var item in group.items) {
+                  if (item.status) {
+                    selectedProductIds.add(item.id);
+                  }
+                }
+              }
 
-              // Tính tổng giá
-              double totalPrice = selectedProducts.fold(0, (sum, item) => sum + item.product.price);
+              // Find the product details for the selected IDs
+              final selectedProducts = products.where((product) => selectedProductIds.contains(product.product.productBranchId)).toList();
+
+              // Calculate total price
+              double totalPrice = selectedProducts.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
 
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
@@ -123,7 +108,6 @@ class TProductCart extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(width: TSizes.sm / 2),
-                        // Hiển thị tổng giá đã tính
                         TProductPriceText(price: totalPrice.toStringAsFixed(2)),
                         const SizedBox(width: TSizes.md),
                         ElevatedButton(
@@ -135,8 +119,22 @@ class TProductCart extends StatelessWidget {
                                         productBranchId: productCart.product.productBranchId,
                                         product: productCart.product);
                                   }).toList();
+                                  //get list id branch choose
+                                  final selectedBranchIds = checkoutItems.map((item) => item.product.branchId).toSet();
+                                  if (selectedBranchIds.length > 1) {
+                                    TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
+                                    return;
+                                  }
+
                                   controller.updateProducts(checkoutItems);
+                                  if (controller.user?.wardCode == 0 || controller.user?.district == 0) {
+                                    goProfile();
+                                    TSnackBar.infoSnackBar(context, message: "Mỗi đơn hàng chỉ được mua từ một chi nhánh");
+                                    return;
+                                  }
                                   goCheckout(controller);
+                                  AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).branchId);
+                                  controller.updateBranch(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId));
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
@@ -162,18 +160,108 @@ class TProductCart extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildBranchGroup(BuildContext context, CartBranchGroup branchGroup, String branchName, CheckboxCartInitial state) {
+    // Find the brand name from the first product in the group
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: TSizes.sm),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 2,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Branch header with checkbox
+          Padding(
+            padding: const EdgeInsets.all(TSizes.sm),
+            child: Row(
+              children: [
+                Checkbox(
+                  value: branchGroup.isGroupSelected,
+                  onChanged: (bool? newValue) {
+                    context.read<CheckboxCartCubit>().toggleBranchGroup(branchGroup.branchId, newValue ?? false);
+                  },
+                ),
+                const Icon(Iconsax.shop),
+                const SizedBox(width: TSizes.spacebtwItems / 2),
+                Text(
+                  branchName,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          // Branch items
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: branchGroup.items.length,
+            itemBuilder: (context, itemIndex) {
+              final cartItem = branchGroup.items[itemIndex];
+              // Find the corresponding product model
+              final productCartModel = products.firstWhere(
+                (p) => p.product.productBranchId == cartItem.id,
+                orElse: () => throw Exception('Product not found for ID: ${cartItem.id}'),
+              );
+
+              return Dismissible(
+                key: Key(cartItem.id.toString()),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  context.read<CartBloc>().add(RemoveProductFromCartEvent(id: cartItem.id.toString()));
+                  TSnackBar.successSnackBar(context, message: "Xóa sản phẩm thành công");
+                },
+                background: Container(
+                  color: Colors.redAccent.withOpacity(0.8),
+                  child: const Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Icon(
+                        Iconsax.shop_remove,
+                        color: Colors.white,
+                        size: TSizes.lg,
+                      ),
+                    ),
+                  ),
+                ),
+                child: TProductCartItem(
+                  product: productCartModel.product,
+                  quantity: productCartModel.quantity,
+                  isSelected: cartItem.status,
+                  onToggleSelection: (bool value) {
+                    context.read<CheckboxCartCubit>().toggleItemCheckbox(cartItem.id, value);
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class TProductCartItem extends StatefulWidget {
-  final int index;
   final ProductModel product;
   final int quantity;
+  final bool isSelected;
+  final Function(bool) onToggleSelection;
 
   const TProductCartItem({
     super.key,
-    required this.index,
     required this.product,
     required this.quantity,
+    required this.isSelected,
+    required this.onToggleSelection,
   });
 
   @override
@@ -188,6 +276,14 @@ class _TProductCartItemState extends State<TProductCartItem> {
   void initState() {
     super.initState();
     _quantityController = TextEditingController(text: widget.quantity.toString());
+  }
+
+  @override
+  void didUpdateWidget(TProductCartItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.quantity != widget.quantity) {
+      _quantityController.text = widget.quantity.toString();
+    }
   }
 
   @override
@@ -210,7 +306,6 @@ class _TProductCartItemState extends State<TProductCartItem> {
     }
   }
 
-// Helper method to decrement quantity
   void _decrementQuantity() {
     int currentQuantity = int.tryParse(_quantityController.text) ?? 0;
     if (currentQuantity > 1) {
@@ -247,159 +342,123 @@ class _TProductCartItemState extends State<TProductCartItem> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CheckboxCartCubit, CheckboxCartState>(
-      builder: (context, state) {
-        if (state is CheckboxCartInitial) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: TSizes.sm / 2, vertical: TSizes.sm),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 0.2,
-                  spreadRadius: 0.5,
-                ),
-              ],
+    var previousvalue = int.parse(_quantityController.text) - 1;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: TSizes.sm / 2, vertical: TSizes.sm),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.grey.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Checkbox for item selection
+          Checkbox(
+            value: widget.isSelected,
+            onChanged: (bool? newValue) {
+              widget.onToggleSelection(newValue ?? false);
+            },
+          ),
+          // Product image
+          TRoundedImage(
+            imageUrl: widget.product.images!.isNotEmpty ? widget.product.images![0] : TImages.product1,
+            applyImageRadius: true,
+            isNetworkImage: widget.product.images!.isNotEmpty,
+            onPressed: () => {},
+            border: Border.all(
+              color: Colors.grey.withOpacity(0.5),
+              width: 1,
             ),
-            child: Column(
-              children: [
-                // Brand row remains the same
-                Row(
-                  children: [
-                    const Icon(Iconsax.shop),
-                    const SizedBox(width: TSizes.spacebtwItems / 2),
-                    Text(
-                      widget.product.brand,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    )
-                  ],
-                ),
-                SizedBox(
-                  width: THelperFunctions.screenWidth(context),
-                  child: const Divider(thickness: 0.2),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Checkbox remains the same
-                    Checkbox(
-                      value: state.itemStates[widget.index].status ?? false,
-                      onChanged: (bool? newValue) {
-                        context.read<CheckboxCartCubit>().toggleItemCheckbox(state.itemStates[widget.index].id, newValue ?? false);
-                      },
-                    ),
-                    // Product image
-                    TRoundedImage(
-                      imageUrl: widget.product.images!.isNotEmpty ? widget.product.images![0] : TImages.product1,
-                      applyImageRadius: true,
-                      isNetworkImage: widget.product.images!.isNotEmpty,
-                      onPressed: () => {},
-                      border: Border.all(
-                        color: Colors.grey.withOpacity(0.5),
-                        width: 1,
-                      ),
-                      width: THelperFunctions.screenWidth(context) * 0.28,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: TSizes.sm),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: THelperFunctions.screenWidth(context) * 0.5,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Product title
-                            TProductTitleText(
-                              title: widget.product.productName,
-                              maxLines: 2,
-                              smallSize: true,
-                            ),
-                            // Product price
-                            TProductPriceText(
-                              price: widget.product.price.toString(),
-                            ),
-                            const SizedBox(height: TSizes.spacebtwItems / 2),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                // Decrement button
-                                GestureDetector(
-                                  onTap: _decrementQuantity,
-                                  child: TRoundedIcon(
-                                    icon: Iconsax.minus,
-                                    backgroundColor: TColors.primary.withOpacity(0.05),
-                                    width: 40,
-                                    height: 40,
-                                  ),
-                                ),
-                                const SizedBox(width: TSizes.sm / 2),
-                                // Quantity input
-                                SizedBox(
-                                  width: THelperFunctions.screenWidth(context) * 0.15,
-                                  height: THelperFunctions.screenWidth(context) * 0.1,
-                                  child: TextFormField(
-                                    controller: _quantityController,
-                                    textAlign: TextAlign.center,
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.all(TSizes.sm),
-                                    ),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        // Validate input doesn't exceed stock quantity
-                                        int parsedValue = int.tryParse(value) ?? 0;
-                                        if (parsedValue > widget.product.stockQuantity) {
-                                          TSnackBar.warningSnackBar(context,
-                                              message: "Số lượng không đượt vượt quá ${widget.product.stockQuantity}");
-                                          _quantityController.text = widget.product.stockQuantity.toString();
-                                          parsedValue = widget.product.stockQuantity;
-                                        }
-                                        onChangeQuantity();
-                                        // _isEditing = true;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: TSizes.sm / 2),
-                                // Increment button
-                                GestureDetector(
-                                  onTap: _incrementQuantity,
-                                  child: TRoundedIcon(
-                                    icon: Iconsax.add,
-                                    width: 40,
-                                    backgroundColor: TColors.primary.withOpacity(0.05),
-                                    height: 40,
-                                  ),
-                                ),
-                                // if (_isEditing)
-                                //   IconButton(
-                                //     icon: const Icon(
-                                //       Icons.save,
-                                //       size: 25,
-                                //       color: TColors.primary,
-                                //     ),
-                                //     onPressed: _saveQuantity,
-                                //   )
-                              ],
-                            )
-                          ],
+            width: THelperFunctions.screenWidth(context) * 0.28,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: TSizes.sm),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: THelperFunctions.screenWidth(context) * 0.5,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Product title
+                  TProductTitleText(
+                    title: widget.product.productName,
+                    maxLines: 2,
+                    smallSize: true,
+                  ),
+                  // Product price
+                  TProductPriceText(
+                    price: widget.product.price.toString(),
+                  ),
+                  const SizedBox(height: TSizes.spacebtwItems / 2),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Decrement button
+                      GestureDetector(
+                        onTap: int.parse(_quantityController.text) > 0 ? _decrementQuantity : null,
+                        child: TRoundedIcon(
+                          icon: Iconsax.minus,
+                          backgroundColor: TColors.primary.withOpacity(0.05),
+                          width: 40,
+                          height: 40,
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ],
+                      const SizedBox(width: TSizes.sm / 2),
+                      // Quantity input
+                      SizedBox(
+                        width: THelperFunctions.screenWidth(context) * 0.15,
+                        height: THelperFunctions.screenWidth(context) * 0.1,
+                        child: TextFormField(
+                          controller: _quantityController,
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: EdgeInsets.all(TSizes.sm),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              // Validate input doesn't exceed stock quantity
+                              int parsedValue = int.tryParse(value) ?? 0;
+                              if (parsedValue > widget.product.stockQuantity) {
+                                TSnackBar.warningSnackBar(context, message: "Số lượng không đượt vượt quá ${widget.product.stockQuantity}");
+                                _quantityController.text = widget.product.stockQuantity.toString();
+                                previousvalue = int.tryParse(value) ?? 1 - 1;
+                                parsedValue = widget.product.stockQuantity;
+                              }
+                              onChangeQuantity();
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: TSizes.sm / 2),
+                      // Increment button
+                      GestureDetector(
+                        onTap: int.parse(_quantityController.text) < widget.product.stockQuantity ? _incrementQuantity : () {},
+                        child: TRoundedIcon(
+                          icon: Iconsax.add,
+                          width: 40,
+                          backgroundColor: TColors.primary.withOpacity(0.05),
+                          height: 40,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
-          );
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
+          )
+        ],
+      ),
     );
   }
 }

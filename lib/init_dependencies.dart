@@ -47,12 +47,15 @@ import 'package:spa_mobile/features/auth/presentation/cubit/policy_term_cubit.da
 import 'package:spa_mobile/features/auth/presentation/cubit/remember_me_cubit.dart';
 import 'package:spa_mobile/features/home/data/datasources/ai_chat_remote_data_source.dart';
 import 'package:spa_mobile/features/home/data/datasources/chat_remote_data_source.dart';
+import 'package:spa_mobile/features/home/data/datasources/hub_remote_data_source.dart';
 import 'package:spa_mobile/features/home/data/datasources/location_remote_data_source.dart';
 import 'package:spa_mobile/features/home/data/repositories/ai_chat_reposotory_impl.dart';
 import 'package:spa_mobile/features/home/data/repositories/chat_repository_impl.dart';
+import 'package:spa_mobile/features/home/data/repositories/hub_repository_impl.dart';
 import 'package:spa_mobile/features/home/data/repositories/location_repository_impl.dart';
 import 'package:spa_mobile/features/home/domain/repositories/ai_chat_repository.dart';
 import 'package:spa_mobile/features/home/domain/repositories/chat_repository.dart';
+import 'package:spa_mobile/features/home/domain/repositories/hub_repository.dart';
 import 'package:spa_mobile/features/home/domain/repositories/location_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/connect_hub.dart';
 import 'package:spa_mobile/features/home/domain/usecases/disconnect_hub.dart';
@@ -60,11 +63,13 @@ import 'package:spa_mobile/features/home/domain/usecases/get_address_auto_comple
 import 'package:spa_mobile/features/home/domain/usecases/get_ai_chat.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_message.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/chat/chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
 import 'package:spa_mobile/features/product/data/datasources/cart_remote_data_src.dart';
 import 'package:spa_mobile/features/product/data/datasources/ghn_remote_data_source.dart';
 import 'package:spa_mobile/features/product/data/datasources/order_remote_data_source.dart';
@@ -79,9 +84,11 @@ import 'package:spa_mobile/features/product/domain/repository/order_repository.d
 import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_available_service.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_cart.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_district.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_fee_shipping.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_lead_time.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_product_detail.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_province.dart';
@@ -91,6 +98,7 @@ import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dar
 import 'package:spa_mobile/features/product/presentation/bloc/list_product/list_product_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/order/order_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/product/product_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/ship_fee/ship_fee_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/cubit/checkbox_cart_cubit.dart';
 import 'package:spa_mobile/features/service/data/datasources/appointment_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/datasources/branch_remote_data_source.dart';
@@ -109,6 +117,7 @@ import 'package:spa_mobile/features/service/domain/repository/service_repository
 import 'package:spa_mobile/features/service/domain/repository/staff_repository.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_branch_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_categories.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
@@ -120,6 +129,7 @@ import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_dat
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';

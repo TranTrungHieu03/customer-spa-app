@@ -11,7 +11,11 @@ class GhnApiService implements BaseApiServices {
       : _dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
-            headers: {"token": token, "shopId": shopId},
+            headers: {
+              "token": token,
+              "shopId": shopId,
+              "X-Timezone": "Asia/Ho_Chi_Minh",
+            },
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 10),
           ),
@@ -68,17 +72,22 @@ class GhnApiService implements BaseApiServices {
         url,
         data: data,
       );
+
       responseJson = response.data;
       if (kDebugMode) {
         AppLogger.debug(responseJson);
+        // AppLogger.debug(response.headers);
       }
       return responseJson;
     } on DioException catch (e) {
       if (kDebugMode) {
-        AppLogger.error(e);
+        AppLogger.error(e.message);
+        AppLogger.error(e.response);
+        AppLogger.error(e.error);
+        AppLogger.error(e.requestOptions);
       }
       if (e.type == DioExceptionType.badResponse) {
-        return responseJson['message'];
+        throw AppException(e.response?.data['message'] ?? 'Lỗi không xác định');
       } else {
         _handleDioException(e);
       }

@@ -72,25 +72,25 @@ class _AutofillAddressState extends State<AutofillAddress> {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           BlocBuilder<AddressBloc, AddressState>(builder: (context, state) {
-            if (state is AddressLoaded) {
-              final suggestions = state.address.take(4).toList();
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: suggestions.length,
-                itemBuilder: (context, index) {
-                  final addressModel = suggestions[index];
-                  return ListTile(
-                    title: Text(addressModel.fullAddress),
-                    onTap: () {
-                      widget.addressSubController.text = addressModel.fullAddress;
-                      widget.update(addressModel);
-                      context.read<AddressBloc>().add(RefreshAddressEvent());
-                      Navigator.of(context).pop();
-                    },
-                  );
-                },
-              );
-            }
+            // if (state is AddressLoaded) .{
+            //   final suggestions = state.address.take(4).toList();
+            //   return ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: suggestions.length,
+            //     itemBuilder: (context, index) {
+            //       final addressModel = suggestions[index];
+            //       return ListTile(
+            //         title: Text(addressModel.fullAddress),
+            //         onTap: () {
+            //           widget.addressSubController.text = addressModel.fullAddress;
+            //           widget.update(addressModel);
+            //           context.read<AddressBloc>().add(RefreshAddressEvent());
+            //           Navigator.of(context).pop();
+            //         },
+            //       );
+            //     },
+            //   );
+            // }
             return const SizedBox();
           })
         ],
