@@ -10,7 +10,7 @@ abstract class CartRepository {
 
   Future<Either<Failure, List<ProductCartModel>>> addProductToCart(AddProductCartParams product);
 
-  Future<Either<Failure, String>> removeProductFromCart(RemoveProductCartParams product);
+  Future<Either<Failure, List<ProductCartModel>>> removeProductFromCart(RemoveProductCartParams product);
 
   Future<Either<Failure, List<ProductCartModel>>> getCartProducts(GetCartParams params);
 }

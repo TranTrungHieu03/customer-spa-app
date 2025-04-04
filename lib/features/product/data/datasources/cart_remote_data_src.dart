@@ -10,7 +10,7 @@ import 'package:spa_mobile/features/product/domain/usecases/remove_product_cart.
 abstract class CartRemoteDataSource {
   Future<List<ProductCartModel>> addProductToCart(AddProductCartParams params);
 
-  Future<String> removeProductFromCart(RemoveProductCartParams params);
+  Future<List<ProductCartModel>> removeProductFromCart(RemoveProductCartParams params);
 
   Future<List<ProductCartModel>> getCartProducts(GetCartParams params);
 }
@@ -52,12 +52,12 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<String> removeProductFromCart(params) async {
+  Future<List<ProductCartModel>> removeProductFromCart(params) async {
     try {
       final response = await _apiServices.deleteApi('/Cart/${params.userId}/${params.productId}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
-        return (apiResponse.result!.data);
+        return (apiResponse.result!.data as List).map((e) => ProductCartModel.fromJson(e)).toList();
       } else {
         throw AppException(apiResponse.result!.message);
       }

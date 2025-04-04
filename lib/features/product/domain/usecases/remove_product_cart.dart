@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
+import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/cart_repository.dart';
 
 class RemoveProductCart implements UseCase<Either, RemoveProductCartParams> {
@@ -9,7 +10,7 @@ class RemoveProductCart implements UseCase<Either, RemoveProductCartParams> {
   RemoveProductCart(this._repository);
 
   @override
-  Future<Either<Failure, String>> call(RemoveProductCartParams params) async {
+  Future<Either<Failure, List<ProductCartModel>>> call(RemoveProductCartParams params) async {
     return await _repository.removeProductFromCart(params);
   }
 }

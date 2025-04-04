@@ -25,9 +25,9 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<Either<Failure, String>> removeProductFromCart(RemoveProductCartParams id) async {
+  Future<Either<Failure, List<ProductCartModel>>> removeProductFromCart(RemoveProductCartParams id) async {
     try {
-      String result = await _cartDataSource.removeProductFromCart(id);
+      List<ProductCartModel> result = await _cartDataSource.removeProductFromCart(id);
       return right(result);
     } on AppException catch (e) {
       return left(ApiFailure(

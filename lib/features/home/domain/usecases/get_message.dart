@@ -12,3 +12,4 @@ class GetMessages implements UseCase<Either, NoParams> {
     return await repository.getMessages(params);
   }
 }
+

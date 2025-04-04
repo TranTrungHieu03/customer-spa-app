@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/features/home/data/models/chat_message.dart';
 
-Widget chatMessageWidget(ScrollController chatListScrollController, List<ChatMessageModel> messageModel, int currentUserId) {
+Widget chatMessageWidget(ScrollController chatListScrollController, List<ChatMessageModel> messageModel, String currentUserId) {
   return Expanded(
       child: Container(
     color: Colors.white,
@@ -19,7 +19,7 @@ Widget chatMessageWidget(ScrollController chatListScrollController, List<ChatMes
   ));
 }
 
-Widget chatItemWidget(ChatMessageModel e, int currentUserId) {
+Widget chatItemWidget(ChatMessageModel e, String currentUserId) {
   bool isMyChat = e.userId == currentUserId;
   return e.userId == 0
       ? systemMessageWidget(e.message!)

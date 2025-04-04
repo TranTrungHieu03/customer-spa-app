@@ -12,12 +12,16 @@ class ChatConnectEvent extends ChatEvent {}
 class ChatDisconnectEvent extends ChatEvent {}
 
 class ChatSendMessageEvent extends ChatEvent {
-  final String message;
+  final SendMessageParams params;
 
-  const ChatSendMessageEvent(this.message);
+  const ChatSendMessageEvent(this.params);
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [params];
 }
 
-class ChatMessagesReceivedEvent extends ChatEvent {}
+class ChatMessageReceivedEvent extends ChatEvent {
+  final ChatMessageModel message;
+
+  const ChatMessageReceivedEvent(this.message);
+}

@@ -9,18 +9,17 @@ class SendMessage implements UseCase<Either, SendMessageParams> {
 
   @override
   Future<Either> call(SendMessageParams params) async {
-    return await repository.sendMessage(params.message);
+    return await repository.sendMessage(params);
   }
 }
 
 class SendMessageParams {
   final String message;
+  final String user;
 
-  SendMessageParams(this.message);
+  SendMessageParams({required this.user, required this.message});
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'message': message,
-    };
+    return <String, dynamic>{'message': message, 'user': user};
   }
 }

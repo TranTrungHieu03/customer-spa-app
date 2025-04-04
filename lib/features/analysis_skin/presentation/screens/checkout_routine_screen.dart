@@ -4,17 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
@@ -24,7 +30,10 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list
 import 'package:spa_mobile/features/service/presentation/widgets/payment_detail_service.dart';
 
 class CheckoutRoutineScreen extends StatefulWidget {
-  const CheckoutRoutineScreen({super.key});
+  const CheckoutRoutineScreen({super.key, required this.time, required this.routine});
+
+  final String time;
+  final RoutineModel routine;
 
   @override
   State<CheckoutRoutineScreen> createState() => _CheckoutRoutineScreenState();
@@ -34,7 +43,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
   int? selectedBranch;
   int? previousBranch;
   BranchModel? branchInfo;
-  UserModel? userId;
+  UserModel? user;
   final _messageController = TextEditingController();
 
   final ScrollController _scrollController = ScrollController();
@@ -44,117 +53,218 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
+    final List<String> steps = widget.routine.steps.split(", ");
     return Scaffold(
       appBar: const TAppbar(
         showBackArrow: true,
         title: Text("Xác nhận"),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(TSizes.sm),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TRoundedContainer(
-                padding: const EdgeInsets.all(TSizes.sm),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            branchInfo!.branchName,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          Text(branchInfo!.branchAddress, style: Theme.of(context).textTheme.bodyMedium)
-                        ],
+        child: BlocListener<RoutineBloc, RoutineState>(
+          listener: (context, state) {
+            if (state is RoutineBook) {
+              TSnackBar.successSnackBar(context, message: "Đặt lịch thành công");
+              // context.read<RoutineBloc>().add(GetRoutineDetailEvent(GetRoutineDetailParams(widget.routine.skincareRoutineId.toString())));
+              goHome();
+            } else if (state is RoutineError) {
+              TSnackBar.errorSnackBar(context, message: state.message);
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(TSizes.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TRoundedContainer(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              branchInfo?.branchName ?? "",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            Text(branchInfo?.branchAddress ?? "", style: Theme.of(context).textTheme.bodyMedium)
+                          ],
+                        ),
                       ),
-                    ),
-                    TRoundedIcon(
-                      icon: Iconsax.edit,
-                      onPressed: () {
-                        final state = context.read<ListBranchesBloc>().state;
-                        if (state is ListBranchesLoaded) {
-                          _showFilterModel(context, state.branches);
-                        }
-                      },
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: TSizes.md,
-              ),
-              const TRoundedContainer(
-                padding: EdgeInsets.all(TSizes.sm),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [Text("Thoi gian dat hen: ")],
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                  ],
-                ),
-              ),
-              Divider(
-                color: dark ? TColors.darkGrey : TColors.grey,
-                thickness: 0.5,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Discount code", style: Theme.of(context).textTheme.titleLarge),
-                  TextButton(
-                      onPressed: () => _showVoucherModal(context),
-                      child: TRoundedContainer(padding: const EdgeInsets.all(TSizes.sm), child: Text(AppLocalizations.of(context)!.add)))
-                ],
-              ),
-              Divider(
-                color: dark ? TColors.darkGrey : TColors.grey,
-                thickness: 0.5,
-              ),
-              const SizedBox(
-                height: TSizes.md,
-              ),
-              TPaymentDetailService(
-                price: (100).toString(),
-                total: (100).toString(),
-                promotePrice: 0,
-              ),
-              Divider(
-                color: dark ? TColors.darkGrey : TColors.grey,
-                thickness: 0.5,
-              ),
-              Text("Note", style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(
-                height: TSizes.xs,
-              ),
-              TextField(
-                focusNode: _focusNode,
-                controller: _messageController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: "Paste your message to the center",
-                  contentPadding: const EdgeInsets.all(TSizes.sm),
-                  hintStyle: Theme.of(context).textTheme.bodySmall,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                      TRoundedIcon(
+                        icon: Iconsax.edit,
+                        onPressed: () {
+                          final state = context.read<ListBranchesBloc>().state;
+                          if (state is ListBranchesLoaded) {
+                            context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
+                            _showFilterModel(context, state.branches);
+                          }
+                        },
+                      )
+                    ],
                   ),
                 ),
-                autofocus: false,
-                onTap: () {
-                  _scrollToBottom();
-                },
-              ),
-            ],
+                const SizedBox(
+                  height: TSizes.md,
+                ),
+                TRoundedContainer(
+                  padding: EdgeInsets.all(TSizes.sm),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "Thời gian:",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(
+                            width: TSizes.sm,
+                          ),
+                          Text(DateFormat('HH:mm EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(widget.time)).toString()),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Liệu trình: ",
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(
+                                  width: TSizes.sm,
+                                ),
+                                Text(
+                                  widget.routine.name,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text('x1'),
+                          const SizedBox(
+                            width: TSizes.sm,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, indexStep) {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor: Colors.teal,
+                                    child: Text(
+                                      '${indexStep + 1}',
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
+                                    ),
+                                  ),
+                                  if (indexStep != steps.length - 1)
+                                    Container(
+                                      height: 20,
+                                      width: 2,
+                                      color: Colors.teal,
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(width: TSizes.md),
+                              Expanded(
+                                child: Text(
+                                  steps[indexStep],
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        itemCount: steps.length,
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  color: dark ? TColors.darkGrey : TColors.grey,
+                  thickness: 0.5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Discount code", style: Theme.of(context).textTheme.titleLarge),
+                    TextButton(
+                        onPressed: () => _showVoucherModal(context),
+                        child: TRoundedContainer(padding: const EdgeInsets.all(TSizes.sm), child: Text(AppLocalizations.of(context)!.add)))
+                  ],
+                ),
+                Divider(
+                  color: dark ? TColors.darkGrey : TColors.grey,
+                  thickness: 0.5,
+                ),
+                const SizedBox(
+                  height: TSizes.md,
+                ),
+                TPaymentDetailService(
+                  price: (widget.routine.totalPrice).toString(),
+                  total: (widget.routine.totalPrice).toString(),
+                  promotePrice: 0,
+                ),
+                Divider(
+                  color: dark ? TColors.darkGrey : TColors.grey,
+                  thickness: 0.5,
+                ),
+                Text("Note", style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(
+                  height: TSizes.xs,
+                ),
+                TextField(
+                  focusNode: _focusNode,
+                  controller: _messageController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    hintText: "Paste your message to the center",
+                    contentPadding: const EdgeInsets.all(TSizes.sm),
+                    hintStyle: Theme.of(context).textTheme.bodySmall,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  autofocus: false,
+                  onTap: () {
+                    _scrollToBottom();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(TSizes.md),
+        child: ElevatedButton(
+            onPressed: () {
+              context.read<RoutineBloc>().add(BookRoutineDetailEvent(BookRoutineParams(
+                  userId: user?.userId ?? 0,
+                  routineId: widget.routine.skincareRoutineId,
+                  branchId: selectedBranch ?? 0,
+                  appointmentTime: widget.time,
+                  voucherId: 0,
+                  note: _messageController.text.toString())));
+            },
+            child: Text('Đặt lịch hẹn', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white))),
       ),
     );
   }
@@ -280,6 +390,13 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
         });
       }
     }
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    AppLogger.info(userJson);
+    if (jsonDecode(userJson) != null) {
+      user = UserModel.fromJson(jsonDecode(userJson));
+    } else {
+      goLoginNotBack();
+    }
   }
 
   @override
@@ -301,7 +418,11 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
   }
 
   void _showFilterModel(BuildContext context, List<BranchModel> branchesState) {
-    List<BranchModel> listBranches = branchesState;
+    void update() {
+      setState(() {
+        branchInfo = branchesState.where((e) => e.branchId == selectedBranch).first;
+      });
+    }
 
     showModalBottomSheet(
       context: context,
@@ -321,9 +442,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
             child: BlocBuilder<ListBranchesBloc, ListBranchesState>(
               builder: (context, state) {
                 if (state is ListBranchesLoaded) {
-                  context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
                   final branches = state.branches;
-                  listBranches = branches;
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,7 +466,8 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                                   activeColor: TColors.primary,
                                   groupValue: selectedBranch,
                                   onChanged: (value) {
-                                    AppLogger.info('Selected branch: $value');
+                                    AppLogger.info('Selected branch: $branch');
+
                                     setState(() {
                                       selectedBranch = value;
                                       branchInfo = branch;
@@ -364,12 +484,9 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                                         branch.branchName,
                                         style: Theme.of(context).textTheme.bodyMedium,
                                       ),
-                                      const SizedBox(
-                                        width: TSizes.xs,
-                                      ),
                                       BlocBuilder<NearestBranchBloc, NearestBranchState>(builder: (context, distanceState) {
                                         if (distanceState is NearestBranchLoaded) {
-                                          return Text('(${distanceState.branches[index].distance.text})');
+                                          return Text(' (${distanceState.branches[index].distance.text})');
                                         } else if (distanceState is NearestBranchLoading) {
                                           return const TShimmerEffect(width: TSizes.shimmerSm, height: TSizes.shimmerSx);
                                         }
@@ -393,6 +510,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                               if (selectedBranch != null) {
                                 await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
                                 if (selectedBranch != 0) {
+                                  AppLogger.info(jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
                                   await LocalStorage.saveData(
                                       LocalStorageKey.branchInfo, jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
                                 }
@@ -422,8 +540,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
       },
     ).then((_) {
       if (selectedBranch != previousBranch) {
-        // updateProducts();
-        // _onFilter();
+        update();
       }
     });
   }

@@ -5,16 +5,17 @@ import 'package:spa_mobile/features/analysis_skin/domain/entities/routine_step.d
 class RoutineStepModel extends RoutineStep {
   final List<ServiceRoutineModel> serviceRoutineSteps;
   final List<ProductRoutineModel> productRoutineSteps;
+  final String? stepStatus;
 
-  const RoutineStepModel({
-    required super.skinCareRoutineStepId,
-    required super.skincareRoutineId,
-    required super.name,
-    required super.step,
-    required super.intervalBeforeNextStep,
-    required this.productRoutineSteps,
-    required this.serviceRoutineSteps,
-  });
+  const RoutineStepModel(
+      {required super.skinCareRoutineStepId,
+      required super.skincareRoutineId,
+      required super.name,
+      required super.step,
+      required super.intervalBeforeNextStep,
+      required this.productRoutineSteps,
+      required this.serviceRoutineSteps,
+      this.stepStatus});
 
   factory RoutineStepModel.fromJson(Map<String, dynamic> json) {
     return RoutineStepModel(
@@ -31,6 +32,7 @@ class RoutineStepModel extends RoutineStep {
               ?.map((item) => ServiceRoutineModel.fromJson(item as Map<String, dynamic>))
               .toList() ??
           [],
+      stepStatus: json['stepStatus'] != null ? json['stepStatus'] as String : "",
     );
   }
 }

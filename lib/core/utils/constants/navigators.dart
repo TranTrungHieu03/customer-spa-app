@@ -230,6 +230,19 @@ goRoutineDetail(String id) async {
       ));
 }
 
+goShowRoutineDetail(String id) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+        builder: (context) => RoutineDetailScreen(id: id, onlyShown: true),
+      ));
+}
+
+goTrackingRoutineDetail(int id, int userId) async {
+  Navigator.push(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperTrackingRoutineScreen(id: id, userId: userId)));
+}
+
 goSelectTime(List<int> staffIds, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
@@ -270,7 +283,7 @@ goSelectServices() async {
 }
 
 goChatList() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ChatListScreen()));
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperChatListScreen()));
 }
 
 goRoutines() async {
@@ -281,10 +294,20 @@ goRoutineStep(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperBookRoutineScreen(id: id)));
 }
 
-goCheckoutRoutine() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const CheckoutRoutineScreen()));
+goCheckoutRoutine(RoutineModel routine, String time) async {
+  Navigator.push(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutRoutineScreen(routine: routine, time: time)));
 }
 
-goSelectRoutineTime() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const SelectRoutineTimeScreen()));
+goSelectRoutineTime(RoutineModel routine) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => SelectRoutineTimeScreen(
+                routineModel: routine,
+              )));
+}
+
+goChatRoom(String channelId) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ChatScreen(channelId: channelId)));
 }

@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -12,11 +13,13 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_de
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_list_view.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_list_view.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 
 class RoutineDetailScreen extends StatefulWidget {
-  const RoutineDetailScreen({super.key, required this.id});
+  const RoutineDetailScreen({super.key, required this.id, this.onlyShown = false});
 
   final String id;
+  final bool onlyShown;
 
   @override
   State<RoutineDetailScreen> createState() => _RoutineDetailScreenState();
@@ -44,6 +47,12 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
           return Scaffold(
             appBar: TAppbar(
               showBackArrow: true,
+              actions: [
+                TRoundedIcon(
+                  icon: Iconsax.home_2,
+                  onPressed: () => goHome(),
+                )
+              ],
               title: Text(routine.name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleLarge),
             ),
             body: SingleChildScrollView(
@@ -111,25 +120,33 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                       },
                       itemCount: steps.length,
                     ),
+                    const SizedBox(height: TSizes.sm),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text("Chi phí: ", style: Theme.of(context).textTheme.bodyLarge),
+                        const SizedBox(width: TSizes.sm),
+                        TProductPriceText(price: routine.totalPrice.toString()),
+                      ],
+                    ),
                     const SizedBox(height: TSizes.lg),
                     ProductListView(products: routine.productRoutines),
                     const SizedBox(height: TSizes.lg),
                     ServiceListView(services: routine.serviceRoutines),
                     const SizedBox(height: TSizes.lg),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                              onPressed: () {
-                                goSelectRoutineTime();
-                              },
-                              child: const Text("Book"))),
-                    )
                   ],
                 ),
               ),
             ),
+            bottomNavigationBar: !widget.onlyShown
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          goSelectRoutineTime(routine);
+                        },
+                        child: const Text("Book")))
+                : null,
           );
         } else if (state is RoutineLoading) {
           return const Scaffold(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,10 +9,13 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/service/data/model/time_model.dart';
 
 class SelectRoutineTimeScreen extends StatefulWidget {
-  const SelectRoutineTimeScreen({super.key});
+  const SelectRoutineTimeScreen({super.key, required this.routineModel});
+
+  final RoutineModel routineModel;
 
   @override
   State<SelectRoutineTimeScreen> createState() => _SelectRoutineTimeScreenState();
@@ -50,10 +52,10 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
     DateTime currentStart = workDayStart;
 
     while (true) {
-      final slotEnd = currentStart.add(Duration(minutes: 20));
-
+      final slotEnd = currentStart.add(const Duration(minutes: 60));
+      //
       if (slotEnd.isAfter(workDayEnd)) break;
-
+      //
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
 
       currentStart = currentStart.add(const Duration(minutes: 15));
@@ -247,26 +249,11 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
                   final isSelected = selectedTime == slot.startTime.toString();
                   return GestureDetector(
                     onTap: () {
-                      final listTimes = <DateTime>[];
-                      // If user choose different specialist, we don't need to check staff free time
-                      DateTime currentTime = slot.startTime;
-
-                      // for (int i = 0; i < controller.services.length; i++) {
-                      //   if (i == 0) {
-                      //     listTimes.add(currentTime);
-                      //   }
-                      //
-                      //   currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
-                      //
-                      //   if (i < controller.services.length - 1) {
-                      //     listTimes.add(currentTime);
-                      //   }
-                      // }
-
-                      // controller.updateTimeStart(listTimes);
                       setState(() {
                         selectedTime = slot.startTime.toString();
                       });
+
+                      goCheckoutRoutine(widget.routineModel, selectedTime);
                     },
                     child: TRoundedContainer(
                       padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),
@@ -278,8 +265,8 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
                       child: Row(
                         children: [
                           Text(DateFormat('HH:mm').format(slot.startTime)),
-                          const Text(" - "),
-                          Text(DateFormat('HH:mm').format(slot.endTime))
+                          // const Text(" - "),
+                          // Text(DateFormat('HH:mm').format(slot.endTime))
                         ],
                       ),
                     ),
@@ -289,19 +276,22 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(TSizes.sm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    goCheckoutRoutine();
-                  },
-                  child: Text(AppLocalizations.of(context)!.continue_book))
-            ],
-          ),
-        ),
+        // bottomNavigationBar: Padding(
+        //   padding: const EdgeInsets.all(TSizes.sm),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.end,
+        //     children: [
+        //       ElevatedButton(
+        //           onPressed: () {
+        //             goCheckoutRoutine(
+        //               widget.routineModel,
+        //                selectedTime
+        //             );
+        //           },
+        //           child: Text(AppLocalizations.of(context)!.continue_book))
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }

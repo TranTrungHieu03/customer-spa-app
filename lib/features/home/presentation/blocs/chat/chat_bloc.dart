@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
@@ -16,38 +18,87 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ConnectHub connect;
   final DisconnectHub disconnect;
 
+  StreamSubscription? _messagesSubscription;
+  final List<ChatMessageModel> _messages = [];
+
   ChatBloc({
     required this.getMessages,
     required this.sendMessage,
     required this.connect,
     required this.disconnect,
   }) : super(ChatInitial()) {
-    on<ChatConnectEvent>((event, emit) async {
-      emit(ChatLoading());
+    on<ChatConnectEvent>(_onConnect);
+    on<ChatDisconnectEvent>(_onDisconnect);
+    on<ChatSendMessageEvent>(_onSendMessage);
+    on<ChatMessageReceivedEvent>(_onMessageReceived);
+  }
+
+  Future<void> _onConnect(ChatConnectEvent event, Emitter<ChatState> emit) async {
+    emit(ChatLoading());
+
+    try {
       await connect(NoParams());
-      emit(ChatLoaded([]));
-      final result = await getMessages(NoParams());
-      result.fold((failure) => emit(ChatError("Error getting messages.")), (stream) {
-        stream.listen((message) {
-          if (state is ChatLoaded) {
-            final currentState = state as ChatLoaded;
-            final updatedMessages = List<ChatMessageModel>.from(currentState.messages)..add(message);
-            add(ChatMessagesReceivedEvent());
-            emit(ChatLoaded(updatedMessages));
-          }
-        });
-      });
-    });
+      await _setupMessageStream(emit);
+      emit(ChatLoaded(List.from(_messages)));
+    } catch (e) {
+      emit(ChatError(e.toString()));
+    }
+  }
 
-    on<ChatDisconnectEvent>((event, emit) async {
-      await disconnect(NoParams());
-      emit(ChatInitial());
-    });
+  Future<void> _setupMessageStream(Emitter<ChatState> emit) async {
+    _messagesSubscription?.cancel();
 
-    on<ChatSendMessageEvent>((event, emit) async {
-      await sendMessage(SendMessageParams((event.message)));
-    });
+    final result = await getMessages(NoParams());
 
-    on<ChatMessagesReceivedEvent>((event, emit) async {});
+    result.fold(
+          (failure) => emit(ChatError(failure.message)),
+          (messagesStream) {
+        _messagesSubscription = messagesStream.listen(
+              (message) => add(ChatMessageReceivedEvent(message)),
+          onError: (error) => emit(ChatError(error.toString())),
+        );
+      },
+    );
+  }
+
+  Future<void> _onDisconnect(ChatDisconnectEvent event, Emitter<ChatState> emit) async {
+    await _messagesSubscription?.cancel();
+    final result = await disconnect(NoParams());
+
+    result.fold(
+      (failure) {
+        emit(ChatError(failure.message));
+      },
+      (_) {
+        // Optionally handle successful disconnect
+      },
+    );
+  }
+
+  Future<void> _onSendMessage(ChatSendMessageEvent event, Emitter<ChatState> emit) async {
+    if (event.params.message.trim().isEmpty) return;
+
+    final result = await sendMessage(event.params);
+
+    result.fold(
+      (failure) {
+        emit(ChatError(failure.message));
+      },
+      (_) {
+        // Message sent successfully
+        // The message will be received via the stream
+      },
+    );
+  }
+
+  void _onMessageReceived(ChatMessageReceivedEvent event, Emitter<ChatState> emit) {
+    _messages.add(event.message);
+    emit(ChatLoaded(List.from(_messages)));
+  }
+
+  @override
+  Future<void> close() {
+    _messagesSubscription?.cancel();
+    return super.close();
   }
 }

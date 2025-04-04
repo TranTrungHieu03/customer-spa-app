@@ -1,3 +1,8 @@
+import 'package:dartz/dartz.dart';
+import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/core/usecase/usecase.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/repositories/routine_repository.dart';
+
 class BookRoutineParams {
   final int userId;
   final int routineId;
@@ -23,5 +28,16 @@ class BookRoutineParams {
       'voucherId': voucherId,
       'note': note
     };
+  }
+}
+
+class BookRoutine implements UseCase<Either, BookRoutineParams> {
+  final RoutineRepository _repository;
+
+  BookRoutine(this._repository);
+
+  @override
+  Future<Either<Failure, int>> call(BookRoutineParams params) async {
+    return await _repository.bookRoutine(params);
   }
 }
