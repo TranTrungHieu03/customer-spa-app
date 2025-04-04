@@ -309,5 +309,5 @@ goSelectRoutineTime(RoutineModel routine) async {
 }
 
 goChatRoom(String channelId) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ChatScreen(channelId: channelId)));
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperChatRoom(channelId: channelId)));
 }

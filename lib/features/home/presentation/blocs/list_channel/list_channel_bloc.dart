@@ -15,7 +15,7 @@ class ListChannelBloc extends Bloc<ListChannelEvent, ListChannelState> {
     on<GetListChannelEvent>((event, emit) async {
       emit(ListChannelLoading());
       final result = await _getListChannel(event.params);
-      result.fold((x) => emit(ListChannelError(x)), (data) => emit(ListChannelLoaded(data)));
+      result.fold((failure) => emit(ListChannelError(failure.message)), (data) => emit(ListChannelLoaded(data)));
     });
   }
 }

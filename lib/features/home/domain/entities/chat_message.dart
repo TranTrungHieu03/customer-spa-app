@@ -2,16 +2,21 @@ import 'package:equatable/equatable.dart';
 
 class ChatMessage extends Equatable {
   final String userId;
-  final String message;
+  final String? content;
   final DateTime timestamp;
+  final String channelId;
+  final String messageType;
+  final String? fileUrl;
 
   const ChatMessage({
     required this.userId,
-    required this.message,
+    this.content,
     required this.timestamp,
+    required this.channelId,
+    this.messageType = 'text',
+    this.fileUrl,
   });
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [userId, message, timestamp];
+  List<Object?> get props => [userId, content, timestamp, channelId, messageType, fileUrl];
 }

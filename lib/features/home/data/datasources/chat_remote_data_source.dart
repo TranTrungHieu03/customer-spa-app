@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:logger/logger.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/home/data/models/chat_message.dart';
@@ -28,11 +27,8 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
         .withUrl(hubUrl,
             options: HttpConnectionOptions(
               transport: HttpTransportType.WebSockets,
-              // logger: AppLogger.info(message),
-              skipNegotiation: true,
             ))
-        .withAutomaticReconnect(retryDelays: [2000, 5000]) // Thử kết nối lại sau 2s, 5s, 10s, 30s
-        .build();
+        .withAutomaticReconnect(retryDelays: [2000, 5000]).build();
 
     // Xử lý sự kiện tái kết nối
     _hubConnection.onreconnecting(({error}) {
@@ -52,11 +48,13 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
     AppLogger.info("go connect");
     if (_hubConnection.state == HubConnectionState.Connected) {
       _hubConnection.on("receiveChannelMessage", (arguments) {
+        AppLogger.info(arguments);
         if (arguments != null && arguments.isNotEmpty) {
-          final sender = arguments[0].toString();
-          final message = arguments[1].toString();
-          final timestamp = DateTime.now();
-          _messageStreamController.add(ChatMessageModel(userId: sender, message: message, timestamp: timestamp));
+          // final sender = arguments[0].toString();
+          // final message = arguments[1].toString();
+          // final timestamp = DateTime.now();
+          AppLogger.info(arguments);
+          _messageStreamController.add(ChatMessageModel(userId: "", timestamp: DateTime.now(), channelId: "", content: "Hieu"));
         }
       });
     }
@@ -71,11 +69,21 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
       try {
         await connect();
       } catch (e) {
-        throw Exception("Failed to send message: Not connected to chat server");
+        throw Exception("Failed to connect to chat server: ${e.toString()}");
       }
     }
 
-    await _hubConnection.invoke("SendMessageToChannel", args: [params.user, params.message]);
+    try {
+      await _hubConnection.invoke(
+        "SendMessageToChannel",
+        args: [params.channelId, params.senderId, params.content ?? "", params.messageType, params.fileUrl ?? ""],
+      );
+
+      AppLogger.info("Message sent successfully to channel ${params.channelId}");
+    } catch (e) {
+      AppLogger.error("Failed to send message to channel ${params.channelId}", error: e);
+      throw Exception("Failed to send message: ${e.toString()}");
+    }
   }
 
   @override
@@ -83,6 +91,19 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
     AppLogger.info("Attempting to connect to hub: ${_hubConnection.baseUrl}");
     await _hubConnection.start();
     AppLogger.info("Connect success: ${_hubConnection.baseUrl}");
+    AppLogger.info("Connect success: ${_hubConnection.connectionId}");
+    _hubConnection.on("receiveChannelMessage", (arguments) {
+      AppLogger.info(arguments);
+      if (arguments != null && arguments.isNotEmpty) {
+        final message = ChatMessageModel(
+          userId: arguments[0].toString(),
+          content: arguments[1].toString(),
+          timestamp: DateTime.now(),
+          channelId: arguments[2].toString(),
+        );
+        _messageStreamController.add(message);
+      }
+    });
   }
 
   @override

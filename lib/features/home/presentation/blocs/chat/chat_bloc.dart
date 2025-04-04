@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
-import 'package:spa_mobile/features/home/data/models/chat_message.dart';
+import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/connect_hub.dart';
 import 'package:spa_mobile/features/home/domain/usecases/disconnect_hub.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_message.dart';
@@ -19,7 +19,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final DisconnectHub disconnect;
 
   StreamSubscription? _messagesSubscription;
-  final List<ChatMessageModel> _messages = [];
+  final List<MessageChannelModel> _messages = [];
 
   ChatBloc({
     required this.getMessages,
@@ -51,10 +51,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final result = await getMessages(NoParams());
 
     result.fold(
-          (failure) => emit(ChatError(failure.message)),
-          (messagesStream) {
+      (failure) => emit(ChatError(failure.message)),
+      (messagesStream) {
         _messagesSubscription = messagesStream.listen(
-              (message) => add(ChatMessageReceivedEvent(message)),
+          (message) => add(ChatMessageReceivedEvent(message)),
           onError: (error) => emit(ChatError(error.toString())),
         );
       },
@@ -76,7 +76,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onSendMessage(ChatSendMessageEvent event, Emitter<ChatState> emit) async {
-    if (event.params.message.trim().isEmpty) return;
+    // if (event.params.content?.trim().isEmpty) return;
 
     final result = await sendMessage(event.params);
 

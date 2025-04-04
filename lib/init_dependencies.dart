@@ -68,6 +68,7 @@ import 'package:spa_mobile/features/home/domain/usecases/get_ai_chat.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_channel.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_list_channel.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_list_message.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_message.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
@@ -75,6 +76,7 @@ import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc
 import 'package:spa_mobile/features/home/presentation/blocs/channel/channel_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/chat/chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/list_channel/list_channel_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/list_message/list_message_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';

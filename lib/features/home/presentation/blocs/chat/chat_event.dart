@@ -21,7 +21,7 @@ class ChatSendMessageEvent extends ChatEvent {
 }
 
 class ChatMessageReceivedEvent extends ChatEvent {
-  final ChatMessageModel message;
+  final MessageChannelModel message;
 
   const ChatMessageReceivedEvent(this.message);
 }

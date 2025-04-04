@@ -14,12 +14,66 @@ class SendMessage implements UseCase<Either, SendMessageParams> {
 }
 
 class SendMessageParams {
-  final String message;
-  final String user;
+  final String channelId;
+  final String senderId;
+  final String? content;
+  final String messageType;
+  final String? fileUrl;
 
-  SendMessageParams({required this.user, required this.message});
+  SendMessageParams({
+    required this.channelId,
+    required this.senderId,
+    this.content,
+    this.messageType = 'text',
+    this.fileUrl,
+  });
 
+  // Convert to Map for easier serialization
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{'message': message, 'user': user};
+    return {
+      'channelId': channelId,
+      'senderId': senderId,
+      'content': content,
+      'messageType': messageType,
+      'fileUrl': fileUrl,
+    };
+  }
+
+  // Create from Map for easier deserialization
+  factory SendMessageParams.fromMap(Map<String, dynamic> map) {
+    return SendMessageParams(
+      channelId: map['channelId'] as String,
+      senderId: map['senderId'] as String,
+      content: map['content'] as String?,
+      messageType: map['messageType'] as String,
+      fileUrl: map['fileUrl'] as String?,
+    );
+  }
+
+  // Override toString for better debugging
+  @override
+  String toString() {
+    return 'SendMessageParams('
+        'channelId: $channelId, '
+        'senderId: $senderId, '
+        'content: $content, '
+        'messageType: $messageType, '
+        'fileUrl: $fileUrl)';
+  }
+
+  SendMessageParams copyWith({
+    String? channelId,
+    String? senderId,
+    String? content,
+    String? messageType,
+    String? fileUrl,
+  }) {
+    return SendMessageParams(
+      channelId: channelId ?? this.channelId,
+      senderId: senderId ?? this.senderId,
+      content: content ?? this.content,
+      messageType: messageType ?? this.messageType,
+      fileUrl: fileUrl ?? this.fileUrl,
+    );
   }
 }

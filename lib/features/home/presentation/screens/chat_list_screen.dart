@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -135,53 +136,59 @@ class _ChatListScreenState extends State<ChatListScreen> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
-      body: BlocBuilder<ListChannelBloc, ListChannelState>(
-        builder: (context, state) {
-          if (state is ListChannelLoaded) {
-            return ListView.separated(
-              itemCount: state.channels.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                final conversation = state.channels[index];
-
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue.shade100,
-                    child: Text(
-                      conversation.name.substring(0, 1).toUpperCase(), // Lấy ký tự đầu tiên của sender
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  title: Text(
-                    conversation.name, // Dùng sender thay vì `name`
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  subtitle: Text(
-                    "No message", // Hiển thị nội dung tin nhắn gần nhất
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-                  ),
-                  trailing: Text(
-                    "",
-                    // conversatio, // Hiển thị thời gian
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                  ),
-                  onTap: () {
-                    AppLogger.info("message");
-                    goChatRoom(conversation.id);
-                  },
-                );
-              },
-            );
-            ;
-          } else if (state is ListChannelLoading) {
-            return const TLoader();
+      body: BlocListener<ListChannelBloc, ListChannelState>(
+        listener: (context, state) {
+          if (state is ListChannelError) {
+            AppLogger.error(state.message);
+            TSnackBar.errorSnackBar(context, message: state.message);
           }
-          return const SizedBox();
         },
+        child: BlocBuilder<ListChannelBloc, ListChannelState>(
+          builder: (context, state) {
+            if (state is ListChannelLoaded) {
+              return ListView.separated(
+                itemCount: state.channels.length,
+                separatorBuilder: (context, index) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final conversation = state.channels[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue.shade100,
+                      child: Text(
+                        conversation.name.substring(0, 1).toUpperCase(), // Lấy ký tự đầu tiên của sender
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    title: Text(
+                      conversation.name, // Dùng sender thay vì `name`
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    subtitle: Text(
+                      "No message", // Hiển thị nội dung tin nhắn gần nhất
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                    ),
+                    trailing: Text(
+                      "",
+                      // conversatio, // Hiển thị thời gian
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    ),
+                    onTap: () {
+                      goChatRoom(conversation.id);
+                    },
+                  );
+                },
+              );
+              ;
+            } else if (state is ListChannelLoading) {
+              return const TLoader();
+            }
+            return const SizedBox();
+          },
+        ),
       ),
     );
   }

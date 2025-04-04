@@ -268,10 +268,12 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => GetCurrentRoutine(serviceLocator()))
     ..registerLazySingleton(() => GetRoutineTracking(serviceLocator()))
     ..registerLazySingleton(() => BookRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetListMessage(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
     ..registerLazySingleton(() => ListRoutineBloc(getListRoutine: serviceLocator()))
+    ..registerLazySingleton(() => ListMessageBloc(getListMessage: serviceLocator()))
     ..registerLazySingleton(() => ListRoutineStepBloc(getRoutineStep: serviceLocator()))
     ..registerLazySingleton(() => RoutineTrackingBloc(getRoutineTracking: serviceLocator()))
     ..registerLazySingleton(() => RoutineBloc(
