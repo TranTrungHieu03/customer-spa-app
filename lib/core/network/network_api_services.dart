@@ -41,7 +41,7 @@ class NetworkApiService implements BaseApiServices {
             options.headers['Content-Type'] = 'application/json';
           }
           if (kDebugMode) {
-            AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
+            // AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
           }
           return handler.next(options);
         },
@@ -221,7 +221,7 @@ class NetworkApiService implements BaseApiServices {
   /// Throws a [FetchDataException] with the appropriate error message if the response status code is not successful.
   dynamic returnResponse(Response response) {
     if (kDebugMode) {
-      AppLogger.debug(response.statusCode);
+      // AppLogger.debug(response.statusCode);
     }
 
     switch (response.statusCode) {

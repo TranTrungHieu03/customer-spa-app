@@ -7,9 +7,13 @@ abstract class ChatEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ChatConnectEvent extends ChatEvent {}
+class ChatConnectEvent extends ChatEvent {
+  const ChatConnectEvent();
+}
 
 class ChatDisconnectEvent extends ChatEvent {}
+class StartListeningEvent extends ChatEvent {}
+class StopListeningEvent extends ChatEvent {}
 
 class ChatSendMessageEvent extends ChatEvent {
   final SendMessageParams params;

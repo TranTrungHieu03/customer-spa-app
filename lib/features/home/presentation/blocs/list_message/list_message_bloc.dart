@@ -25,11 +25,9 @@ class ListMessageBloc extends Bloc<ListMessageEvent, ListMessageState> {
     });
     on<ListMessageNewMessageEvent>((event, emit) {
       if (state is ListMessageLoaded) {
-        final currentMessages = List<MessageChannelModel>.from((state as ListMessageLoaded).messages);
-        currentMessages.add(event.newMessage); // Thêm tin nhắn mới vào danh sách
-        currentMessages.sort((a, b) => a.timestamp.compareTo(b.timestamp)); // Sắp xếp lại tin nhắn theo thời gian
-
-        emit(ListMessageLoaded(currentMessages));
+        final currentState = state as ListMessageLoaded;
+        final updatedMessages = List<MessageChannelModel>.from(currentState.messages)..add(event.newMessage);
+        emit(ListMessageLoaded(updatedMessages));
       }
     });
   }

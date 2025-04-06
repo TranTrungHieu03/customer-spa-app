@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/home/data/datasources/hub_remote_data_source.dart';
 import 'package:spa_mobile/features/home/data/models/channel_model.dart';
 import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
@@ -23,8 +22,6 @@ class HubRepositoryImpl implements HubRepository {
   Future<Either<Failure, UserChatModel>> getUserChatInfo(GetUserChatInfoParams params) async {
     try {
       final UserChatModel response = await _dataSource.getUserChatInfo(params);
-      AppLogger.info(response);
-      AppLogger.info(jsonEncode(response));
       await LocalStorage.saveData(LocalStorageKey.userChat, jsonEncode(response));
       return right(response);
     } catch (e) {

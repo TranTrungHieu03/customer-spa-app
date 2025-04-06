@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/home/data/datasources/chat_remote_data_source.dart';
-import 'package:spa_mobile/features/home/data/models/chat_message.dart';
+import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
 import 'package:spa_mobile/features/home/domain/repositories/chat_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 
@@ -32,13 +34,8 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<Failure, Stream<ChatMessageModel>>> getMessages(NoParams params) async {
-    try {
-      final Stream<ChatMessageModel> response = _remoteDataSource.getMessages();
-      return right(response);
-    } catch (e) {
-      return left(ApiFailure(message: e.toString()));
-    }
+  Stream<MessageChannelModel> getMessages(NoParams params) {
+    return _remoteDataSource.getMessages();
   }
 
   @override

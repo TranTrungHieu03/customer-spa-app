@@ -18,7 +18,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ConnectHub connect;
   final DisconnectHub disconnect;
 
-  StreamSubscription? _messagesSubscription;
+  StreamSubscription<MessageChannelModel>? _messagesSubscription;
   final List<MessageChannelModel> _messages = [];
 
   ChatBloc({
@@ -30,6 +30,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatConnectEvent>(_onConnect);
     on<ChatDisconnectEvent>(_onDisconnect);
     on<ChatSendMessageEvent>(_onSendMessage);
+
     on<ChatMessageReceivedEvent>(_onMessageReceived);
   }
 
@@ -38,26 +39,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     try {
       await connect(NoParams());
-      await _setupMessageStream(emit);
+      _setupMessageStream(emit);
+
       emit(ChatLoaded(List.from(_messages)));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
   }
 
-  Future<void> _setupMessageStream(Emitter<ChatState> emit) async {
+  void _setupMessageStream(Emitter<ChatState> emit) {
     _messagesSubscription?.cancel();
 
-    final result = await getMessages(NoParams());
+    final stream = getMessages(NoParams());
 
-    result.fold(
-      (failure) => emit(ChatError(failure.message)),
-      (messagesStream) {
-        _messagesSubscription = messagesStream.listen(
-          (message) => add(ChatMessageReceivedEvent(message)),
-          onError: (error) => emit(ChatError(error.toString())),
-        );
-      },
+    _messagesSubscription = stream.listen(
+      (message) => add(ChatMessageReceivedEvent(message)),
+      cancelOnError: false,
     );
   }
 
@@ -76,24 +73,24 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   Future<void> _onSendMessage(ChatSendMessageEvent event, Emitter<ChatState> emit) async {
-    // if (event.params.content?.trim().isEmpty) return;
-
     final result = await sendMessage(event.params);
 
     result.fold(
       (failure) {
         emit(ChatError(failure.message));
       },
-      (_) {
-        // Message sent successfully
-        // The message will be received via the stream
-      },
+      (_) {},
     );
   }
 
   void _onMessageReceived(ChatMessageReceivedEvent event, Emitter<ChatState> emit) {
-    _messages.add(event.message);
-    emit(ChatLoaded(List.from(_messages)));
+    if (state is ChatLoaded) {
+      final currentState = state as ChatLoaded;
+
+      emit(ChatLoaded([...currentState.messages, event.message]));
+    } else if (state is ChatInitial || state is ChatError) {
+      emit(ChatLoaded([event.message]));
+    }
   }
 
   @override

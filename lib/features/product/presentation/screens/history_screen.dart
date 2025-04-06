@@ -34,9 +34,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
             padding: EdgeInsets.all(TSizes.sm / 2),
             child: TabBarView(
               children: [
-                TStatusTab(),
-                TStatusTab(),
-                TStatusTab(),
+                TStatusBarProduct(
+                  status: "Pending",
+                ),
+                TStatusBarProduct(
+                  status: "Shipping",
+                ),
+                TStatusBarProduct(
+                  status: "Completed",
+                ),
+                TStatusBarProduct(
+                  status: "Cancelled",
+                ),
               ],
             ),
           ),
@@ -52,7 +61,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ),
                   backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                   bottom: TTabBar(
-                      isScroll: false, tabs: ['Processing', 'Completed', 'Cancel'].map((category) => Tab(child: Text(category))).toList()))
+                      isScroll: false,
+                      tabs: ['Processing', 'Shipping', 'Completed', 'Cancel'].map((category) => Tab(child: Text(category))).toList()))
             ];
           },
         ),
