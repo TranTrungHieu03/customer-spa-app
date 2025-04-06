@@ -17,7 +17,9 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_banner.dart';
@@ -37,10 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _getUser();
+    _loadData();
   }
 
-  void _getUser() async {
+  void _loadData() async {
     final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
     AppLogger.info("User: $userJson");
     if (jsonDecode(userJson) != null) {
@@ -48,6 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
         user = UserModel.fromJson(jsonDecode(userJson));
         isLoading = false;
       });
+      if (user?.userId != 0 && user?.userId != null) {
+        context.read<RoutineBloc>().add(GetCurrentRoutineEvent(GetCurrentRoutineParams(user!.userId)));
+      }
     } else {
       setState(() {
         isLoading = false;
@@ -178,6 +183,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
+                  BlocBuilder<RoutineBloc, RoutineState>(
+                    builder: (context, state) {
+                      if (state is RoutineLoaded) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Gói liệu trình hiện tại", style: Theme.of(context).textTheme.titleLarge),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: TSizes.sm,
+                            ),
+                            TRoundedContainer(
+                              padding: EdgeInsets.all(0),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    onTap: () => goTrackingRoutineDetail(state.routineModel.skincareRoutineId, user?.userId ?? 0),
+                                    title: Text(state.routineModel.name, style: Theme.of(context).textTheme.titleLarge),
+                                    subtitle: Text(state.routineModel.description),
+                                    trailing: const Icon(
+                                      Iconsax.arrow_right_1,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: TSizes.sm,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      if (state is RoutineLoading) {
+                        return TShimmerEffect(width: THelperFunctions.screenWidth(context), height: TSizes.shimmerSm);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                  Text("Gói liệu trình phù hợp", style: Theme.of(context).textTheme.titleLarge),
                   Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(
                     height: TSizes.sm,

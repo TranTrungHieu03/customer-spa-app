@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:signalr_netcore/ihub_protocol.dart';
 import 'package:signalr_netcore/signalr_client.dart';
-import 'package:spa_mobile/features/home/data/models/chat_message.dart';
+import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
+import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 
 abstract class ChatRemoteDataSource {
-  Stream<ChatMessageModel> getMessages();
+  Stream<MessageChannelModel> getMessages();
 
-  Future<void> sendMessage(String message);
+  Future<void> sendMessage(SendMessageParams message);
 
   Future<void> connect();
 
@@ -15,36 +18,68 @@ abstract class ChatRemoteDataSource {
 
 class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
   late HubConnection _hubConnection;
-  final StreamController<ChatMessageModel> _messageStreamController = StreamController<ChatMessageModel>.broadcast();
 
-  SignalRChatRemoteDataSource({
-    required String hubUrl,
-  }) {
-    _hubConnection = HubConnectionBuilder().withUrl(hubUrl).build();
+  // final List<OnMessageReceivedCallback> _callbacks = [];
+  final StreamController<MessageChannelModel> _messageStreamController = StreamController<MessageChannelModel>.broadcast();
 
-    _hubConnection.on("ReceiveMessage", (arguments) {
+  SignalRChatRemoteDataSource({required String hubUrl, required String userId}) {
+    var defaultHeaders = MessageHeaders();
+    defaultHeaders.setHeaderValue("withCredentials", "true");
+
+    _hubConnection = HubConnectionBuilder()
+        .withUrl(
+      '$hubUrl?userId=$userId',
+      options: HttpConnectionOptions(
+        headers: defaultHeaders,
+      ),
+    )
+        .withAutomaticReconnect(retryDelays: [2000, 5000]).build();
+
+    _hubConnection.on("receiveChannelMessage", (arguments) {
       if (arguments != null && arguments.isNotEmpty) {
-        final sender = arguments[0].toString();
-        final message = arguments[1].toString();
-        final timestamp = DateTime.now();
-        _messageStreamController.add(ChatMessageModel(userId: sender, message: message, timestamp: timestamp));
+        try {
+          final message = MessageChannelModel.fromJson(json.decode(json.encode(arguments[0])));
+
+          handleMessageReceived(message);
+        } catch (e) {}
       }
     });
   }
 
-  @override
-  Stream<ChatMessageModel> getMessages() => _messageStreamController.stream;
+  void handleMessageReceived(MessageChannelModel message) {
+    _messageStreamController.add(message);
+  }
 
   @override
-  Future<void> sendMessage(String message) async {
-    if (_hubConnection.state == HubConnectionState.Connected) {
-      await _hubConnection.invoke("SendMessage", args: ["FlutterUser", message]);
+  Stream<MessageChannelModel> getMessages() {
+    return _messageStreamController.stream;
+  }
+
+  @override
+  Future<void> sendMessage(SendMessageParams params) async {
+    if (_hubConnection.state != HubConnectionState.Connected) {
+      await connect();
+    }
+
+    if (params.content?.trim().isEmpty ?? true) {
+      throw Exception("Message content is empty.");
+    }
+
+    try {
+      await _hubConnection.invoke(
+        "SendMessageToChannel",
+        args: [params.channelId, params.senderId, params.content ?? "", params.messageType, params.fileUrl ?? ""],
+      );
+    } catch (e) {
+      throw Exception("Failed to send message: ${e.toString()}");
     }
   }
 
   @override
   Future<void> connect() async {
-    await _hubConnection.start();
+    if (_hubConnection.state == HubConnectionState.Disconnected) {
+      await _hubConnection.start()?.then((_) {}).catchError((error) {});
+    }
   }
 
   @override

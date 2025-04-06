@@ -69,8 +69,21 @@ class TProductCart extends StatelessWidget {
               final selectedProducts = products.where((product) => selectedProductIds.contains(product.product.productBranchId)).toList();
 
               // Calculate total price
-              double totalPrice = selectedProducts.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
-
+              // double totalPrice = selectedProducts.fold(0, (sum, item) => sum + (item.product.price * item.quantity));
+// Trong BlocBuilder của bottomNavigationBar
+              final totalPrice = state.branchGroups.fold(0.0, (sum, group) {
+                return sum +
+                    group.items.fold(0.0, (groupSum, item) {
+                      if (item.status) {
+                        final product = products.firstWhere(
+                          (p) => p.product.productBranchId == item.id,
+                          orElse: () => throw Exception('Product not found'),
+                        );
+                        return groupSum + (product.product.price * item.quantity);
+                      }
+                      return groupSum;
+                    });
+              });
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.sm),
                 decoration: BoxDecoration(
@@ -113,11 +126,18 @@ class TProductCart extends StatelessWidget {
                         ElevatedButton(
                           onPressed: selectedProducts.isNotEmpty
                               ? () {
-                                  final List<ProductQuantity> checkoutItems = selectedProducts.map((productCart) {
-                                    return ProductQuantity(
-                                        quantity: productCart.quantity,
-                                        productBranchId: productCart.product.productBranchId,
-                                        product: productCart.product);
+                                  final List<ProductQuantity> checkoutItems = state.branchGroups.expand((group) {
+                                    return group.items.where((item) => item.status).map((item) {
+                                      final product = products.firstWhere(
+                                        (p) => p.product.productBranchId == item.id,
+                                        orElse: () => throw Exception('Product not found'),
+                                      );
+                                      return ProductQuantity(
+                                        quantity: item.quantity, // Lấy quantity từ Cubit thay vì từ productCart
+                                        productBranchId: item.id,
+                                        product: product.product,
+                                      );
+                                    });
                                   }).toList();
                                   //get list id branch choose
                                   final selectedBranchIds = checkoutItems.map((item) => item.product.branchId).toSet();
@@ -215,8 +235,35 @@ class TProductCart extends StatelessWidget {
               return Dismissible(
                 key: Key(cartItem.id.toString()),
                 direction: DismissDirection.endToStart,
+                confirmDismiss: (direction) async {
+                  // Hiển thị dialog xác nhận nếu cần
+                  return await showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Xác nhận"),
+                      content: Text("Bạn có chắc muốn xóa sản phẩm này?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text("Hủy"),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text("Xóa"),
+                        ),
+                      ],
+                      backgroundColor: TColors.white,
+                    ),
+                  );
+                },
                 onDismissed: (direction) {
+                  // 1. Gửi event xóa đến CartBloc
                   context.read<CartBloc>().add(RemoveProductFromCartEvent(id: cartItem.id.toString()));
+
+                  // 2. Cập nhật UI ngay lập tức bằng cách loại bỏ item khỏi danh sách
+                  final cubit = context.read<CheckboxCartCubit>();
+                  cubit.deleteItem(cartItem.id);
+
                   TSnackBar.successSnackBar(context, message: "Xóa sản phẩm thành công");
                 },
                 background: Container(
@@ -271,17 +318,26 @@ class TProductCartItem extends StatefulWidget {
 class _TProductCartItemState extends State<TProductCartItem> {
   late TextEditingController _quantityController;
   Timer? _debounce;
+  late int quantity;
 
   @override
   void initState() {
     super.initState();
     _quantityController = TextEditingController(text: widget.quantity.toString());
+    quantity = widget.quantity;
+    // _quantityController.addListener(() {
+    //   setState(() {
+    //     quantity = int.tryParse(_quantityController.text) ?? 1;
+    //   });
+    // });
   }
 
   @override
   void didUpdateWidget(TProductCartItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.quantity != widget.quantity) {
+    // Chỉ cập nhật nếu quantity từ widget khác với hiện tại
+    if (oldWidget.quantity != widget.quantity && widget.quantity != quantity) {
+      quantity = widget.quantity;
       _quantityController.text = widget.quantity.toString();
     }
   }
@@ -299,6 +355,7 @@ class _TProductCartItemState extends State<TProductCartItem> {
       setState(() {
         currentQuantity++;
         _quantityController.text = currentQuantity.toString();
+        quantity = currentQuantity;
       });
       onChangeQuantity();
     } else {
@@ -312,7 +369,11 @@ class _TProductCartItemState extends State<TProductCartItem> {
       setState(() {
         currentQuantity--;
         _quantityController.text = currentQuantity.toString();
+        quantity = currentQuantity;
       });
+      AppLogger.info(currentQuantity);
+      AppLogger.info(_quantityController.text);
+
       onChangeQuantity();
     } else {
       TSnackBar.warningSnackBar(context, message: "Bạn có chắc muốn xóa sản phẩm này");
@@ -327,13 +388,34 @@ class _TProductCartItemState extends State<TProductCartItem> {
   }
 
   void _saveQuantity() {
-    int? quantity = int.tryParse(_quantityController.text);
-    if (quantity != null && quantity > 0 && quantity < 1000) {
-      // Add event to update cart quantity
+    final newQuantity = int.tryParse(_quantityController.text) ?? quantity;
+    if (newQuantity > 0 && newQuantity < 1000) {
+      setState(() {
+        quantity = newQuantity;
+      });
+
+      // Cập nhật trong Cubit
+      context.read<CheckboxCartCubit>().updateProductQuantity(
+            widget.product.productBranchId,
+            newQuantity,
+          );
+
+      // Gửi event cập nhật lên server
       context.read<CartBloc>().add(UpdateProductToCartEvent(
-          params: AddProductCartParams(userId: 0, productId: widget.product.productBranchId, quantity: quantity, operation: 2)));
+            params: AddProductCartParams(
+              userId: 0,
+              productId: widget.product.productBranchId,
+              quantity: newQuantity,
+              operation: 2,
+            ),
+          ));
     } else {
-      // Show error if quantity is invalid
+      // Nếu không hợp lệ, reset về giá trị cũ
+      _quantityController.text = quantity.toString();
+      context.read<CheckboxCartCubit>().updateProductQuantity(
+            widget.product.productBranchId,
+            quantity,
+          );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Vui lòng nhập số lượng hợp lệ (1-999)')),
       );
@@ -342,7 +424,6 @@ class _TProductCartItemState extends State<TProductCartItem> {
 
   @override
   Widget build(BuildContext context) {
-    var previousvalue = int.parse(_quantityController.text) - 1;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: TSizes.sm / 2, vertical: TSizes.sm),
       decoration: BoxDecoration(
@@ -432,7 +513,7 @@ class _TProductCartItemState extends State<TProductCartItem> {
                               if (parsedValue > widget.product.stockQuantity) {
                                 TSnackBar.warningSnackBar(context, message: "Số lượng không đượt vượt quá ${widget.product.stockQuantity}");
                                 _quantityController.text = widget.product.stockQuantity.toString();
-                                previousvalue = int.tryParse(value) ?? 1 - 1;
+
                                 parsedValue = widget.product.stockQuantity;
                               }
                               onChangeQuantity();

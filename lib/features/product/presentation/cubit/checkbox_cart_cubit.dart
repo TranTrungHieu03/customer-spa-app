@@ -4,59 +4,27 @@ import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
 
 part 'checkbox_cart_state.dart';
 
-//
-// class CheckboxCartCubit extends Cubit<CheckboxCartState> {
-//   CheckboxCartCubit(List<int> productIds)
-//       : super(CheckboxCartInitial(
-//           itemStates: productIds.map((id) => CartStatusState(id: id, status: false)).toList(),
-//           isAllSelected: false,
-//         ));
-//
-//   void toggleItemCheckbox(int id, bool value) {
-//     final currentState = state as CheckboxCartInitial;
-//
-//     final updatedItems = currentState.itemStates.map((item) {
-//       if (item.id == id) {
-//         return CartStatusState(id: item.id, status: value);
-//       }
-//       return item;
-//     }).toList();
-//
-//     final isAllSelected = updatedItems.every((item) => item.status);
-//
-//     emit(currentState.copyWith(itemStates: updatedItems, isAllSelected: isAllSelected));
-//   }
-//
-//   // ✅ Hàm chọn tất cả sản phẩm
-//   void toggleSelectAll(bool value) {
-//     final currentState = state as CheckboxCartInitial;
-//
-//     final updatedItems = currentState.itemStates.map((item) => CartStatusState(id: item.id, status: value)).toList();
-//
-//     emit(currentState.copyWith(itemStates: updatedItems, isAllSelected: value));
-//   }
-// }
-
 class CheckboxCartCubit extends Cubit<CheckboxCartState> {
   CheckboxCartCubit(List<ProductCartModel> productCarts) : super(_initializeState(productCarts));
 
   static CheckboxCartInitial _initializeState(List<ProductCartModel> productCarts) {
-    // Group products by branchId
     final Map<int, List<CartStatusState>> groupedProducts = {};
 
-    // Populate groups
     for (var productCart in productCarts) {
       final branchId = productCart.product.branchId;
-      final cartState = CartStatusState(id: productCart.product.productBranchId, branchId: branchId, status: false);
+      final cartState = CartStatusState(
+        id: productCart.product.productBranchId,
+        branchId: branchId,
+        status: false,
+        quantity: productCart.quantity, // Truyền quantity từ productCart
+      );
 
       if (!groupedProducts.containsKey(branchId)) {
         groupedProducts[branchId] = [];
       }
-
       groupedProducts[branchId]!.add(cartState);
     }
 
-    // Convert map to list of branch groups
     final branchGroups = groupedProducts.entries.map((entry) {
       return CartBranchGroup(
         branchId: entry.key,
@@ -77,7 +45,7 @@ class CheckboxCartCubit extends Cubit<CheckboxCartState> {
     final updatedGroups = currentState.branchGroups.map((group) {
       final updatedItems = group.items.map((item) {
         if (item.id == id) {
-          return CartStatusState(id: item.id, branchId: item.branchId, status: value);
+          return CartStatusState(id: item.id, branchId: item.branchId, status: value, quantity: item.quantity);
         }
         return item;
       }).toList();
@@ -103,7 +71,9 @@ class CheckboxCartCubit extends Cubit<CheckboxCartState> {
     final currentState = state as CheckboxCartInitial;
     final updatedGroups = currentState.branchGroups.map((group) {
       if (group.branchId == branchId) {
-        final updatedItems = group.items.map((item) => CartStatusState(id: item.id, branchId: item.branchId, status: value)).toList();
+        final updatedItems = group.items
+            .map((item) => CartStatusState(id: item.id, branchId: item.branchId, status: value, quantity: item.quantity))
+            .toList();
 
         return CartBranchGroup(
           branchId: group.branchId,
@@ -125,7 +95,8 @@ class CheckboxCartCubit extends Cubit<CheckboxCartState> {
     final currentState = state as CheckboxCartInitial;
 
     final updatedGroups = currentState.branchGroups.map((group) {
-      final updatedItems = group.items.map((item) => CartStatusState(id: item.id, branchId: item.branchId, status: value)).toList();
+      final updatedItems =
+          group.items.map((item) => CartStatusState(id: item.id, branchId: item.branchId, status: value, quantity: item.quantity)).toList();
 
       return CartBranchGroup(
         branchId: group.branchId,
@@ -151,5 +122,73 @@ class CheckboxCartCubit extends Cubit<CheckboxCartState> {
     }
 
     return selectedIds;
+  }
+
+  void updateProductQuantity(int productId, int newQuantity) {
+    final currentState = state as CheckboxCartInitial;
+
+    final updatedGroups = currentState.branchGroups.map((group) {
+      final updatedItems = group.items.map((item) {
+        if (item.id == productId) {
+          return item.copyWith(quantity: newQuantity);
+        }
+        return item;
+      }).toList();
+
+      return group.copyWith(items: updatedItems);
+    }).toList();
+
+    emit(currentState.copyWith(branchGroups: updatedGroups));
+  }
+
+  void deleteItem(int productId) {
+    final currentState = state as CheckboxCartInitial;
+
+    // Create new list of groups with the item removed
+    final updatedGroups = currentState.branchGroups.map((group) {
+      final updatedItems = group.items.where((item) => item.id != productId).toList();
+      return group.copyWith(items: updatedItems);
+    }).toList();
+
+    // Remove empty branch groups
+    final nonEmptyGroups = updatedGroups.where((group) => group.items.isNotEmpty).toList();
+
+    // Check if all remaining groups are selected
+    final isAllSelected = nonEmptyGroups.isNotEmpty && nonEmptyGroups.every((group) => group.isGroupSelected);
+
+    emit(currentState.copyWith(
+      branchGroups: nonEmptyGroups,
+      isAllSelected: isAllSelected,
+    ));
+  }
+
+  // Delete multiple items by their IDs
+  void deleteMultipleItems(List<int> productIds) {
+    final currentState = state as CheckboxCartInitial;
+
+    // Create new list of groups with the items removed
+    final updatedGroups = currentState.branchGroups.map((group) {
+      final updatedItems = group.items.where((item) => !productIds.contains(item.id)).toList();
+      return group.copyWith(items: updatedItems);
+    }).toList();
+
+    // Remove empty branch groups
+    final nonEmptyGroups = updatedGroups.where((group) => group.items.isNotEmpty).toList();
+
+    // Check if all remaining groups are selected
+    final isAllSelected = nonEmptyGroups.isNotEmpty && nonEmptyGroups.every((group) => group.isGroupSelected);
+
+    emit(currentState.copyWith(
+      branchGroups: nonEmptyGroups,
+      isAllSelected: isAllSelected,
+    ));
+  }
+
+  // Delete all selected items
+  void deleteSelectedItems() {
+    final selectedIds = getSelectedItemIds();
+    if (selectedIds.isNotEmpty) {
+      deleteMultipleItems(selectedIds);
+    }
   }
 }

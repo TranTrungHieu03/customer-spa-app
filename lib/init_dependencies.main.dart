@@ -167,12 +167,16 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetStaffFreeInTime(serviceLocator()))
     ..registerLazySingleton(() => GetBranchDetail(serviceLocator()))
     ..registerLazySingleton(() => GetUserChatInfo(serviceLocator()))
+    ..registerLazySingleton(() => GetListChannel(serviceLocator()))
+    ..registerLazySingleton(() => GetChannel(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
     ..registerLazySingleton(() => BranchBloc(getBranchDetail: serviceLocator()))
     ..registerLazySingleton(() => UserChatBloc(getUserChatInfo: serviceLocator()))
+    ..registerLazySingleton(() => ListChannelBloc(getListChannel: serviceLocator()))
+    ..registerLazySingleton(() => ChannelBloc(getChannel: serviceLocator()))
     ..registerLazySingleton(() => StaffBloc(getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getStaffFreeInTime: serviceLocator()))
     ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));
@@ -217,29 +221,14 @@ Future<void> _initAiChat() async {
   serviceLocator
     //data src
     ..registerFactory<AiChatRemoteDataSource>(() => AiChatRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
-    ..registerFactory<ChatRemoteDataSource>(() => SignalRChatRemoteDataSource(hubUrl: "https://solaceapi.ddnsking.com/chat"))
     //repo
     ..registerFactory<AiChatRepository>(() => AiChatRepositoryImpl(
           serviceLocator<AiChatRemoteDataSource>(),
         ))
-    ..registerFactory<ChatRepository>(() => ChatRepositoryImpl(
-          serviceLocator<ChatRemoteDataSource>(),
-        ))
     //use case
     ..registerLazySingleton(() => GetAiChat(serviceLocator()))
-    ..registerLazySingleton(() => SendMessage(serviceLocator()))
-    ..registerLazySingleton(() => ConnectHub(serviceLocator()))
-    ..registerLazySingleton(() => DisconnectHub(serviceLocator()))
-    ..registerLazySingleton(() => GetMessages(serviceLocator()))
-
     //bloc
-    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()))
-    ..registerLazySingleton(() => ChatBloc(
-          getMessages: serviceLocator(),
-          sendMessage: serviceLocator(),
-          connect: serviceLocator(),
-          disconnect: serviceLocator(),
-        ));
+    ..registerLazySingleton(() => AiChatBloc(getAiChat: serviceLocator()));
 }
 
 Future<void> _initSkinAnalysis() async {
@@ -261,10 +250,20 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => GetRoutineDetail(serviceLocator()))
     ..registerLazySingleton(() => GetListRoutine(serviceLocator()))
     ..registerLazySingleton(() => GetRoutineStep(serviceLocator()))
+    ..registerLazySingleton(() => GetCurrentRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetRoutineTracking(serviceLocator()))
+    ..registerLazySingleton(() => BookRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetListMessage(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
     ..registerLazySingleton(() => ListRoutineBloc(getListRoutine: serviceLocator()))
+    ..registerLazySingleton(() => ListMessageBloc(getListMessage: serviceLocator()))
     ..registerLazySingleton(() => ListRoutineStepBloc(getRoutineStep: serviceLocator()))
-    ..registerLazySingleton(() => RoutineBloc(getRoutineDetail: serviceLocator()));
+    ..registerLazySingleton(() => RoutineTrackingBloc(getRoutineTracking: serviceLocator()))
+    ..registerLazySingleton(() => RoutineBloc(
+          getRoutineDetail: serviceLocator(),
+          bookRoutine: serviceLocator(),
+          getCurrentRoutine: serviceLocator(),
+        ));
 }

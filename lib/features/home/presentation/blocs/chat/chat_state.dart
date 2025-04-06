@@ -12,7 +12,7 @@ class ChatInitial extends ChatState {}
 class ChatLoading extends ChatState {}
 
 class ChatLoaded extends ChatState {
-  final List<ChatMessageModel> messages;
+  final List<MessageChannelModel> messages;
 
   const ChatLoaded(this.messages);
 

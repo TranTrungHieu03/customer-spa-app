@@ -99,16 +99,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     RemoveProductFromCartEvent event,
     Emitter<CartState> emit,
   ) async {
-    emit(CartLoading());
     final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
     int userId;
     if (jsonDecode(userJson) != null) {
       userId = UserModel.fromJson(jsonDecode(userJson)).userId;
       final result = await _removeProductCart(RemoveProductCartParams(userId: userId, productId: event.id));
-      result.fold(
-        (failure) => emit(CartError(message: failure.message)),
-        (message) => emit(CartSuccess(message: message)),
-      );
+      result.fold((failure) => emit(CartError(message: failure.message)), (message) {});
     } else {
       goLoginNotBack();
     }

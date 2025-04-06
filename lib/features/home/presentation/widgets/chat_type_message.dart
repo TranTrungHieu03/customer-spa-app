@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 
-Widget chatTypeMessageWidget(TextEditingController messageTextController, Function submitMessageFunction) {
+Widget chatTypeMessageWidget(TextEditingController messageTextController, Function submitMessageFunction, VoidCallback onTapMessage) {
   return ConstrainedBox(
-    constraints: BoxConstraints(
+    constraints: const BoxConstraints(
       minHeight: 60,
       maxHeight: 120.0,
     ),
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 20,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
+    child: TRoundedContainer(
       child: Row(
         children: [
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 0, left: 0, right: 0),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minHeight: 60,
                   maxHeight: 120.0,
                 ),
@@ -33,6 +24,7 @@ Widget chatTypeMessageWidget(TextEditingController messageTextController, Functi
                   controller: messageTextController,
                   scrollPhysics: BouncingScrollPhysics(),
                   maxLines: null,
+                  onTap: () => onTapMessage(),
                   style: TextStyle(color: TColors.gradientColorFrom),
                   decoration: InputDecoration(
                     enabledBorder: InputBorder.none,
@@ -50,10 +42,10 @@ Widget chatTypeMessageWidget(TextEditingController messageTextController, Functi
           ),
           GestureDetector(
             onTap: () => submitMessageFunction(),
-            child: Padding(
+            child: const Padding(
               padding: EdgeInsets.only(right: 12),
               child: Icon(
-                Icons.send,
+                Iconsax.send_1,
                 color: TColors.gradientColorFrom,
               ),
             ),

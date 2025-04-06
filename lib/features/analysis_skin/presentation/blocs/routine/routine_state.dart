@@ -15,6 +15,14 @@ final class RoutineLoaded extends RoutineState {
   const RoutineLoaded(this.routineModel);
 }
 
+final class RoutineBook extends RoutineState {
+  final int id;
+
+  const RoutineBook(this.id);
+}
+
+
+
 final class RoutineError extends RoutineState {
   final String message;
 

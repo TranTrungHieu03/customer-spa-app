@@ -30,7 +30,7 @@ class NetworkApiService implements BaseApiServices {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           AppLogger.info(options.path);
-          if (options.path != '/register' && options.path != '/login' && options.path != '/first-step') {
+          if (options.path != '/register' && options.path != '/Auth/login' && options.path != '/Auth/first-step') {
             _cachedToken = _cachedToken ??= await authService.getToken();
             options.headers['Authorization'] = 'Bearer $_cachedToken';
           }
@@ -41,7 +41,7 @@ class NetworkApiService implements BaseApiServices {
             options.headers['Content-Type'] = 'application/json';
           }
           if (kDebugMode) {
-            AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
+            // AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
           }
           return handler.next(options);
         },
@@ -221,7 +221,7 @@ class NetworkApiService implements BaseApiServices {
   /// Throws a [FetchDataException] with the appropriate error message if the response status code is not successful.
   dynamic returnResponse(Response response) {
     if (kDebugMode) {
-      AppLogger.debug(response.statusCode);
+      // AppLogger.debug(response.statusCode);
     }
 
     switch (response.statusCode) {

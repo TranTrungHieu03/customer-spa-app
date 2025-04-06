@@ -14,7 +14,7 @@ class UserChatModel extends UserChat {
         email: json["email"],
         password: json["password"],
         fullName: json["fullName"],
-        userId: json["userId"],
+        userId: json["userId"] != null ? int.parse(json["userId"].toString()) : 0,
         image: json["image"],
       );
 

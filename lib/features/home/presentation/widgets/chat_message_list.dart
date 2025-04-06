@@ -1,36 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:spa_mobile/features/home/data/models/chat_message.dart';
+import 'package:intl/intl.dart';
+import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
 
-Widget chatMessageWidget(ScrollController chatListScrollController, List<ChatMessageModel> messageModel, int currentUserId) {
+Widget chatMessageWidget(ScrollController chatListScrollController, List<MessageChannelModel> messages, String currentUserId) {
   return Expanded(
-      child: Container(
-    color: Colors.white,
-    child: SingleChildScrollView(
-      controller: chatListScrollController,
-      child: Column(
-        children: [
-          ...messageModel.map((e) => chatItemWidget(e, currentUserId)),
-          SizedBox(
-            height: 6,
-          )
-        ],
+    child: Container(
+      color: Colors.white,
+      child: SingleChildScrollView(
+        controller: chatListScrollController,
+        child: Column(
+          children: _buildMessageListWithDates(messages, currentUserId),
+        ),
       ),
     ),
-  ));
+  );
 }
 
-Widget chatItemWidget(ChatMessageModel e, int currentUserId) {
-  bool isMyChat = e.userId == currentUserId;
-  return e.userId == 0
-      ? systemMessageWidget(e.message!)
+List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, String currentUserId) {
+  final List<Widget> messageWidgets = [];
+  DateTime? lastMessageDate;
+
+  for (var message in messages) {
+    try {
+      final messageDate = DateTime.parse(message.timestamp).toLocal();
+      final onlyDate = DateTime(messageDate.year, messageDate.month, messageDate.day);
+
+      if (lastMessageDate == null || onlyDate != lastMessageDate) {
+        messageWidgets.add(dateDivider(onlyDate));
+        lastMessageDate = onlyDate;
+      }
+    } catch (_) {}
+
+    messageWidgets.add(chatItemWidget(message, currentUserId));
+  }
+
+  messageWidgets.add(const SizedBox(height: 6));
+
+  return messageWidgets;
+}
+
+Widget chatItemWidget(MessageChannelModel e, String currentUserId) {
+  bool isMyChat = e.sender == currentUserId;
+
+  return e.sender == "0"
+      ? systemMessageWidget(e.content ?? '')
       : Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12),
+          padding: const EdgeInsets.only(left: TSizes.xs, right: TSizes.xs),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              isMyChat ? messageTime(isMyChat, e) : userAvatar(int.parse(e.userId), "hieu"),
-              messageTextAndName(isMyChat, e.message!, "Hieu"),
-              if (!isMyChat) messageTime(isMyChat, e)
+              if (!isMyChat) userAvatar(e.sender, e.senderCustomer?.fullName ?? ""),
+              messageTextAndName(isMyChat, e.content ?? '', e.senderCustomer?.fullName ?? ""),
+              if (isMyChat) messageTime(isMyChat, e),
             ],
           ),
         );
@@ -48,29 +70,26 @@ Widget systemMessageWidget(String text) {
   );
 }
 
-Widget userAvatar(int userId, String userName) {
-  Color avatarColor = Colors.greenAccent;
-  if (userId < 10000) {
-    avatarColor = Color(0xFFffadad);
-  } else if (userId < 100000) {
-    avatarColor = Color(0xFFffd6a5);
-  } else if (userId < 200000) {
-    avatarColor = Color(0xFFfdffb6);
-  } else if (userId < 700000) {
-    avatarColor = Color(0xFFcaffbf);
-  } else if (userId < 1000000) {
-    avatarColor = Colors.blueAccent;
-  }
+Widget userAvatar(String userId, String userName) {
+  final hash = userId.hashCode;
+  final color = Color(hash).withOpacity(0.8);
 
   return Container(
     width: 40,
     height: 40,
     margin: EdgeInsets.only(bottom: 8),
-    decoration: BoxDecoration(shape: BoxShape.circle, color: avatarColor),
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: color,
+    ),
     child: Center(
       child: Text(
-        userName.substring(0, 1).toUpperCase(),
-        style: TextStyle(fontSize: 18, color: Colors.black87),
+        userName.isNotEmpty ? userName.substring(0, 1).toUpperCase() : '?',
+        style: TextStyle(
+          fontSize: 18,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     ),
   );
@@ -78,45 +97,99 @@ Widget userAvatar(int userId, String userName) {
 
 Widget messageTextAndName(bool isMyChat, String messageText, String userName) {
   return Expanded(
+    child: Container(
+      margin: EdgeInsets.fromLTRB(isMyChat ? 20 : 8, 6, 8, 6),
       child: Column(
-    crossAxisAlignment: isMyChat ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-    children: [
-      Container(
-        margin: EdgeInsets.fromLTRB(isMyChat ? 20 : 8, 6, 8, 6),
-        padding: EdgeInsets.fromLTRB(16, isMyChat ? 6 : 14, 16, 12),
-        decoration:
-            BoxDecoration(color: isMyChat ? Color(0xffebebeb0) : Color(0xffedf4ff), borderRadius: BorderRadius.all(Radius.circular(15))),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isMyChat)
-              Text(
-                userName,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 13,
-                ),
-              ),
+        crossAxisAlignment: isMyChat ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          if (!isMyChat)
             Text(
-              messageText,
-              style: TextStyle(height: 1.7),
+              userName,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 13,
+              ),
             ),
-          ],
-        ),
+          Container(
+            padding: EdgeInsets.fromLTRB(14, isMyChat ? 4 : 10, 14, 8),
+            decoration: BoxDecoration(
+              color: isMyChat ? Color(0xffebebeb) : Color(0xffedf4ff),
+              borderRadius: BorderRadius.all(Radius.circular(50)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  messageText,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-    ],
-  ));
+    ),
+  );
 }
 
-Widget messageTime(bool isMyChat, ChatMessageModel e) {
-  // var parsedDate = DateTime.parse(e.createDate!);
-  var parsedDate = e.timestamp;
-  var timeText = parsedDate.hour.toString() + " : " + parsedDate.minute.toString().padLeft(2, '0');
-  return Container(
-      margin: EdgeInsets.only(left: isMyChat ? 48 : 8, bottom: 12, right: isMyChat ? 0 : 16),
+Widget messageTime(bool isMyChat, MessageChannelModel e) {
+  try {
+    final parsedDate = DateTime.parse(e.timestamp).toLocal();
+
+    final timeText = '${parsedDate.hour}:${parsedDate.minute.toString().padLeft(2, '0')}';
+
+    return Container(
+      margin: EdgeInsets.only(
+        left: isMyChat ? 0 : TSizes.sm,
+        bottom: 12,
+        right: isMyChat ? 0 : TSizes.sm,
+      ),
       alignment: Alignment.center,
       child: Text(
         timeText,
-        style: TextStyle(color: Colors.grey),
-      ));
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 12,
+        ),
+      ),
+    );
+  } catch (e) {
+    return Container(
+      margin: EdgeInsets.only(
+        left: isMyChat ? 48 : 8,
+        bottom: 12,
+        right: isMyChat ? 0 : 16,
+      ),
+      alignment: Alignment.center,
+      child: const Text(
+        '--:--',
+        style: TextStyle(
+          color: Colors.grey,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+}
+
+Widget dateDivider(DateTime date) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    child: Row(
+      children: [
+        const Expanded(child: Divider()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            DateFormat('EEEE, dd/MM/yyyy', "vi").format(date),
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const Expanded(child: Divider()),
+      ],
+    ),
+  );
 }
