@@ -5,10 +5,12 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
+import 'package:spa_mobile/core/common/model/voucher_model.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
@@ -16,14 +18,18 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
+import 'package:spa_mobile/features/product/presentation/bloc/list_voucher/list_voucher_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/screens/voucher_screen.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_staff_bloc.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/leave_booking.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/payment_detail_service.dart';
+import 'package:spa_mobile/init_dependencies.dart';
 
 class ConfirmPaymentScreen extends StatefulWidget {
   const ConfirmPaymentScreen({
@@ -336,9 +342,10 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Discount code", style: Theme.of(context).textTheme.titleLarge),
+                              Text("Mã giảm giá", style: Theme.of(context).textTheme.titleLarge),
                               TextButton(
-                                  onPressed: () => _showVoucherModal(context),
+                                  onPressed: () =>
+                                      _showVoucherModal(context, controller.totalPrice, controller.user ?? UserModel.empty(), controller),
                                   child: TRoundedContainer(
                                       padding: const EdgeInsets.all(TSizes.sm), child: Text(AppLocalizations.of(context)!.add)))
                             ],
@@ -350,17 +357,18 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          BlocBuilder<ServiceBloc, ServiceState>(
-                            builder: (context, state) {
-                              if (state is ServiceDetailSuccess) {
-                                return TPaymentDetailService(
-                                  price: (total + state.service.price).toString(),
-                                  total: (total + state.service.price).toString(),
-                                  promotePrice: 0,
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
+                          // BlocBuilder<ServiceBloc, ServiceState>(
+                          //   builder: (context, state) {
+                          // if (state is ServiceDetailSuccess) {
+                          //   return
+                          TPaymentDetailService(
+                            price: (controller.services.fold(0.0, (a, b) => a += b.price)).toString(),
+                            total: (controller.totalPrice).toString(),
+                            promotePrice: controller.voucher?.discountAmount ?? 0,
+                            //     );
+                            //   }
+                            //   return const SizedBox.shrink();
+                            // },
                           ),
                           const SizedBox(
                             height: TSizes.md,
@@ -410,7 +418,6 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const Spacer(),
                 BlocConsumer<AppointmentBloc, AppointmentState>(
                   builder: (context, state) {
                     return ElevatedButton(
@@ -421,7 +428,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             branchId: controller.branchId,
                             appointmentsTime: controller.time,
                             notes: _messageController.text,
-                            voucherId: 0)));
+                            voucherId: controller.voucher?.voucherId ?? 0)));
                       },
                       child: Text(AppLocalizations.of(context)!.confirm),
                     );
@@ -467,62 +474,6 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
       },
     );
   }
-}
-
-void _showVoucherModal(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (BuildContext context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          left: TSizes.md,
-          right: TSizes.md,
-          top: TSizes.md,
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.shop_voucher,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Enter your voucher code",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Available Vouchers",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 300,
-              child: ListView.builder(
-                shrinkWrap: false,
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: 5,
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildVoucherItem(context, index);
-                },
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
 }
 
 Widget _buildVoucherItem(BuildContext context, int index) {
@@ -576,3 +527,160 @@ Widget _buildVoucherItem(BuildContext context, int index) {
 //   },
 //   isValue: isValidate,
 // ),
+
+void _showVoucherModal(BuildContext context, double currentTotalPrice, UserModel user, AppointmentDataController controller) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (BuildContext context) {
+      return FractionallySizedBox(
+        heightFactor: 0.7,
+        child: Scaffold(
+          body: Padding(
+            padding: EdgeInsets.only(
+              left: TSizes.md,
+              right: TSizes.md,
+              top: TSizes.md,
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text(
+                //   AppLocalizations.of(context)!.shop_voucher,
+                //   style: Theme.of(context).textTheme.titleMedium,
+                // ),
+                // const SizedBox(height: 16),
+                // TextField(
+                //   decoration: InputDecoration(
+                //     hintText: "Enter your voucher code",
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10),
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: 16),
+                Text(
+                  "Available Vouchers",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 500,
+                  child: BlocProvider<ListVoucherBloc>(
+                    create: (context) =>
+                        ListVoucherBloc(getVouchers: serviceLocator())..add(GetVoucherByDateEvent(DateTime.now().toUtc().toString())),
+                    child: BlocBuilder<ListVoucherBloc, ListVoucherState>(
+                      builder: (context, state) {
+                        if (state is ListVoucherLoaded) {
+                          final vouchers = [...state.vouchers]..sort((a, b) {
+                              bool isInvalid(VoucherModel v) =>
+                                  (user.bonusPoint ?? 0) < (v.requirePoint ?? 0) || currentTotalPrice < (v.minOrderAmount ?? 0);
+
+                              return isInvalid(a) == isInvalid(b) ? 0 : (isInvalid(a) ? 1 : -1);
+                            });
+
+                          return ListView.builder(
+                            shrinkWrap: false,
+                            padding: const EdgeInsets.only(top: TSizes.md),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: state.vouchers.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final voucher = vouchers[index];
+                              return Card(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                color: ((user.bonusPoint ?? 0) < voucher.requirePoint || currentTotalPrice < (voucher.minOrderAmount ?? 0))
+                                    ? TColors.grey
+                                    : TColors.primaryBackground.withOpacity(0.9),
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.local_offer,
+                                    color:
+                                        ((user.bonusPoint ?? 0) < voucher.requirePoint || currentTotalPrice < (voucher.minOrderAmount ?? 0))
+                                            ? TColors.darkerGrey
+                                            : Colors.green,
+                                  ),
+                                  title: GestureDetector(onTap: () => _showVoucherDetail(context, voucher), child: Text(voucher.code)),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(formatMoney(voucher.discountAmount.toString())),
+                                      if ((user.bonusPoint ?? 0) < voucher.requirePoint)
+                                        Text('Cần thêm ${voucher.requirePoint - (user.bonusPoint ?? 0).toInt()} điểm để sử dụng mã này',
+                                            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
+                                      if (currentTotalPrice < (voucher.minOrderAmount ?? 0))
+                                        Text(
+                                            'Mua thêm ${formatMoney((voucher.minOrderAmount ?? 0 - currentTotalPrice).toString())} để sử dụng mã này',
+                                            style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
+                                    ],
+                                  ),
+                                  trailing: ElevatedButton(
+                                    onPressed: ((user.bonusPoint ?? 0) < voucher.requirePoint ||
+                                            currentTotalPrice < (voucher.minOrderAmount ?? 0))
+                                        ? null
+                                        : () {
+                                            controller.updateVoucher(voucher);
+                                            controller.updateTotalPrice((controller.services.fold(0.0, (x, y) => x += y.price.toDouble()) -
+                                                (controller.voucher?.discountAmount.toDouble() ?? 0)));
+                                            goReview(controller);
+                                          },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.apply,
+                                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                            color: Colors.white,
+                                            fontSize: TSizes.md,
+                                          ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else if (state is ListVoucherLoading) {
+                          return ListView.builder(
+                            shrinkWrap: false,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: 2,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  TShimmerEffect(width: THelperFunctions.screenWidth(context) * 0.7, height: TSizes.shimmerMd),
+                                  TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSm)
+                                ],
+                              );
+                            },
+                          );
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showVoucherDetail(BuildContext context, VoucherModel voucher) {
+  showBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(heightFactor: 0.6, child: VoucherScreen(voucherModel: voucher));
+      });
+}

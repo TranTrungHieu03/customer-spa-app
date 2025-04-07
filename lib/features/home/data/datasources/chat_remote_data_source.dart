@@ -19,7 +19,6 @@ abstract class ChatRemoteDataSource {
 class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
   late HubConnection _hubConnection;
 
-  // final List<OnMessageReceivedCallback> _callbacks = [];
   final StreamController<MessageChannelModel> _messageStreamController = StreamController<MessageChannelModel>.broadcast();
 
   SignalRChatRemoteDataSource({required String hubUrl, required String userId}) {
@@ -39,7 +38,6 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
       if (arguments != null && arguments.isNotEmpty) {
         try {
           final message = MessageChannelModel.fromJson(json.decode(json.encode(arguments[0])));
-
           handleMessageReceived(message);
         } catch (e) {}
       }

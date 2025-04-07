@@ -54,7 +54,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   @override
   Future<List<ProductCartModel>> removeProductFromCart(params) async {
     try {
-      final response = await _apiServices.deleteApi('/Cart/${params.userId}/${params.productId}');
+      final response = await _apiServices.deleteApi('/Cart/${params.userId}/${params.productIds.join(',')}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((e) => ProductCartModel.fromJson(e)).toList();

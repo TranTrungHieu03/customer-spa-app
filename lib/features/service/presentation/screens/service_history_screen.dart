@@ -23,7 +23,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: BlocConsumer<ListAppointmentBloc, ListAppointmentState>(
         listener: (context, state) {
           if (state is ListAppointmentError) {

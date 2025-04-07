@@ -8,3 +8,9 @@ class CreateOrderEvent extends OrderEvent {
 
   CreateOrderEvent(this.params);
 }
+
+class GetOrderEvent extends OrderEvent {
+  final GetOrderProductDetailParams params;
+
+  GetOrderEvent(this.params);
+}

@@ -137,6 +137,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     } else {
       goLoginNotBack();
     }
+
     if (userId?.district == 0 || userId?.wardCode == 0) {
       TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
     }

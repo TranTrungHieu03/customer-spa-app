@@ -128,7 +128,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                product.category.name,
+                                product.category?.name ?? "",
                                 style: Theme.of(context).textTheme.titleLarge,
                               ),
                               TRoundedContainer(

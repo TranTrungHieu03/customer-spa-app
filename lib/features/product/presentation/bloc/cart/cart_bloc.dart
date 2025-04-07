@@ -103,7 +103,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     int userId;
     if (jsonDecode(userJson) != null) {
       userId = UserModel.fromJson(jsonDecode(userJson)).userId;
-      final result = await _removeProductCart(RemoveProductCartParams(userId: userId, productId: event.id));
+      final result = await _removeProductCart(RemoveProductCartParams(userId: userId, productIds: event.ids));
       result.fold((failure) => emit(CartError(message: failure.message)), (message) {});
     } else {
       goLoginNotBack();

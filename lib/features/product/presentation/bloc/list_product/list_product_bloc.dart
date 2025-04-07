@@ -24,7 +24,7 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
       return;
     }
     if (currentState is ListProductLoaded) {
-      AppLogger.info("go here");
+      AppLogger.info("go here Loaded");
       emit(currentState.copyWith(isLoadingMore: true));
       final result = await _getListProducts(event.params);
       result.fold(
@@ -36,6 +36,7 @@ class ListProductBloc extends Bloc<ListProductEvent, ListProductState> {
         )),
       );
     } else {
+      AppLogger.info("go here Initial");
       emit(const ListProductLoading(isLoadingMore: false));
       final result = await _getListProducts(event.params);
       result.fold(

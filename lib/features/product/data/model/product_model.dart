@@ -1,8 +1,10 @@
+import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_category_model.dart';
 import 'package:spa_mobile/features/product/domain/entities/product.dart';
 
 class ProductModel extends Product {
-  final ProductCategoryModel category;
+  final ProductCategoryModel? category;
+  final BranchModel? branch;
 
   ProductModel(
       {required super.productId,
@@ -17,11 +19,12 @@ class ProductModel extends Product {
       required super.discount,
       required super.status,
       required super.categoryId,
-      required this.category,
+      this.category,
       required super.companyId,
       required super.productBranchId,
       required super.stockQuantity,
       required super.volume,
+      this.branch,
       required super.images});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -42,8 +45,9 @@ class ProductModel extends Product {
       branchId: json['brandId'] ?? 0,
       stockQuantity: json['stockQuantity'] ?? 0,
       productBranchId: json['productBranchId'] ?? 0,
-      category: ProductCategoryModel.fromJson(json['category']),
+      category: json['category'] != null ? ProductCategoryModel.fromJson(json['category']) : null,
       images: (json['images'] is List) ? (json['images'] as List).map((e) => e.toString()).toList() : [],
+      branch: json['branches'] != null ? BranchModel.fromJson(json['branches']) : null,
     );
   }
 
@@ -62,7 +66,6 @@ class ProductModel extends Product {
       'categoryId': categoryId,
       'skinTypeSuitable': skinTypeSuitable,
       'companyId': companyId,
-      'category': category.toJson(),
       'images': (images as List).map((e) => e.toString()).toList(),
     };
   }

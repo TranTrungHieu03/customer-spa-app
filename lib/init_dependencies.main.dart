@@ -107,6 +107,7 @@ Future<void> _initProduct() async {
     ..registerFactory<ProductRemoteDataSource>(() => ProductRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<CartRemoteDataSource>(() => CartRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<OrderRemoteDataSource>(() => OrderRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<VoucherRemoteDataSource>(() => VoucherRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
     ..registerFactory<LocationRemoteDataSource>(() => LocationRemoteDataSourceImpl(
           serviceLocator<PermissionService>(),
           serviceLocator<GoongApiService>(),
@@ -117,6 +118,7 @@ Future<void> _initProduct() async {
     ..registerFactory<CartRepository>(() => CartRepositoryImpl(serviceLocator<CartRemoteDataSource>()))
     ..registerFactory<LocationRepository>(() => LocationRepositoryImpl(serviceLocator<LocationRemoteDataSource>()))
     ..registerFactory<OrderRepository>(() => OrderRepositoryImpl(serviceLocator<OrderRemoteDataSource>()))
+    ..registerFactory<VoucherRepository>(() => VoucherRepositoryImpl(serviceLocator<VoucherRemoteDataSource>()))
     //use case
     ..registerLazySingleton(() => GetListProducts(serviceLocator()))
     ..registerLazySingleton(() => GetProductDetail(serviceLocator()))
@@ -128,10 +130,15 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => CreateOrder(serviceLocator()))
     ..registerLazySingleton(() => GetAvailableService(serviceLocator()))
     ..registerLazySingleton(() => GetLeadTime(serviceLocator()))
+    ..registerLazySingleton(() => GetHistoryProduct(serviceLocator()))
+    ..registerLazySingleton(() => GetOrderProductDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetVouchers(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
-    ..registerLazySingleton(() => OrderBloc(createOrder: serviceLocator()))
+    ..registerLazySingleton(() => ListOrderBloc(getHistoryProduct: serviceLocator()))
+    ..registerLazySingleton(() => ListVoucherBloc(getVouchers: serviceLocator()))
+    ..registerLazySingleton(() => OrderBloc(createOrder: serviceLocator(), getOrderProductDetail: serviceLocator()))
     ..registerLazySingleton(() => ListProductBloc(getListProducts: serviceLocator()))
     ..registerLazySingleton(() => NearestBranchBloc(getDistance: serviceLocator()))
     ..registerLazySingleton(

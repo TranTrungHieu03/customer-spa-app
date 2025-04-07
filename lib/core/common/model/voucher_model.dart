@@ -13,20 +13,22 @@ class VoucherModel extends Voucher {
       required super.validFrom,
       required super.validTo,
       required super.createdDate,
-      required super.updatedDate});
+      required super.updatedDate,
+      required super.requirePoint});
 
   factory VoucherModel.fromJson(Map<String, dynamic> json) {
     return VoucherModel(
       voucherId: json['voucherId'],
       code: json['code'],
       quantity: json['quantity'],
+      requirePoint: (json['requirePoint'] ?? 0 as num).toDouble(),
       remainQuantity: json['remainQuantity'],
       status: json['status'],
       description: json['description'],
       discountAmount: (json['discountAmount'] as num).toDouble(),
-      minOrderAmount: (json['minOrderAmount'] as num).toDouble(),
-      validFrom: DateTime.parse(json['validFrom']),
-      validTo: DateTime.parse(json['validTo']),
+      minOrderAmount: (json['minOrderAmount'] ?? 0 as num).toDouble(),
+      validFrom: DateTime.parse(json['validFrom']).toLocal(),
+      validTo: DateTime.parse(json['validTo']).toLocal(),
       createdDate: DateTime.parse(json['createdDate']),
       updatedDate: DateTime.parse(json['updatedDate']),
     );

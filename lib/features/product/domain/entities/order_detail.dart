@@ -6,9 +6,9 @@ class OrderDetail extends Equatable {
   final int productId;
   final int? promotionId;
   final int quantity;
-  final int unitPrice;
-  final int subTotal;
-  final int? discountAmount;
+  final double unitPrice;
+  final double subTotal;
+  final double? discountAmount;
   final String status;
   final String statusPayment;
 

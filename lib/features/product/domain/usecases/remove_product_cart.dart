@@ -17,7 +17,7 @@ class RemoveProductCart implements UseCase<Either, RemoveProductCartParams> {
 
 class RemoveProductCartParams {
   final int userId;
-  final String productId;
+  final List<String> productIds;
 
-  RemoveProductCartParams({required this.userId, required this.productId});
+  RemoveProductCartParams({required this.userId, required this.productIds});
 }
