@@ -40,6 +40,7 @@ import 'package:spa_mobile/features/home/presentation/widgets/navigator_menu.dar
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/presentation/screens/checkout_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/history_screen.dart';
+import 'package:spa_mobile/features/product/presentation/screens/order_detail_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/shipment_information_screen.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';

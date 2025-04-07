@@ -18,6 +18,7 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
@@ -38,6 +39,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
   // Controllers
   final ScrollController _scrollController = ScrollController();
   TabController? _tabController;
+  UserModel user = UserModel.empty();
 
   // UI State
   bool _isScrolled = false;
@@ -80,6 +82,14 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
           selectedBranch = int.parse(branchId);
           previousBranch = selectedBranch;
         });
+
+        final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+        AppLogger.info(userJson);
+        if (jsonDecode(userJson) != null) {
+          user = UserModel.fromJson(jsonDecode(userJson));
+        } else {
+          goLoginNotBack();
+        }
       }
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -481,6 +491,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                 onTap: () {
                                   controller.updateBranch(branchInfo);
                                   controller.updateBranchId(selectedBranch ?? 0);
+                                  controller.updateUser(user);
                                   _showServiceDetail(context, service.serviceId, selectedBranch ?? 0, controller);
                                 },
                                 child: Padding(

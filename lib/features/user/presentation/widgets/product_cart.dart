@@ -258,7 +258,7 @@ class TProductCart extends StatelessWidget {
                 },
                 onDismissed: (direction) {
                   // 1. Gửi event xóa đến CartBloc
-                  context.read<CartBloc>().add(RemoveProductFromCartEvent(id: cartItem.id.toString()));
+                  context.read<CartBloc>().add(RemoveProductFromCartEvent(ids: [cartItem.id.toString()]));
 
                   // 2. Cập nhật UI ngay lập tức bằng cách loại bỏ item khỏi danh sách
                   final cubit = context.read<CheckboxCartCubit>();

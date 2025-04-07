@@ -153,7 +153,17 @@ class _ShipmentInformationScreenState extends State<ShipmentInformationScreen> {
                   const SizedBox(
                     width: TSizes.lg,
                   ),
-                  ElevatedButton(onPressed: () {}, child: Text(AppLocalizations.of(context)!.save))
+                  ElevatedButton(
+                      onPressed: () {
+                        widget.controller.updateShipment(ShipmentModel(
+                            address: addressController.text.trim(),
+                            name: fullNameController.text.trim(),
+                            phoneNumber: phoneController.text.toString().trim(),
+                            districtId: districtId,
+                            wardCode: wardCode));
+                        goCheckout(widget.controller);
+                      },
+                      child: Text(AppLocalizations.of(context)!.save))
                 ],
               )
             ],

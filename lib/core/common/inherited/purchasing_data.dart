@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
+import 'package:spa_mobile/core/common/model/voucher_model.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/data/model/shipment_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 
 class PurchasingDataController extends ChangeNotifier {
   int _branchId = 0;
-  UserModel? _user;
+  UserModel? _user = UserModel.empty();
   late BranchModel _branch;
   ShipmentModel _shipment = ShipmentModel.empty();
+  VoucherModel? _voucher;
   double _totalPrice = 0;
   List<ProductQuantity> _products = [];
   int _serviceGHN = 0;
   int _shippingCost = 0;
   String _expectedDate = "";
+  String _method = 'bank_transfer';
 
   int get branchId => _branchId;
+
+  VoucherModel? get voucher => _voucher;
 
   double get totalPrice => _totalPrice;
 
@@ -32,6 +37,18 @@ class PurchasingDataController extends ChangeNotifier {
   int get shippingCost => _shippingCost;
 
   String get expectedDate => _expectedDate;
+
+  String get method => _method;
+
+  void updateMethod(String method) {
+    _method = method;
+    notifyListeners();
+  }
+
+  void updateVoucher(VoucherModel voucher) {
+    _voucher = voucher;
+    notifyListeners();
+  }
 
   void updateBranchId(int branchId) {
     _branchId = branchId;

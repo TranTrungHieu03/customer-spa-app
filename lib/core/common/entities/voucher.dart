@@ -8,11 +8,12 @@ class Voucher extends Equatable {
   final String status;
   final String description;
   final double discountAmount;
-  final double minOrderAmount;
+  final double? minOrderAmount;
   final DateTime validFrom;
   final DateTime validTo;
   final DateTime createdDate;
   final DateTime updatedDate;
+  final double requirePoint;
 
   Voucher({
     required this.voucherId,
@@ -22,11 +23,12 @@ class Voucher extends Equatable {
     required this.status,
     required this.description,
     required this.discountAmount,
-    required this.minOrderAmount,
     required this.validFrom,
     required this.validTo,
     required this.createdDate,
     required this.updatedDate,
+    required this.requirePoint,
+    this.minOrderAmount,
   });
 
   @override

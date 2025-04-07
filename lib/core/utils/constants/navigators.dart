@@ -312,3 +312,8 @@ goChatRoom(String channelId, String userId) async {
   Navigator.push(
       navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperChatRoom(channelId: channelId, userId: userId)));
 }
+
+goOrderProductDetail(int orderId) async {
+  Navigator.push(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderDetailScreen(orderId: orderId)));
+}

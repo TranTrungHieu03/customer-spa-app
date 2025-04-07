@@ -16,9 +16,9 @@ class UpdateProductToCartEvent extends CartEvent {
 }
 
 class RemoveProductFromCartEvent extends CartEvent {
-  final String id;
+  final List<String> ids;
 
-  RemoveProductFromCartEvent({required this.id});
+  RemoveProductFromCartEvent({required this.ids});
 }
 
 class GetCartProductsEvent extends CartEvent {}

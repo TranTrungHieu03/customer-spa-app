@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
+import 'package:spa_mobile/core/common/model/voucher_model.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_model.dart';
 
@@ -11,11 +13,17 @@ class AppointmentDataController extends ChangeNotifier {
   double _totalPrice = 0;
   int _totalDuration = 0;
   int _branchId = 0;
+  UserModel? _user = UserModel.empty();
   BranchModel? branchModel;
   List<DateTime> timeStart = [];
   List<int> _staffIds = [];
+  VoucherModel? _voucher;
 
   List<StaffModel?> _staffs = [];
+
+  UserModel? get user => _user;
+
+  VoucherModel? get voucher => _voucher;
 
   List<ServiceModel> get services => _services;
 
@@ -37,6 +45,16 @@ class AppointmentDataController extends ChangeNotifier {
 
   void updateServices(List<ServiceModel> newServices) {
     _services = newServices;
+    notifyListeners();
+  }
+
+  void updateVoucher(VoucherModel newServices) {
+    _voucher = newServices;
+    notifyListeners();
+  }
+
+  void updateUser(UserModel newServices) {
+    _user = newServices;
     notifyListeners();
   }
 
