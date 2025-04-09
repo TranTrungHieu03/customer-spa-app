@@ -82,14 +82,14 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
           selectedBranch = int.parse(branchId);
           previousBranch = selectedBranch;
         });
+      }
 
-        final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
-        AppLogger.info(userJson);
-        if (jsonDecode(userJson) != null) {
-          user = UserModel.fromJson(jsonDecode(userJson));
-        } else {
-          goLoginNotBack();
-        }
+      final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+      AppLogger.info(userJson);
+      if (jsonDecode(userJson) != null) {
+        user = UserModel.fromJson(jsonDecode(userJson));
+      } else {
+        goLoginNotBack();
       }
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -622,6 +622,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     controller.updateTotalPrice(totalAmount);
                     controller.updateBranchId(selectedBranch ?? 0);
                     controller.updateBranch(branchInfo);
+                    controller.updateUser(user);
                     goSelectSpecialist(selectedBranch ?? 0, controller);
                   },
                   child: Text(

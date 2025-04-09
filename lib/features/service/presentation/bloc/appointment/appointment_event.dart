@@ -50,3 +50,9 @@ final class UpdateNoteEvent extends AppointmentEvent {
 }
 
 final class ClearAppointmentEvent extends AppointmentEvent {}
+
+final class CancelAppointmentEvent extends AppointmentEvent {
+  final CancelOrderParams params;
+
+  CancelAppointmentEvent(this.params);
+}

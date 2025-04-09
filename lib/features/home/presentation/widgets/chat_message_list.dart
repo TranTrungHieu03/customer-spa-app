@@ -1,23 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
+import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
 
-Widget chatMessageWidget(ScrollController chatListScrollController, List<MessageChannelModel> messages, String currentUserId) {
-  return Expanded(
-    child: Container(
-      color: Colors.white,
-      child: SingleChildScrollView(
-        controller: chatListScrollController,
-        child: Column(
-          children: _buildMessageListWithDates(messages, currentUserId),
-        ),
+Widget chatMessageWidget(
+    ScrollController chatListScrollController, List<MessageChannelModel> messages, String currentUserId, List<UserChatModel> members) {
+  return Container(
+    color: Colors.white,
+    child: SingleChildScrollView(
+      controller: chatListScrollController,
+      child: Column(
+        children: _buildMessageListWithDates(messages, currentUserId, members),
       ),
     ),
   );
 }
 
-List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, String currentUserId) {
+List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, String currentUserId, List<UserChatModel> members) {
   final List<Widget> messageWidgets = [];
   DateTime? lastMessageDate;
 
@@ -32,7 +36,7 @@ List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, Stri
       }
     } catch (_) {}
 
-    messageWidgets.add(chatItemWidget(message, currentUserId));
+    messageWidgets.add(chatItemWidget(message, currentUserId, members));
   }
 
   messageWidgets.add(const SizedBox(height: 6));
@@ -40,7 +44,7 @@ List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, Stri
   return messageWidgets;
 }
 
-Widget chatItemWidget(MessageChannelModel e, String currentUserId) {
+Widget chatItemWidget(MessageChannelModel e, String currentUserId, List<UserChatModel> members) {
   bool isMyChat = e.sender == currentUserId;
 
   return e.sender == "0"
@@ -50,8 +54,9 @@ Widget chatItemWidget(MessageChannelModel e, String currentUserId) {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (!isMyChat) userAvatar(e.sender, e.senderCustomer?.fullName ?? ""),
-              messageTextAndName(isMyChat, e.content ?? '', e.senderCustomer?.fullName ?? ""),
+              if (!isMyChat) userAvatar(e.sender, e.senderCustomer?.fullName ?? "", members),
+              if (e.messageType != 'text') messageImageAndName(isMyChat, e.content ?? "", e.senderCustomer?.fullName ?? ""),
+              if (e.messageType == 'text') messageTextAndName(isMyChat, e.content ?? '', e.senderCustomer?.fullName ?? ""),
               if (isMyChat) messageTime(isMyChat, e),
             ],
           ),
@@ -70,8 +75,9 @@ Widget systemMessageWidget(String text) {
   );
 }
 
-Widget userAvatar(String userId, String userName) {
+Widget userAvatar(String userId, String userName, List<UserChatModel> members) {
   final hash = userId.hashCode;
+  final user = members.firstWhere((x) => x.id == userId);
   final color = Color(hash).withOpacity(0.8);
 
   return Container(
@@ -83,14 +89,21 @@ Widget userAvatar(String userId, String userName) {
       color: color,
     ),
     child: Center(
-      child: Text(
-        userName.isNotEmpty ? userName.substring(0, 1).toUpperCase() : '?',
-        style: TextStyle(
-          fontSize: 18,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      child: user.image != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image(
+                image: NetworkImage(user.image),
+                fit: BoxFit.cover,
+              ))
+          : Text(
+              user.fullName.isNotEmpty ? userName.substring(0, 1).toUpperCase() : '?',
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
     ),
   );
 }
@@ -123,6 +136,55 @@ Widget messageTextAndName(bool isMyChat, String messageText, String userName) {
                   messageText,
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget messageImageAndName(bool isMyChat, String url, String userName) {
+  // Tách phần base64 ra
+  // final String base64Data = url.contains(',') ? url.split(',').last : url;
+  AppLogger.error(url);
+  Uint8List imageBytes;
+
+  if (url.contains(',')) {
+    final base64Data = url.split(',').last;
+    imageBytes = base64Decode(base64Data);
+  } else {
+    imageBytes = base64Decode(url); // nếu không có prefix
+  }
+
+  return Expanded(
+    child: Container(
+      margin: EdgeInsets.fromLTRB(isMyChat ? 20 : 8, 6, 8, 6),
+      child: Column(
+        crossAxisAlignment: isMyChat ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          if (!isMyChat)
+            Text(
+              userName,
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 13,
+              ),
+            ),
+          Container(
+            // padding: EdgeInsets.fromLTRB(14, isMyChat ? 4 : 10, 14, 8),
+            decoration: BoxDecoration(
+              color: isMyChat ? const Color(0xffebebeb) : const Color(0xffedf4ff),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.memory(
+                imageBytes,
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ],

@@ -142,14 +142,15 @@ class TProductCart extends StatelessWidget {
                                   //get list id branch choose
                                   final selectedBranchIds = checkoutItems.map((item) => item.product.branchId).toSet();
                                   if (selectedBranchIds.length > 1) {
-                                    TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
+                                    TSnackBar.infoSnackBar(context, message: "Mỗi đơn hàng chỉ được mua từ một chi nhánh");
+
                                     return;
                                   }
 
                                   controller.updateProducts(checkoutItems);
                                   if (controller.user?.wardCode == 0 || controller.user?.district == 0) {
                                     goProfile();
-                                    TSnackBar.infoSnackBar(context, message: "Mỗi đơn hàng chỉ được mua từ một chi nhánh");
+                                    TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
                                     return;
                                   }
                                   goCheckout(controller);

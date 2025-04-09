@@ -32,3 +32,10 @@ final class AppointmentCreateData extends AppointmentState {
 
   const AppointmentCreateData(this.params);
 }
+
+final class CancelAppointmentSuccess extends AppointmentState {
+  final String error;
+  final int orderId;
+
+  CancelAppointmentSuccess({required this.orderId, required this.error});
+}

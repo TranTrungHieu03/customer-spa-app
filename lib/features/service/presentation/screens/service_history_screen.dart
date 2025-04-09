@@ -55,7 +55,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                       status: "completed",
                     ),
                     TStatusTabService(
-                      status: "cancel",
+                      status: "cancelled",
                     ),
                   ],
                 ),

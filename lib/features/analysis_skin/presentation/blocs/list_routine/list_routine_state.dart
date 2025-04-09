@@ -11,6 +11,22 @@ final class ListRoutineLoaded extends ListRoutineState {
   ListRoutineLoaded(this.routines);
 }
 
+final class ListRoutineHistoryLoaded extends ListRoutineState {
+  final List<RoutineModel> active;
+  final List<RoutineModel> cancelled;
+  final List<RoutineModel> completed;
+
+  ListRoutineHistoryLoaded({required this.active, required this.cancelled, required this.completed});
+}
+
+final class ListRoutineHistoryLoading extends ListRoutineState {
+  final List<RoutineModel> active;
+  final List<RoutineModel> cancelled;
+  final List<RoutineModel> completed;
+
+  ListRoutineHistoryLoading({required this.active, required this.cancelled, required this.completed});
+}
+
 final class ListRoutineError extends ListRoutineState {
   final String message;
 

@@ -16,11 +16,11 @@ class TLeaveBooking extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Are you sure you want to leave this booking?",
+            "Bạn có chắc muốn rời khỏi lịch đặt này?",
             style: Theme.of(context).textTheme.displaySmall,
           ),
           Text(
-            "All selections will be lost",
+            "Tất cả dữ liệu đã chọn sẽ mất.",
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const Spacer(),
@@ -42,7 +42,7 @@ class TLeaveBooking extends StatelessWidget {
                     clearFn();
                     goHome();
                   },
-                  child: Text("Yes, exit"),
+                  child: Text('Đồng ý'),
                 ),
               ),
             ],

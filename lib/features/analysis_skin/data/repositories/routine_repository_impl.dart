@@ -8,6 +8,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/repositories/routine_re
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 
@@ -80,6 +81,18 @@ class RoutineRepositoryImpl implements RoutineRepository {
   Future<Either<Failure, RoutineTrackingModel>> getRoutineTracking(GetRoutineTrackingParams params) async {
     try {
       RoutineTrackingModel result = await _dataSource.getRoutineTracking(params);
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<RoutineModel>>> getHistoryRoutine(GetRoutineHistoryParams params) async {
+    try {
+      List<RoutineModel> result = await _dataSource.getHistoryRoutine(params);
       return right(result);
     } catch (e) {
       return left(ApiFailure(

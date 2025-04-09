@@ -24,7 +24,6 @@ import 'package:spa_mobile/features/product/domain/usecases/get_lead_time.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_voucher/list_voucher_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/ship_fee/ship_fee_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/screens/voucher_screen.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 import 'product_price.dart';
@@ -79,18 +78,19 @@ class _TProductCheckoutState extends State<TProductCheckout> {
               final product = products[index].product;
               return Column(
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Iconsax.shop),
-                      const SizedBox(
-                        width: TSizes.spacebtwItems / 2,
-                      ),
-                      Text(
-                        product.brand,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      )
-                    ],
-                  ),
+                  if (index == 0)
+                    Row(
+                      children: [
+                        const Icon(Iconsax.shop),
+                        const SizedBox(
+                          width: TSizes.spacebtwItems / 2,
+                        ),
+                        Text(
+                          controller.branch?.branchName ?? "",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
+                      ],
+                    ),
                   SizedBox(
                       width: THelperFunctions.screenWidth(context),
                       child: const Divider(
@@ -110,6 +110,7 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                           width: 1,
                         ),
                         width: THelperFunctions.screenWidth(context) * 0.28,
+                        height: THelperFunctions.screenWidth(context) * 0.28,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: TSizes.sm),
@@ -119,26 +120,33 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              TProductTitleText(
-                                title: product.productName,
+                              Text(
+                                product.productName,
+                                style: Theme.of(context).textTheme.bodyMedium,
                                 maxLines: 2,
-                                smallSize: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(product.brand,
+                                  maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "x${products[index].quantity}",
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ],
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  TProductPriceText(
-                                    price: product.price.toString(),
-                                  ),
                                   Text(
-                                    'x${products[index].quantity.toString()}',
+                                    formatMoney(product.price.toString()),
                                     style: Theme.of(context).textTheme.bodySmall,
                                   )
                                 ],
-                              ),
-                              const SizedBox(
-                                height: TSizes.sm,
                               )
                             ],
                           ),

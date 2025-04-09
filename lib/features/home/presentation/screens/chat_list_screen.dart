@@ -31,7 +31,6 @@ class _WrapperChatListScreenState extends State<WrapperChatListScreen> {
   }
 }
 
-
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
 
@@ -42,7 +41,6 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   UserChatModel? userChatModel;
   late int userId;
-
 
   @override
   void initState() {
@@ -112,6 +110,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
         child: BlocBuilder<ListChannelBloc, ListChannelState>(
           builder: (context, state) {
             if (state is ListChannelLoaded) {
+              if (state.channels.isEmpty) {
+                return Center(
+                  child: Text('Chưa có đoạn hội thoại'),
+                );
+              }
               return ListView.separated(
                 itemCount: state.channels.length,
                 separatorBuilder: (context, index) => const Divider(height: 1),
@@ -131,12 +134,12 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-                    subtitle: Text(
-                      "No message", // Hiển thị nội dung tin nhắn gần nhất
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
-                    ),
+                    // subtitle: Text(
+                    //   "No message", // Hiển thị nội dung tin nhắn gần nhất
+                    //   maxLines: 1,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                    // ),
                     trailing: Text(
                       "",
                       // conversatio, // Hiển thị thời gian

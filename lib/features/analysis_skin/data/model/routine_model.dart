@@ -19,7 +19,7 @@ class RoutineModel extends Routine {
       required this.serviceRoutines});
 
   factory RoutineModel.fromJson(Map<String, dynamic> json) {
-    AppLogger.info("fromJson RoutineModel $json");
+    // AppLogger.info("fromJson RoutineModel $json");
     return RoutineModel(
       skincareRoutineId: json['skincareRoutineId'],
       name: json['name'],

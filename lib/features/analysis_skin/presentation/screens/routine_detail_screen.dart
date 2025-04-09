@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/inherited/routine_data.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
@@ -14,6 +15,23 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/rou
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_list_view.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_list_view.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
+
+class WrapperRoutineDetail extends StatelessWidget {
+  const WrapperRoutineDetail({super.key, required this.id, this.onlyShown = false});
+
+  final String id;
+  final bool onlyShown;
+
+  @override
+  Widget build(BuildContext context) {
+    return RoutineData(
+        controller: RoutineDataController(),
+        child: RoutineDetailScreen(
+          id: id,
+          onlyShown: onlyShown,
+        ));
+  }
+}
 
 class RoutineDetailScreen extends StatefulWidget {
   const RoutineDetailScreen({super.key, required this.id, this.onlyShown = false});
@@ -34,6 +52,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = RoutineData.of(context);
     return BlocConsumer<RoutineBloc, RoutineState>(
       listener: (context, state) {
         if (state is RoutineError) {
@@ -143,7 +162,8 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
                         onPressed: () {
-                          goSelectRoutineTime(routine);
+                          controller.updateRoutine(routine);
+                          goSelectRoutineTime(controller);
                         },
                         child: const Text("Book")))
                 : null,

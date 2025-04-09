@@ -12,8 +12,8 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/constants/skin_analysis.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/skin_data.dart';
 
 class AnalysisResultScreen extends StatefulWidget {
@@ -72,7 +72,10 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!.skin_condition.toUpperCase(),
-                                  style: Theme.of(context).textTheme.headlineSmall,
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .headlineSmall,
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
@@ -143,7 +146,10 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                             },
                             child: Text(
                               AppLocalizations.of(context)!.recommendation,
-                              style: Theme.of(context).textTheme.titleLarge,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleLarge,
                             ),
                           ),
                           TextButton(
@@ -152,7 +158,10 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                             },
                             child: Text(
                               AppLocalizations.of(context)!.editForm,
-                              style: Theme.of(context).textTheme.bodyLarge,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .bodyLarge,
                             ),
                           )
                         ],
@@ -160,23 +169,69 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                     const SizedBox(
                       height: TSizes.sm,
                     ),
-                    if (_isVisible)
-                      SizedBox(
-                        height: 170,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () => goRoutineDetail(routines[index].skincareRoutineId.toString()),
-                              child: TServiceRoutine(
-                                routineModel: routines[index],
+                    // if (_isVisible)
+                    ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final routine = routines[index];
+                          final List<String> listSteps = routine.steps.split(", ");
+                          return GestureDetector(
+                            onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
+                            child: TRoundedContainer(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ListTile(
+                                    title: Text(routine.name, style: Theme
+                                        .of(context)
+                                        .textTheme
+                                        .titleLarge),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(routine.description),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            formatMoney(routine.totalPrice.toString()),
+                                            style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      goRoutineDetail(routine.skincareRoutineId.toString());
+                                    },
+                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+                                  //   child: Text("Các bước thực hiện:", style: Theme.of(context).textTheme.bodyMedium),
+                                  // ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
+                                  //   child: ListView.builder(
+                                  //     shrinkWrap: true,
+                                  //     physics: const NeverScrollableScrollPhysics(),
+                                  //     itemBuilder: (context, indexStep) {
+                                  //       return Text('${indexStep + 1}. ${listSteps[indexStep]}');
+                                  //     },
+                                  //     itemCount: listSteps.length,
+                                  //   ),
+                                  // ),
+                                  const SizedBox(
+                                    height: TSizes.md,
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                          separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
-                          itemCount: routines.length,
-                        ),
-                      ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: TSizes.sm,
+                          );
+                        },
+                        itemCount: routines.length)
                   ],
                 ),
               ),
@@ -187,6 +242,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
           return const SizedBox.shrink();
         },
       ),
+
     );
   }
 }

@@ -99,4 +99,10 @@ class GhnApiService implements BaseApiServices {
     // TODO: implement putApi
     throw UnimplementedError();
   }
+
+  @override
+  Future patchApi(String url, data) {
+    // TODO: implement patchApi
+    throw UnimplementedError();
+  }
 }

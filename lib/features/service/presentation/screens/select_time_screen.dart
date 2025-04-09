@@ -2,7 +2,6 @@ import "dart:math";
 
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import "package:iconsax/iconsax.dart";
 import "package:intl/intl.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -64,26 +63,31 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
 
     List<TimeModel> allPossibleSlots = [];
     DateTime currentStart = workDayStart;
+    AppLogger.info(widget.controller.totalDuration);
 
     while (true) {
       final slotEnd = currentStart.add(Duration(minutes: widget.controller.totalDuration));
-
       if (slotEnd.isAfter(workDayEnd)) break;
 
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
-
       currentStart = currentStart.add(const Duration(minutes: 15));
     }
 
+    final now = DateTime.now();
+
     availableTimeSlots = allPossibleSlots.where((possibleSlot) {
-      return !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
+      final isNotBooked = !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
+      final isInFuture = possibleSlot.startTime.isAfter(now);
+      return isNotBooked && isInFuture;
     }).toList();
 
     setState(() {});
   }
 
   bool _isOverlapping(TimeModel slot1, TimeModel slot2) {
-    return slot1.startTime.isBefore(slot2.endTime) && slot1.endTime.isAfter(slot2.startTime);
+    const buffer = Duration(minutes: 5);
+
+    return slot1.startTime.isBefore(slot2.endTime.add(buffer)) && slot1.endTime.isAfter(slot2.startTime.subtract(buffer));
   }
 
   @override
@@ -91,7 +95,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     super.initState();
     _loadLanguageAndInit();
     if (widget.staffIds[0] != 0) {}
-    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffIds[0], date: selectedDate)));
+    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffIds, date: selectedDate)));
 
     generateAvailableTimeSlots();
   }
@@ -154,7 +158,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                 if (widget.staffIds[0] != 0) {
                   context
                       .read<ListTimeBloc>()
-                      .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds[0], date: date)));
+                      .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
                 }
                 _scrollToSelectedDate();
               },
@@ -193,7 +197,6 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     }).contains(false);
     AppLogger.info(controller.staffIds);
     AppLogger.info(isChooseDiffSpecialist);
-    AppLogger.info(controller.services[0].duration);
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -343,7 +346,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                           selectedDate = DateTime.parse(item['date']!);
                           context
                               .read<ListTimeBloc>()
-                              .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds[0], date: selectedDate)));
+                              .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds, date: selectedDate)));
                         });
 
                         _scrollToSelectedDate();
@@ -472,19 +475,24 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(TSizes.sm),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                  onPressed: () {
-                    goReview(controller);
-                  },
-                  child: Text(AppLocalizations.of(context)!.continue_book))
-            ],
-          ),
-        ),
+        // bottomNavigationBar: isChooseDiffSpecialist
+        //     ? Padding(
+        //         padding: const EdgeInsets.all(TSizes.sm),
+        //         child: Row(
+        //           mainAxisAlignment: MainAxisAlignment.end,
+        //           children: [
+        //             ElevatedButton(
+        //                 onPressed: !controller.time.map((x) => controller.time[0] == x).contains(false)
+        //                     ? null
+        //                     : () {
+        //                         AppLogger.info(controller.time);
+        //                         goReview(controller);
+        //                       },
+        //                 child: Text(AppLocalizations.of(context)!.continue_book))
+        //           ],
+        //         ),
+        //       )
+        //     : null,
       ),
     );
   }

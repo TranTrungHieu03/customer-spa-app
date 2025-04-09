@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spa_mobile/core/common/inherited/routine_data.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -9,13 +10,12 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/service/data/model/time_model.dart';
 
 class SelectRoutineTimeScreen extends StatefulWidget {
-  const SelectRoutineTimeScreen({super.key, required this.routineModel});
+  const SelectRoutineTimeScreen({super.key, required this.controller});
 
-  final RoutineModel routineModel;
+  final RoutineDataController controller;
 
   @override
   State<SelectRoutineTimeScreen> createState() => _SelectRoutineTimeScreenState();
@@ -60,9 +60,12 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
 
       currentStart = currentStart.add(const Duration(minutes: 15));
     }
+    final now = DateTime.now();
 
     availableTimeSlots = allPossibleSlots.where((possibleSlot) {
-      return !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
+      final isNotBooked = !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
+      final isInFuture = possibleSlot.startTime.isAfter(now);
+      return isNotBooked && isInFuture;
     }).toList();
 
     setState(() {});
@@ -201,7 +204,7 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
                         setState(() {
                           selectedDate = DateTime.parse(item['date']!);
                         });
-
+                        generateAvailableTimeSlots();
                         _scrollToSelectedDate();
                       },
                       child: Padding(
@@ -252,8 +255,8 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
                       setState(() {
                         selectedTime = slot.startTime.toString();
                       });
-
-                      goCheckoutRoutine(widget.routineModel, selectedTime);
+                      widget.controller.updateTime(slot.startTime.toString());
+                      goCheckoutRoutine(widget.controller);
                     },
                     child: TRoundedContainer(
                       padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),

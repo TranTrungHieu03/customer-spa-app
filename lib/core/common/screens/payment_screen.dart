@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentSuccessPage extends StatelessWidget {
   const PaymentSuccessPage({Key? key}) : super(key: key);
@@ -10,7 +12,7 @@ class PaymentSuccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TAppbar(
-        title: const Text('Payment Successful'),
+        title: const Text('Thanh toán thành công'),
         showBackArrow: false,
       ),
       body: Center(
@@ -24,21 +26,27 @@ class PaymentSuccessPage extends StatelessWidget {
             ),
             const SizedBox(height: TSizes.md),
             Text(
-              'Payment Successful!',
-              style: Theme.of(context).textTheme.displaySmall,
+              'Thanh toán thành công!',
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .displaySmall,
             ),
             const SizedBox(height: TSizes.md),
             Text(
-              'Your transaction has been completed successfully.',
+              'Giao dịch của bạn đã được xử lý thành công.',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .bodyMedium,
             ),
             const SizedBox(height: TSizes.lg),
             ElevatedButton(
               onPressed: () {
                 goHome();
               },
-              child: const Text('Return to Home'),
+              child: const Text('Về trang chủ'),
             ),
           ],
         ),
@@ -55,7 +63,7 @@ class PaymentFailurePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TAppbar(
-        title: const Text('Payment Failed'),
+        title: const Text('Thanh toán thất bại'),
         showBackArrow: false,
       ),
       body: Center(
@@ -69,14 +77,20 @@ class PaymentFailurePage extends StatelessWidget {
             ),
             const SizedBox(height: TSizes.md),
             Text(
-              'Payment Failed',
-              style: Theme.of(context).textTheme.displaySmall,
+              'Thanh toán thất bại',
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .displaySmall,
             ),
             const SizedBox(height: TSizes.md),
             Text(
-              'There was an issue processing your payment. Please try again.',
+              'Đã xảy ra lỗi trong quá trình xử lý thanh toán. Vui lòng thử lại.',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .bodyMedium,
             ),
             const SizedBox(height: TSizes.lg),
             ElevatedButton(
@@ -90,7 +104,7 @@ class PaymentFailurePage extends StatelessWidget {
               onPressed: () {
                 goHome();
               },
-              child: const Text('Return to Home'),
+              child: const Text('Về trang chủ'),
             ),
           ],
         ),

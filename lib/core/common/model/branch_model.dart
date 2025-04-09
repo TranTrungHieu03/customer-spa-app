@@ -52,19 +52,18 @@ class BranchModel extends Branch {
     };
   }
 
-  Map<String, dynamic> isEmpty() {
-    return {
-      'branchId': "",
-      'branchName': "",
-      'branchAddress': "",
-      'branchPhone': "",
-      'longAddress': "",
-      'latAddress': "",
-      'status': "",
-      'managerId': "",
-      'district': "",
-      'wardCode': ""
-    };
+  factory BranchModel.empty() {
+    return const BranchModel(
+        branchId: 0,
+        branchName: "",
+        branchAddress: "",
+        branchPhone: "",
+        longAddress: "",
+        latAddress: "",
+        status: "",
+        managerId: 0,
+        district: 0,
+        wardCode: 0);
   }
 
   Branch copyWith({

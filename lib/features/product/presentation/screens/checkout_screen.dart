@@ -4,7 +4,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
@@ -17,6 +16,7 @@ import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/order/order_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/ship_fee/ship_fee_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/payment_method.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_checkout.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/init_dependencies.dart';
@@ -50,64 +50,59 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 create: (context) =>
                     ShipFeeBloc(getLeadTime: serviceLocator(), getFeeShipping: serviceLocator(), getAvailableService: serviceLocator())),
           ],
-          child: Padding(
-            padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
-            child: SingleChildScrollView(
-              child: BlocListener<OrderBloc, OrderState>(
-                listener: (context, state) {
-                  if (state is OrderError) {
-                    TSnackBar.errorSnackBar(context, message: state.message);
-                  }
-                  if (state is OrderSuccess) {
-                    // goSuccess(AppLocalizations.of(context)!.paymentSuccessTitle, AppLocalizations.of(context)!.paymentSuccessSubTitle,
-                    //     () => goFeedback(), TImages.success);
-                    context
-                        .read<CartBloc>()
-                        .add(RemoveProductFromCartEvent(ids: widget.controller.products.map((x) => x.productBranchId.toString()).toList()));
-                    goOrderProductDetail(state.orderId);
-                  }
-                },
-                child: BlocBuilder<OrderBloc, OrderState>(
-                  builder: (context, state) {
-                    return Stack(
+          child: BlocListener<OrderBloc, OrderState>(
+              listenWhen: (previous, current) {
+                // Only trigger the listener when transitioning from a non-success state to success state
+                return previous is! OrderSuccess;
+              },
+              listener: (context, state) {
+                if (state is OrderError) {
+                  TSnackBar.errorSnackBar(context, message: state.message);
+                }
+                if (state is OrderSuccess) {
+                  context
+                      .read<CartBloc>()
+                      .add(RemoveProductFromCartEvent(ids: widget.controller.products.map((x) => x.productBranchId.toString()).toList()));
+                  goOrderProductDetail(state.orderId);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(TSizes.defaultSpace / 2),
+                child: SingleChildScrollView(
+                    child: Stack(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            TContactInformation(controller: widget.controller),
-                            const SizedBox(
-                              height: TSizes.md,
-                            ),
-                            TProductCheckout(
-                              messageController: _messageController,
-                              products: products,
-                              controller: widget.controller,
-                            ),
-                            const SizedBox(
-                              height: TSizes.md,
-                            ),
-                            TPaymentMethod(
-                              initialMethod: 'payOs',
-                              onChanged: (method) {
-                                widget.controller.updateMethod(method);
-                              },
-                            ),
-                            const SizedBox(
-                              height: TSizes.md,
-                            ),
-                            TPaymentDetail(
-                              controller: widget.controller,
-                            )
-                          ],
+                        TContactInformation(controller: widget.controller),
+                        const SizedBox(
+                          height: TSizes.md,
                         ),
-                        if (state is OrderLoading) const TLoader()
+                        TProductCheckout(
+                          messageController: _messageController,
+                          products: products,
+                          controller: widget.controller,
+                        ),
+                        const SizedBox(
+                          height: TSizes.md,
+                        ),
+                        TPaymentMethod(
+                          initialMethod: 'payOs',
+                          onChanged: (method) {
+                            widget.controller.updateMethod(method);
+                          },
+                        ),
+                        const SizedBox(
+                          height: TSizes.md,
+                        ),
+                        TPaymentDetail(
+                          controller: widget.controller,
+                        )
                       ],
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
+                    ),
+                  ],
+                )),
+              )),
         ),
         bottomNavigationBar: TBottomCheckout(
           controller: widget.controller,
@@ -214,83 +209,6 @@ class TPaymentDetail extends StatelessWidget {
               ),
             ],
           )
-        ],
-      ),
-    );
-  }
-}
-
-class TPaymentMethod extends StatefulWidget {
-  const TPaymentMethod({
-    super.key,
-    required this.onChanged,
-    this.initialMethod = 'payOs',
-  });
-
-  final String initialMethod;
-  final Function(String method) onChanged;
-
-  @override
-  State<TPaymentMethod> createState() => _TPaymentMethodState();
-}
-
-class _TPaymentMethodState extends State<TPaymentMethod> {
-  late String selectedMethod;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedMethod = widget.initialMethod;
-  }
-
-  void _selectMethod(String method) {
-    setState(() {
-      selectedMethod = method;
-    });
-    widget.onChanged(method);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TRoundedContainer(
-      radius: 10,
-      padding: const EdgeInsets.all(TSizes.sm),
-      borderColor: TColors.grey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(AppLocalizations.of(context)!.payment_method, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(height: TSizes.sm),
-
-          /// Cash Option
-          GestureDetector(
-            onTap: () => _selectMethod('cash'),
-            child: Row(
-              children: [
-                const Icon(Iconsax.money_send, color: TColors.primary),
-                const SizedBox(width: TSizes.sm),
-                Text(AppLocalizations.of(context)!.cash, style: Theme.of(context).textTheme.bodyMedium),
-                const Spacer(),
-                if (selectedMethod == 'cash') const Icon(Iconsax.tick_circle, color: TColors.primary),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: TSizes.sm),
-
-          /// Bank Transfer Option
-          GestureDetector(
-            onTap: () => _selectMethod('payOs'),
-            child: Row(
-              children: [
-                const Icon(Iconsax.wallet, color: TColors.primary),
-                const SizedBox(width: TSizes.sm),
-                Text(AppLocalizations.of(context)!.bank_transfer, style: Theme.of(context).textTheme.bodyMedium),
-                const Spacer(),
-                if (selectedMethod == 'payOs') const Icon(Iconsax.tick_circle, color: TColors.primary),
-              ],
-            ),
-          ),
         ],
       ),
     );

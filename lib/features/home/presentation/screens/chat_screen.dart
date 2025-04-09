@@ -9,9 +9,11 @@ import 'package:spa_mobile/features/home/data/repositories/chat_repository_impl.
 import 'package:spa_mobile/features/home/domain/repositories/chat_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/connect_hub.dart';
 import 'package:spa_mobile/features/home/domain/usecases/disconnect_hub.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_channel.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_list_message.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_message.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/channel/channel_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/chat/chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/list_message/list_message_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/chat_message_list.dart';
@@ -153,59 +155,80 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: chatBloc,
-      child: BlocListener<ChatBloc, ChatState>(
-        listener: (context, state) {
-          if (state is ChatError) {
-            TSnackBar.errorSnackBar(context, message: state.error);
-            AppLogger.info(state.error);
-          }
+    return BlocProvider(
+      create: (context) => ChannelBloc(getChannel: serviceLocator())..add(GetChannelEvent(GetChannelParams(widget.channelId))),
+      child: BlocProvider.value(
+        value: chatBloc,
+        child: BlocListener<ChatBloc, ChatState>(
+          listener: (context, state) {
+            if (state is ChatError) {
+              TSnackBar.errorSnackBar(context, message: state.error);
+              AppLogger.info(state.error);
+            }
 
-          if (state is ChatLoaded && state.messages.isNotEmpty) {
-            final latestMessage = state.messages.last;
-            AppLogger.info("Forwarding message to ListMessageBloc: ${latestMessage.content}");
-            context.read<ListMessageBloc>().add(ListMessageNewMessageEvent(latestMessage));
-            _scrollToBottom();
-          }
-        },
-        child: Scaffold(
-          appBar: const TAppbar(showBackArrow: true),
-          backgroundColor: Colors.white,
-          body: Column(
-            children: [
-              BlocBuilder<ListMessageBloc, ListMessageState>(
-                builder: (context, state) {
-                  if (state is ListMessageLoading) {
-                    return Center(child: CircularProgressIndicator());
-                  } else if (state is ListMessageLoaded) {
-                    _scrollToBottom();
-                    final sortedMessages = state.messages..sort((a, b) => a.timestamp.compareTo(b.timestamp));
-                    return Expanded(child: chatMessageWidget(chatListScrollController, sortedMessages, widget.userId));
-                  }
-                  return const SizedBox();
-                },
-              ),
-            ],
-          ),
-          bottomNavigationBar: Padding(
-            padding: EdgeInsets.only(
-              left: TSizes.sm,
-              right: TSizes.sm,
-              top: TSizes.sm,
-              bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.sm,
-            ),
-            child: chatTypeMessageWidget(messageTextController, () {
-              chatBloc.add(ChatSendMessageEvent(
-                SendMessageParams(
-                  channelId: widget.channelId,
-                  senderId: widget.userId,
-                  content: messageTextController.text.trim(),
+            if (state is ChatLoaded && state.messages.isNotEmpty) {
+              final latestMessage = state.messages.last;
+              AppLogger.info("Forwarding message to ListMessageBloc: ${latestMessage.content}");
+              context.read<ListMessageBloc>().add(ListMessageNewMessageEvent(latestMessage));
+              _scrollToBottom();
+            }
+          },
+          child: BlocBuilder<ChannelBloc, ChannelState>(
+            builder: (context, channelState) {
+              if (channelState is ChannelLoaded) {
+                return Scaffold(
+                  appBar: TAppbar(
+                    showBackArrow: true,
+                    title: Text(channelState.channel.name),
+                  ),
+                  backgroundColor: Colors.white,
+                  body: Column(
+                    children: [
+                      BlocBuilder<ListMessageBloc, ListMessageState>(
+                        builder: (context, state) {
+                          if (state is ListMessageLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (state is ListMessageLoaded) {
+                            _scrollToBottom();
+                            final sortedMessages = state.messages..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+                            return Expanded(
+                                child: chatMessageWidget(
+                                    chatListScrollController, sortedMessages, widget.userId, channelState.channel.memberDetails!));
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    ],
+                  ),
+                  bottomNavigationBar: Padding(
+                    padding: EdgeInsets.only(
+                      left: TSizes.sm,
+                      right: TSizes.sm,
+                      top: TSizes.sm,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.sm,
+                    ),
+                    child: chatTypeMessageWidget(messageTextController, () {
+                      chatBloc.add(ChatSendMessageEvent(
+                        SendMessageParams(
+                          channelId: widget.channelId,
+                          senderId: widget.userId,
+                          content: messageTextController.text.trim(),
+                        ),
+                      ));
+
+                      messageTextController.clear();
+                    }, () => _scrollToBottom()),
+                  ),
+                );
+              }
+              return const Center(
+                child: Text(
+                  'Không thể lấy thông tin từ hệ thống',
+                  style: TextStyle(fontSize: 16, color: Colors.red),
+                  textAlign: TextAlign.center,
                 ),
-              ));
-
-              messageTextController.clear();
-            }, () => _scrollToBottom()),
+              );
+            },
           ),
         ),
       ),

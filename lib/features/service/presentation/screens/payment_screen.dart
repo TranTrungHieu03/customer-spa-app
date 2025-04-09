@@ -10,11 +10,13 @@ import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/payment_method.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
@@ -74,217 +76,282 @@ class _PaymentScreenState extends State<PaymentScreen> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(TSizes.sm),
-        child: BlocListener<AppointmentBloc, AppointmentState>(
-          listener: (context, state) {
-            if (state is AppointmentLoaded) {
-              setState(() {
-                isPaid = state.appointment.statusPayment == "Paid";
-              });
-            }
-          },
-          child: BlocBuilder<AppointmentBloc, AppointmentState>(
-            builder: (context, state) {
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(TSizes.sm),
+          child: BlocListener<AppointmentBloc, AppointmentState>(
+            listener: (context, state) {
               if (state is AppointmentLoaded) {
-                final order = state.appointment;
+                setState(() {
+                  isPaid = state.appointment.statusPayment == "Paid";
+                });
+              }
+            },
+            child: BlocBuilder<AppointmentBloc, AppointmentState>(
+              builder: (context, state) {
+                if (state is AppointmentLoaded) {
+                  final order = state.appointment;
 
-                var totalTime = order.appointments.fold(0, (sum, x) => sum + int.parse(x.service?.duration ?? "0"));
-                if (order.appointments.length > 1) {
-                  totalTime = totalTime + (order.appointments.length - 1) * 5;
-                }
-                final totalPrice = order.appointments.fold(0.0, (sum, x) => sum + x.subTotal);
-                totalAmount = order.totalAmount;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Order ref: #",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                            Text(
-                              order.orderCode.toString(),
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        TRoundedIcon(
-                          icon: Icons.qr_code_scanner_rounded,
-                          color: TColors.primary,
-                          size: 30,
-                          onPressed: () => _showModelQR(context, order),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.payment, color: Colors.green),
-                        const SizedBox(width: TSizes.sm),
-                        if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
-                          Text(
-                            "Đang chờ thanh toán",
-                            style: Theme.of(context).textTheme.bodyMedium,
+                  var totalTime = order.appointments.fold(0, (sum, x) => sum + int.parse(x.service?.duration ?? "0"));
+                  if (order.appointments.length > 1) {
+                    totalTime = totalTime + (order.appointments.length - 1) * 5;
+                  }
+                  final totalPrice = order.appointments.fold(0.0, (sum, x) => sum + x.subTotal);
+                  totalAmount = order.totalAmount;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                "Order ref: #",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                              Text(
+                                order.orderCode.toString(),
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
                           ),
-                        if (order.statusPayment == "Paid")
-                          Text(
-                            "Đã thanh toán",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Iconsax.building,
-                          color: TColors.primary,
-                        ),
-                        const SizedBox(
-                          width: TSizes.sm,
-                        ),
-                        Expanded(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                          if (order.status.toLowerCase() != 'cancelled')
+                            TRoundedIcon(
+                              icon: Icons.qr_code_scanner_rounded,
+                              color: TColors.primary,
+                              size: 30,
+                              onPressed: () => _showModelQR(context, order),
+                            )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.payment, color: Colors.green),
+                          const SizedBox(width: TSizes.sm),
+                          if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
                             Text(
-                              order.appointments[0].branch?.branchName ?? "",
+                              "Đang chờ thanh toán",
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
+                          if (order.statusPayment == "Paid")
                             Text(
-                              order.appointments[0].branch?.branchAddress ?? "",
+                              "Đã thanh toán",
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Iconsax.building,
+                            color: TColors.primary,
+                          ),
+                          const SizedBox(
+                            width: TSizes.sm,
+                          ),
+                          Expanded(
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                order.appointments[0].branch?.branchName ?? "",
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              Text(
+                                order.appointments[0].branch?.branchAddress ?? "",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          )),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Iconsax.calendar_1,
+                            color: TColors.primary,
+                          ),
+                          const SizedBox(
+                            width: TSizes.sm,
+                          ),
+                          Text(
+                            DateFormat('EEEE, dd MMMM yyyy', lgCode).format(order.appointments[0].appointmentsTime).toString(),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Iconsax.clock,
+                            color: TColors.primary,
+                          ),
+                          const SizedBox(
+                            width: TSizes.sm,
+                          ),
+                          Text(
+                            "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime).toString()} - "
+                            "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
+                          ),
+                          const Spacer(),
+                          TRoundedIcon(
+                            icon: Iconsax.info_circle,
+                            color: TColors.darkerGrey,
+                            onPressed: () => _showModelTimeInfo(context),
+                          )
+                        ],
+                      ),
+                      Divider(
+                        color: dark ? TColors.darkGrey : TColors.grey,
+                        thickness: 0.5,
+                      ),
+                      const SizedBox(
+                        height: TSizes.md,
+                      ),
+                      TGridLayout(
+                          mainAxisExtent: 70,
+                          crossAxisCount: 1,
+                          isScroll: false,
+                          itemCount: order.appointments.length,
+                          itemBuilder: (context, index) {
+                            final serviceState = order.appointments[index];
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(serviceState.service.name, style: Theme.of(context).textTheme.bodyMedium),
+                                    const SizedBox(
+                                      height: TSizes.sm,
+                                    ),
+                                    Text(
+                                      "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    TProductPriceText(price: serviceState.service.price.toString()),
+                                  ],
+                                )
+                              ],
+                            );
+                          }),
+                      Divider(
+                        color: dark ? TColors.darkGrey : TColors.grey,
+                        thickness: 0.5,
+                      ),
+                      TPaymentDetailService(
+                        price: (totalPrice).toString(),
+                        total: (order.totalAmount).toString(),
+                        promotePrice: order.voucherId != 0 ? order.voucher!.discountAmount : 0,
+                      ),
+                      Divider(
+                        color: dark ? TColors.darkGrey : TColors.grey,
+                        thickness: 0.5,
+                      ),
+                      if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
+                          order.status.toLowerCase() != "cancelled")
+                        Text(
+                          "Payment Methods",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
+                      if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
+                          order.status.toLowerCase() != "cancelled")
+                        TPaymentSelection(
+                          total: order.totalAmount,
+                          onOptionChanged: handlePaymentOptionChange,
+                          selectedOption: _selectedPaymentOption,
+                        ),
+                      Divider(
+                        color: dark ? TColors.darkGrey : TColors.grey,
+                        thickness: 0.5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Ngày đặt lịch',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          Text(DateFormat('HH:mm, dd/MM/yyyy').format(order.createdDate.toUtc().toLocal().add(Duration(hours: 7))),
+                              style: Theme.of(context).textTheme.bodySmall)
+                        ],
+                      ),
+                      if (order.status == 'Cancelled')
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Ngày huỷ đơn',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
+                            Text(
+                                DateFormat('HH:mm, dd/MM/yyyy').format(
+                                  order.updatedDate.toUtc().toLocal().add(Duration(hours: 7)),
+                                ),
+                                style: Theme.of(context).textTheme.bodySmall)
                           ],
-                        )),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.md,
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Iconsax.calendar_1,
-                          color: TColors.primary,
                         ),
-                        const SizedBox(
-                          width: TSizes.sm,
+                      if (order.status == 'Cancelled')
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Lý do: ',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.7),
+                                child: Text(
+                                  order.note ?? "",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  maxLines: 3,
+                                ))
+                          ],
                         ),
-                        Text(
-                          DateFormat('EEEE, dd MMMM yyyy', lgCode).format(order.appointments[0].appointmentsTime).toString(),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.md,
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Iconsax.clock,
-                          color: TColors.primary,
-                        ),
-                        const SizedBox(
-                          width: TSizes.sm,
-                        ),
-                        Text(
-                          "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime).toString()} - "
-                          "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
-                        ),
-                        const Spacer(),
-                        TRoundedIcon(
-                          icon: Iconsax.info_circle,
-                          color: TColors.darkerGrey,
-                          onPressed: () => _showModelTimeInfo(context),
-                        )
-                      ],
-                    ),
-                    Divider(
-                      color: dark ? TColors.darkGrey : TColors.grey,
-                      thickness: 0.5,
-                    ),
-                    const SizedBox(
-                      height: TSizes.md,
-                    ),
-                    TGridLayout(
-                        mainAxisExtent: 70,
-                        crossAxisCount: 1,
-                        itemCount: order.appointments.length,
-                        itemBuilder: (context, index) {
-                          final serviceState = order.appointments[index];
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(serviceState.service.name, style: Theme.of(context).textTheme.bodyMedium),
-                                  const SizedBox(
-                                    height: TSizes.sm,
-                                  ),
-                                  Text(
-                                    "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  TProductPriceText(price: serviceState.service.price.toString()),
-                                ],
-                              )
-                            ],
-                          );
-                        }),
-                    Divider(
-                      color: dark ? TColors.darkGrey : TColors.grey,
-                      thickness: 0.5,
-                    ),
-                    TPaymentDetailService(
-                      price: (totalPrice).toString(),
-                      total: (order.totalAmount).toString(),
-                      promotePrice: order.voucherId != 0 ? order.voucher!.discountAmount : 0,
-                    ),
-                    Divider(
-                      color: dark ? TColors.darkGrey : TColors.grey,
-                      thickness: 0.5,
-                    ),
-                    if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
-                      Text(
-                        "Payment Methods",
-                        style: Theme.of(context).textTheme.titleLarge,
+                      const SizedBox(
+                        height: TSizes.md,
                       ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                    if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
-                      TPaymentSelection(
-                        total: order.totalAmount,
-                        onOptionChanged: handlePaymentOptionChange,
-                        selectedOption: _selectedPaymentOption,
-                      ),
-                  ],
-                );
-              } else if (state is AppointmentLoading) {
-                return const TLoader();
-              }
-              return const SizedBox();
-            },
+                      if (order.status == "Pending")
+                        TextButton(
+                            onPressed: () {
+                              _showModalCancel(context, order.orderId);
+                            },
+                            child: Text(
+                              'Hủy lịch hẹn',
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
+                            ))
+                    ],
+                  );
+                } else if (state is AppointmentLoading) {
+                  return const TLoader();
+                }
+                return const SizedBox();
+              },
+            ),
           ),
         ),
       ),
@@ -363,6 +430,84 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     "Giữa mỗi dịch vụ được khấu hao 5 phút để chuẩn bị cho dịch vụ tiếp theo",
                     style: Theme.of(context).textTheme.bodyMedium,
                   )),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showModalCancel(BuildContext context, int orderId) {
+    final TextEditingController reasonController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            left: TSizes.md,
+            right: TSizes.md,
+            top: TSizes.md,
+            bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.md,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Lý do hủy',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                autofocus: true,
+                controller: reasonController,
+                maxLines: 6,
+                decoration: InputDecoration(
+                  hintText: "Enter your massage",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: BlocListener<AppointmentBloc, AppointmentState>(
+                      listener: (context, state) {
+                        if (state is CancelAppointmentSuccess) {
+                          TSnackBar.infoSnackBar(context, message: state.error);
+                          goBookingDetail(state.orderId);
+                        }
+                        if (state is AppointmentError) {
+                          TSnackBar.errorSnackBar(context, message: state.message);
+                        }
+                      },
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context
+                              .read<AppointmentBloc>()
+                              .add(CancelAppointmentEvent(CancelOrderParams(orderId: orderId, reason: reasonController.text.trim())));
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.submit,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: Colors.white,
+                                fontSize: TSizes.md,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         );

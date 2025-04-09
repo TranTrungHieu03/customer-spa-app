@@ -226,7 +226,7 @@ goRoutineDetail(String id) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-        builder: (context) => RoutineDetailScreen(id: id),
+        builder: (context) => WrapperRoutineDetail(id: id),
       ));
 }
 
@@ -234,7 +234,7 @@ goShowRoutineDetail(String id) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-        builder: (context) => RoutineDetailScreen(id: id, onlyShown: true),
+        builder: (context) => WrapperRoutineDetail(id: id, onlyShown: true),
       ));
 }
 
@@ -294,17 +294,16 @@ goRoutineStep(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperBookRoutineScreen(id: id)));
 }
 
-goCheckoutRoutine(RoutineModel routine, String time) async {
-  Navigator.push(
-      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutRoutineScreen(routine: routine, time: time)));
+goCheckoutRoutine(RoutineDataController controller) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutRoutineScreen(controller: controller)));
 }
 
-goSelectRoutineTime(RoutineModel routine) async {
+goSelectRoutineTime(RoutineDataController routine) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => SelectRoutineTimeScreen(
-                routineModel: routine,
+                controller: routine,
               )));
 }
 
@@ -314,6 +313,15 @@ goChatRoom(String channelId, String userId) async {
 }
 
 goOrderProductDetail(int orderId) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderDetailScreen(orderId: orderId)));
+}
+
+goHistoryRoutine() async {
   Navigator.push(
-      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderDetailScreen(orderId: orderId)));
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider<ListRoutineBloc>(
+                create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()),
+                child: RoutineHistoryScreen(),
+              )));
 }

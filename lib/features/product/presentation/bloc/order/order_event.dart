@@ -14,3 +14,9 @@ class GetOrderEvent extends OrderEvent {
 
   GetOrderEvent(this.params);
 }
+
+class CancelOrderEvent extends OrderEvent {
+  final CancelOrderParams params;
+
+  CancelOrderEvent(this.params);
+}

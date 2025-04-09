@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
-import 'package:spa_mobile/features/service/data/model/time_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_time_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
@@ -21,5 +21,5 @@ abstract class AppointmentRepository {
 
   Future<Either<Failure, OrderAppointmentModel>> getAppointment(GetAppointmentParams params);
 
-  Future<Either<Failure, List<TimeModel>>> getTimeSlots(GetTimeSlotByDateParams params);
+  Future<Either<Failure, List<StaffTimeModel>>> getTimeSlots(GetTimeSlotByDateParams params);
 }
