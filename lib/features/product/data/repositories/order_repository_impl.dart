@@ -4,6 +4,7 @@ import 'package:spa_mobile/features/product/data/datasources/order_remote_data_s
 import 'package:spa_mobile/features/product/data/model/list_order_product_model.dart';
 import 'package:spa_mobile/features/product/data/model/order_product_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/order_repository.dart';
+import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_history_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_order_product_detail.dart';
@@ -41,6 +42,18 @@ class OrderRepositoryImpl implements OrderRepository {
   Future<Either<Failure, OrderProductModel>> getOrderProductDetail(GetOrderProductDetailParams params) async {
     try {
       OrderProductModel result = await _dataSource.getOrderProductModel(params);
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> cancelOrder(CancelOrderParams params) async {
+    try {
+      String result = await _dataSource.cancelOrder(params);
       return right(result);
     } catch (e) {
       return left(ApiFailure(

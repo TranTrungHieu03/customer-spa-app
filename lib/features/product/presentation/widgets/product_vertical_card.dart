@@ -13,6 +13,7 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/out_of_stock_overlay.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
@@ -38,6 +39,39 @@ class TProductCardVertical extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // TRoundedContainer(
+            //   height: TSizes.productHeight,
+            //   width: width + 15,
+            //   padding: const EdgeInsets.all(TSizes.sm),
+            //   backgroundColor: dark ? TColors.dark : TColors.light,
+            //   child: Stack(
+            //     children: [
+            //       TRoundedImage(
+            //         width: width,
+            //         imageUrl: productModel.images!.isNotEmpty ? productModel.images![0] : TImages.product1,
+            //         applyImageRadius: true,
+            //         isNetworkImage: productModel.images!.isNotEmpty,
+            //         fit: BoxFit.contain,
+            //       ),
+            //       // Positioned(
+            //       //   top: 12,
+            //       //   child: TRoundedContainer(
+            //       //     radius: TSizes.sm,
+            //       //     backgroundColor: TColors.secondary.withOpacity(0.8),
+            //       //     padding: const EdgeInsets.symmetric(
+            //       //         horizontal: TSizes.sm, vertical: TSizes.xs),
+            //       //     child: Text(
+            //       //       productModel.discount.toString() + "%",
+            //       //       style: Theme.of(context)
+            //       //           .textTheme
+            //       //           .labelLarge!
+            //       //           .apply(color: TColors.black),
+            //       //     ),
+            //       //   ),
+            //       // ),
+            //     ],
+            //   ),
+            // ),
             TRoundedContainer(
               height: TSizes.productHeight,
               width: width + 15,
@@ -52,22 +86,17 @@ class TProductCardVertical extends StatelessWidget {
                     isNetworkImage: productModel.images!.isNotEmpty,
                     fit: BoxFit.contain,
                   ),
-                  // Positioned(
-                  //   top: 12,
-                  //   child: TRoundedContainer(
-                  //     radius: TSizes.sm,
-                  //     backgroundColor: TColors.secondary.withOpacity(0.8),
-                  //     padding: const EdgeInsets.symmetric(
-                  //         horizontal: TSizes.sm, vertical: TSizes.xs),
-                  //     child: Text(
-                  //       productModel.discount.toString() + "%",
-                  //       style: Theme.of(context)
-                  //           .textTheme
-                  //           .labelLarge!
-                  //           .apply(color: TColors.black),
-                  //     ),
-                  //   ),
-                  // ),
+                  // Add the out of stock overlay when stock is 0
+                  if (productModel.stockQuantity <= 0)
+                    Positioned.fill(
+                      child: OutOfStockOverlay(
+                        width: width + 15,
+                        height: TSizes.productHeight,
+                        text: 'Hết hàng',
+                        backgroundColor: Colors.red,
+                        borderRadius: BorderRadius.circular(TSizes.cardRadiusMd),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -122,18 +151,20 @@ class TProductCardVertical extends StatelessWidget {
                     return Container(
                       padding: const EdgeInsets.all(0),
                       decoration: BoxDecoration(
-                        color: (state is CartLoading) ? TColors.primaryBackground : TColors.primary,
+                        color: (state is CartLoading || productModel.stockQuantity == 0) ? TColors.primaryBackground : TColors.primary,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(TSizes.cardRadiusMd),
                           bottomRight: Radius.circular(TSizes.productImageRadius),
                         ),
                       ),
                       child: GestureDetector(
-                        onTap: () {
-
-                          context.read<CartBloc>().add(AddProductToCartEvent(
-                              params: AddProductCartParams(userId: 0, productId: productModel.productBranchId, quantity: 1, operation: 0)));
-                        },
+                        onTap: productModel.stockQuantity > 0
+                            ? () {
+                                context.read<CartBloc>().add(AddProductToCartEvent(
+                                    params: AddProductCartParams(
+                                        userId: 0, productId: productModel.productBranchId, quantity: 1, operation: 0)));
+                              }
+                            : null,
                         child: const SizedBox(
                           width: TSizes.iconLg * 1.2,
                           height: TSizes.iconLg * 1.2,

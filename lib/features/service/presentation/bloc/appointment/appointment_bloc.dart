@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
@@ -11,12 +12,12 @@ part 'appointment_state.dart';
 class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final GetAppointment _getAppointment;
   final CreateAppointment _createAppointment;
+  final CancelOrder _cancelOrder;
 
-  AppointmentBloc({
-    required GetAppointment getAppointment,
-    required CreateAppointment createAppointment,
-  })  : _getAppointment = getAppointment,
+  AppointmentBloc({required GetAppointment getAppointment, required CreateAppointment createAppointment, required CancelOrder cancelOrder})
+      : _getAppointment = getAppointment,
         _createAppointment = createAppointment,
+        _cancelOrder = cancelOrder,
         super(AppointmentInitial()) {
     on<GetAppointmentEvent>(_onGetAppointmentEvent);
     on<CreateAppointmentEvent>(_onCreateAppointmentEvent);
@@ -26,6 +27,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     // on<UpdateCreateTimeEvent>(_onUpdateTimeDataEvent);
     // on<UpdateNoteEvent>(_onUpdateNoteDataEvent);
     on<ClearAppointmentEvent>(_onClearAppointmentEvent);
+    on<CancelAppointmentEvent>(_onCancelAppointment);
   }
 
   Future<void> _onGetAppointmentEvent(GetAppointmentEvent event, Emitter<AppointmentState> emit) async {
@@ -37,28 +39,23 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     );
   }
 
+  Future<void> _onCancelAppointment(CancelAppointmentEvent event, Emitter<AppointmentState> emit) async {
+    emit(AppointmentLoading());
+    final result = await _cancelOrder(event.params);
+    result.fold(
+      (failure) => emit(AppointmentError(failure.message)),
+      (message) => emit(CancelAppointmentSuccess(orderId: event.params.orderId, error: message)),
+    );
+  }
+
   Future<void> _onCreateAppointmentEvent(CreateAppointmentEvent event, Emitter<AppointmentState> emit) async {
     emit(AppointmentLoading());
     AppLogger.debug(event.params);
-    final result = await _createAppointment(CreateAppointmentParams(
-      staffId: event.params.staffId,
-      serviceId: event.params.serviceId,
-      branchId: event.params.branchId,
-      appointmentsTime: event.params.appointmentsTime,
-      notes: event.params.notes,
-      voucherId: event.params.voucherId,
-    ));
+    final result = await _createAppointment(event.params);
     result.fold(
       (failure) {
         emit(AppointmentError(failure.message));
-        emit(AppointmentCreateData(CreateAppointmentParams(
-          staffId: event.params.staffId,
-          serviceId: event.params.serviceId,
-          branchId: event.params.branchId,
-          appointmentsTime: event.params.appointmentsTime,
-          notes: event.params.notes,
-          voucherId: event.params.voucherId,
-        )));
+        emit(AppointmentCreateData(event.params));
       },
       (appointment) => emit(AppointmentCreateSuccess(appointment)),
     );

@@ -27,6 +27,9 @@ class PayosBloc extends Bloc<PayosEvent, PayosState> {
       emit(PayosLoading());
       emit(PayosWebViewLoaded());
     });
+    on<RefreshPayOS>((event, emit) {
+      emit(PayosInitial());
+    });
     //
     // on<NavigateToHome>((event, emit) {
     //   emit(PayosInitial());

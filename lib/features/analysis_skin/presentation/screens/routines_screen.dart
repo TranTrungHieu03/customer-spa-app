@@ -20,7 +20,7 @@ class _WrapperRoutineScreenState extends State<WrapperRoutineScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ListRoutineBloc>(
-      create: (context) => ListRoutineBloc(getListRoutine: serviceLocator()),
+      create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()),
       child: RoutinesScreen(),
     );
   }

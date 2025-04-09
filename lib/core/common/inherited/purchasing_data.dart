@@ -16,7 +16,7 @@ class PurchasingDataController extends ChangeNotifier {
   int _serviceGHN = 0;
   int _shippingCost = 0;
   String _expectedDate = "";
-  String _method = 'bank_transfer';
+  String _method = 'PayOs';
 
   int get branchId => _branchId;
 

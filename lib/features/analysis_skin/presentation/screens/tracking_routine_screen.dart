@@ -4,6 +4,7 @@ import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/product_routine_model.dart';
@@ -58,6 +59,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
         builder: (context, state) {
           if (state is RoutineTracking) {
             final routineSteps = state.routine.userRoutineSteps;
+            AppLogger.info(state.routine.userRoutineSteps.length);
             _currentStep = routineSteps.indexWhere((element) => element.stepStatus == "InProgress");
             _currentStep = (_currentStep == -1) ? 0 : _currentStep;
             return Scaffold(

@@ -19,6 +19,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.d
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/skin_analysis_via_form.dart';
@@ -96,6 +97,7 @@ import 'package:spa_mobile/features/product/domain/repository/order_repository.d
 import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
 import 'package:spa_mobile/features/product/domain/repository/voucher_repository.dart';
 import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
+import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_available_service.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_cart.dart';

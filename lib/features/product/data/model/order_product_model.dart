@@ -18,6 +18,7 @@ class OrderProductModel {
   final List<OrderDetailModel> orderDetails;
   final ShipmentResponseModel? shipment;
   final String updatedDate;
+  final String paymentMethod;
 
   OrderProductModel(
       {required this.orderId,
@@ -33,6 +34,7 @@ class OrderProductModel {
       this.note,
       required this.orderDetails,
       required this.updatedDate,
+      required this.paymentMethod,
       this.shipment});
 
   factory OrderProductModel.fromJson(Map<String, dynamic> json) {
@@ -48,6 +50,7 @@ class OrderProductModel {
       status: json['status'],
       statusPayment: json['statusPayment'],
       note: json['note'],
+      paymentMethod: json['paymentMethod'] ?? "",
       orderDetails: (json['orderDetails'] as List<dynamic>).map((e) => OrderDetailModel.fromJson(e)).toList(),
       shipment: json['shipment'] != null ? ShipmentResponseModel.fromJson(json['shipment']) : null,
       updatedDate: json['updatedDate'],

@@ -19,6 +19,13 @@ final class OrderSuccess extends OrderState {
   OrderSuccess(this.orderId);
 }
 
+final class OrderCancelSuccess extends OrderState {
+  final String message;
+  final int orderId;
+
+  OrderCancelSuccess({required this.orderId, required this.message});
+}
+
 final class OrderError extends OrderState {
   final String message;
 

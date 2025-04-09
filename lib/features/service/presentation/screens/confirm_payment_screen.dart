@@ -343,11 +343,16 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Mã giảm giá", style: Theme.of(context).textTheme.titleLarge),
-                              TextButton(
-                                  onPressed: () =>
-                                      _showVoucherModal(context, controller.totalPrice, controller.user ?? UserModel.empty(), controller),
-                                  child: TRoundedContainer(
-                                      padding: const EdgeInsets.all(TSizes.sm), child: Text(AppLocalizations.of(context)!.add)))
+                              (controller.voucher == null)
+                                  ? TextButton(
+                                      onPressed: () => _showVoucherModal(
+                                          context, controller.totalPrice, controller.user ?? UserModel.empty(), controller),
+                                      child: TRoundedContainer(
+                                          padding: const EdgeInsets.all(TSizes.sm), child: Text(AppLocalizations.of(context)!.add)))
+                                  : GestureDetector(
+                                      onTap: () => _showVoucherModal(
+                                          context, controller.totalPrice, controller.user ?? UserModel.empty(), controller),
+                                      child: Text(controller.voucher?.code ?? ""))
                             ],
                           ),
                           Divider(
@@ -428,6 +433,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             branchId: controller.branchId,
                             appointmentsTime: controller.time,
                             notes: _messageController.text,
+                            userId: controller.user?.userId ?? 0,
                             voucherId: controller.voucher?.voucherId ?? 0)));
                       },
                       child: Text(AppLocalizations.of(context)!.confirm),
@@ -475,58 +481,6 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
     );
   }
 }
-
-Widget _buildVoucherItem(BuildContext context, int index) {
-  final voucherTitles = [
-    "10% Off for First Order",
-    "Free Shipping on Orders Over \$50",
-    "Buy 2 Get 1 Free",
-    "Buy 3 Get 1 Free",
-    "Buy 5 Get 2 Free",
-  ];
-  final voucherCodes = ["FIRST10", "FREE_SHIP50", "B2G1FREE", "B3G1FREE", "B5G2FREE"];
-
-  return Card(
-    margin: const EdgeInsets.only(bottom: 10),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: ListTile(
-      leading: const Icon(
-        Icons.local_offer,
-        color: Colors.green,
-      ),
-      title: Text(voucherTitles[index]),
-      subtitle: Text("Code: ${voucherCodes[index]}"),
-      trailing: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
-        ),
-        child: Text(
-          AppLocalizations.of(context)!.apply,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.white,
-                fontSize: TSizes.md,
-              ),
-        ),
-      ),
-    ),
-  );
-}
-
-// bottomNavigationBar: TBottomCheckoutService(
-//   onPressed: () {
-//     context.read<AppointmentBloc>().add(CreateAppointmentEvent(CreateAppointmentParams(
-//         staffId: staffList,
-//         serviceId: servicesList,
-//         branchId: selectedBranch ?? 1,
-//         appointmentsTime: combineDateTime(selectedDate, selectedTime),
-//         notes: "",
-//         voucherId: 0)));
-//   },
-//   isValue: isValidate,
-// ),
 
 void _showVoucherModal(BuildContext context, double currentTotalPrice, UserModel user, AppointmentDataController controller) {
   showModalBottomSheet(

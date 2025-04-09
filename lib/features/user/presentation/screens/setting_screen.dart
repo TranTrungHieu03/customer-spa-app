@@ -6,7 +6,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/common/widgets/section_heading.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
@@ -91,8 +90,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   TSettingsMenuTile(
                     icon: Iconsax.award,
                     title: AppLocalizations.of(context)!.rewards,
-                    onTap: () {
-                    },
+                    onTap: () {},
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
@@ -129,8 +127,8 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   TSettingsMenuTile(
                     icon: Iconsax.pet,
-                    title:  "Gói liệu trình",
-                    onTap: () => goServiceHistory(),
+                    title: "Gói liệu trình",
+                    onTap: () => goHistoryRoutine(),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   const Divider(),

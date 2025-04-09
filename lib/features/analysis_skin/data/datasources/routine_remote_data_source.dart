@@ -7,6 +7,7 @@ import 'package:spa_mobile/features/analysis_skin/data/model/routine_tracking_mo
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 
@@ -16,6 +17,8 @@ abstract class RoutineRemoteDataSource {
   Future<RoutineModel> getRoutineDetail(GetRoutineDetailParams params);
 
   Future<List<RoutineStepModel>> getRoutineStep(GetRoutineStepParams params);
+
+  Future<List<RoutineModel>> getHistoryRoutine(GetRoutineHistoryParams params);
 
   Future<int> bookRoutine(BookRoutineParams params);
 
@@ -123,6 +126,23 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
 
       if (apiResponse.success) {
         return RoutineTrackingModel.fromJson(apiResponse.result!.data);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<RoutineModel>> getHistoryRoutine(GetRoutineHistoryParams params) async {
+    try {
+      final response = await _apiService.getApi('/Routine/get-list-routine-by/${params.userId}/${params.status}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((x) => RoutineModel.fromJson(x)).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }

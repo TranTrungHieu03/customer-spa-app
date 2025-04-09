@@ -53,8 +53,8 @@ class AppointmentDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateUser(UserModel newServices) {
-    _user = newServices;
+  void updateUser(UserModel user) {
+    _user = user;
     notifyListeners();
   }
 

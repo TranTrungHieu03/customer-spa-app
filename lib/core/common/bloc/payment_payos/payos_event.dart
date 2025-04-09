@@ -12,3 +12,5 @@ class PayosFailed extends PayosEvent {}
 class PayosCancelled extends PayosEvent {}
 
 class RetryPayos extends PayosEvent {}
+
+class RefreshPayOS extends PayosEvent{}

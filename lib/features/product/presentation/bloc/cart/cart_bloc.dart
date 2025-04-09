@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
@@ -103,6 +104,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     int userId;
     if (jsonDecode(userJson) != null) {
       userId = UserModel.fromJson(jsonDecode(userJson)).userId;
+      AppLogger.info(event.ids);
       final result = await _removeProductCart(RemoveProductCartParams(userId: userId, productIds: event.ids));
       result.fold((failure) => emit(CartError(message: failure.message)), (message) {});
     } else {

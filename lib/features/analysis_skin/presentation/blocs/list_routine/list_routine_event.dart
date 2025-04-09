@@ -4,3 +4,9 @@ part of 'list_routine_bloc.dart';
 sealed class ListRoutineEvent {}
 
 final class GetListRoutineEvent extends ListRoutineEvent {}
+
+final class GetHistoryRoutineEvent extends ListRoutineEvent {
+  final GetRoutineHistoryParams params;
+
+  GetHistoryRoutineEvent(this.params);
+}

@@ -10,7 +10,6 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -250,8 +249,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     child: GestureDetector(
                       onTap: () {
                         widget.controller.updateServiceIds([widget.serviceId]);
-                        widget.controller.updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
+                        widget.controller
+                            .updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
                         widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
+                        widget.controller.updateTotalPrice((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.price);
                         goSelectSpecialist(widget.branchId, widget.controller);
                       },
                       child: Container(

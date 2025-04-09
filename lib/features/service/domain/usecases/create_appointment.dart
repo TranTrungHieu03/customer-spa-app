@@ -23,8 +23,10 @@ class CreateAppointmentParams {
   final int voucherId;
   final String? feedback;
   final int totalMinutes;
+  final int userId;
 
   CreateAppointmentParams({
+    required this.userId,
     required this.staffId,
     required this.serviceId,
     required this.branchId,
@@ -46,29 +48,30 @@ class CreateAppointmentParams {
       'voucherId': voucherId,
       'feedback': feedback,
       'totalMinutes': totalMinutes,
+      'userId': userId
     };
   }
 
   // Phương thức copyWith
-  CreateAppointmentParams copyWith({
-    List<int>? staffId,
-    List<int>? serviceId,
-    int? branchId,
-    List<DateTime>? appointmentsTime,
-    String? notes,
-    int? voucherId,
-    String? feedback,
-    int? totalMinutes,
-  }) {
+  CreateAppointmentParams copyWith(
+      {List<int>? staffId,
+      List<int>? serviceId,
+      int? branchId,
+      List<DateTime>? appointmentsTime,
+      String? notes,
+      int? voucherId,
+      String? feedback,
+      int? totalMinutes,
+      int? userId}) {
     return CreateAppointmentParams(
-      staffId: staffId ?? this.staffId,
-      serviceId: serviceId ?? this.serviceId,
-      branchId: branchId ?? this.branchId,
-      appointmentsTime: appointmentsTime ?? this.appointmentsTime,
-      notes: notes ?? this.notes,
-      voucherId: voucherId ?? this.voucherId,
-      feedback: feedback ?? this.feedback,
-      totalMinutes: totalMinutes ?? this.totalMinutes,
-    );
+        staffId: staffId ?? this.staffId,
+        serviceId: serviceId ?? this.serviceId,
+        branchId: branchId ?? this.branchId,
+        appointmentsTime: appointmentsTime ?? this.appointmentsTime,
+        notes: notes ?? this.notes,
+        voucherId: voucherId ?? this.voucherId,
+        feedback: feedback ?? this.feedback,
+        totalMinutes: totalMinutes ?? this.totalMinutes,
+        userId: userId ?? this.userId);
   }
 }

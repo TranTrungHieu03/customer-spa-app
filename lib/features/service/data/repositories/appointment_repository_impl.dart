@@ -3,6 +3,8 @@ import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/features/service/data/datasources/appointment_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_time_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_time_model.dart';
 import 'package:spa_mobile/features/service/data/model/time_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/appointment_repository.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
@@ -48,9 +50,9 @@ class AppointmentRepositoryImpl extends AppointmentRepository {
   }
 
   @override
-  Future<Either<Failure, List<TimeModel>>> getTimeSlots(GetTimeSlotByDateParams params) async {
+  Future<Either<Failure, List<StaffTimeModel>>> getTimeSlots(GetTimeSlotByDateParams params) async {
     try {
-      List<TimeModel> response = await _appointmentRemoteDataSource.getTimeSlots(params);
+      List<StaffTimeModel> response = await _appointmentRemoteDataSource.getTimeSlots(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

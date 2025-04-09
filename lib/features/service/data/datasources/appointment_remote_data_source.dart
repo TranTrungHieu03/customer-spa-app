@@ -4,7 +4,7 @@ import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
-import 'package:spa_mobile/features/service/data/model/time_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_time_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
@@ -23,7 +23,7 @@ abstract class AppointmentRemoteDataSource {
 
   Future<ListOrderAppointmentModel> getHistoryBooking(GetListAppointmentParams params);
 
-  Future<List<TimeModel>> getTimeSlots(GetTimeSlotByDateParams params);
+  Future<List<StaffTimeModel>> getTimeSlots(GetTimeSlotByDateParams params);
 }
 
 class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
@@ -87,16 +87,17 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
   }
 
   @override
-  Future<List<TimeModel>> getTimeSlots(GetTimeSlotByDateParams params) async {
+  Future<List<StaffTimeModel>> getTimeSlots(GetTimeSlotByDateParams params) async {
     try {
-      final response = await _apiService.getApi('/Staff/staff-busy-times?staffId=${params.staffId}&date=${params.date.toString()}');
+      final response =
+          await _apiService.getApi('/Staff/multiple-staff-busy-times?staffIds=${params.staffId.join(',')}&date=${params.date.toString()}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         if (apiResponse.result!.data == null) {
           return [];
         }
         AppLogger.info(apiResponse.result!.data);
-        return (apiResponse.result!.data as List).map((x) => TimeModel.fromJson(x)).toList();
+        return (apiResponse.result!.data as List).map((x) => StaffTimeModel.fromJson(x)).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }
