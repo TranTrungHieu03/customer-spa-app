@@ -2,7 +2,7 @@ name: spa_mobile
 description: "A spa center"
 publish_to: 'none'
 
-version: 1.0.3+10
+version: 1.0.3+11
 
 environment:
   sdk: ^3.5.3

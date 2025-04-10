@@ -36,7 +36,10 @@ class SkinAnalysisBloc extends Bloc<SkinAnalysisEvent, SkinAnalysisState> {
     final result = await _skinAnalysisViaForm(event.params);
     result.fold(
       (failure) => emit(SkinAnalysisError(failure.message)),
-      (data) => emit(SkinAnalysisLoaded(routines: data.routines, skinHealth: data.skinhealth)),
+      (data) {
+        AppLogger.debug(">>>>>>> result: $result");
+        emit(SkinAnalysisLoaded(routines: data.routines, skinHealth: data.skinhealth));
+      },
     );
   }
 }

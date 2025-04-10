@@ -204,7 +204,7 @@ class _TStatusTabServiceState extends State<TStatusTabService> with AutomaticKee
                                           const SizedBox(
                                             width: TSizes.sm,
                                           ),
-                                          TProductPriceText(price: order.totalAmount.toString())
+                                          TProductPriceText(price: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString())
                                         ],
                                       ),
                                       const SizedBox(

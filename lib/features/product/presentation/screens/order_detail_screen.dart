@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:spa_mobile/core/common/model/request_payos_model.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/common/widgets/payment_method.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -18,6 +21,9 @@ import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_order_product_detail.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/order/order_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
+import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -30,6 +36,17 @@ class OrderDetailScreen extends StatefulWidget {
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  PaymentOption _selectedPaymentOption = PaymentOption.full;
+
+  void handlePaymentOptionChange(PaymentOption option) {
+    setState(() {
+      _selectedPaymentOption = option;
+    });
+  }
+
+  double totalAmount = 0;
+  bool isPaid = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +68,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 OrderBloc(getOrderProductDetail: serviceLocator(), createOrder: serviceLocator(), cancelOrdder: serviceLocator())
                   ..add(GetOrderEvent(GetOrderProductDetailParams(id: widget.orderId))),
             child: BlocListener<OrderBloc, OrderState>(
-              listener: (context, state) {},
+              listener: (context, state) {
+                if (state is OrderLoaded) {
+                  setState(() {
+                    isPaid = state.order.statusPayment == "Paid" || state.order.statusPayment == "PaidDeposit";
+                  });
+                }
+              },
               child: BlocBuilder<OrderBloc, OrderState>(
                 builder: (context, state) {
                   if (state is OrderLoading) {
@@ -62,7 +85,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (order.status == 'Pending' && order.statusPayment != 'Cash')
-                          Text('Trạng thái thanh toán: ${order.statusPayment == 'Pending' ? 'Chưa thanh toán' : 'Đã thanh toán'}'),
+                          Text(
+                              'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã thanh toán ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
                         const SizedBox(
                           height: TSizes.xs,
                         ),
@@ -252,6 +276,26 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         const Divider(
                           thickness: 0.2,
                         ),
+                        if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
+                            order.status.toLowerCase() != "cancelled")
+                          Text(
+                            "Payment Methods",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        const SizedBox(
+                          height: TSizes.sm,
+                        ),
+                        if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
+                            order.status.toLowerCase() != "cancelled")
+                          TPaymentSelection(
+                            total: order.totalAmount,
+                            onOptionChanged: handlePaymentOptionChange,
+                            selectedOption: _selectedPaymentOption,
+                          ),
+                        Divider(
+                          color: TColors.darkGrey,
+                          thickness: 0.5,
+                        ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -428,6 +472,34 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: Row(
+        children: [
+          const Spacer(),
+          if (!isPaid)
+            ElevatedButton(
+                onPressed: () {
+                  if (_selectedPaymentOption == PaymentOption.full) {
+                    context.read<PaymentBloc>().add(PayFullEvent(PayFullParams(
+                        totalAmount: totalAmount.toString(),
+                        orderId: widget.orderId,
+                        request: RequestPayOsModel(returnUrl: "/success", cancelUrl: "/cancel"))));
+                  } else {
+                    context.read<PaymentBloc>().add(PayDepositEvent(PayDepositParams(
+                        totalAmount: totalAmount.toString(),
+                        orderId: widget.orderId,
+                        percent: 30,
+                        request: RequestPayOsModel(returnUrl: "/success", cancelUrl: "/cancel"))));
+                  }
+                  goRedirectPayment(
+                    widget.orderId,
+                  );
+                },
+                child: const Text("Pay Now")),
+          const SizedBox(
+            width: TSizes.md,
+          )
+        ],
       ),
     );
   }

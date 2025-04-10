@@ -46,7 +46,7 @@ List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, Stri
 
 Widget chatItemWidget(MessageChannelModel e, String currentUserId, List<UserChatModel> members) {
   bool isMyChat = e.sender == currentUserId;
-
+  final user = members.firstWhere((x) => x.id == currentUserId);
   return e.sender == "0"
       ? systemMessageWidget(e.content ?? '')
       : Padding(
@@ -55,8 +55,8 @@ Widget chatItemWidget(MessageChannelModel e, String currentUserId, List<UserChat
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!isMyChat) userAvatar(e.sender, e.senderCustomer?.fullName ?? "", members),
-              if (e.messageType != 'text') messageImageAndName(isMyChat, e.content ?? "", e.senderCustomer?.fullName ?? ""),
-              if (e.messageType == 'text') messageTextAndName(isMyChat, e.content ?? '', e.senderCustomer?.fullName ?? ""),
+              if (e.messageType != 'text') messageImageAndName(isMyChat, e.content ?? "", user.fullName ?? ""),
+              if (e.messageType == 'text') messageTextAndName(isMyChat, e.content ?? '', user.fullName ?? ""),
               if (isMyChat) messageTime(isMyChat, e),
             ],
           ),
@@ -89,7 +89,7 @@ Widget userAvatar(String userId, String userName, List<UserChatModel> members) {
       color: color,
     ),
     child: Center(
-      child: user.image != null
+      child: user.image.isNotEmpty
           ? ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: Image(
@@ -97,7 +97,7 @@ Widget userAvatar(String userId, String userName, List<UserChatModel> members) {
                 fit: BoxFit.cover,
               ))
           : Text(
-              user.fullName.isNotEmpty ? userName.substring(0, 1).toUpperCase() : '?',
+              user.fullName.isNotEmpty ? user.fullName.substring(0, 1).toUpperCase() : '?',
               style: const TextStyle(
                 fontSize: 18,
                 color: Colors.white,

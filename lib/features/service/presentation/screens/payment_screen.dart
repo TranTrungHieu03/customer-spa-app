@@ -16,6 +16,7 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
@@ -133,16 +134,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         children: [
                           const Icon(Icons.payment, color: Colors.green),
                           const SizedBox(width: TSizes.sm),
-                          if (order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit")
+                          if (order.status == 'Pending' && order.statusPayment != 'Cash')
                             Text(
-                              "Đang chờ thanh toán",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          if (order.statusPayment == "Paid")
-                            Text(
-                              "Đã thanh toán",
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            )
+                                'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã cọc ${formatMoney(((order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3).toString())}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
+                          const SizedBox(
+                            height: TSizes.xs,
+                          ),
                         ],
                       ),
                       const SizedBox(
@@ -223,7 +220,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: TSizes.md,
                       ),
                       TGridLayout(
-                          mainAxisExtent: 70,
+                          mainAxisExtent: 80,
                           crossAxisCount: 1,
                           isScroll: false,
                           itemCount: order.appointments.length,
@@ -243,7 +240,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     Text(
                                       "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
-                                    )
+                                    ),
+                                    const SizedBox(
+                                      height: TSizes.sm,
+                                    ),
+                                    Text('Specialist: ${serviceState.staff?.fullName ?? ""}',
+                                        style: Theme.of(context).textTheme.bodyMedium),
                                   ],
                                 ),
                                 Column(
@@ -262,7 +264,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ),
                       TPaymentDetailService(
                         price: (totalPrice).toString(),
-                        total: (order.totalAmount).toString(),
+                        total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),
                         promotePrice: order.voucherId != 0 ? order.voucher!.discountAmount : 0,
                       ),
                       Divider(

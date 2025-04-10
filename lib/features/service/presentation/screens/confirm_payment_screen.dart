@@ -310,7 +310,12 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                             Text(
                                               "${service.duration} ${AppLocalizations.of(context)!.minutes}",
                                               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
-                                            )
+                                            ),
+                                            const SizedBox(
+                                              height: TSizes.sm,
+                                            ),
+                                            Text('Specialist: ${controller.staff[index]?.staffInfo?.fullName ?? ""}',
+                                                style: Theme.of(context).textTheme.bodyMedium),
                                           ],
                                         ),
                                         Column(

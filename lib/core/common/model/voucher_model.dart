@@ -25,7 +25,7 @@ class VoucherModel extends Voucher {
       remainQuantity: json['remainQuantity'],
       status: json['status'],
       description: json['description'],
-      discountAmount: (json['discountAmount'] as num).toDouble(),
+      discountAmount: (json['discountAmount'] ?? 0 as num).toDouble(),
       minOrderAmount: (json['minOrderAmount'] ?? 0 as num).toDouble(),
       validFrom: DateTime.parse(json['validFrom']).toLocal(),
       validTo: DateTime.parse(json['validTo']).toLocal(),

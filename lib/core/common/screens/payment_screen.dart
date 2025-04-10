@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
-import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spa_mobile/core/common/bloc/payment_payos/payos_bloc.dart';
+import 'package:spa_mobile/core/common/widgets/appbar.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class PaymentSuccessPage extends StatelessWidget {
   const PaymentSuccessPage({Key? key}) : super(key: key);
@@ -27,23 +27,18 @@ class PaymentSuccessPage extends StatelessWidget {
             const SizedBox(height: TSizes.md),
             Text(
               'Thanh toán thành công!',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .displaySmall,
+              style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(height: TSizes.md),
             Text(
               'Giao dịch của bạn đã được xử lý thành công.',
               textAlign: TextAlign.center,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: TSizes.lg),
             ElevatedButton(
               onPressed: () {
+                context.read<PayosBloc>().add(RefreshPayOS());
                 goHome();
               },
               child: const Text('Về trang chủ'),
@@ -78,30 +73,25 @@ class PaymentFailurePage extends StatelessWidget {
             const SizedBox(height: TSizes.md),
             Text(
               'Thanh toán thất bại',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .displaySmall,
+              style: Theme.of(context).textTheme.displaySmall,
             ),
             const SizedBox(height: TSizes.md),
             Text(
               'Đã xảy ra lỗi trong quá trình xử lý thanh toán. Vui lòng thử lại.',
               textAlign: TextAlign.center,
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: TSizes.lg),
-            ElevatedButton(
-              onPressed: () {
-                // context.read<PaymentBloc>().add(RetryPayment());
-              },
-              child: const Text('Try Again'),
-            ),
+            // ElevatedButton(
+            //   // onPressed: () {
+            //   //   context.read<PaymentBloc>().add(RetryPayment());
+            //   // },
+            //   child: const Text('Try Again'),
+            // ),
             const SizedBox(height: TSizes.md),
             TextButton(
               onPressed: () {
+                context.read<PayosBloc>().add(RefreshPayOS());
                 goHome();
               },
               child: const Text('Về trang chủ'),
