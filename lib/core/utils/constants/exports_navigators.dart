@@ -11,6 +11,7 @@ import 'package:spa_mobile/core/common/screens/redirect_screen.dart';
 import 'package:spa_mobile/core/common/screens/success_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysing_image_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysis_result_screen.dart';
@@ -18,6 +19,7 @@ import 'package:spa_mobile/features/analysis_skin/presentation/screens/basic_scr
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/book_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/checkout_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/order_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_detail_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_history_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routines_screen.dart';
@@ -45,6 +47,7 @@ import 'package:spa_mobile/features/product/presentation/screens/checkout_screen
 import 'package:spa_mobile/features/product/presentation/screens/history_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/order_detail_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/product_detail_screen.dart';
+import 'package:spa_mobile/features/product/presentation/screens/product_feedback_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/shipment_information_screen.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';

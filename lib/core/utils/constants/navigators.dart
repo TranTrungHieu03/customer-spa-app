@@ -316,12 +316,31 @@ goOrderProductDetail(int orderId) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderDetailScreen(orderId: orderId)));
 }
 
-goHistoryRoutine() async {
+// goHistoryRoutine() async {
+//   Navigator.push(
+//       navigatorKey.currentContext!,
+//       MaterialPageRoute(
+//           builder: (context) => BlocProvider<ListRoutineBloc>(
+//                 create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()),
+//                 child: RoutineHistoryScreen(),
+//               )));
+// }
+
+goFeedbackProduct(int customerId, int productId, int orderId) async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => ProductFeedbackScreen(customerId: customerId, productId: productId, orderId: orderId)));
+}
+
+goHistoryOrderRoutine() async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) => BlocProvider<ListRoutineBloc>(
-                create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()),
+          builder: (context) => BlocProvider<ListOrderRoutineBloc>(
+                create: (context) => ListOrderRoutineBloc(getHistoryOrderRoutine: serviceLocator()),
                 child: RoutineHistoryScreen(),
               )));
+}
+
+goOrderRoutineDetail(int orderId) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderRoutineDetail(orderId: orderId)));
 }

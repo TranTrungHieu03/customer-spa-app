@@ -54,6 +54,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                     TStatusTabService(
                       status: "completed",
                     ),
+
                     TStatusTabService(
                       status: "cancelled",
                     ),
@@ -73,7 +74,7 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                       backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                       bottom: TTabBar(
                           isScroll: true,
-                          tabs: ["Pending", "Completed", "Arrived", "Cancel"].map((category) => Tab(child: Text(category))).toList()))
+                          tabs: ["Đang chờ", "Đã đến", "Đã hoàn thành", "Đã hủy"].map((category) => Tab(child: Text(category))).toList()))
                 ];
               },
             ),

@@ -11,8 +11,11 @@ import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/widget/status_tab_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/widget/status_tab_order_routine.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 
 class RoutineHistoryScreen extends StatefulWidget {
@@ -52,9 +55,9 @@ class _RoutineHistoryScreenState extends State<RoutineHistoryScreen> {
 
     return DefaultTabController(
       length: 3,
-      child: BlocConsumer<ListRoutineBloc, ListRoutineState>(
+      child: BlocConsumer<ListOrderRoutineBloc, ListOrderRoutineState>(
         listener: (context, state) {
-          if (state is ListRoutineError) {
+          if (state is ListOrderRoutineError) {
             TSnackBar.errorSnackBar(context, message: state.message);
           }
         },
@@ -69,13 +72,13 @@ class _RoutineHistoryScreenState extends State<RoutineHistoryScreen> {
               ),
             ),
             body: NestedScrollView(
-              body: Padding(
+              body: const Padding(
                 padding: EdgeInsets.all(TSizes.sm / 2),
                 child: TabBarView(
                   children: [
-                    TStatusBarRoutine(status: "active", userId: userId),
-                    TStatusBarRoutine(status: "completed", userId: userId),
-                    TStatusBarRoutine(status: "cancelled", userId: userId),
+                    TStatusBarOrderRoutine(status: "pending"),
+                    TStatusBarOrderRoutine(status: "completed"),
+                    TStatusBarOrderRoutine(status: "cancelled"),
                   ],
                 ),
               ),
@@ -92,7 +95,7 @@ class _RoutineHistoryScreenState extends State<RoutineHistoryScreen> {
                     backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                     bottom: TTabBar(
                       isScroll: true,
-                      tabs: ["Active", "Completed", "Cancelled"].map((category) => Tab(child: Text(category))).toList(),
+                      tabs: ["Đang chờ", "Đã hoàn thành", "Đã hủy"].map((category) => Tab(child: Text(category))).toList(),
                     ),
                   )
                 ];

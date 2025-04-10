@@ -255,7 +255,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                   style: Theme.of(context).textTheme.bodySmall,
                                                 )
                                               ],
-                                            )
+                                            ),
+                                            if (order.status.toLowerCase() == 'completed')
+                                              TextButton(
+                                                  onPressed: () {
+                                                    goFeedbackProduct(order.customer?.userId ?? 0, orderDetail.productId, widget.orderId);
+                                                  },
+                                                  child: Text(
+                                                    'Đánh giá',
+                                                    style: Theme.of(context).textTheme.bodyLarge,
+                                                  ))
                                           ],
                                         ),
                                       ),
@@ -460,7 +469,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               child: Text(
                                 'Hủy đơn hàng',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
-                              ))
+                              )),
                       ],
                     );
                   } else if (state is OrderError) {

@@ -133,9 +133,11 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => GetHistoryProduct(serviceLocator()))
     ..registerLazySingleton(() => GetOrderProductDetail(serviceLocator()))
     ..registerLazySingleton(() => GetVouchers(serviceLocator()))
+    ..registerLazySingleton(() => FeedbackProduct(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
+    ..registerLazySingleton(() => FeedbackProductBloc(feedbackProduct: serviceLocator()))
     ..registerLazySingleton(() => ListOrderBloc(getHistoryProduct: serviceLocator()))
     ..registerLazySingleton(() => ListVoucherBloc(getVouchers: serviceLocator()))
     ..registerLazySingleton(
@@ -265,12 +267,16 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => BookRoutine(serviceLocator()))
     ..registerLazySingleton(() => GetListMessage(serviceLocator()))
     ..registerLazySingleton(() => GetHistoryRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetOrderRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetHistoryOrderRoutine(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
     ..registerLazySingleton(() => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()))
     ..registerLazySingleton(() => ListMessageBloc(getListMessage: serviceLocator()))
     ..registerLazySingleton(() => ListRoutineStepBloc(getRoutineStep: serviceLocator()))
+    ..registerLazySingleton(() => OrderRoutineBloc(getOrderRoutine: serviceLocator()))
+    ..registerLazySingleton(() => ListOrderRoutineBloc(getHistoryOrderRoutine: serviceLocator()))
     ..registerLazySingleton(() => RoutineTrackingBloc(getRoutineTracking: serviceLocator()))
     ..registerLazySingleton(() => RoutineBloc(
           getRoutineDetail: serviceLocator(),

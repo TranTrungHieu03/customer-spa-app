@@ -128,7 +128,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   TSettingsMenuTile(
                     icon: Iconsax.pet,
                     title: "Gói liệu trình",
-                    onTap: () => goHistoryRoutine(),
+                    onTap: () => goHistoryOrderRoutine(),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   const Divider(),
