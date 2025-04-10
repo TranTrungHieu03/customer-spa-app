@@ -84,7 +84,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (order.status == 'Pending' && order.statusPayment != 'Cash')
+                        if (order.statusPayment != 'Cash')
                           Text(
                               'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã thanh toán ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
                         const SizedBox(
@@ -297,7 +297,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
                             order.status.toLowerCase() != "cancelled")
                           TPaymentSelection(
-                            total: order.totalAmount,
+                            total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
                           ),

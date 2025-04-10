@@ -80,6 +80,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                     final order = state.order;
                     final routine = order.routine;
                     final List<String> steps = routine.steps.split(", ");
+                    totalAmount = order.totalAmount - (order.voucher?.discountAmount ?? 0);
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -172,7 +173,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
                             order.status.toLowerCase() != "cancelled")
                           TPaymentSelection(
-                            total: order.totalAmount,
+                            total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
                           ),
@@ -222,7 +223,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 TProductPriceText(
-                                  price: (order.totalAmount).toString(),
+                                  price: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),
                                   isLarge: true,
                                 )
                               ],
