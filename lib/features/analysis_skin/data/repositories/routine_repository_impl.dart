@@ -1,12 +1,17 @@
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/datasources/routine_remote_data_source.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/list_order_routine_model.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/order_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_step_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_tracking_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/repositories/routine_repository.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
@@ -93,6 +98,31 @@ class RoutineRepositoryImpl implements RoutineRepository {
   Future<Either<Failure, List<RoutineModel>>> getHistoryRoutine(GetRoutineHistoryParams params) async {
     try {
       List<RoutineModel> result = await _dataSource.getHistoryRoutine(params);
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, OrderRoutineModel>> getOrderRoutine(GetOrderRoutineParams params) async {
+    try {
+      OrderRoutineModel result = await _dataSource.getOrderRoutine(params);
+      AppLogger.wtf(result);
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ListOrderRoutineModel>> getOrderRoutineHistory(GetHistoryOrderRoutineParams params) async {
+    try {
+      ListOrderRoutineModel result = await _dataSource.getHistoryOrderRoutine(params);
       return right(result);
     } catch (e) {
       return left(ApiFailure(

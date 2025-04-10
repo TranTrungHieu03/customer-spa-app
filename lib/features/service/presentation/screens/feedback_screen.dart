@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Hãy đánh giá dịch vụ của chúng tôi:',
+                'Hãy đánh giá sản phẩm của chúng tôi:',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 20),
@@ -104,7 +103,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                goHome();
               },
               child: const Text('Đóng'),
             ),

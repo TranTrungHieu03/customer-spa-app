@@ -84,7 +84,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (order.status == 'Pending' && order.statusPayment != 'Cash')
+                        if (order.statusPayment != 'Cash')
                           Text(
                               'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã thanh toán ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
                         const SizedBox(
@@ -255,7 +255,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                   style: Theme.of(context).textTheme.bodySmall,
                                                 )
                                               ],
-                                            )
+                                            ),
+                                            if (order.status.toLowerCase() == 'completed')
+                                              TextButton(
+                                                  onPressed: () {
+                                                    goFeedbackProduct(order.customer?.userId ?? 0, orderDetail.productId, widget.orderId);
+                                                  },
+                                                  child: Text(
+                                                    'Đánh giá',
+                                                    style: Theme.of(context).textTheme.bodyLarge,
+                                                  ))
                                           ],
                                         ),
                                       ),
@@ -288,7 +297,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
                             order.status.toLowerCase() != "cancelled")
                           TPaymentSelection(
-                            total: order.totalAmount,
+                            total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
                           ),
@@ -460,7 +469,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               child: Text(
                                 'Hủy đơn hàng',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
-                              ))
+                              )),
                       ],
                     );
                   } else if (state is OrderError) {

@@ -76,8 +76,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                           bottom: TTabBar(
                               isScroll: true,
-                              tabs:
-                                  ['Processing', 'Shipping', 'Completed', 'Cancel'].map((category) => Tab(child: Text(category))).toList()))
+                              tabs: ["Đang chờ", "Đã giao", "Đã hoàn thành", "Đã hủy"]
+                                  .map((category) => Tab(child: Text(category)))
+                                  .toList()))
                     ];
                   },
                 ),

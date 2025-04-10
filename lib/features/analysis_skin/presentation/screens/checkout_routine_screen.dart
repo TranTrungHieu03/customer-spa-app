@@ -74,7 +74,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
             if (state is RoutineBook) {
               TSnackBar.successSnackBar(context, message: "Đặt lịch thành công");
               // context.read<RoutineBloc>().add(GetRoutineDetailEvent(GetRoutineDetailParams(widget.routine.skincareRoutineId.toString())));
-              goHome();
+              goOrderRoutineDetail(state.id);
             } else if (state is RoutineError) {
               TSnackBar.errorSnackBar(context, message: state.message);
             }
