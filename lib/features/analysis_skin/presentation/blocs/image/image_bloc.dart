@@ -43,7 +43,7 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
 
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: event.isCamera ? ImageSource.camera : ImageSource.gallery,
       );
 
       if (image != null) {

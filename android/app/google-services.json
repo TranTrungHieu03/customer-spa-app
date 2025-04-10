@@ -50,6 +50,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "771780416047-bgiim44uk2rfn9946ngujei2m0j19rcq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hieutt.customer.app",
+            "certificate_hash": "b3dd58c3557c85e3b013e4f5e1bcf039a6cb10e8"
+          }
+        },
+        {
           "client_id": "771780416047-otkb2i8fcuukah8to1kbr0p4qvoui8pr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

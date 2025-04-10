@@ -72,10 +72,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                               children: [
                                 Text(
                                   AppLocalizations.of(context)!.skin_condition.toUpperCase(),
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .headlineSmall,
+                                  style: Theme.of(context).textTheme.headlineSmall,
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
@@ -136,36 +133,37 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                     const SizedBox(
                       height: TSizes.md,
                     ),
-                    if (!_isVisible)
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              _toggleVisibility();
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)!.recommendation,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .titleLarge,
-                            ),
+                    Text('Quý khách vui lòng đến cửa hàng để được hỗ trợ tư vấn tình trạng chính xác nhất.'),
+                    const SizedBox(
+                      height: TSizes.md,
+                    ),
+                    // if (!_isVisible)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // TextButton(
+                        //   onPressed: () {
+                        //     _toggleVisibility();
+                        //   },
+                        //   child: Text(
+                        //     AppLocalizations.of(context)!.recommendation,
+                        //     style: Theme
+                        //         .of(context)
+                        //         .textTheme
+                        //         .titleLarge,
+                        //   ),
+                        // ),
+                        TextButton(
+                          onPressed: () {
+                            goFormData(skinHealth, true);
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.editForm,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                          TextButton(
-                            onPressed: () {
-                              goFormData(skinHealth, true);
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)!.editForm,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .bodyLarge,
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
+                    ),
                     const SizedBox(
                       height: TSizes.sm,
                     ),
@@ -182,10 +180,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ListTile(
-                                    title: Text(routine.name, style: Theme
-                                        .of(context)
-                                        .textTheme
-                                        .titleLarge),
+                                    title: Text(routine.name, style: Theme.of(context).textTheme.titleLarge),
                                     subtitle: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -242,7 +237,6 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
           return const SizedBox.shrink();
         },
       ),
-
     );
   }
 }

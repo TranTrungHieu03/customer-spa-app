@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     title: AppLocalizations.of(context)!.analysisImage,
                                     iconData: Iconsax.scan,
                                     onPressed: () {
-                                      context.read<ImageBloc>().add(PickImageEvent());
+                                      _showImageSourceActionSheet(context);
                                     },
                                   ),
                                   TFlashAction(
@@ -402,4 +402,35 @@ class TSearchHome extends StatelessWidget {
           )),
     );
   }
+}
+
+void _showImageSourceActionSheet(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext ctx) {
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt),
+              title: Text('Chụp ảnh'),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                context.read<ImageBloc>().add(PickImageEvent(true));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library),
+              title: Text('Chọn từ thư viện'),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                context.read<ImageBloc>().add(PickImageEvent(false));
+              },
+            ),
+          ],
+        ),
+      );
+    },
+  );
 }

@@ -220,12 +220,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     }, () => _scrollToBottom()),
                   ),
                 );
+              } else if (channelState is ChannelLoading) {
+                return Center(child: CircularProgressIndicator());
               }
-              return const Center(
-                child: Text(
-                  'Không thể lấy thông tin từ hệ thống',
-                  style: TextStyle(fontSize: 16, color: Colors.red),
-                  textAlign: TextAlign.center,
+              return Scaffold(
+                body: const Center(
+                  child: Text(
+                    'Không thể lấy thông tin từ hệ thống',
+                    style: TextStyle(fontSize: 16, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               );
             },
