@@ -76,7 +76,7 @@ class _ShipmentInformationScreenState extends State<ShipmentInformationScreen> {
       appBar: TAppbar(
         showBackArrow: true,
         title: Text(
-          "Thông tin giao hàng",
+          AppLocalizations.of(context)!.shipping_information,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
@@ -149,7 +149,7 @@ class _ShipmentInformationScreenState extends State<ShipmentInformationScreen> {
                           goLoginNotBack();
                         }
                       },
-                      child: const Text("Lưu vào dữ liệu")),
+                      child: Text(AppLocalizations.of(context)!.save_to_data)),
                   const SizedBox(
                     width: TSizes.lg,
                   ),

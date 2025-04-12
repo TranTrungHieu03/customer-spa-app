@@ -5,6 +5,7 @@ import 'package:spa_mobile/features/product/data/model/product_feedback_model.da
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/feedback_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
+import 'package:spa_mobile/features/product/domain/usecases/list_feedback_product.dart';
 
 abstract class ProductRepository {
   Future<Either<Failure, ListProductModel>> getProducts(GetListProductParams page);
@@ -14,4 +15,6 @@ abstract class ProductRepository {
   Future<Either<Failure, ListProductModel>> searchProducts(String query);
 
   Future<Either<Failure, ProductFeedbackModel>> feedback(FeedbackProductParams params);
+
+  Future<Either<Failure, List<ProductFeedbackModel>>> getListFeedback(ListProductFeedbackParams params);
 }

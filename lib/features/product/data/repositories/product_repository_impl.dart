@@ -8,6 +8,7 @@ import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
 import 'package:spa_mobile/features/product/domain/usecases/feedback_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
+import 'package:spa_mobile/features/product/domain/usecases/list_feedback_product.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
   final ProductRemoteDataSource _productRemoteDataSource;
@@ -47,9 +48,22 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, ProductFeedbackModel>> feedback(FeedbackProductParams params)async {
+  Future<Either<Failure, ProductFeedbackModel>> feedback(FeedbackProductParams params) async {
     try {
       ProductFeedbackModel result = await _productRemoteDataSource.feedbackProduct(params);
+
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProductFeedbackModel>>> getListFeedback(ListProductFeedbackParams params) async {
+    try {
+      List<ProductFeedbackModel> result = await _productRemoteDataSource.getlistFeedbackProduct(params);
 
       return right(result);
     } catch (e) {

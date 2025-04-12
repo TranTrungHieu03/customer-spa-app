@@ -173,8 +173,9 @@ goChat() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const ChatAiScreen()));
 }
 
-goFeedback() async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const FeedbackScreen()));
+goFeedback(int customerId, int serviceId, int orderId) async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => ServiceFeedbackScreen(customerId: customerId, serviceId: serviceId, orderId: orderId)));
 }
 
 goStatusService(String title, String content, Widget value, String image, Color color) async {

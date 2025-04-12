@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
@@ -75,7 +76,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
               }
 
               if (orders.isEmpty) {
-                return const Center(child: Text('Do not have any order here!'));
+                return Center(child: Text(AppLocalizations.of(context)!.no_order));
               }
 
               return NotificationListener<ScrollNotification>(
@@ -219,13 +220,13 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                                   order.orderDetails.fold(0, (x, y) => x + y.quantity) - order.orderDetails[0].quantity;
                                               return indexDetail == 1 && order.orderDetails.length > 1
                                                   ? ExpansionTile(
-                                                      title: Text("Xem thêm"),
+                                                      title: Text(AppLocalizations.of(context)!.view_more),
                                                       tilePadding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
                                                       childrenPadding: EdgeInsets.zero,
                                                       collapsedBackgroundColor: Colors.transparent,
                                                       backgroundColor: Colors.transparent,
                                                       subtitle: Text(
-                                                        "$quantityOfHide sản phẩm khác",
+                                                        "$quantityOfHide ${AppLocalizations.of(context)!.other_products}",
                                                         style: Theme.of(context).textTheme.bodySmall,
                                                       ),
                                                       children: order.orderDetails
@@ -314,7 +315,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
                                             Text(
-                                              "Total: ",
+                                              "${AppLocalizations.of(context)!.total}: ",
                                               style: Theme.of(context).textTheme.bodyMedium,
                                             ),
                                             Text(
@@ -340,7 +341,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                     return const TServiceHorizontalCardShimmer();
                   });
             }
-            return const Center(child: Text('Do not have any order here!'));
+            return Center(child: Text(AppLocalizations.of(context)!.no_order));
           },
         ),
       ),

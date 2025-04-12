@@ -287,7 +287,7 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Đảm bảo nhận hàng vào ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(state.leadTime).toUtc().toLocal())}.",
+                              "${AppLocalizations.of(context)!.estimated_delivery} ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(state.leadTime).toUtc().toLocal())}.",
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],
@@ -390,7 +390,7 @@ void _showVoucherModal(BuildContext context, double currentTotalPrice, UserModel
                 // ),
                 // const SizedBox(height: 16),
                 Text(
-                  "Available Vouchers",
+                  AppLocalizations.of(context)!.available_vouchers,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 16),
@@ -438,11 +438,12 @@ void _showVoucherModal(BuildContext context, double currentTotalPrice, UserModel
                                     children: [
                                       Text(formatMoney(voucher.discountAmount.toString())),
                                       if ((user.bonusPoint ?? 0) < voucher.requirePoint)
-                                        Text('Cần thêm ${voucher.requirePoint - (user.bonusPoint ?? 0).toInt()} điểm để sử dụng mã này',
+                                        Text(
+                                            '${AppLocalizations.of(context)!.need_more} ${voucher.requirePoint - (user.bonusPoint ?? 0).toInt()} ${AppLocalizations.of(context)!.points_required_to_use}',
                                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
                                       if (currentTotalPrice < (voucher.minOrderAmount ?? 0))
                                         Text(
-                                            'Mua thêm ${formatMoney((voucher.minOrderAmount ?? 0 - currentTotalPrice).toString())} để sử dụng mã này',
+                                            '${AppLocalizations.of(context)!.buy_more} ${formatMoney((voucher.minOrderAmount ?? 0 - currentTotalPrice).toString())} ${AppLocalizations.of(context)!.to_use_this_code}',
                                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
                                     ],
                                   ),
@@ -578,7 +579,7 @@ void _showMessageModal(BuildContext context) {
             TextField(
               autofocus: true,
               decoration: InputDecoration(
-                hintText: "Enter your massage",
+                hintText: AppLocalizations.of(context)!.enter_your_message,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

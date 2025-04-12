@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/model/voucher_model.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
@@ -29,7 +30,9 @@ class VoucherScreen extends StatelessWidget {
             children: [
               Icon(Icons.description, color: Colors.blue), // Icon for description
               const SizedBox(width: 8),
-              Expanded(child: Text('Description: ${voucherModel.description}', style: Theme.of(context).textTheme.bodyMedium)),
+              Expanded(
+                  child: Text('${AppLocalizations.of(context)!.description}: ${voucherModel.description}',
+                      style: Theme.of(context).textTheme.bodyMedium)),
             ],
           ),
           const SizedBox(height: 8),
@@ -40,7 +43,7 @@ class VoucherScreen extends StatelessWidget {
               Icon(Icons.money_off, color: Colors.green), // Icon for discount amount
               const SizedBox(width: 8),
               Expanded(
-                  child: Text('Discount Amount: ${formatMoney(voucherModel.discountAmount.toString())}',
+                  child: Text('${AppLocalizations.of(context)!.discount_amount}: ${formatMoney(voucherModel.discountAmount.toString())}',
                       style: Theme.of(context).textTheme.bodyMedium)),
             ],
           ),
@@ -52,7 +55,8 @@ class VoucherScreen extends StatelessWidget {
               Icon(Icons.access_time, color: Colors.orange), // Icon for valid from
               const SizedBox(width: 8),
               Expanded(
-                  child: Text('Valid From: ${DateFormat('EEEE, dd MMMM yyyy', 'vi').format(voucherModel.validFrom.toLocal())}',
+                  child: Text(
+                      '${AppLocalizations.of(context)!.valid_from}: ${DateFormat('EEEE, dd MMMM yyyy', 'vi').format(voucherModel.validFrom.toLocal())}',
                       style: Theme.of(context).textTheme.bodyMedium)),
             ],
           ),
@@ -64,7 +68,8 @@ class VoucherScreen extends StatelessWidget {
               Icon(Icons.access_alarm, color: Colors.red), // Icon for valid to
               const SizedBox(width: 8),
               Expanded(
-                  child: Text('Valid From: ${DateFormat('EEEE, dd MMMM yyyy', 'vi').format(voucherModel.validTo.toLocal())}',
+                  child: Text(
+                      '${AppLocalizations.of(context)!.valid_to}: ${DateFormat('EEEE, dd MMMM yyyy', 'vi').format(voucherModel.validTo.toLocal())}',
                       style: Theme.of(context).textTheme.bodyMedium)),
             ],
           ),

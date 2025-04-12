@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
@@ -139,7 +140,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     }
 
     if (userId?.district == 0 || userId?.wardCode == 0) {
-      TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
+      TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.update_address_to_purchase);
     }
     params = GetListProductParams.empty(selectedBranch ?? 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -157,7 +158,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
       backgroundColor: TColors.white,
       appBar: TAppbar(
         title: Text(
-          'Product',
+          AppLocalizations.of(context)!.products,
           style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
         ),
         actions: [
@@ -256,7 +257,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              "Sắp xếp",
+                              AppLocalizations.of(context)!.sort,
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             const SizedBox(
@@ -290,7 +291,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Bộ lọc",
+                              AppLocalizations.of(context)!.filter,
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             const SizedBox(
@@ -323,7 +324,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Chi nhánh",
+                              AppLocalizations.of(context)!.branch,
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             const SizedBox(
@@ -387,7 +388,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Branch',
+                        AppLocalizations.of(context)!.branch,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: TSizes.sm),
@@ -463,7 +464,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
                             ),
                             child: Text(
-                              "Set as default",
+                              AppLocalizations.of(context)!.set_as_default,
                               style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
                             ),
                           ),
@@ -500,7 +501,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 RadioListTile<String>(
-                  title: const Text('Giá giảm dần'),
+                  title: Text(AppLocalizations.of(context)!.price_descending),
                   value: "1",
                   activeColor: TColors.primary,
                   groupValue: selectedSortType,
@@ -514,7 +515,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                   },
                 ),
                 RadioListTile<String>(
-                  title: const Text('Giá tăng dần'),
+                  title: Text(AppLocalizations.of(context)!.price_ascending),
                   value: "0",
                   activeColor: TColors.primary,
                   groupValue: selectedSortType,
@@ -542,8 +543,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          'Huỷ bỏ',
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
                           style: TextStyle(color: TColors.black),
                         ),
                       ),
@@ -557,7 +558,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                 _onFilter();
                                 Navigator.pop(context);
                               },
-                        child: const Text('Áp dụng'),
+                        child: Text(AppLocalizations.of(context)!.apply),
                       ),
                     ),
                     const SizedBox(
@@ -629,12 +630,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           children: [
             // Title
             Center(
-              child: Text('Bộ lọc sản phẩm', style: Theme.of(context).textTheme.titleLarge),
+              child: Text(AppLocalizations.of(context)!.product_filter, style: Theme.of(context).textTheme.titleLarge),
             ),
             const SizedBox(height: TSizes.lg),
 
             // Price Range Slider
-            Text('Khoảng giá', style: Theme.of(context).textTheme.bodyLarge),
+            Text(AppLocalizations.of(context)!.price_range, style: Theme.of(context).textTheme.bodyLarge),
             RangeSlider(
               values: _priceRange,
               min: 0,
@@ -682,7 +683,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             // Brand Selection
             const SizedBox(height: TSizes.lg),
             ExpansionTile(
-              title: Text('Nhãn hàng', style: Theme.of(context).textTheme.bodyLarge),
+              title: Text(AppLocalizations.of(context)!.brand, style: Theme.of(context).textTheme.bodyLarge),
               children: [
                 Container(
                   height: 400,
@@ -708,7 +709,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               ],
             ),
 
-            ExpansionTile(title: Text('Chi nhánh', style: Theme.of(context).textTheme.bodyLarge), children: [
+            ExpansionTile(title: Text(AppLocalizations.of(context)!.branch, style: Theme.of(context).textTheme.bodyLarge), children: [
               BlocBuilder<ListBranchesBloc, ListBranchesState>(
                 builder: (context, state) {
                   if (state is ListBranchesLoaded) {

@@ -204,7 +204,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Review and confirm",
+                            AppLocalizations.of(context)!.review_and_confirm,
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
                           const SizedBox(
@@ -314,7 +314,8 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                             const SizedBox(
                                               height: TSizes.sm,
                                             ),
-                                            Text('Specialist: ${controller.staff[index]?.staffInfo?.fullName ?? ""}',
+                                            Text(
+                                                '${AppLocalizations.of(context)!.specialist}: ${controller.staff[index]?.staffInfo?.fullName ?? ""}',
                                                 style: Theme.of(context).textTheme.bodyMedium),
                                           ],
                                         ),
@@ -347,7 +348,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Mã giảm giá", style: Theme.of(context).textTheme.titleLarge),
+                              Text(AppLocalizations.of(context)!.voucher_code, style: Theme.of(context).textTheme.titleLarge),
                               (controller.voucher == null)
                                   ? TextButton(
                                       onPressed: () => _showVoucherModal(
@@ -393,7 +394,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Text("Note", style: Theme.of(context).textTheme.titleLarge),
+                          Text(AppLocalizations.of(context)!.note, style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(
                             height: TSizes.xs,
                           ),
@@ -402,7 +403,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             controller: _messageController,
                             maxLines: 4,
                             decoration: InputDecoration(
-                              hintText: "Paste your message to the center",
+                              hintText: AppLocalizations.of(context)!.enter_your_message,
                               contentPadding: const EdgeInsets.all(TSizes.sm),
                               hintStyle: Theme.of(context).textTheme.bodySmall,
                               border: OutlineInputBorder(
@@ -446,7 +447,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                   },
                   listener: (context, state) {
                     if (state is AppointmentCreateSuccess) {
-                      TSnackBar.successSnackBar(context, message: "Lich hen cua ban da duoc giu cho. Vui long thanh toan de hoan tat.");
+                      TSnackBar.successSnackBar(context, message: AppLocalizations.of(context)!.appointment_reserved_notice);
                       goBookingDetail(state.id);
                     } else if (state is AppointmentError) {
                       TSnackBar.errorSnackBar(context, message: state.message);
@@ -476,7 +477,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
               Padding(
                   padding: const EdgeInsets.all(TSizes.spacebtwSections),
                   child: Text(
-                    "Giữa mỗi dịch vụ được khấu hao 5 phút để chuẩn bị cho dịch vụ tiếp theo",
+                    AppLocalizations.of(context)!.service_gap_notice,
                     style: Theme.of(context).textTheme.bodyMedium,
                   )),
             ],
@@ -524,7 +525,7 @@ void _showVoucherModal(BuildContext context, double currentTotalPrice, UserModel
                 // ),
                 // const SizedBox(height: 16),
                 Text(
-                  "Available Vouchers",
+                  AppLocalizations.of(context)!.available_vouchers,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 16),
@@ -572,11 +573,12 @@ void _showVoucherModal(BuildContext context, double currentTotalPrice, UserModel
                                     children: [
                                       Text(formatMoney(voucher.discountAmount.toString())),
                                       if ((user.bonusPoint ?? 0) < voucher.requirePoint)
-                                        Text('Cần thêm ${voucher.requirePoint - (user.bonusPoint ?? 0).toInt()} điểm để sử dụng mã này',
+                                        Text(
+                                            '${AppLocalizations.of(context)!.need_more} ${voucher.requirePoint - (user.bonusPoint ?? 0).toInt()} ${AppLocalizations.of(context)!.points_required_to_use}',
                                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
                                       if (currentTotalPrice < (voucher.minOrderAmount ?? 0))
                                         Text(
-                                            'Mua thêm ${formatMoney((voucher.minOrderAmount ?? 0 - currentTotalPrice).toString())} để sử dụng mã này',
+                                            '${AppLocalizations.of(context)!.buy_more} ${formatMoney((voucher.minOrderAmount ?? 0 - currentTotalPrice).toString())} ${AppLocalizations.of(context)!.to_use_this_code}',
                                             style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
                                     ],
                                   ),
