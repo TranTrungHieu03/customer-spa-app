@@ -18,6 +18,12 @@ class AppointmentDataController extends ChangeNotifier {
   List<DateTime> timeStart = [];
   List<int> _staffIds = [];
   VoucherModel? _voucher;
+  String _note = '';
+  int _appointmentId = 0;
+
+  int get appointmentId => _appointmentId;
+
+  String get note => _note;
 
   List<StaffModel?> _staffs = [];
 
@@ -73,6 +79,16 @@ class AppointmentDataController extends ChangeNotifier {
 
   void updateTime(int time) {
     _totalDuration = time;
+    notifyListeners();
+  }
+
+  void updateId(int id) {
+    _appointmentId = id;
+    notifyListeners();
+  }
+
+  void updateNote(String note) {
+    _note = note;
     notifyListeners();
   }
 

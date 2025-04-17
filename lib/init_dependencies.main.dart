@@ -134,10 +134,12 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => GetOrderProductDetail(serviceLocator()))
     ..registerLazySingleton(() => GetVouchers(serviceLocator()))
     ..registerLazySingleton(() => FeedbackProduct(serviceLocator()))
+    ..registerLazySingleton(() => GetListProductFeedback(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
     ..registerLazySingleton(() => FeedbackProductBloc(feedbackProduct: serviceLocator()))
+    ..registerLazySingleton(() => ListProductFeedbackBloc(getListProductFeedback: serviceLocator()))
     ..registerLazySingleton(() => ListOrderBloc(getHistoryProduct: serviceLocator()))
     ..registerLazySingleton(() => ListVoucherBloc(getVouchers: serviceLocator()))
     ..registerLazySingleton(
@@ -179,9 +181,13 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetUserChatInfo(serviceLocator()))
     ..registerLazySingleton(() => GetListChannel(serviceLocator()))
     ..registerLazySingleton(() => GetChannel(serviceLocator()))
+    ..registerLazySingleton(() => FeedbackService(serviceLocator()))
+    ..registerLazySingleton(() => GetListServiceFeedback(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
+    ..registerLazySingleton(() => FeedbackServiceBloc(feedbackService: serviceLocator()))
+    ..registerLazySingleton(() => ListFeedbackServiceBloc(getListServiceFeedback: serviceLocator()))
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
     ..registerLazySingleton(() => BranchBloc(getBranchDetail: serviceLocator()))
     ..registerLazySingleton(() => UserChatBloc(getUserChatInfo: serviceLocator()))
@@ -221,11 +227,20 @@ Future<void> _initAppointment() async {
     ..registerLazySingleton(() => GetListAppointment(serviceLocator()))
     ..registerLazySingleton(() => GetTimeSlotByDate(serviceLocator()))
     ..registerLazySingleton(() => CancelOrder(serviceLocator()))
+    ..registerLazySingleton(() => GetAppointmentDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetSlotWorking(serviceLocator()))
+    ..registerLazySingleton(() => GetAppointmentsByRoutine(serviceLocator()))
+    ..registerLazySingleton(() => UpdateAppointment(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(
-        () => AppointmentBloc(getAppointment: serviceLocator(), createAppointment: serviceLocator(), cancelOrder: serviceLocator()))
-    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator()))
+    ..registerLazySingleton(() => AppointmentBloc(
+        getAppointment: serviceLocator(),
+        createAppointment: serviceLocator(),
+        cancelOrder: serviceLocator(),
+        updateAppointment: serviceLocator(),
+        getAppointmentDetail: serviceLocator()))
+    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()))
+    ..registerLazySingleton(() => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()))
     ..registerLazySingleton(() => ListTimeBloc(getTimeSlotByDate: serviceLocator()));
 }
 

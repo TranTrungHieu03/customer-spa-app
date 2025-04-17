@@ -172,7 +172,7 @@ class TPaymentDetail extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Phí giảm giá', style: Theme.of(context).textTheme.bodyMedium),
+                    Text(AppLocalizations.of(context)!.discount_fee, style: Theme.of(context).textTheme.bodyMedium),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [

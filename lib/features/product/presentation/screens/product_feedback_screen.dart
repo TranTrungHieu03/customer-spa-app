@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -45,7 +46,7 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Hãy đánh giá sản phẩm của chúng tôi:',
+                    AppLocalizations.of(context)!.rate_our_product,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 20),
@@ -53,7 +54,7 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
                     initialRating: 5,
                     minRating: 1,
                     direction: Axis.horizontal,
-                    allowHalfRating: true,
+                    allowHalfRating: false,
                     itemCount: 5,
                     itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                     itemBuilder: (context, _) => const Icon(
@@ -67,17 +68,12 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    'Bạn đã đánh giá: $_rating sao',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 20),
                   Form(
                     child: TextField(
                       controller: _controller,
                       maxLines: 4,
                       decoration: InputDecoration(
-                        hintText: "Enter your feedback ...",
+                        hintText: AppLocalizations.of(context)!.enter_your_feedback,
                         contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.sm, vertical: TSizes.md),
                         hintStyle: Theme.of(context).textTheme.bodySmall,
                         border: OutlineInputBorder(
@@ -96,7 +92,8 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
         ),
         bottomNavigationBar: Builder(
           builder: (context) => Padding(
-            padding: const EdgeInsets.all(TSizes.sm),
+            padding: EdgeInsets.only(
+                top: TSizes.sm, left: TSizes.sm, right: TSizes.sm, bottom: TSizes.sm + MediaQuery.of(context).viewInsets.bottom),
             child: Row(
               children: [
                 Expanded(
@@ -114,7 +111,7 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
                           );
                     },
                     child: Text(
-                      'Gửi đánh giá',
+                      AppLocalizations.of(context)!.submit_review,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
                     ),
                   ),
@@ -132,15 +129,14 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Cảm ơn bạn!'),
-          content: Text('Bạn đã đánh giá $_rating sao.'),
+          title: Text(AppLocalizations.of(context)!.thank_you),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 goOrderProductDetail(widget.orderId);
               },
-              child: const Text('Đóng'),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         );

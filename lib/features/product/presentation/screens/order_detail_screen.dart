@@ -45,13 +45,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   double totalAmount = 0;
+  String paymentMethod = '';
   bool isPaid = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TAppbar(
-        title: Text('Đơn hàng chi tiet'),
+        title: Text(AppLocalizations.of(context)!.order_details),
         showBackArrow: true,
         actions: [
           TRoundedIcon(
@@ -72,6 +73,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 if (state is OrderLoaded) {
                   setState(() {
                     isPaid = state.order.statusPayment == "Paid" || state.order.statusPayment == "PaidDeposit";
+                    totalAmount = state.order.totalAmount;
+                    paymentMethod = state.order.paymentMethod.toLowerCase();
                   });
                 }
               },
@@ -86,7 +89,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       children: [
                         if (order.statusPayment != 'Cash')
                           Text(
-                              'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã thanh toán ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
+                              '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.paid} ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}'),
                         const SizedBox(
                           height: TSizes.xs,
                         ),
@@ -96,7 +99,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
                             radius: 100,
                             child: Text(
-                              'Dự kiến giao hàng vào: ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(order.shipment?.expectedDeliveryTime ?? ""))}',
+                              '${AppLocalizations.of(context)!.estimated_delivery}: ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(order.shipment?.expectedDeliveryTime ?? ""))}',
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                           ),
@@ -104,7 +107,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           height: TSizes.xs,
                         ),
                         Text(
-                          'Thông tin người nhận',
+                          AppLocalizations.of(context)!.recipient_info,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         const SizedBox(
@@ -174,7 +177,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (BuildContext context, int indexDetail) {
-                            final orderDetail = order.orderDetails[indexDetail];
+                            final orderDetail = order.orderDetails![indexDetail];
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -256,15 +259,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                 )
                                               ],
                                             ),
-                                            if (order.status.toLowerCase() == 'completed')
-                                              TextButton(
-                                                  onPressed: () {
-                                                    goFeedbackProduct(order.customer?.userId ?? 0, orderDetail.productId, widget.orderId);
-                                                  },
-                                                  child: Text(
-                                                    'Đánh giá',
-                                                    style: Theme.of(context).textTheme.bodyLarge,
-                                                  ))
+                                            // if (order.status.toLowerCase() == 'completed')
+                                            TextButton(
+                                                onPressed: () {
+                                                  goFeedbackProduct(
+                                                      order.customer?.userId ?? 0, orderDetail.product.productId, widget.orderId);
+                                                },
+                                                child: Text(
+                                                  AppLocalizations.of(context)!.review,
+                                                  style: Theme.of(context).textTheme.bodyLarge,
+                                                ))
                                           ],
                                         ),
                                       ),
@@ -277,7 +281,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           separatorBuilder: (BuildContext context, int index) => const SizedBox(
                             height: TSizes.spacebtwItems,
                           ),
-                          itemCount: order.orderDetails.length,
+                          itemCount: order.orderDetails?.length ?? 0,
                         ),
                         const SizedBox(
                           height: TSizes.md,
@@ -288,14 +292,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
                             order.status.toLowerCase() != "cancelled")
                           Text(
-                            "Payment Methods",
+                            AppLocalizations.of(context)!.payment_methods,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         const SizedBox(
                           height: TSizes.sm,
                         ),
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
-                            order.status.toLowerCase() != "cancelled")
+                            order.status.toLowerCase() != "cancelled" &&
+                            order.paymentMethod.toLowerCase() != 'cash')
                           TPaymentSelection(
                             total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
@@ -338,7 +343,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text('Phí giảm giá', style: Theme.of(context).textTheme.bodyMedium),
+                                  Text(AppLocalizations.of(context)!.discount_fee, style: Theme.of(context).textTheme.bodyMedium),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -355,7 +360,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Tổng tiền",
+                                  AppLocalizations.of(context)!.total_amount,
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 TProductPriceText(
@@ -381,7 +386,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             Expanded(
                               flex: 3,
                               child: Text(
-                                "Phương thức thanh toán",
+                                AppLocalizations.of(context)!.payment_methods,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ),
@@ -390,7 +395,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  order.paymentMethod.toLowerCase() == 'cash' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản',
+                                  order.paymentMethod.toLowerCase() == 'cash'
+                                      ? AppLocalizations.of(context)!.cash_on_delivery
+                                      : AppLocalizations.of(context)!.bank_transfer,
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TColors.darkerGrey),
                                 ),
                               ),
@@ -401,7 +408,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Ngày đặt hàng',
+                              AppLocalizations.of(context)!.order_date,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             Text(
@@ -416,7 +423,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Ngày nhận hàng',
+                                AppLocalizations.of(context)!.delivery_date,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(
@@ -431,7 +438,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Ngày huỷ đơn',
+                                AppLocalizations.of(context)!.cancellation_date,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(
@@ -446,7 +453,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Lý do: ',
+                                AppLocalizations.of(context)!.cancellation_reason,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               ConstrainedBox(
@@ -467,7 +474,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                 _showModalCancel(context, order.orderId);
                               },
                               child: Text(
-                                'Hủy đơn hàng',
+                                AppLocalizations.of(context)!.cancel_order,
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
                               )),
                       ],
@@ -485,7 +492,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       bottomNavigationBar: Row(
         children: [
           const Spacer(),
-          if (!isPaid)
+          if (!isPaid && paymentMethod != 'cash')
             ElevatedButton(
                 onPressed: () {
                   if (_selectedPaymentOption == PaymentOption.full) {
@@ -504,7 +511,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     widget.orderId,
                   );
                 },
-                child: const Text("Pay Now")),
+                child: Text(AppLocalizations.of(context)!.pay_now)),
           const SizedBox(
             width: TSizes.md,
           )
@@ -534,7 +541,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Lý do hủy',
+                AppLocalizations.of(context)!.cancellation_reason,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 16),
@@ -543,7 +550,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                 controller: reasonController,
                 maxLines: 6,
                 decoration: InputDecoration(
-                  hintText: "Enter your massage",
+                  hintText: AppLocalizations.of(context)!.enter_your_message,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

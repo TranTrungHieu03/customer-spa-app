@@ -84,15 +84,15 @@ class _SettingScreenState extends State<SettingScreen> {
                   //   title: AppLocalizations.of(context)!.account_settings,
                   //   showActionButton: false,
                   // ),
-                  const SizedBox(
-                    height: TSizes.spacebtwItems,
-                  ),
-                  TSettingsMenuTile(
-                    icon: Iconsax.award,
-                    title: AppLocalizations.of(context)!.rewards,
-                    onTap: () {},
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  ),
+                  // const SizedBox(
+                  //   height: TSizes.spacebtwItems,
+                  // ),
+                  // TSettingsMenuTile(
+                  //   icon: Iconsax.award,
+                  //   title: AppLocalizations.of(context)!.rewards,
+                  //   onTap: () {},
+                  //   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  // ),
                   TSettingsMenuTile(
                     icon: Icons.language_outlined,
                     title: AppLocalizations.of(context)!.language,
@@ -120,9 +120,9 @@ class _SettingScreenState extends State<SettingScreen> {
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(
-                    icon: Iconsax.bookmark,
+                    icon: Iconsax.calendar_1,
                     title: AppLocalizations.of(context)!.appointment,
-                    onTap: () => goServiceHistory(),
+                    onTap: () => goTableAppointments(),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   TSettingsMenuTile(

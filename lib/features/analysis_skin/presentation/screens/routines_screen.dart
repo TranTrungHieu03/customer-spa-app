@@ -58,7 +58,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                   return ListView.separated(
                       itemBuilder: (context, index) {
                         final routine = routines[index];
-                        final List<String> listSteps = routine.steps.split(", ");
+                        // final List<String> listSteps = routine.steps.split(", ");
                         return GestureDetector(
                           onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
                           child: TRoundedContainer(

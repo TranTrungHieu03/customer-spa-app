@@ -44,7 +44,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   @override
   Future<ListOrderProductModel> getHistoryProduct(GetHistoryProductParams params) async {
     try {
-      final response = await _apiServices.getApi('/Order/history-booking?page=${params.page}&status=${params.status}&orderType=product');
+      final response = await _apiServices.getApi('/Order/history-booking-all?page=${params.page}&status=${params.status}');
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return ListOrderProductModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);

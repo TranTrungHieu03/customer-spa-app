@@ -77,7 +77,7 @@ class TProductCart extends StatelessWidget {
                       if (item.status) {
                         final product = products.firstWhere(
                           (p) => p.product.productBranchId == item.id,
-                          orElse: () => throw Exception('Product not found'),
+                          orElse: () => throw Exception(AppLocalizations.of(context)!.product_not_found),
                         );
                         return groupSum + (product.product.price * item.quantity);
                       }
@@ -130,7 +130,7 @@ class TProductCart extends StatelessWidget {
                                     return group.items.where((item) => item.status).map((item) {
                                       final product = products.firstWhere(
                                         (p) => p.product.productBranchId == item.id,
-                                        orElse: () => throw Exception('Product not found'),
+                                        orElse: () => throw Exception(AppLocalizations.of(context)!.product_not_found),
                                       );
                                       return ProductQuantity(
                                         quantity: item.quantity, // Lấy quantity từ Cubit thay vì từ productCart
@@ -142,7 +142,7 @@ class TProductCart extends StatelessWidget {
                                   //get list id branch choose
                                   final selectedBranchIds = checkoutItems.map((item) => item.product.branchId).toSet();
                                   if (selectedBranchIds.length > 1) {
-                                    TSnackBar.infoSnackBar(context, message: "Mỗi đơn hàng chỉ được mua từ một chi nhánh");
+                                    TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.one_branch_per_order);
 
                                     return;
                                   }
@@ -150,12 +150,13 @@ class TProductCart extends StatelessWidget {
                                   controller.updateProducts(checkoutItems);
                                   if (controller.user?.wardCode == 0 || controller.user?.district == 0) {
                                     goProfile();
-                                    TSnackBar.infoSnackBar(context, message: "Vui lòng cập nhật thông tin địa chỉ để mua hàng");
+                                    TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.update_address_to_purchase);
                                     return;
                                   }
                                   goCheckout(controller);
                                   AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).branchId);
                                   controller.updateBranch(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId));
+                                  AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).district);
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
@@ -230,7 +231,7 @@ class TProductCart extends StatelessWidget {
               // Find the corresponding product model
               final productCartModel = products.firstWhere(
                 (p) => p.product.productBranchId == cartItem.id,
-                orElse: () => throw Exception('Product not found for ID: ${cartItem.id}'),
+                orElse: () => throw Exception('${AppLocalizations.of(context)!.product_not_found_by_id} ${cartItem.id}'),
               );
 
               return Dismissible(
@@ -241,16 +242,16 @@ class TProductCart extends StatelessWidget {
                   return await showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text("Xác nhận"),
-                      content: Text("Bạn có chắc muốn xóa sản phẩm này?"),
+                      title: Text(AppLocalizations.of(context)!.confirm),
+                      content: Text(AppLocalizations.of(context)!.confirm_delete_product),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: Text("Hủy"),
+                          child: Text(AppLocalizations.of(context)!.cancel),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(true),
-                          child: Text("Xóa"),
+                          child: Text(AppLocalizations.of(context)!.delete),
                         ),
                       ],
                       backgroundColor: TColors.white,
@@ -265,7 +266,7 @@ class TProductCart extends StatelessWidget {
                   final cubit = context.read<CheckboxCartCubit>();
                   cubit.deleteItem(cartItem.id);
 
-                  TSnackBar.successSnackBar(context, message: "Xóa sản phẩm thành công");
+                  TSnackBar.successSnackBar(context, message: AppLocalizations.of(context)!.delete_product_success);
                 },
                 background: Container(
                   color: Colors.redAccent.withOpacity(0.8),
@@ -360,7 +361,8 @@ class _TProductCartItemState extends State<TProductCartItem> {
       });
       onChangeQuantity();
     } else {
-      TSnackBar.warningSnackBar(context, message: "Số lượng không đượt vượt quá ${widget.product.stockQuantity}");
+      TSnackBar.warningSnackBar(context,
+          message: "${AppLocalizations.of(context)!.quantity_limit_exceeded} ${widget.product.stockQuantity}");
     }
   }
 
@@ -377,7 +379,7 @@ class _TProductCartItemState extends State<TProductCartItem> {
 
       onChangeQuantity();
     } else {
-      TSnackBar.warningSnackBar(context, message: "Bạn có chắc muốn xóa sản phẩm này");
+      TSnackBar.warningSnackBar(context, message: AppLocalizations.of(context)!.confirm_delete_product);
     }
   }
 
@@ -417,9 +419,7 @@ class _TProductCartItemState extends State<TProductCartItem> {
             widget.product.productBranchId,
             quantity,
           );
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập số lượng hợp lệ (1-999)')),
-      );
+      TSnackBar.warningSnackBar(context, message: AppLocalizations.of(context)!.invalid_quantity_input);
     }
   }
 
@@ -512,7 +512,8 @@ class _TProductCartItemState extends State<TProductCartItem> {
                               // Validate input doesn't exceed stock quantity
                               int parsedValue = int.tryParse(value) ?? 0;
                               if (parsedValue > widget.product.stockQuantity) {
-                                TSnackBar.warningSnackBar(context, message: "Số lượng không đượt vượt quá ${widget.product.stockQuantity}");
+                                TSnackBar.warningSnackBar(context,
+                                    message: "${AppLocalizations.of(context)!.quantity_limit_exceeded} ${widget.product.stockQuantity}");
                                 _quantityController.text = widget.product.stockQuantity.toString();
 
                                 parsedValue = widget.product.stockQuantity;

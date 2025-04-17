@@ -11,11 +11,13 @@ import 'package:spa_mobile/features/analysis_skin/domain/repositories/routine_re
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_appointment_by_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
+import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 class RoutineRepositoryImpl implements RoutineRepository {
   final RoutineRemoteDataSource _dataSource;
@@ -123,6 +125,18 @@ class RoutineRepositoryImpl implements RoutineRepository {
   Future<Either<Failure, ListOrderRoutineModel>> getOrderRoutineHistory(GetHistoryOrderRoutineParams params) async {
     try {
       ListOrderRoutineModel result = await _dataSource.getHistoryOrderRoutine(params);
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<AppointmentModel>>> getListAppointmentsByRoutine(GetListAppointmentByRoutineParams params) async {
+    try {
+      List<AppointmentModel> result = await _dataSource.getAppointmentsByRoutine(params);
       return right(result);
     } catch (e) {
       return left(ApiFailure(

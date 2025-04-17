@@ -7,6 +7,7 @@ class Appointment extends Equatable {
   final int serviceId;
   final int branchId;
   final DateTime appointmentsTime;
+  final DateTime appointmentEndTime;
   final String status;
   final String notes;
   final String feedback;
@@ -21,6 +22,7 @@ class Appointment extends Equatable {
     required this.serviceId,
     required this.branchId,
     required this.appointmentsTime,
+    required this.appointmentEndTime,
     required this.status,
     required this.notes,
     required this.feedback,

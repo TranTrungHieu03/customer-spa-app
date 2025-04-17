@@ -6,7 +6,7 @@ class RoutineStep extends Equatable {
   final String name;
   final String? description;
   final int step;
-  final String? intervalBeforeNextStep;
+  final int? intervalBeforeNextStep;
 
   const RoutineStep({
     required this.skinCareRoutineStepId,
@@ -19,5 +19,5 @@ class RoutineStep extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => [skincareRoutineId, name];
+  List<Object?> get props => [step, name];
 }

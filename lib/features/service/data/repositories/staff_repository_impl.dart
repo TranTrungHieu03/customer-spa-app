@@ -3,7 +3,9 @@ import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/features/service/data/datasources/staff_remote_data_source.dart';
 import 'package:spa_mobile/features/service/data/model/staff_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_service_model.dart';
+import 'package:spa_mobile/features/service/data/model/staff_slot_working.dart';
 import 'package:spa_mobile/features/service/domain/repository/staff_repository.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_slot_working.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff_by_list_id.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
@@ -48,6 +50,16 @@ class StaffRepositoryImpl implements StaffRepository {
   Future<Either<Failure, List<StaffServiceModel>>> getStaffFreeInTime(GetStaffFreeInTimeParams param) async {
     try {
       List<StaffServiceModel> response = await _staffRemoteDataSource.getStaffFreeInTime(param);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<StaffSlotWorkingModel>>> getListSlotWorking(GetListSlotWorkingParams param) async {
+    try {
+      List<StaffSlotWorkingModel> response = await _staffRemoteDataSource.getStaffShift(param);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

@@ -6,6 +6,7 @@ import 'package:spa_mobile/features/product/data/model/product_feedback_model.da
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/feedback_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
+import 'package:spa_mobile/features/product/domain/usecases/list_feedback_product.dart';
 
 abstract class ProductRemoteDataSource {
   Future<ListProductModel> getProducts(GetListProductParams page);
@@ -15,6 +16,8 @@ abstract class ProductRemoteDataSource {
   Future<ListProductModel> searchProducts(String query);
 
   Future<ProductFeedbackModel> feedbackProduct(FeedbackProductParams params);
+
+  Future<List<ProductFeedbackModel>> getlistFeedbackProduct(ListProductFeedbackParams params);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -68,6 +71,22 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return ProductFeedbackModel.fromJson(apiResponse.result!.data);
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ProductFeedbackModel>> getlistFeedbackProduct(ListProductFeedbackParams params) async {
+    try {
+      final response = await _apiServices.getApi('/ProductFeedback/get-by-product/${params.productId}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((x) => ProductFeedbackModel.fromJson(x)).toList();
       } else {
         throw AppException(apiResponse.result!.message);
       }

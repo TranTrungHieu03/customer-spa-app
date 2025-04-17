@@ -7,7 +7,7 @@ import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_branches/list_branches_bloc.dart';
 import 'package:spa_mobile/features/user/presentation/widgets/product_cart.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key, required this.controller});
 
@@ -23,7 +23,7 @@ class _CartScreenState extends State<CartScreen> {
     return Scaffold(
         appBar: TAppbar(
           title: Text(
-            "Cart",
+           AppLocalizations.of(context)!.cart,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           showBackArrow: true,

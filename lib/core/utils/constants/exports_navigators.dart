@@ -52,10 +52,13 @@ import 'package:spa_mobile/features/product/presentation/screens/shipment_inform
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/staff_slot_working/staff_slot_working_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/screens/appointment_detail_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/checkout_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/confirm_payment_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/feedback_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/payment_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/review_update_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/select_service_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/select_specialist_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/select_time_screen.dart';
@@ -63,6 +66,9 @@ import 'package:spa_mobile/features/service/presentation/screens/service_detail_
 import 'package:spa_mobile/features/service/presentation/screens/service_history_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/status_service_screen.dart';
 import 'package:spa_mobile/features/product/presentation/screens/cart_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/table_appointments_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/update_specialist_screen.dart';
+import 'package:spa_mobile/features/service/presentation/screens/update_time_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/setting_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';

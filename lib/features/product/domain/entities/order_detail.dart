@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 
 class OrderDetail extends Equatable {
   final int orderDetailId;
-  final int orderId;
-  final int productId;
-  final int? promotionId;
+  // final int orderId;
+  // final int productId;
+  // final int? promotionId;
   final int quantity;
   final double unitPrice;
   final double subTotal;
@@ -14,9 +14,9 @@ class OrderDetail extends Equatable {
 
   const OrderDetail({
     required this.orderDetailId,
-    required this.orderId,
-    required this.productId,
-    this.promotionId,
+    // required this.orderId,
+    // required this.productId,
+    // this.promotionId,
     required this.quantity,
     required this.unitPrice,
     required this.subTotal,
@@ -28,9 +28,9 @@ class OrderDetail extends Equatable {
   @override
   List<Object?> get props => [
         orderDetailId,
-        orderId,
-        productId,
-        promotionId,
+        // orderId,
+        // productId,
+        // promotionId,
         quantity,
         unitPrice,
         subTotal,

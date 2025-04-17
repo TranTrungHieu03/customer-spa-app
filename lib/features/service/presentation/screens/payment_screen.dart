@@ -19,7 +19,6 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
-import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
@@ -70,6 +69,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: widget.isBack,
+        title: Text(AppLocalizations.of(context)!.order_details),
         actions: [
           TRoundedIcon(
             icon: Iconsax.home_2,
@@ -117,13 +117,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             ],
                           ),
-                          if (order.status.toLowerCase() != 'cancelled')
-                            TRoundedIcon(
-                              icon: Icons.qr_code_scanner_rounded,
-                              color: TColors.primary,
-                              size: 30,
-                              onPressed: () => _showModelQR(context, order),
-                            )
                         ],
                       ),
                       const SizedBox(
@@ -136,7 +129,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           const SizedBox(width: TSizes.sm),
                           if (order.statusPayment != 'Cash')
                             Text(
-                                'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã cọc ${formatMoney(((order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3).toString())}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
+                                '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.deposit_paid} ${formatMoney(((order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3).toString())}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}'),
                           const SizedBox(
                             height: TSizes.xs,
                           ),
@@ -220,48 +213,68 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: TSizes.md,
                       ),
                       TGridLayout(
-                          mainAxisExtent: 80,
+                          mainAxisExtent: 180,
                           crossAxisCount: 1,
                           isScroll: false,
                           itemCount: order.appointments.length,
                           itemBuilder: (context, index) {
                             final serviceState = order.appointments[index];
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                            return
+                                // Row(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                // children: [
                                 Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(serviceState.service.name, style: Theme.of(context).textTheme.bodyMedium),
-                                    const SizedBox(
-                                      height: TSizes.sm,
-                                    ),
+                                    if (order.status.toLowerCase() != 'cancelled')
+                                      TRoundedIcon(
+                                        icon: Icons.qr_code_scanner_rounded,
+                                        color: TColors.primary,
+                                        size: 30,
+                                        onPressed: () => _showModelQR(context, serviceState.appointmentId),
+                                      )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: TSizes.sm,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
                                     Text(
                                       "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
                                     ),
-                                    const SizedBox(
-                                      height: TSizes.sm,
-                                    ),
-                                    Text('Specialist: ${serviceState.staff?.fullName ?? ""}',
-                                        style: Theme.of(context).textTheme.bodyMedium),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
                                     TProductPriceText(price: serviceState.service.price.toString()),
                                   ],
-                                )
+                                ),
+                                const SizedBox(
+                                  height: TSizes.sm,
+                                ),
+                                Text('${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.staffInfo?.fullName ?? ""}',
+                                    style: Theme.of(context).textTheme.bodyMedium),
+                                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!.review,
+                                        style: Theme.of(context).textTheme.bodyLarge,
+                                      )),
+                                ]),
+                                Divider(
+                                  color: dark ? TColors.darkGrey : TColors.grey,
+                                  thickness: 0.5,
+                                ),
                               ],
                             );
                           }),
-                      Divider(
-                        color: dark ? TColors.darkGrey : TColors.grey,
-                        thickness: 0.5,
-                      ),
                       TPaymentDetailService(
                         price: (totalPrice).toString(),
                         total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),
@@ -274,7 +287,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
                           order.status.toLowerCase() != "cancelled")
                         Text(
-                          "Payment Methods",
+                          AppLocalizations.of(context)!.payment_methods,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       const SizedBox(
@@ -295,7 +308,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Ngày đặt lịch',
+                            AppLocalizations.of(context)!.booking_date,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                           Text(DateFormat('HH:mm, dd/MM/yyyy').format(order.createdDate.toUtc().toLocal().add(Duration(hours: 7))),
@@ -307,7 +320,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Ngày huỷ đơn',
+                              AppLocalizations.of(context)!.cancellation_date,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             Text(
@@ -322,7 +335,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Lý do: ',
+                              AppLocalizations.of(context)!.cancellation_reason,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             ConstrainedBox(
@@ -343,7 +356,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               _showModalCancel(context, order.orderId);
                             },
                             child: Text(
-                              'Hủy lịch hẹn',
+                              AppLocalizations.of(context)!.cancel_appointment,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
                             ))
                     ],
@@ -379,7 +392,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     widget.id,
                   );
                 },
-                child: const Text("Pay Now")),
+                child: Text(AppLocalizations.of(context)!.pay_now)),
           const SizedBox(
             width: TSizes.md,
           )
@@ -388,7 +401,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  void _showModelQR(BuildContext context, OrderAppointmentModel order) {
+  void _showModelQR(BuildContext context, int id) {
     if (!mounted) return;
 
     showModalBottomSheet(
@@ -402,9 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           heightFactor: 0.6,
           child: Column(
             children: [
-              Padding(
-                  padding: const EdgeInsets.all(TSizes.spacebtwSections),
-                  child: TQrCheckIn(id: order.orderId.toString(), time: DateTime.now())),
+              Padding(padding: const EdgeInsets.all(TSizes.spacebtwSections), child: TQrCheckIn(id: id.toString(), time: DateTime.now())),
             ],
           ),
         );
@@ -429,7 +440,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Padding(
                   padding: const EdgeInsets.all(TSizes.spacebtwSections),
                   child: Text(
-                    "Giữa mỗi dịch vụ được khấu hao 5 phút để chuẩn bị cho dịch vụ tiếp theo",
+                    AppLocalizations.of(context)!.service_gap_notice,
                     style: Theme.of(context).textTheme.bodyMedium,
                   )),
             ],
@@ -469,7 +480,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 controller: reasonController,
                 maxLines: 6,
                 decoration: InputDecoration(
-                  hintText: "Enter your massage",
+                  hintText: AppLocalizations.of(context)!.enter_your_message,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

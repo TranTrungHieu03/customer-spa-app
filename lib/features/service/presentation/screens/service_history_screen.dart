@@ -45,19 +45,19 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
                 padding: EdgeInsets.all(TSizes.sm / 2),
                 child: TabBarView(
                   children: [
-                    TStatusTabService(
-                      status: "pending",
-                    ),
-                    TStatusTabService(
-                      status: "arrived",
-                    ),
-                    TStatusTabService(
-                      status: "completed",
-                    ),
-
-                    TStatusTabService(
-                      status: "cancelled",
-                    ),
+                    // TStatusTabService(
+                    //   status: "pending",
+                    // ),
+                    // TStatusTabService(
+                    //   status: "arrived",
+                    // ),
+                    // TStatusTabService(
+                    //   status: "completed",
+                    // ),
+                    //
+                    // TStatusTabService(
+                    //   status: "cancelled",
+                    // ),
                   ],
                 ),
               ),

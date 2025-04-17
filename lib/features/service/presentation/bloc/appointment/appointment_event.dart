@@ -8,11 +8,22 @@ final class GetAppointmentEvent extends AppointmentEvent {
 
   GetAppointmentEvent(this.id);
 }
+  final class GetAppointmentDetailEvent extends AppointmentEvent {
+  final GetAppointmentDetailParams params;
+
+  GetAppointmentDetailEvent(this.params);
+  }
 
 final class CreateAppointmentEvent extends AppointmentEvent {
   final CreateAppointmentParams params;
 
   CreateAppointmentEvent(this.params);
+}
+
+final class UpdateAppointmentEvent extends AppointmentEvent {
+  final UpdateAppointmentParams params;
+
+  UpdateAppointmentEvent(this.params);
 }
 
 final class ResetAppointmentEvent extends AppointmentEvent {}

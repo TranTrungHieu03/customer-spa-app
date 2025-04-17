@@ -4,7 +4,6 @@ import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
@@ -59,7 +58,7 @@ class _TStatusBarRoutineState extends State<TStatusBarRoutine> with AutomaticKee
                 return ListView.separated(
                     itemBuilder: (context, index) {
                       final routine = routines[index];
-                      final List<String> listSteps = routine.steps.split(", ");
+                      // final List<String> listSteps = routine.steps.split(", ");
                       return GestureDetector(
                         // onTap: () => goTrackingRoutineDetail(routine.skincareRoutineId, widget.userId),
                         child: TRoundedContainer(
@@ -72,13 +71,6 @@ class _TStatusBarRoutineState extends State<TStatusBarRoutine> with AutomaticKee
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(routine.description),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        formatMoney(routine.totalPrice.toString()),
-                                        style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
                                   ],
                                 ),
                                 onTap: () {

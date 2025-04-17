@@ -62,7 +62,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    final List<String> steps = widget.controller.routine.steps.split(", ");
+    // final List<String> steps = widget.controller.routine.steps.split(", ");
     return Scaffold(
       appBar: const TAppbar(
         showBackArrow: true,
@@ -166,43 +166,43 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                       const SizedBox(
                         height: TSizes.md,
                       ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, indexStep) {
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 12,
-                                    backgroundColor: Colors.teal,
-                                    child: Text(
-                                      '${indexStep + 1}',
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
-                                    ),
-                                  ),
-                                  if (indexStep != steps.length - 1)
-                                    Container(
-                                      height: 20,
-                                      width: 2,
-                                      color: Colors.teal,
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(width: TSizes.md),
-                              Expanded(
-                                child: Text(
-                                  steps[indexStep],
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                        itemCount: steps.length,
-                      ),
+                      // ListView.builder(
+                      //   shrinkWrap: true,
+                      //   physics: const NeverScrollableScrollPhysics(),
+                      //   itemBuilder: (context, indexStep) {
+                      //     return Row(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         Column(
+                      //           children: [
+                      //             CircleAvatar(
+                      //               radius: 12,
+                      //               backgroundColor: Colors.teal,
+                      //               child: Text(
+                      //                 '${indexStep + 1}',
+                      //                 style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
+                      //               ),
+                      //             ),
+                      //             if (indexStep != steps.length - 1)
+                      //               Container(
+                      //                 height: 20,
+                      //                 width: 2,
+                      //                 color: Colors.teal,
+                      //               ),
+                      //           ],
+                      //         ),
+                      //         const SizedBox(width: TSizes.md),
+                      //         Expanded(
+                      //           child: Text(
+                      //             steps[indexStep],
+                      //             style: Theme.of(context).textTheme.bodyMedium,
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     );
+                      //   },
+                      //   itemCount: steps.length,
+                      // ),
                     ],
                   ),
                 ),

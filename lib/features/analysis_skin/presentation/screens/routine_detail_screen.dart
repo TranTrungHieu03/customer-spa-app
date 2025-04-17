@@ -62,7 +62,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
       builder: (context, state) {
         if (state is RoutineLoaded) {
           final routine = state.routineModel;
-          final List<String> steps = routine.steps.split(", ");
+          // final List<String> steps = routine.steps.split(", ");
           return Scaffold(
             appBar: TAppbar(
               showBackArrow: true,
@@ -102,43 +102,43 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: TSizes.sm),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, indexStep) {
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 12,
-                                  backgroundColor: Colors.teal,
-                                  child: Text(
-                                    '${indexStep + 1}',
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
-                                  ),
-                                ),
-                                if (indexStep != steps.length - 1)
-                                  Container(
-                                    height: 20,
-                                    width: 2,
-                                    color: Colors.teal,
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(width: TSizes.md),
-                            Expanded(
-                              child: Text(
-                                steps[indexStep],
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      itemCount: steps.length,
-                    ),
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   physics: const NeverScrollableScrollPhysics(),
+                    //   itemBuilder: (context, indexStep) {
+                    //     return Row(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Column(
+                    //           children: [
+                    //             CircleAvatar(
+                    //               radius: 12,
+                    //               backgroundColor: Colors.teal,
+                    //               child: Text(
+                    //                 '${indexStep + 1}',
+                    //                 style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
+                    //               ),
+                    //             ),
+                    //             if (indexStep != steps.length - 1)
+                    //               Container(
+                    //                 height: 20,
+                    //                 width: 2,
+                    //                 color: Colors.teal,
+                    //               ),
+                    //           ],
+                    //         ),
+                    //         const SizedBox(width: TSizes.md),
+                    //         Expanded(
+                    //           child: Text(
+                    //             steps[indexStep],
+                    //             style: Theme.of(context).textTheme.bodyMedium,
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     );
+                    //   },
+                    //   itemCount: steps.length,
+                    // ),
                     const SizedBox(height: TSizes.sm),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

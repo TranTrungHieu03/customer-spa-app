@@ -224,92 +224,92 @@ class _HomeScreenState extends State<HomeScreen> {
                       return const SizedBox.shrink();
                     },
                   ),
-                  Text("Gói liệu trình phù hợp", style: Theme.of(context).textTheme.titleLarge),
-                  Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                  Text("Sản phẩm đề xuất", style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(
-                    height: TSizes.spacebtwItems,
-                  ),
-                  const TProductBanner(),
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-
-                  Text("Lịch hẹn sắp tới", style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                  Text(AppLocalizations.of(context)!.bannerTitle, style: Theme.of(context).textTheme.titleLarge),
-                  const TBanner(),
-                  const SizedBox(
-                    height: TSizes.defaultSpace,
-                  ),
-                  Text(AppLocalizations.of(context)!.service_type, style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                  const TServiceCategories(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.featured_service, style: Theme.of(context).textTheme.titleLarge),
-                      GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Text(AppLocalizations.of(context)!.view_all, style: Theme.of(context).textTheme.bodySmall),
-                              const TRoundedIcon(icon: Icons.chevron_right)
-                            ],
-                          ))
-                    ],
-                  ),
-                  // TGridLayout(
-                  //     itemCount: 2,
-                  //     crossAxisCount: 2,
-                  //     itemBuilder: (context, index) {
-                  //       return null;
+                  // Text("Gói liệu trình phù hợp", style: Theme.of(context).textTheme.titleLarge),
+                  // Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
+                  // const SizedBox(
+                  //   height: TSizes.sm,
+                  // ),
+                  // Text("Sản phẩm đề xuất", style: Theme.of(context).textTheme.titleLarge),
+                  // const SizedBox(
+                  //   height: TSizes.spacebtwItems,
+                  // ),
+                  // const TProductBanner(),
+                  // const SizedBox(
+                  //   height: TSizes.sm,
+                  // ),
                   //
-                  //       // return const TServiceCard();
-                  //     }),
-                  const SizedBox(
-                    height: TSizes.md,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(AppLocalizations.of(context)!.best_selling_product, style: Theme.of(context).textTheme.titleLarge),
-                      GestureDetector(
-                          onTap: () {},
-                          child: Row(
-                            children: [
-                              Text(AppLocalizations.of(context)!.view_all, style: Theme.of(context).textTheme.bodySmall),
-                              const TRoundedIcon(icon: Icons.chevron_right)
-                            ],
-                          ))
-                    ],
-                  ),
-                  // TGridLayout(
-                  //     crossAxisCount: 2,
-                  //     itemCount: 2,
-                  //     itemBuilder: (_, index) => const TProductCardVertical()),
-                  const SizedBox(
-                    height: TSizes.md,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // goSelectServices();
-                    },
-                    child: Text("QR CODE"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      goRoutines();
-                    },
-                    child: Text("Statistics"),
-                  )
+                  // Text("Lịch hẹn sắp tới", style: Theme.of(context).textTheme.titleLarge),
+                  // const SizedBox(
+                  //   height: TSizes.sm,
+                  // ),
+                  // Text(AppLocalizations.of(context)!.bannerTitle, style: Theme.of(context).textTheme.titleLarge),
+                  // const TBanner(),
+                  // const SizedBox(
+                  //   height: TSizes.defaultSpace,
+                  // ),
+                  // Text(AppLocalizations.of(context)!.service_type, style: Theme.of(context).textTheme.titleLarge),
+                  // const SizedBox(
+                  //   height: TSizes.sm,
+                  // ),
+                  // const TServiceCategories(),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Text(AppLocalizations.of(context)!.featured_service, style: Theme.of(context).textTheme.titleLarge),
+                  //     GestureDetector(
+                  //         onTap: () {},
+                  //         child: Row(
+                  //           children: [
+                  //             Text(AppLocalizations.of(context)!.view_all, style: Theme.of(context).textTheme.bodySmall),
+                  //             const TRoundedIcon(icon: Icons.chevron_right)
+                  //           ],
+                  //         ))
+                  //   ],
+                  // ),
+                  // // TGridLayout(
+                  // //     itemCount: 2,
+                  // //     crossAxisCount: 2,
+                  // //     itemBuilder: (context, index) {
+                  // //       return null;
+                  // //
+                  // //       // return const TServiceCard();
+                  // //     }),
+                  // const SizedBox(
+                  //   height: TSizes.md,
+                  // ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Text(AppLocalizations.of(context)!.best_selling_product, style: Theme.of(context).textTheme.titleLarge),
+                  //     GestureDetector(
+                  //         onTap: () {},
+                  //         child: Row(
+                  //           children: [
+                  //             Text(AppLocalizations.of(context)!.view_all, style: Theme.of(context).textTheme.bodySmall),
+                  //             const TRoundedIcon(icon: Icons.chevron_right)
+                  //           ],
+                  //         ))
+                  //   ],
+                  // ),
+                  // // TGridLayout(
+                  // //     crossAxisCount: 2,
+                  // //     itemCount: 2,
+                  // //     itemBuilder: (_, index) => const TProductCardVertical()),
+                  // const SizedBox(
+                  //   height: TSizes.md,
+                  // ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //    goTableAppointments();
+                  //   },
+                  //   child: Text("QR CODE"),
+                  // ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     goRoutines();
+                  //   },
+                  //   child: Text("Statistics"),
+                  // )
                 ],
               ),
             )
