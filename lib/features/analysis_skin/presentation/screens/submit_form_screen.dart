@@ -72,6 +72,10 @@ class _SubmitFormScreenState extends State<SubmitFormScreen> {
             TSnackBar.errorSnackBar(context, message: state.message);
             goHome();
           }
+          if (state is SkinAnalysisLoaded) {
+            // TSnackBar.successSnackBar(context, message: state.message);
+            goSkinResult();
+          }
         }),
       ),
     );

@@ -12,9 +12,6 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/status_tab_order_routine.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 

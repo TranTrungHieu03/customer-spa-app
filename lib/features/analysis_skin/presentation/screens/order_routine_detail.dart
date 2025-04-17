@@ -79,7 +79,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                   } else if (state is OrderRoutineLoaded) {
                     final order = state.order;
                     final routine = order.routine;
-                    final List<String> steps = routine.steps.split(", ");
+                    // final List<String> steps = routine.steps.split(", ");
                     totalAmount = order.totalAmount - (order.voucher?.discountAmount ?? 0);
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,43 +112,43 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                           ],
                         ),
                         const SizedBox(height: TSizes.sm),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, indexStep) {
-                            return Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 12,
-                                      backgroundColor: Colors.teal,
-                                      child: Text(
-                                        '${indexStep + 1}',
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
-                                      ),
-                                    ),
-                                    if (indexStep != steps.length - 1)
-                                      Container(
-                                        height: 20,
-                                        width: 2,
-                                        color: Colors.teal,
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(width: TSizes.md),
-                                Expanded(
-                                  child: Text(
-                                    steps[indexStep],
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                          itemCount: steps.length,
-                        ),
+                        // ListView.builder(
+                        //   shrinkWrap: true,
+                        //   physics: const NeverScrollableScrollPhysics(),
+                        //   itemBuilder: (context, indexStep) {
+                        //     return Row(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Column(
+                        //           children: [
+                        //             CircleAvatar(
+                        //               radius: 12,
+                        //               backgroundColor: Colors.teal,
+                        //               child: Text(
+                        //                 '${indexStep + 1}',
+                        //                 style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
+                        //               ),
+                        //             ),
+                        //             if (indexStep != steps.length - 1)
+                        //               Container(
+                        //                 height: 20,
+                        //                 width: 2,
+                        //                 color: Colors.teal,
+                        //               ),
+                        //           ],
+                        //         ),
+                        //         const SizedBox(width: TSizes.md),
+                        //         Expanded(
+                        //           child: Text(
+                        //             steps[indexStep],
+                        //             style: Theme.of(context).textTheme.bodyMedium,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     );
+                        //   },
+                        //   itemCount: steps.length,
+                        // ),
                         const SizedBox(height: TSizes.sm),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,

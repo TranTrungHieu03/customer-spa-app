@@ -5,15 +5,16 @@ class ServiceFeedbackModel extends Feedback {
   final int serviceFeedbackId;
   final UserModel? customer;
 
-  ServiceFeedbackModel(
-      {required super.customerId,
-      required super.status,
-      super.comment,
-      super.rating,
-      required this.serviceFeedbackId,
-      required super.createdAt,
-      this.customer,
-      required super.updatedAt});
+  ServiceFeedbackModel({
+    required super.customerId,
+    required super.status,
+    super.comment,
+    super.rating,
+    required this.serviceFeedbackId,
+    required super.createdAt,
+    this.customer,
+    required super.updatedAt,
+  });
 
   factory ServiceFeedbackModel.fromJson(Map<String, dynamic> json) {
     return ServiceFeedbackModel(
@@ -22,8 +23,8 @@ class ServiceFeedbackModel extends Feedback {
       comment: json['comment'],
       rating: json['rating'],
       serviceFeedbackId: json['serviceFeedbackId'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      createdAt: json['createdDate'],
+      updatedAt: json['updatedDate'],
       customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
     );
   }

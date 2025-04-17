@@ -18,9 +18,9 @@ class ListFeedbackServiceBloc extends Bloc<ListFeedbackServiceEvent, ListFeedbac
       result.fold((message) => emit(ListFeedbackServiceError(message.toString())), (data) {
         double average = 5.0;
         if ((data as List<ServiceFeedbackModel>).isNotEmpty) {
-          average = data.fold(0.0, (average, x) => average + (x.rating?.toDouble() ?? 0.0));
+          average = data.fold(0.0, (average, x) => average + (x.rating?.toDouble() ?? 0.0)) / data.length;
         }
-        emit(ListFeedbackServiceLoaded(feedbacks: data, average: average));
+        emit(ListFeedbackServiceLoaded(feedbacks: data..sort((a, b) => b.createdAt.compareTo(a.createdAt)), average: average));
       });
     });
   }

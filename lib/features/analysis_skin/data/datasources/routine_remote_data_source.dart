@@ -9,11 +9,13 @@ import 'package:spa_mobile/features/analysis_skin/data/model/routine_tracking_mo
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_appointment_by_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
+import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 abstract class RoutineRemoteDataSource {
   Future<List<RoutineModel>> getListSkinCare();
@@ -33,6 +35,8 @@ abstract class RoutineRemoteDataSource {
   Future<RoutineModel> getCurrentRoutine(GetCurrentRoutineParams params);
 
   Future<RoutineTrackingModel> getRoutineTracking(GetRoutineTrackingParams params);
+
+  Future<List<AppointmentModel>> getAppointmentsByRoutine(GetListAppointmentByRoutineParams params);
 }
 
 class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
@@ -185,6 +189,23 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
 
       if (apiResponse.success) {
         return ListOrderRoutineModel.fromJson(apiResponse.result!.data, apiResponse.result!.pagination);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<AppointmentModel>> getAppointmentsByRoutine(GetListAppointmentByRoutineParams params) async {
+    try {
+      final response = await _apiService.getApi('/Appointments/get-appointments-by-routine?routineId=${params.id}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((x) => AppointmentModel.fromJson(x)).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }

@@ -11,21 +11,19 @@ class RoutineModel extends Routine {
       {required super.skincareRoutineId,
       required super.name,
       required super.description,
-      required super.steps,
-      required super.frequency,
+      required super.totalSteps,
       required super.totalPrice,
       required super.targetSkinTypes,
       required this.productRoutines,
       required this.serviceRoutines});
 
   factory RoutineModel.fromJson(Map<String, dynamic> json) {
-    // AppLogger.info("fromJson RoutineModel $json");
+    AppLogger.info("fromJson RoutineModel $json");
     return RoutineModel(
       skincareRoutineId: json['skincareRoutineId'],
       name: json['name'],
       description: json['description'],
-      steps: json['steps'],
-      frequency: json['frequency'],
+      totalSteps: json['totalSteps'],
       totalPrice: json['totalPrice'],
       targetSkinTypes: json['targetSkinTypes'],
       productRoutines: List<ProductModel>.from(json['productRoutines'].map((x) => ProductModel.fromJson(x['products']))),
@@ -38,8 +36,7 @@ class RoutineModel extends Routine {
       'skincareRoutineId': skincareRoutineId,
       'name': name,
       'description': description,
-      'steps': steps,
-      'frequency': frequency,
+      'totalSteps': totalSteps,
       'targetSkinTypes': targetSkinTypes,
       'productRoutines': productRoutines != null ? List<dynamic>.from(productRoutines!.map((x) => x.toJson())) : null,
       'serviceRoutines': serviceRoutines != null ? List<dynamic>.from(serviceRoutines!.map((x) => x.toJson())) : null,

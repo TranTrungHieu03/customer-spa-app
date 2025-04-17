@@ -227,11 +227,20 @@ Future<void> _initAppointment() async {
     ..registerLazySingleton(() => GetListAppointment(serviceLocator()))
     ..registerLazySingleton(() => GetTimeSlotByDate(serviceLocator()))
     ..registerLazySingleton(() => CancelOrder(serviceLocator()))
+    ..registerLazySingleton(() => GetAppointmentDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetSlotWorking(serviceLocator()))
+    ..registerLazySingleton(() => GetAppointmentsByRoutine(serviceLocator()))
+    ..registerLazySingleton(() => UpdateAppointment(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(
-        () => AppointmentBloc(getAppointment: serviceLocator(), createAppointment: serviceLocator(), cancelOrder: serviceLocator()))
-    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator()))
+    ..registerLazySingleton(() => AppointmentBloc(
+        getAppointment: serviceLocator(),
+        createAppointment: serviceLocator(),
+        cancelOrder: serviceLocator(),
+        updateAppointment: serviceLocator(),
+        getAppointmentDetail: serviceLocator()))
+    ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()))
+    ..registerLazySingleton(() => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()))
     ..registerLazySingleton(() => ListTimeBloc(getTimeSlotByDate: serviceLocator()));
 }
 

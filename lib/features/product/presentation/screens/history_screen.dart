@@ -26,7 +26,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return BlocProvider(
       create: (context) => ListOrderBloc(getHistoryProduct: serviceLocator()),
       child: DefaultTabController(
-        length: 4,
+        length: 3,
         child: BlocListener<ListOrderBloc, ListOrderState>(
           listener: (context, state) {
             if (state is ListOrderError) {
@@ -53,9 +53,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           status: "pending",
                         ),
                         TStatusBarProduct(
-                          status: "shipping",
-                        ),
-                        TStatusBarProduct(
                           status: "completed",
                         ),
                         TStatusBarProduct(
@@ -79,7 +76,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               isScroll: true,
                               tabs: [
                                 AppLocalizations.of(context)!.pending,
-                                AppLocalizations.of(context)!.delivered,
                                 AppLocalizations.of(context)!.completed,
                                 AppLocalizations.of(context)!.cancelled
                               ].map((category) => Tab(child: Text(category))).toList()))

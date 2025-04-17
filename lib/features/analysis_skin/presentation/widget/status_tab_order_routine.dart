@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -6,11 +8,13 @@ import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/order_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/order_horizontal_shimmer_card.dart';
 
@@ -29,6 +33,7 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
   bool isLoading = false;
   late ScrollController _scrollController;
   String lgCode = 'vi';
+  UserModel? user;
 
   Future<void> _loadLanguageAndInit() async {
     final prefs = await SharedPreferences.getInstance();
@@ -37,11 +42,21 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
     });
   }
 
+  Future<void> _loadUserTemp() async {
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    if (jsonDecode(userJson) != null) {
+      user = UserModel.fromJson(jsonDecode(userJson));
+    } else {
+      goLoginNotBack();
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loadLanguageAndInit();
+    _loadUserTemp();
     _scrollController = ScrollController();
     context.read<ListOrderRoutineBloc>().add(GetHistoryOrderRoutineEvent(GetHistoryOrderRoutineParams(page: 1, status: widget.status)));
   }
@@ -120,19 +135,10 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
                                     ],
                                   ),
                                   onTap: () {
-                                    goOrderRoutineDetail(order.orderId);
+                                    goTrackingRoutineDetail(routine.skincareRoutineId, user?.userId ?? 0);
                                   },
                                 ),
-                                Row(
-                                  children: [
-                                    const Spacer(),
-                                    Text(AppLocalizations.of(context)!.total_payment),
-                                    const SizedBox(
-                                      width: TSizes.sm,
-                                    ),
-                                    TProductPriceText(price: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString())
-                                  ],
-                                ),
+
                               ],
                             ),
                           ),

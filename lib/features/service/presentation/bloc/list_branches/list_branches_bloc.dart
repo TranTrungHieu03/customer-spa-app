@@ -15,6 +15,7 @@ class ListBranchesBloc extends Bloc<ListBranchesEvent, ListBranchesState> {
   })  : _getListBranches = getListBranches,
         super(ListBranchesInitial()) {
     on<GetListBranchesEvent>(_onGetListBranches);
+    on<RefreshListBranchesEvent>(_onRefreshListBranches);
   }
 
   Future<void> _onGetListBranches(GetListBranchesEvent event, Emitter<ListBranchesState> emit) async {
@@ -32,5 +33,9 @@ class ListBranchesBloc extends Bloc<ListBranchesEvent, ListBranchesState> {
         }
       });
     }
+  }
+
+  Future<void> _onRefreshListBranches(RefreshListBranchesEvent event, Emitter<ListBranchesState> emit) async {
+    emit(ListBranchesInitial());
   }
 }

@@ -18,6 +18,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/repositories/skin_analy
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_appointment_by_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
@@ -146,11 +147,13 @@ import 'package:spa_mobile/features/service/domain/repository/staff_repository.d
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/feedback_service.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_appointment_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_branch_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_categories.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_feedback_service.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_services.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_list_slot_working.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_service_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
@@ -158,6 +161,7 @@ import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_ti
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
+import 'package:spa_mobile/features/service/domain/usecases/update_appointment.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/branch/branch_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/category/list_category_bloc.dart';
@@ -172,6 +176,7 @@ import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bl
 import 'package:spa_mobile/features/service/presentation/bloc/service/service_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/service_cart/service_cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/bloc/staff_slot_working/staff_slot_working_bloc.dart';
 import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/address/address_bloc.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';

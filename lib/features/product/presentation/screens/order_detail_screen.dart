@@ -177,7 +177,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (BuildContext context, int indexDetail) {
-                            final orderDetail = order.orderDetails[indexDetail];
+                            final orderDetail = order.orderDetails![indexDetail];
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -260,14 +260,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               ],
                                             ),
                                             // if (order.status.toLowerCase() == 'completed')
-                                              TextButton(
-                                                  onPressed: () {
-                                                    goFeedbackProduct(order.customer?.userId ?? 0, orderDetail.productId, widget.orderId);
-                                                  },
-                                                  child: Text(
-                                                    AppLocalizations.of(context)!.review,
-                                                    style: Theme.of(context).textTheme.bodyLarge,
-                                                  ))
+                                            TextButton(
+                                                onPressed: () {
+                                                  goFeedbackProduct(
+                                                      order.customer?.userId ?? 0, orderDetail.product.productId, widget.orderId);
+                                                },
+                                                child: Text(
+                                                  AppLocalizations.of(context)!.review,
+                                                  style: Theme.of(context).textTheme.bodyLarge,
+                                                ))
                                           ],
                                         ),
                                       ),
@@ -280,7 +281,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           separatorBuilder: (BuildContext context, int index) => const SizedBox(
                             height: TSizes.spacebtwItems,
                           ),
-                          itemCount: order.orderDetails.length,
+                          itemCount: order.orderDetails?.length ?? 0,
                         ),
                         const SizedBox(
                           height: TSizes.md,

@@ -21,6 +21,7 @@ class FeedbackServiceParams {
       'customerId': customerId,
       'comment': comment,
       'rating': rating.toInt(),
+      'userId': 1,
     };
   }
 }

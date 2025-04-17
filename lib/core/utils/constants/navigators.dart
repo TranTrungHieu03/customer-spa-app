@@ -97,7 +97,7 @@ goServiceHistory() async {
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => BlocProvider<ListAppointmentBloc>(
-                create: (_) => ListAppointmentBloc(getListAppointment: serviceLocator()),
+                create: (_) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()),
                 child: const ServiceHistoryScreen(),
               )));
 }
@@ -248,9 +248,25 @@ goSelectTime(List<int> staffIds, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) => SelectTimeScreen(
-                staffIds: staffIds,
-                controller: controller,
+          builder: (context) => BlocProvider(
+                create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+                child: SelectTimeScreen(
+                  staffIds: staffIds,
+                  controller: controller,
+                ),
+              )));
+}
+
+goUpdateTime(List<int> staffIds, AppointmentDataController controller) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider(
+                create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+                child: UpdateTimeScreen(
+                  staffIds: staffIds,
+                  controller: controller,
+                ),
               )));
 }
 
@@ -264,11 +280,30 @@ goSelectSpecialist(int branchId, AppointmentDataController controller) async {
               )));
 }
 
+goUpdateSpecialist(int branchId, AppointmentDataController controller) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => UpdateSpecialistScreen(
+                branchId: branchId,
+                controller: controller,
+              )));
+}
+
 goReview(AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => ConfirmPaymentScreen(
+                controller: controller,
+              )));
+}
+
+goUpdateReview(AppointmentDataController controller) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => ReviewUpdateScreen(
                 controller: controller,
               )));
 }
@@ -344,4 +379,13 @@ goHistoryOrderRoutine() async {
 
 goOrderRoutineDetail(int orderId) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderRoutineDetail(orderId: orderId)));
+}
+
+goTableAppointments() async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => TableAppointmentsScreen()));
+}
+
+goAppointmentDetail(String appointmentId) async {
+  Navigator.push(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => AppointmentDetailScreen(appointmentId: (appointmentId))));
 }

@@ -235,6 +235,7 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                 TSnackBar.errorSnackBar(context, message: state.message);
               }
               if (state is ShipFeeLoadedServiceId) {
+                AppLogger.info(branch?.district ?? 0);
                 widget.controller.updateServiceGHN(state.serviceId);
                 context.read<ShipFeeBloc>().add(GetLeadTimeEvent(GetLeadTimeParams(
                       fromDistrictId: branch!.district,
@@ -245,6 +246,7 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                     )));
               }
               if (state is ShipFeeLoaded && state.leadTime.isNotEmpty && state.fee == 0) {
+
                 controller.updateExpectedDate(state.leadTime);
                 context.read<ShipFeeBloc>().add(GetShipFeeEvent(GetFeeShippingParams(
                       fromDistrictId: branch!.district,

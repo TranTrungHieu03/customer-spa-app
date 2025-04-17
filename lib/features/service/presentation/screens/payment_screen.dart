@@ -19,7 +19,6 @@ import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
-import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
@@ -70,6 +69,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: widget.isBack,
+        title: Text(AppLocalizations.of(context)!.order_details),
         actions: [
           TRoundedIcon(
             icon: Iconsax.home_2,
@@ -117,13 +117,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             ],
                           ),
-                          if (order.status.toLowerCase() != 'cancelled')
-                            TRoundedIcon(
-                              icon: Icons.qr_code_scanner_rounded,
-                              color: TColors.primary,
-                              size: 30,
-                              onPressed: () => _showModelQR(context, order),
-                            )
                         ],
                       ),
                       const SizedBox(
@@ -220,7 +213,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: TSizes.md,
                       ),
                       TGridLayout(
-                          mainAxisExtent: 130,
+                          mainAxisExtent: 180,
                           crossAxisCount: 1,
                           isScroll: false,
                           itemCount: order.appointments.length,
@@ -238,20 +231,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(serviceState.service.name, style: Theme.of(context).textTheme.bodyMedium),
+                                    if (order.status.toLowerCase() != 'cancelled')
+                                      TRoundedIcon(
+                                        icon: Icons.qr_code_scanner_rounded,
+                                        color: TColors.primary,
+                                        size: 30,
+                                        onPressed: () => _showModelQR(context, serviceState.appointmentId),
+                                      )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: TSizes.sm,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
+                                    ),
                                     TProductPriceText(price: serviceState.service.price.toString()),
                                   ],
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
                                 ),
-                                Text(
-                                  "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                Text('${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.fullName ?? ""}',
+                                Text('${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.staffInfo?.fullName ?? ""}',
                                     style: Theme.of(context).textTheme.bodyMedium),
                                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                                   TextButton(
@@ -262,14 +267,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                         AppLocalizations.of(context)!.review,
                                         style: Theme.of(context).textTheme.bodyLarge,
                                       )),
-                                ])
+                                ]),
+                                Divider(
+                                  color: dark ? TColors.darkGrey : TColors.grey,
+                                  thickness: 0.5,
+                                ),
                               ],
                             );
                           }),
-                      Divider(
-                        color: dark ? TColors.darkGrey : TColors.grey,
-                        thickness: 0.5,
-                      ),
                       TPaymentDetailService(
                         price: (totalPrice).toString(),
                         total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),
@@ -396,7 +401,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  void _showModelQR(BuildContext context, OrderAppointmentModel order) {
+  void _showModelQR(BuildContext context, int id) {
     if (!mounted) return;
 
     showModalBottomSheet(
@@ -410,9 +415,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           heightFactor: 0.6,
           child: Column(
             children: [
-              Padding(
-                  padding: const EdgeInsets.all(TSizes.spacebtwSections),
-                  child: TQrCheckIn(id: order.orderId.toString(), time: DateTime.now())),
+              Padding(padding: const EdgeInsets.all(TSizes.spacebtwSections), child: TQrCheckIn(id: id.toString(), time: DateTime.now())),
             ],
           ),
         );

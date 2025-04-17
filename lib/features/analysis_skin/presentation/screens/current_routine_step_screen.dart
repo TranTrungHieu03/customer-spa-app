@@ -4,6 +4,7 @@ import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/product_routine_model.dart';
@@ -57,6 +58,7 @@ class _CurrentRoutineStepScreenState extends State<CurrentRoutineStepScreen> {
         builder: (context, state) {
           if (state is ListRoutineStepLoaded) {
             final routineSteps = state.routines;
+            AppLogger.info(routineSteps);
             return Scaffold(
               appBar: const TAppbar(
                 showBackArrow: true,

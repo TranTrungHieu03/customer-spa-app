@@ -69,7 +69,7 @@ class TServiceCardRoutine extends StatelessWidget {
                               smallSize: true,
                               maxLines: 2,
                             )),
-                        TProductPriceText(price: service.price.toString())
+                        // TProductPriceText(price: service.price.toString())
                       ],
                     ),
                   ),

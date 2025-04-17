@@ -35,13 +35,8 @@ class TServiceRoutine extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: TSizes.sm),
-          Text(
-            routineModel.frequency,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: TColors.darkGrey,
-                ),
-          ),
-          const SizedBox(height: TSizes.sm),
+
+
           Text(
             routineModel.description,
             maxLines: 3,

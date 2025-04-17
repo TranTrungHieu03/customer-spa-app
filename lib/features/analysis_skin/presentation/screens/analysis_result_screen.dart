@@ -6,6 +6,7 @@ import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
@@ -26,21 +27,18 @@ class AnalysisResultScreen extends StatefulWidget {
 }
 
 class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
-  bool _isVisible = false;
-
-  void _toggleVisibility() {
-    setState(() {
-      _isVisible = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    bool isOk = false;
     return Scaffold(
       appBar: TAppbar(
-        showBackArrow: true,
+        showBackArrow: false,
         title: Text(AppLocalizations.of(context)!.analysis_result),
+        actions: [
+          TRoundedIcon(
+            icon: Iconsax.home_2,
+            onPressed: () => goHome(),
+          )
+        ],
       ),
       body: BlocConsumer<SkinAnalysisBloc, SkinAnalysisState>(
         listener: (context, state) {
@@ -50,7 +48,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
         },
         builder: (context, state) {
           if (state is SkinAnalysisLoading) {
-            const TLoader();
+            return const Center(child: TLoader());
           } else if (state is SkinAnalysisLoaded) {
             final routines = state.routines;
             AppLogger.debug(routines);
@@ -58,122 +56,111 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             AppLogger.debug(skinHealth);
             return Padding(
               padding: const EdgeInsets.all(TSizes.sm),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TRoundedContainer(
-                            backgroundColor: Colors.greenAccent.shade200,
-                            borderColor: TColors.primary,
-                            padding: const EdgeInsets.symmetric(vertical: TSizes.md, horizontal: TSizes.sm),
-                            child: Column(
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!.skin_condition.toUpperCase(),
-                                  style: Theme.of(context).textTheme.headlineSmall,
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                TSkinData(
-                                  title: AppLocalizations.of(context)!.skin_type,
-                                  iconData: Iconsax.drop3,
-                                  iconColor: Colors.purple,
-                                  backgroundIconColor: Colors.purple.shade50,
-                                  value: SkinAnalysis.getSkinTypeName(context, skinHealth.skinType.skinType),
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                TSkinData(
-                                  title: AppLocalizations.of(context)!.skin_age,
-                                  iconData: Iconsax.battery_charging4,
-                                  iconColor: Colors.deepOrange,
-                                  backgroundIconColor: Colors.orange.shade50,
-                                  value: skinHealth.skinAge.value.toString(),
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                TSkinData(
-                                  title: AppLocalizations.of(context)!.skin_color,
-                                  iconData: Iconsax.blend,
-                                  iconColor: Colors.yellow.shade700,
-                                  backgroundIconColor: Colors.yellow.shade100,
-                                  value: SkinAnalysis.getSkinColorName(context, skinHealth.skinColor.value),
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                TSkinData(
-                                  title: AppLocalizations.of(context)!.acne,
-                                  iconData: Iconsax.bubble,
-                                  iconColor: Colors.white,
-                                  backgroundIconColor: Colors.grey.shade500,
-                                  value: skinHealth.acne.rectangle.length.toString() + (" ") + AppLocalizations.of(context)!.zone,
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                TSkinData(
-                                  title: AppLocalizations.of(context)!.mole,
-                                  iconData: Iconsax.story,
-                                  iconColor: Colors.blue,
-                                  backgroundIconColor: Colors.blue.shade100,
-                                  value: skinHealth.mole.rectangle.length.toString() + (" ") + AppLocalizations.of(context)!.zone,
-                                ),
-                              ],
-                            ),
+              child: ListView(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TRoundedContainer(
+                          backgroundColor: Colors.greenAccent.shade200,
+                          borderColor: TColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: TSizes.md, horizontal: TSizes.sm),
+                          child: Column(
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!.skin_condition.toUpperCase(),
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              TSkinData(
+                                title: AppLocalizations.of(context)!.skin_type,
+                                iconData: Iconsax.drop3,
+                                iconColor: Colors.purple,
+                                backgroundIconColor: Colors.purple.shade50,
+                                value: SkinAnalysis.getSkinTypeName(context, skinHealth.skinType.skinType),
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              TSkinData(
+                                title: AppLocalizations.of(context)!.skin_age,
+                                iconData: Iconsax.battery_charging4,
+                                iconColor: Colors.deepOrange,
+                                backgroundIconColor: Colors.orange.shade50,
+                                value: skinHealth.skinAge.value.toString(),
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              TSkinData(
+                                title: AppLocalizations.of(context)!.skin_color,
+                                iconData: Iconsax.blend,
+                                iconColor: Colors.yellow.shade700,
+                                backgroundIconColor: Colors.yellow.shade100,
+                                value: SkinAnalysis.getSkinColorName(context, skinHealth.skinColor.value),
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              TSkinData(
+                                title: AppLocalizations.of(context)!.acne,
+                                iconData: Iconsax.bubble,
+                                iconColor: Colors.white,
+                                backgroundIconColor: Colors.grey.shade500,
+                                value: "${skinHealth.acne.rectangle.length} ${AppLocalizations.of(context)!.zone}",
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              TSkinData(
+                                title: AppLocalizations.of(context)!.mole,
+                                iconData: Iconsax.story,
+                                iconColor: Colors.blue,
+                                backgroundIconColor: Colors.blue.shade100,
+                                value: "${skinHealth.mole.rectangle.length} ${AppLocalizations.of(context)!.zone}",
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.md,
-                    ),
-                    Text('Quý khách vui lòng đến cửa hàng để được hỗ trợ tư vấn tình trạng chính xác nhất.'),
-                    const SizedBox(
-                      height: TSizes.md,
-                    ),
-                    // if (!_isVisible)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // TextButton(
-                        //   onPressed: () {
-                        //     _toggleVisibility();
-                        //   },
-                        //   child: Text(
-                        //     AppLocalizations.of(context)!.recommendation,
-                        //     style: Theme
-                        //         .of(context)
-                        //         .textTheme
-                        //         .titleLarge,
-                        //   ),
-                        // ),
-                        TextButton(
-                          onPressed: () {
-                            goFormData(skinHealth, true);
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.editForm,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: TSizes.sm,
-                    ),
-                    // if (_isVisible)
-                    ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          final routine = routines[index];
-                          final List<String> listSteps = routine.steps.split(", ");
-                          return GestureDetector(
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: TSizes.md,
+                  ),
+                  Text(
+                    'Quý khách vui lòng đến cửa hàng để được hỗ trợ tư vấn tình trạng chính xác nhất.',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(
+                    height: TSizes.md,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          goFormData(skinHealth, true);
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)!.editForm,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: TSizes.sm,
+                  ),
+                  // Instead of ListView.separated, we use Column to display routine items
+                  Column(
+                    children: List.generate(routines.length, (index) {
+                      final routine = routines[index];
+                      return Column(
+                        children: [
+                          GestureDetector(
                             onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
                             child: TRoundedContainer(
                               child: Column(
@@ -198,37 +185,20 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                       goRoutineDetail(routine.skincareRoutineId.toString());
                                     },
                                   ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                                  //   child: Text("Các bước thực hiện:", style: Theme.of(context).textTheme.bodyMedium),
-                                  // ),
-                                  // Padding(
-                                  //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                                  //   child: ListView.builder(
-                                  //     shrinkWrap: true,
-                                  //     physics: const NeverScrollableScrollPhysics(),
-                                  //     itemBuilder: (context, indexStep) {
-                                  //       return Text('${indexStep + 1}. ${listSteps[indexStep]}');
-                                  //     },
-                                  //     itemCount: listSteps.length,
-                                  //   ),
-                                  // ),
                                   const SizedBox(
                                     height: TSizes.md,
                                   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            height: TSizes.sm,
-                          );
-                        },
-                        itemCount: routines.length)
-                  ],
-                ),
+                          ),
+                          if (index < routines.length - 1)
+                            const SizedBox(height: TSizes.sm),
+                        ],
+                      );
+                    }),
+                  ),
+                ],
               ),
             );
           } else if (state is SkinAnalysisError) {

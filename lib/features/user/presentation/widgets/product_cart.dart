@@ -156,6 +156,7 @@ class TProductCart extends StatelessWidget {
                                   goCheckout(controller);
                                   AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).branchId);
                                   controller.updateBranch(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId));
+                                  AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).district);
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(

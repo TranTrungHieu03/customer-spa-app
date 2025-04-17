@@ -17,7 +17,7 @@ final class SkinAnalysisLoaded extends SkinAnalysisState {
 }
 
 final class SkinAnalysisError extends SkinAnalysisState {
-  String message;
+  final String message;
 
   SkinAnalysisError(this.message);
 }

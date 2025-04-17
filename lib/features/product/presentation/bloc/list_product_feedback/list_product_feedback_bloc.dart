@@ -22,7 +22,7 @@ class ListProductFeedbackBloc extends Bloc<ListProductFeedbackEvent, ListProduct
           final double totalRate = data.fold(0.0, (x, y) => x + (y.rating?.toDouble() ?? 5.0));
           average = totalRate / data.length;
         }
-        emit(ListProductFeedbackLoaded(feedbacks: data, average: average));
+        emit(ListProductFeedbackLoaded(feedbacks: data..sort((x, y) => y.createdAt.compareTo(x.createdAt)), average: average));
       });
     });
   }

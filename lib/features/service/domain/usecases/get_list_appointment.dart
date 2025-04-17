@@ -1,23 +1,31 @@
 import 'package:dartz/dartz.dart';
-import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
-import 'package:spa_mobile/features/service/data/model/list_order_model.dart';
 import 'package:spa_mobile/features/service/domain/repository/appointment_repository.dart';
 
-class GetListAppointment implements UseCase<Either, GetListAppointmentParams> {
+final class GetListAppointmentParams {
+  final String startTime;
+  final String endTime;
+
+  GetListAppointmentParams({
+    required this.startTime,
+    required this.endTime,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'startDate': startTime,
+      'endDate': endTime,
+    };
+  }
+}
+
+final class GetListAppointment implements UseCase<Either, GetListAppointmentParams> {
   final AppointmentRepository _repository;
 
   GetListAppointment(this._repository);
 
   @override
-  Future<Either<Failure, ListOrderAppointmentModel>> call(GetListAppointmentParams params) async {
+  Future<Either> call(GetListAppointmentParams params) async {
     return await _repository.getHistoryBooking(params);
   }
-}
-
-class GetListAppointmentParams {
-  final int page;
-  final String status;
-
-  GetListAppointmentParams({required this.page, required this.status});
 }

@@ -1,14 +1,16 @@
 part of 'list_appointment_bloc.dart';
 
 @immutable
-sealed class ListAppointmentEvent {
-  final int page;
-  final String title;
-
-  const ListAppointmentEvent({required this.page, required this.title});
-}
+sealed class ListAppointmentEvent {}
 
 final class GetListAppointmentEvent extends ListAppointmentEvent {
-  const GetListAppointmentEvent({required super.page, required super.title});
+  final GetListAppointmentParams params;
+
+  GetListAppointmentEvent(this.params);
 }
 
+final class GetListAppointmentByRoutineEvent extends ListAppointmentEvent {
+  final GetListAppointmentByRoutineParams params;
+
+  GetListAppointmentByRoutineEvent(this.params);
+}
