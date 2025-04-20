@@ -9,27 +9,23 @@ class ProductModel extends Product {
   ProductModel(
       {required super.productId,
       required super.productName,
-      required super.skinTypeSuitable,
       required super.productDescription,
       required super.price,
       required super.dimension,
       required super.brand,
       required super.quantity,
       required super.branchId,
-      required super.discount,
       required super.status,
       required super.categoryId,
       this.category,
       required super.companyId,
       required super.productBranchId,
       required super.stockQuantity,
-      required super.volume,
       this.branch,
       required super.images});
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      skinTypeSuitable: json['skinTypeSuitable'],
       productId: json['productId'],
       productName: json['productName'],
       brand: json['brand'] ?? "",
@@ -37,8 +33,6 @@ class ProductModel extends Product {
       price: json['price'],
       dimension: json['dimension'],
       quantity: json['quantity'],
-      volume: json['volume'],
-      discount: json['discount'],
       status: json['status'],
       categoryId: json['categoryId'],
       companyId: json['companyId'],
@@ -47,7 +41,7 @@ class ProductModel extends Product {
       productBranchId: json['productBranchId'] ?? 0,
       category: json['category'] != null ? ProductCategoryModel.fromJson(json['category']) : null,
       images: (json['images'] is List) ? (json['images'] as List).map((e) => e.toString()).toList() : [],
-      branch: json['branches'] != null ? BranchModel.fromJson(json['branches']) : null,
+      branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
     );
   }
 
@@ -57,14 +51,11 @@ class ProductModel extends Product {
       'productName': productName,
       'productDescription': productDescription,
       'price': price,
-      'volume': volume,
       'quantity': quantity,
       'dimension': dimension,
-      'discount': discount,
       'status': status,
       'brand': brand,
       'categoryId': categoryId,
-      'skinTypeSuitable': skinTypeSuitable,
       'companyId': companyId,
       'images': (images as List).map((e) => e.toString()).toList(),
     };

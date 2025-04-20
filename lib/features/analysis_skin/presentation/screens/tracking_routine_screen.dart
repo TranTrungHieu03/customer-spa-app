@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
@@ -104,9 +105,10 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                   AppLogger.info(routineSteps);
 
                   return Scaffold(
-                    appBar: const TAppbar(
+                    appBar:   TAppbar(
                       showBackArrow: true,
-                      title: Text('Tiến trình theo dõi'),
+                      title: Text(AppLocalizations.of(context)!.progress_tracking,
+                          style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black)),
                     ),
                     body: Padding(
                       padding: const EdgeInsets.all(0),
@@ -131,7 +133,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                               if (_currentStep < routineSteps.length - 1)
                                 OutlinedButton(
                                   onPressed: details.onStepContinue,
-                                  child: const Text("Tiếp tục"),
+                                  child: Text(AppLocalizations.of(context)!.next),
                                 ),
                               const SizedBox(
                                 width: TSizes.lg,
@@ -139,7 +141,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                               if (_currentStep > 0)
                                 OutlinedButton(
                                   onPressed: details.onStepCancel,
-                                  child: const Text("Quay lại"),
+                                  child:Text(AppLocalizations.of(context)!.back),
                                 ),
                             ],
                           );
@@ -148,10 +150,10 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                           return Step(
                             title: Text(step.name),
                             subtitle: Text(step.stepStatus?.toUpperCase() == "InProgress".toUpperCase()
-                                ? "Đang thực hiện"
+                                ? AppLocalizations.of(context)!.in_progress
                                 : step.stepStatus?.toUpperCase() == "Completed".toUpperCase()
-                                    ? "Đã hoàn thành"
-                                    : "Đang chờ"),
+                                    ? AppLocalizations.of(context)!.completed
+                                    : AppLocalizations.of(context)!.pending),
                             content: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

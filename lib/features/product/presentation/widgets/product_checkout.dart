@@ -246,7 +246,6 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                     )));
               }
               if (state is ShipFeeLoaded && state.leadTime.isNotEmpty && state.fee == 0) {
-
                 controller.updateExpectedDate(state.leadTime);
                 context.read<ShipFeeBloc>().add(GetShipFeeEvent(GetFeeShippingParams(
                       fromDistrictId: branch!.district,
@@ -256,7 +255,8 @@ class _TProductCheckoutState extends State<TProductCheckout> {
                       toWardCode: shipment.wardCode,
                       height: 50,
                       length: 50,
-                      weight: widget.products.fold<int>(0, (x, y) => x + y.product.volume.toInt()),
+                      weight: 500,
+                      // weight: widget.products.fold<int>(0, (x, y) => x + y.product.volume.toInt()),
                       width: 50,
                     )));
               }

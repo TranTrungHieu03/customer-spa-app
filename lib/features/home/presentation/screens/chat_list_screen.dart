@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
@@ -112,7 +113,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
             if (state is ListChannelLoaded) {
               if (state.channels.isEmpty) {
                 return Center(
-                  child: Text('Chưa có đoạn hội thoại'),
+                  child: Text(AppLocalizations.of(context)!.no_conversation),
                 );
               }
               return ListView.separated(

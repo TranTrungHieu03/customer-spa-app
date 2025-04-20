@@ -46,7 +46,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TAppbar(
-        title: Text('Đơn hàng chi tiet'),
+        title: Text(AppLocalizations.of(context)!.order_details),
         showBackArrow: true,
         actions: [
           TRoundedIcon(
@@ -86,7 +86,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                       children: [
                         if (order.statusPayment != 'Cash')
                           Text(
-                              'Trạng thái thanh toán: ${order.statusPayment == 'PaidDeposit' ? 'Đã thanh toán ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? 'Đã thanh toán đủ' : 'Chưa thanh toán'}'),
+                              '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.paid} ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}'),
                         const SizedBox(
                           height: TSizes.xs,
                         ),
@@ -95,13 +95,14 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Các bước của liệu trình", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyLarge),
+                            Text(AppLocalizations.of(context)!.treatment_steps,
+                                overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyLarge),
                             GestureDetector(
                               onTap: () => goTrackingRoutineDetail(routine.skincareRoutineId, order.customerId),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text("Xem chi tiết", style: Theme.of(context).textTheme.bodySmall),
+                                  Text(AppLocalizations.of(context)!.view_more, style: Theme.of(context).textTheme.bodySmall),
                                   const Icon(
                                     Iconsax.arrow_right_3,
                                     size: 17,
@@ -164,7 +165,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
                             order.status.toLowerCase() != "cancelled")
                           Text(
-                            "Payment Methods",
+                            AppLocalizations.of(context)!.payment_methods,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         const SizedBox(
@@ -202,7 +203,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text('Phí giảm giá', style: Theme.of(context).textTheme.bodyMedium),
+                                  Text(AppLocalizations.of(context)!.discount_fee, style: Theme.of(context).textTheme.bodyMedium),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -219,7 +220,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Tổng tiền",
+                                  AppLocalizations.of(context)!.total_amount,
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 TProductPriceText(
@@ -245,7 +246,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                             Expanded(
                               flex: 3,
                               child: Text(
-                                "Phương thức thanh toán",
+                                AppLocalizations.of(context)!.payment_method,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ),
@@ -254,7 +255,9 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  order.paymentMethod?.toLowerCase() == 'cash' ? 'Thanh toán khi nhận hàng' : 'Chuyển khoản',
+                                  order.paymentMethod?.toLowerCase() == 'cash'
+                                      ? AppLocalizations.of(context)!.cash_on_delivery
+                                      : AppLocalizations.of(context)!.bank_transfer,
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: TColors.darkerGrey),
                                 ),
                               ),
@@ -265,7 +268,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Ngày đặt lịch',
+                              AppLocalizations.of(context)!.order_date,
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                             Text(
@@ -281,7 +284,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Ngày huỷ đơn',
+                                AppLocalizations.of(context)!.cancellation_date,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(
@@ -296,7 +299,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Lý do: ',
+                                AppLocalizations.of(context)!.cancellation_reason,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               ConstrainedBox(
@@ -358,7 +361,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                     widget.orderId,
                   );
                 },
-                child: const Text("Pay Now")),
+                child: Text(AppLocalizations.of(context)!.pay_now)),
           const SizedBox(
             width: TSizes.md,
           )

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
@@ -64,7 +65,7 @@ class _RoutineHistoryScreenState extends State<RoutineHistoryScreen> {
               leadingOnPressed: () => goHome(),
               leadingIcon: Iconsax.arrow_left,
               title: Text(
-                'Lịch sử gói liệu trình',
+                 AppLocalizations.of(context)!.treatment_package_history,
                 style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black),
               ),
             ),
@@ -92,7 +93,11 @@ class _RoutineHistoryScreenState extends State<RoutineHistoryScreen> {
                     backgroundColor: THelperFunctions.isDarkMode(context) ? TColors.black : TColors.white,
                     bottom: TTabBar(
                       isScroll: true,
-                      tabs: ["Đang chờ", "Đã hoàn thành", "Đã hủy"].map((category) => Tab(child: Text(category))).toList(),
+                      tabs: [
+                        AppLocalizations.of(context)!.pending,
+                        AppLocalizations.of(context)!.completed,
+                        AppLocalizations.of(context)!.cancelled
+                      ].map((category) => Tab(child: Text(category))).toList(),
                     ),
                   )
                 ];

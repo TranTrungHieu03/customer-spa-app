@@ -1,12 +1,14 @@
 import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/network/network_api_services.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
+import 'package:spa_mobile/features/service/data/model/service_staff_shift_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_service_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_slot_working.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_slot_working.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_staff_by_list_id.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_service_staff_shift.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_single_staff.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart';
 
@@ -22,6 +24,8 @@ abstract class StaffRemoteDataSource {
   Future<List<StaffServiceModel>> getStaffFreeInTime(GetStaffFreeInTimeParams param);
 
   Future<List<StaffSlotWorkingModel>> getStaffShift(GetListSlotWorkingParams param);
+
+  Future<List<ServiceStaffShiftModel>> getServiceStaffShift(GetServiceStaffShiftParams param);
 }
 
 class StaffRemoteDataSourceImpl implements StaffRemoteDataSource {
@@ -112,6 +116,23 @@ class StaffRemoteDataSourceImpl implements StaffRemoteDataSource {
 
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((x) => StaffSlotWorkingModel.fromJson(x)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ServiceStaffShiftModel>> getServiceStaffShift(GetServiceStaffShiftParams param) async{
+    try {
+      final response = await _apiServices.postApi('/Staff/get-list-shifts-with-service', param.toJson());
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((x) => ServiceStaffShiftModel.fromJson(x)).toList();
       } else {
         throw AppException(apiResponse.result!.message);
       }

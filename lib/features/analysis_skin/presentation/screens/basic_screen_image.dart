@@ -23,7 +23,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Your Photo")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.your_photo)),
       body: BlocConsumer<ImageBloc, ImageState>(
         listener: (context, state) {
           if (state is ImageInvalid) {

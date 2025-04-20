@@ -18,7 +18,7 @@ class GetListProducts implements UseCase<Either, GetListProductParams> {
 class GetListProductParams {
   final int branchId;
   final String brand;
-  final int? categoryId;
+  final List<int>? categoryId;
   final double? minPrice;
   final double? maxPrice;
   final String sortBy;
@@ -39,7 +39,7 @@ class GetListProductParams {
       brand: "",
       page: 1,
       branchId: branchId,
-      categoryId: 0,
+      categoryId: [],
       minPrice: -1.0,
       maxPrice: -1.0,
       sortBy: "",
@@ -49,7 +49,7 @@ class GetListProductParams {
   GetListProductParams copyWith({
     int? branchId,
     String? brand,
-    int? categoryId,
+    List<int>? categoryId,
     double? minPrice,
     double? maxPrice,
     String? sortBy,

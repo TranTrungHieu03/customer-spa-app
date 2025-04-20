@@ -20,6 +20,7 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_distance.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
@@ -97,7 +98,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             brand: "",
             page: currentState.pagination.page + 1,
             branchId: selectedBranch ?? 1,
-            categoryId: 0,
+            categoryId: [],
             minPrice: -1,
             maxPrice: -1,
             sortBy: "")));
@@ -145,14 +146,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
     params = GetListProductParams.empty(selectedBranch ?? 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ListProductBloc>().add(GetListProductsEvent(
-          GetListProductParams(brand: "", page: 1, branchId: selectedBranch ?? 1, categoryId: 0, minPrice: -1, maxPrice: -1, sortBy: "")));
+          GetListProductParams(brand: "", page: 1, branchId: selectedBranch ?? 1, categoryId: [], minPrice: -1, maxPrice: -1, sortBy: "")));
       controller = PurchasingData.of(context)
         ..updateBranchId(selectedBranch ?? 1)
         ..updateUser(userId);
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -210,8 +209,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           },
                         );
                       } else if (state is ListProductEmpty) {
-                        return const Center(
-                          child: Text('No product available.', style: TextStyle(fontSize: 16)),
+                        return Center(
+                          child: Text(AppLocalizations.of(context)!.no_product_available, style: TextStyle(fontSize: 16)),
                         );
                       } else if (state is ListProductLoaded) {
                         return TGridLayout(
@@ -246,7 +245,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 padding: const EdgeInsets.all(TSizes.sm),
                 color: TColors.white,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     GestureDetector(
                       onTap: () => _showSortBottomSheet(context),
@@ -274,40 +273,43 @@ class _ProductsScreenState extends State<ProductsScreen> {
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        final state = context.read<ListBranchesBloc>().state;
-                        if (state is ListBranchesLoaded) {
-                          context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
-                          _showFilterBottomSheet(context);
-                          // _showFilterModel(context, state.branches);
-                        }
-                      },
-                      child: TRoundedContainer(
-                        padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
-                        backgroundColor: TColors.primaryBackground,
-                        radius: 20,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              AppLocalizations.of(context)!.filter,
-                              style: Theme.of(context).textTheme.labelLarge,
-                            ),
-                            const SizedBox(
-                              width: TSizes.xs,
-                            ),
-                            const Icon(
-                              Iconsax.arrow_down_1,
-                              size: 16,
-                              weight: 20,
-                            ),
-                          ],
-                        ),
-                      ),
+                    const SizedBox(
+                      width: TSizes.sm,
                     ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     final state = context.read<ListBranchesBloc>().state;
+                    //     if (state is ListBranchesLoaded) {
+                    //       context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
+                    //       _showFilterBottomSheet(context);
+                    //       // _showFilterModel(context, state.branches);
+                    //     }
+                    //   },
+                    //   child: TRoundedContainer(
+                    //     padding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
+                    //     backgroundColor: TColors.primaryBackground,
+                    //     radius: 20,
+                    //     child: Row(
+                    //       mainAxisSize: MainAxisSize.min,
+                    //       crossAxisAlignment: CrossAxisAlignment.end,
+                    //       mainAxisAlignment: MainAxisAlignment.center,
+                    //       children: [
+                    //         Text(
+                    //           AppLocalizations.of(context)!.filter,
+                    //           style: Theme.of(context).textTheme.labelLarge,
+                    //         ),
+                    //         const SizedBox(
+                    //           width: TSizes.xs,
+                    //         ),
+                    //         const Icon(
+                    //           Iconsax.arrow_down_1,
+                    //           size: 16,
+                    //           weight: 20,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     GestureDetector(
                       onTap: () {
                         final state = context.read<ListBranchesBloc>().state;
@@ -603,7 +605,7 @@ class FilterBottomSheet extends StatefulWidget {
 }
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
-  RangeValues _priceRange = const RangeValues(0, 1000);
+  RangeValues _priceRange = const RangeValues(0, 10000);
   List<int> _ratings = [];
   List<String> _selectedBrands = [];
   String? _selectedBrand;
@@ -641,9 +643,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             RangeSlider(
               values: _priceRange,
               min: 0,
-              max: 1000,
+              max: 10000,
               divisions: 100,
-              labels: RangeLabels('\$${_priceRange.start.round()}', '\$${_priceRange.end.round()}'),
+              labels: RangeLabels(formatMoney(_priceRange.start.round().toString()), formatMoney(_priceRange.end.round().toString())),
               onChanged: (RangeValues values) {
                 setState(() {
                   _priceRange = values;
@@ -684,32 +686,32 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
             // Brand Selection
             const SizedBox(height: TSizes.lg),
-            ExpansionTile(
-              title: Text(AppLocalizations.of(context)!.brand, style: Theme.of(context).textTheme.bodyLarge),
-              children: [
-                Container(
-                  height: 400,
-                  child: ListView(
-                    children: _availableBrands.map((brand) {
-                      return CheckboxListTile(
-                        title: Text(brand),
-                        value: _selectedBrands.contains(brand),
-                        onChanged: (bool? selected) {
-                          setState(() {
-                            if (selected == true) {
-                              _selectedBrands.add(brand);
-                            } else {
-                              _selectedBrands.remove(brand);
-                            }
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
+            // ExpansionTile(
+            //   title: Text(AppLocalizations.of(context)!.brand, style: Theme.of(context).textTheme.bodyLarge),
+            //   children: [
+            //     Container(
+            //       height: 400,
+            //       child: ListView(
+            //         children: _availableBrands.map((brand) {
+            //           return CheckboxListTile(
+            //             title: Text(brand),
+            //             value: _selectedBrands.contains(brand),
+            //             onChanged: (bool? selected) {
+            //               setState(() {
+            //                 if (selected == true) {
+            //                   _selectedBrands.add(brand);
+            //                 } else {
+            //                   _selectedBrands.remove(brand);
+            //                 }
+            //               });
+            //             },
+            //             controlAffinity: ListTileControlAffinity.leading,
+            //           );
+            //         }).toList(),
+            //       ),
+            //     ),
+            //   ],
+            // ),
 
             ExpansionTile(title: Text(AppLocalizations.of(context)!.branch, style: Theme.of(context).textTheme.bodyLarge), children: [
               BlocBuilder<ListBranchesBloc, ListBranchesState>(
@@ -818,18 +820,18 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   ),
                 ),
                 onPressed: () {
-                  // TODO: Implement filter application
-                  // Example:
-                  // context.read<ListProductBloc>().add(FilterProductsEvent(
-                  //   minPrice: _priceRange.start,
-                  //   maxPrice: _priceRange.end,
-                  //   ratings: _ratings,
-                  //   brands: _selectedBrands,
-                  // ));
+                  context.read<ListProductBloc>().add(GetListProductsEvent(GetListProductParams(
+                      brand: "",
+                      page: 1,
+                      branchId: selectedBranch ?? 1,
+                      categoryId: [],
+                      minPrice: _priceRange.start,
+                      maxPrice: _priceRange.end,
+                      sortBy: "")));
                   Navigator.pop(context);
                 },
                 child: Text(
-                  'Apply Filters',
+                  AppLocalizations.of(context)!.apply,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,

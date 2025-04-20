@@ -60,9 +60,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   TSnackBar.errorSnackBar(context, message: state.message);
                 }
                 if (state is OrderSuccess) {
-                  context
-                      .read<CartBloc>()
-                      .add(RemoveProductFromCartEvent(ids: widget.controller.products.map((x) => x.productBranchId.toString()).toList()));
+                  if (widget.controller.isFromCart) {
+                    context
+                        .read<CartBloc>()
+                        .add(RemoveProductFromCartEvent(ids: widget.controller.products.map((x) => x.productBranchId.toString()).toList()));
+                  }
                   goOrderProductDetail(state.orderId);
                 }
               },

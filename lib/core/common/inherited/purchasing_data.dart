@@ -17,6 +17,7 @@ class PurchasingDataController extends ChangeNotifier {
   int _shippingCost = 0;
   String _expectedDate = "";
   String _method = 'PayOs';
+  bool _isFromCart = true;
 
   int get branchId => _branchId;
 
@@ -39,6 +40,13 @@ class PurchasingDataController extends ChangeNotifier {
   String get expectedDate => _expectedDate;
 
   String get method => _method;
+
+  bool get isFromCart => _isFromCart;
+
+  void updateIsFromCart(bool isFromCart) {
+    _isFromCart = isFromCart;
+    notifyListeners();
+  }
 
   void updateMethod(String method) {
     _method = method;

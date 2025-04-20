@@ -11,7 +11,7 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/service/data/model/time_model.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SelectRoutineTimeScreen extends StatefulWidget {
   const SelectRoutineTimeScreen({super.key, required this.controller});
 
@@ -166,7 +166,7 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
-                  "Select time",
+                  AppLocalizations.of(context)!.select_time,
                   style: Theme.of(context).textTheme.displaySmall,
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
@@ -224,9 +225,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 return Center(child: CircularProgressIndicator());
               }
               return Scaffold(
-                body: const Center(
+                body: Center(
                   child: Text(
-                    'Không thể lấy thông tin từ hệ thống',
+                    AppLocalizations.of(context)!.cannot_fetch_info,
                     style: TextStyle(fontSize: 16, color: Colors.red),
                     textAlign: TextAlign.center,
                   ),

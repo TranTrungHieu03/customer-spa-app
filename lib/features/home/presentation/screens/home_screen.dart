@@ -21,9 +21,6 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_ro
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
-import 'package:spa_mobile/features/home/presentation/widgets/banner.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_banner.dart';
-import 'package:spa_mobile/features/service/presentation/widgets/service_categories.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -191,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Gói liệu trình hiện tại", style: Theme.of(context).textTheme.titleLarge),
+                                Text(AppLocalizations.of(context)!.current_treatment_package, style: Theme.of(context).textTheme.titleLarge),
                               ],
                             ),
                             const SizedBox(
@@ -414,17 +411,17 @@ void _showImageSourceActionSheet(BuildContext context) {
           children: [
             ListTile(
               leading: Icon(Icons.camera_alt),
-              title: Text('Chụp ảnh'),
+              title: Text(AppLocalizations.of(context)!.take_photo),
               onTap: () {
-                Navigator.of(ctx).pop();
+                // Navigator.of(ctx).pop();
                 context.read<ImageBloc>().add(PickImageEvent(true));
               },
             ),
             ListTile(
               leading: Icon(Icons.photo_library),
-              title: Text('Chọn từ thư viện'),
+              title: Text(AppLocalizations.of(context)!.choose_from_gallery),
               onTap: () {
-                Navigator.of(ctx).pop();
+                // Navigator.of(ctx).pop();
                 context.read<ImageBloc>().add(PickImageEvent(false));
               },
             ),
