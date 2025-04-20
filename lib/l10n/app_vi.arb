@@ -279,5 +279,7 @@
   "steps": "Bước",
   "routine": "Liệu trình",
   "no_product_available": "Không có sản phẩm nào",
-  "arrived": "Đã đến"
+  "arrived": "Đã đến",
+  "no_suitable_treatment": "Không có liệu trình nào phù hợp với bạn"
+
 }
