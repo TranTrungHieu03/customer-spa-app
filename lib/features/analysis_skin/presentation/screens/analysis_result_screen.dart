@@ -131,7 +131,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                     height: TSizes.md,
                   ),
                   Text(
-                    'Quý khách vui lòng đến cửa hàng để được hỗ trợ tư vấn tình trạng chính xác nhất.',
+                   AppLocalizations.of(context)!.please_visit_store,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(

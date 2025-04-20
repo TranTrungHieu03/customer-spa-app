@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,7 @@ import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment_detail.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart';
@@ -41,9 +43,15 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TAppbar(
-        title: Text('Appointment Detail'),
+      appBar: TAppbar(
+        title: Text(AppLocalizations.of(context)!.appointment_detail),
         showBackArrow: true,
+        actions: [
+          TRoundedIcon(
+            icon: Iconsax.home_2,
+            onPressed: () => goHome(),
+          )
+        ],
       ),
       body: BlocProvider(
         create: (_) => AppointmentBloc(
@@ -76,7 +84,13 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                               width: TSizes.sm,
                             ),
                             Text(
-                              appointment.status,
+                              appointment.status.toLowerCase() == 'pending' ?
+                                  AppLocalizations.of(context)!.pending :
+                                  appointment.status.toLowerCase() == 'arrived' ?
+                                  AppLocalizations.of(context)!.arrived :
+                                  appointment.status.toLowerCase() == 'completed' ?
+                                  AppLocalizations.of(context)!.completed :
+                                  AppLocalizations.of(context)!.cancelled,
                               style: Theme.of(context).textTheme.bodyMedium,
                             )
                           ],
@@ -170,7 +184,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Specialist information', style: Theme.of(context).textTheme.bodyLarge!.copyWith()),
+                                Text(AppLocalizations.of(context)!.specialist_information,
+                                    style: Theme.of(context).textTheme.bodyLarge!.copyWith()),
                                 const SizedBox(
                                   height: TSizes.sm,
                                 ),
@@ -210,7 +225,9 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                         : Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
-                                onPressed: () {}, child: Text('Choose specialist', style: Theme.of(context).textTheme.labelLarge)),
+                                onPressed: () {},
+                                child:
+                                    Text(AppLocalizations.of(context)!.choose_specialist, style: Theme.of(context).textTheme.labelLarge)),
                           ),
                     const SizedBox(
                       height: TSizes.md,
@@ -220,7 +237,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Service information', style: Theme.of(context).textTheme.bodyLarge!.copyWith()),
+                          Text(AppLocalizations.of(context)!.service_information, style: Theme.of(context).textTheme.bodyLarge!.copyWith()),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
@@ -230,12 +247,12 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           ),
                           Row(
                             children: [
-                              Text('Duration:'),
+                              Text(AppLocalizations.of(context)!.duration),
                               const SizedBox(
                                 width: TSizes.sm,
                               ),
                               Text(
-                                '${appointment.service.duration} minutes' ?? "",
+                                '${appointment.service.duration} ${AppLocalizations.of(context)!.minutes}' ?? "",
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
@@ -250,7 +267,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Steps: '),
+                              Text(AppLocalizations.of(context)!.step),
                               const SizedBox(
                                 width: TSizes.sm,
                               ),

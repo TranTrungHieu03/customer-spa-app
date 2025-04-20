@@ -66,7 +66,7 @@ class AppointmentDataController extends ChangeNotifier {
 
   void updateServiceIds(List<int> newServiceIds) {
     _serviceIds = newServiceIds;
-    _staffIds = List.filled(newServiceIds.length, 0);
+    _staffIds = List.filled(newServiceIds.length, -1);
     _staffs = List.filled(newServiceIds.length, null);
     timeStart = List.filled(newServiceIds.length, DateTime.now());
     notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/routine_data.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
@@ -7,7 +8,6 @@ import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
-import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
@@ -85,13 +85,14 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Các bước của liệu trình", overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyLarge),
+                        Text(AppLocalizations.of(context)!.treatment_steps,
+                            overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyLarge),
                         GestureDetector(
                           onTap: () => goRoutineStep(routine.skincareRoutineId),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text("Xem chi tiết", style: Theme.of(context).textTheme.bodySmall),
+                              Text(AppLocalizations.of(context)!.view_more, style: Theme.of(context).textTheme.bodySmall),
                               const Icon(
                                 Iconsax.arrow_right_3,
                                 size: 17,
@@ -143,7 +144,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text("Chi phí: ", style: Theme.of(context).textTheme.bodyLarge),
+                        Text(AppLocalizations.of(context)!.total, style: Theme.of(context).textTheme.bodyLarge),
                         const SizedBox(width: TSizes.sm),
                         TProductPriceText(price: routine.totalPrice.toString()),
                       ],
@@ -165,7 +166,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                           controller.updateRoutine(routine);
                           goSelectRoutineTime(controller);
                         },
-                        child: const Text("Book")))
+                        child: Text(AppLocalizations.of(context)!.book_now)))
                 : null,
           );
         } else if (state is RoutineLoading) {

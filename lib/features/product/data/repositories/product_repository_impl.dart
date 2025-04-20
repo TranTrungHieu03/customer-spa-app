@@ -3,6 +3,8 @@ import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/network/connection_checker.dart';
 import 'package:spa_mobile/features/product/data/datasources/product_remote_data_src.dart';
 import 'package:spa_mobile/features/product/data/model/list_product_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_cart_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_category_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_feedback_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/repository/product_repository.dart';
@@ -64,6 +66,19 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Either<Failure, List<ProductFeedbackModel>>> getListFeedback(ListProductFeedbackParams params) async {
     try {
       List<ProductFeedbackModel> result = await _productRemoteDataSource.getlistFeedbackProduct(params);
+
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ProductCategoryModel>>> getProductCategories() async {
+    try {
+      List<ProductCategoryModel> result = await _productRemoteDataSource.getAllProductCategories();
 
       return right(result);
     } catch (e) {

@@ -108,7 +108,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           Row(
                             children: [
                               Text(
-                                "Order ref: #",
+                               AppLocalizations.of(context)!.order_ref,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(
@@ -471,7 +471,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Lý do hủy',
+                AppLocalizations.of(context)!.cancellation_reason,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 16),

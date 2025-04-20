@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
@@ -64,7 +65,7 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TAppbar(title: Text("Appointment Schedule"), showBackArrow: true),
+      appBar: TAppbar(title: Text(AppLocalizations.of(context)!.appointment_schedule), showBackArrow: true),
       body: BlocProvider(
         create: (_) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator())
           ..add(GetListAppointmentEvent(
@@ -178,10 +179,10 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                       ),
                       const SizedBox(height: TSizes.sm),
                       if (state is ListAppointmentLoaded && selectedEvents.isEmpty)
-                        const Expanded(
-                          child: const Center(
+                        Expanded(
+                          child: Center(
                             child: Text(
-                              "No appointments available",
+                              AppLocalizations.of(context)!.no_appointments_available,
                               style: TextStyle(fontSize: 16, color: TColors.black),
                             ),
                           ),
@@ -246,7 +247,7 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                                               alignment: Alignment.centerRight,
                                               child: TextButton(
                                                   onPressed: () {},
-                                                  child: Text('Vào gói liệu trình để cập nhật nhân viên',
+                                                  child: Text(AppLocalizations.of(context)!.update_staff_from_package,
                                                       style: Theme.of(context).textTheme.labelLarge)),
                                             ),
                                     ],

@@ -2,6 +2,7 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/product/data/model/list_product_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_category_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_feedback_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/feedback_product.dart';
@@ -18,6 +19,8 @@ abstract class ProductRemoteDataSource {
   Future<ProductFeedbackModel> feedbackProduct(FeedbackProductParams params);
 
   Future<List<ProductFeedbackModel>> getlistFeedbackProduct(ListProductFeedbackParams params);
+
+  Future<List<ProductCategoryModel>> getAllProductCategories();
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -44,7 +47,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   Future<ListProductModel> getProducts(GetListProductParams params) async {
     try {
       final response = await _apiServices.getApi(
-          '/Product/filter?BranchId=${params.branchId}&Brand=${params.brand}&CategoryId=${params.categoryId == 0 ? "" : params.categoryId}&MinPrice=${params.minPrice == -1.0 ? "" : params.minPrice}&MaxPrice=${params.maxPrice == -1.0 ? "" : params.maxPrice}&SortBy=${params.sortBy}&PageNumber=${params.page}');
+          '/Product/filter?BranchId=${params.branchId}&Brand=${params.brand}&CategoryIds=${params.categoryId?.isNotEmpty ?? false ? params.categoryId : ""}&MinPrice=${params.minPrice == -1.0 ? "" : params.minPrice}&MaxPrice=${params.maxPrice == -1.0 ? "" : params.maxPrice}&SortBy=${params.sortBy}&PageNumber=${params.page}');
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
@@ -87,6 +90,22 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((x) => ProductFeedbackModel.fromJson(x)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ProductCategoryModel>> getAllProductCategories() async {
+    try {
+      final response = await _apiServices.getApi('/Category/get-all');
+
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((x) => ProductCategoryModel.fromJson(x)).toList();
       } else {
         throw AppException(apiResponse.result!.message);
       }

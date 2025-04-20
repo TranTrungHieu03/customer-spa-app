@@ -63,8 +63,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
           } else if (state is ServiceDetailSuccess) {
             final serviceData = state.service;
             return BlocProvider(
-              create: (context) =>
-              ListFeedbackServiceBloc(getListServiceFeedback: serviceLocator())
+              create: (context) => ListFeedbackServiceBloc(getListServiceFeedback: serviceLocator())
                 ..add(GetListFeedbackServiceEvent(GetListFeedbackServiceParams(widget.serviceId))),
               child: Scaffold(
                 appBar: const TAppbar(
@@ -103,15 +102,14 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                   },
                                   aspectRatio: 3 / 2),
                               items: serviceData.images
-                                  .map((banner) =>
-                                  TRoundedImage(
-                                    imageUrl: banner,
-                                    applyImageRadius: false,
-                                    isNetworkImage: true,
-                                    fit: BoxFit.cover,
-                                    onPressed: () => {},
-                                    width: THelperFunctions.screenWidth(context),
-                                  ))
+                                  .map((banner) => TRoundedImage(
+                                        imageUrl: banner,
+                                        applyImageRadius: false,
+                                        isNetworkImage: true,
+                                        fit: BoxFit.cover,
+                                        onPressed: () => {},
+                                        width: THelperFunctions.screenWidth(context),
+                                      ))
                                   .toList()),
                           if (_currentIndex > 0)
                             Positioned(
@@ -147,10 +145,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                               children: [
                                 Text(
                                   serviceData.serviceCategory?.name ?? "",
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .titleLarge,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                                 // TRoundedContainer(
                                 //   radius: 20,
@@ -208,31 +203,19 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                             const SizedBox(
                               height: TSizes.md,
                             ),
-                            Text("About the service", style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyLarge),
+                            Text(AppLocalizations.of(context)!.about_the_service, style: Theme.of(context).textTheme.bodyLarge),
                             const SizedBox(
                               height: TSizes.sm,
                             ),
-                            Text(serviceData.description, style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyMedium),
+                            Text(serviceData.description, style: Theme.of(context).textTheme.bodyMedium),
                             const SizedBox(
                               height: TSizes.sm,
                             ),
-                            Text(AppLocalizations.of(context)!.step + ": ", style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyLarge),
+                            Text(AppLocalizations.of(context)!.step + ": ", style: Theme.of(context).textTheme.bodyLarge),
                             const SizedBox(
                               height: TSizes.sm,
                             ),
-                            Text(serviceData.steps, style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyMedium),
+                            Text(serviceData.steps, style: Theme.of(context).textTheme.bodyMedium),
                             const SizedBox(
                               height: TSizes.md,
                             ),
@@ -251,10 +234,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                           children: [
                                             Text(
                                               AppLocalizations.of(context)!.feedback,
-                                              style: Theme
-                                                  .of(context)!
-                                                  .textTheme
-                                                  .titleLarge,
+                                              style: Theme.of(context)!.textTheme.titleLarge,
                                             ),
                                             TRoundedContainer(
                                               radius: 20,
@@ -281,23 +261,23 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                         const SizedBox(
                                           height: TSizes.sm,
                                         ),
+                                        if (state.feedbacks.isEmpty)
+                                          Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Text(AppLocalizations.of(context)!.no_feedback_for_service)),
                                         SizedBox(
                                           height: 400,
                                           child: ListView.separated(
                                               itemBuilder: (context, index) {
                                                 final comment = state.feedbacks[index];
-                                                if (state.feedbacks.isEmpty) {
-                                                  return Align(
-                                                      alignment: Alignment.topCenter,
-                                                      child: Text(AppLocalizations.of(context)!.no_feedback_for_service));
-                                                }
+
                                                 return Column(
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       children: [
-                                                        Text(comment.customer?.fullName ?? "User"),
+                                                        Text(comment.customer?.fullName ?? AppLocalizations.of(context)!.user),
                                                         RatingBar.builder(
                                                           initialRating: comment.rating?.toDouble() ?? 5,
                                                           minRating: 1,
@@ -305,8 +285,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                                           allowHalfRating: false,
                                                           itemCount: 5,
                                                           itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                                                          itemBuilder: (context, _) =>
-                                                          const Icon(
+                                                          itemBuilder: (context, _) => const Icon(
                                                             Icons.star,
                                                             color: Colors.amber,
                                                           ),
@@ -334,10 +313,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                                       child: Text(
                                                         DateFormat("HH:mm, dd/MM/yyyy").format(
                                                             DateTime.parse(comment.createdAt).toUtc().toLocal().add(Duration(hours: 7))),
-                                                        style: Theme
-                                                            .of(context)!
-                                                            .textTheme
-                                                            .labelMedium,
+                                                        style: Theme.of(context)!.textTheme.labelMedium,
                                                       ),
                                                     )
                                                   ],
@@ -401,16 +377,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         onTap: () {
                           widget.controller.updateServiceIds([widget.serviceId]);
                           widget.controller
-                              .updateTime(int.parse((context
-                              .read<ServiceBloc>()
-                              .state as ServiceDetailSuccess).service.duration));
-                          widget.controller.updateServices([(context
-                              .read<ServiceBloc>()
-                              .state as ServiceDetailSuccess).service
-                          ]);
-                          widget.controller.updateTotalPrice((context
-                              .read<ServiceBloc>()
-                              .state as ServiceDetailSuccess).service.price);
+                              .updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
+                          widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
+                          widget.controller.updateTotalPrice((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.price);
                           goSelectSpecialist(widget.branchId, widget.controller);
                         },
                         child: Container(
@@ -422,11 +391,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           alignment: Alignment.center,
                           child: Text(
                             AppLocalizations.of(context)!.book_now,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(color: Colors.white),
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
                           ),
                         ),
                       ),

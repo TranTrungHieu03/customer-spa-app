@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
@@ -118,7 +119,8 @@ class ServiceAppointmentListView extends StatelessWidget {
                                       controller.updateNote(appt.notes ?? "");
                                       goUpdateSpecialist(appt.branch?.branchId ?? 0, controller);
                                     },
-                                    child: Text('Choose specialist', style: Theme.of(context).textTheme.labelLarge)),
+                                    child: Text(AppLocalizations.of(context)!.choose_specialist,
+                                        style: Theme.of(context).textTheme.labelLarge)),
                               ),
                             ),
                     ],

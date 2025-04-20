@@ -17,6 +17,7 @@ import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -198,6 +199,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         BlocBuilder<ListProductFeedbackBloc, ListProductFeedbackState>(
                           builder: (context, state) {
                             if (state is ListProductFeedbackLoaded) {
+                              AppLogger.info(state.feedbacks.isEmpty);
                               return Padding(
                                 padding: const EdgeInsets.all(TSizes.sm),
                                 child: Column(
@@ -234,16 +236,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     const SizedBox(
                                       height: TSizes.sm,
                                     ),
+                                    if (state.feedbacks.isEmpty)
+                                      Align(
+                                          alignment: Alignment.topCenter,
+                                          child: Text(AppLocalizations.of(context)!.no_feedback_for_product)),
                                     SizedBox(
                                       height: 400,
                                       child: ListView.separated(
                                           itemBuilder: (context, index) {
                                             final comment = state.feedbacks[index];
-                                            if (state.feedbacks.isEmpty) {
-                                              return Align(
-                                                  alignment: Alignment.topCenter,
-                                                  child: Text(AppLocalizations.of(context)!.no_feedback_for_product));
-                                            }
+
                                             return Column(
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               children: [
@@ -308,6 +310,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   color: TColors.primary,
                                 ),
                               );
+                            } else if (state is ListProductFeedbackError) {
+                              return Center(
+                                child: Text(
+                                  state.message,
+                                  style: Theme.of(context).textTheme.labelMedium,
+                                ),
+                              );
                             }
                             return const SizedBox();
                           },
@@ -351,6 +360,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         flex: 3,
                         child: GestureDetector(
                           onTap: () {
+                            AppLogger.info(product.branch?.district);
                             widget.controller.updateBranch(product.branch ?? BranchModel.empty());
                             widget.controller
                                 .updateProducts([ProductQuantity(quantity: 1, productBranchId: product.productBranchId, product: product)]);

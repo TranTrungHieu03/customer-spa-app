@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
@@ -58,9 +59,9 @@ class _BookRoutineScreenState extends State<BookRoutineScreen> {
           if (state is ListRoutineStepLoaded) {
             final routineSteps = state.routines;
             return Scaffold(
-              appBar: const TAppbar(
+              appBar: TAppbar(
                 showBackArrow: true,
-                title: Text('Chi tiết các bước '),
+                title: Text(AppLocalizations.of(context)!.step_details),
               ),
               body: Padding(
                 padding: const EdgeInsets.all(0),
@@ -86,23 +87,20 @@ class _BookRoutineScreenState extends State<BookRoutineScreen> {
                         if (_currentStep > 0)
                           OutlinedButton(
                             onPressed: details.onStepCancel,
-                            child: const Text("Quay lại"),
+                            child: Text(AppLocalizations.of(context)!.back),
                           ),
                         const SizedBox(
                           width: TSizes.lg,
                         ),
                         if (_currentStep < routineSteps.length - 1)
-                          OutlinedButton(
-                            onPressed: details.onStepContinue,
-                            child: const Text("Tiếp tục"),
-                          ),
+                          OutlinedButton(onPressed: details.onStepContinue, child: Text(AppLocalizations.of(context)!.next)),
                       ],
                     );
                   },
                   steps: routineSteps.map((step) {
                     return Step(
                       title: Text(step.name),
-                      subtitle: Text('Step ${step.step}'),
+                      subtitle: Text('${AppLocalizations.of(context)!.steps} ${step.step}'),
                       content: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

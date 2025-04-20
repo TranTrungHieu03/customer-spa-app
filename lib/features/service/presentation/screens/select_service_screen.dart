@@ -435,7 +435,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text("Xem các gói liệu trình", style: Theme.of(context).textTheme.titleLarge),
+                        Text(AppLocalizations.of(context)!.view_treatment_packages, style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(width: TSizes.sm),
                         const Icon(Iconsax.arrow_right_1)
                       ],
@@ -599,7 +599,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('${_selectedServiceIds.length} services'),
+                        Text('${_selectedServiceIds.length} ${AppLocalizations.of(context)?.services}'),
                         const SizedBox(
                           width: TSizes.xs,
                         ),
@@ -693,7 +693,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Branch',
+                        AppLocalizations.of(context)!.branch,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: TSizes.sm),
@@ -766,7 +766,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                               padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
                             ),
                             child: Text(
-                              "Set as default",
+                              AppLocalizations.of(context)!.set_as_default,
                               style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
                             ),
                           ),

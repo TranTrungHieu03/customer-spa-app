@@ -64,15 +64,15 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
     final dark = THelperFunctions.isDarkMode(context);
     // final List<String> steps = widget.controller.routine.steps.split(", ");
     return Scaffold(
-      appBar: const TAppbar(
+      appBar: TAppbar(
         showBackArrow: true,
-        title: Text("Xác nhận"),
+        title: Text(AppLocalizations.of(context)!.confirm),
       ),
       body: SingleChildScrollView(
         child: BlocListener<RoutineBloc, RoutineState>(
           listener: (context, state) {
             if (state is RoutineBook) {
-              TSnackBar.successSnackBar(context, message: "Đặt lịch thành công");
+              TSnackBar.successSnackBar(context, message: AppLocalizations.of(context)!.booking_success);
               // context.read<RoutineBloc>().add(GetRoutineDetailEvent(GetRoutineDetailParams(widget.routine.skincareRoutineId.toString())));
               goOrderRoutineDetail(state.id);
             } else if (state is RoutineError) {
@@ -126,7 +126,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                       Row(
                         children: [
                           Text(
-                            "Thời gian:",
+                            AppLocalizations.of(context)!.time,
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(
@@ -144,7 +144,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  "Liệu trình: ",
+                                  AppLocalizations.of(context)!.treatment,
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 const SizedBox(
@@ -213,7 +213,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Discount code", style: Theme.of(context).textTheme.titleLarge),
+                    Text(AppLocalizations.of(context)!.discount_code, style: Theme.of(context).textTheme.titleLarge),
                     (widget.controller.voucher == null)
                         ? TextButton(
                             onPressed: () => _showVoucherModal(context, widget.controller),
@@ -238,7 +238,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                   color: dark ? TColors.darkGrey : TColors.grey,
                   thickness: 0.5,
                 ),
-                Text("Note", style: Theme.of(context).textTheme.titleLarge),
+                Text(AppLocalizations.of(context)!.note, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(
                   height: TSizes.xs,
                 ),
@@ -247,7 +247,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                   controller: _messageController,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    hintText: "Paste your message to the center",
+                    hintText: AppLocalizations.of(context)!.paste_message_to_center,
                     contentPadding: const EdgeInsets.all(TSizes.sm),
                     hintStyle: Theme.of(context).textTheme.bodySmall,
                     border: OutlineInputBorder(
@@ -276,7 +276,8 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                   voucherId: widget.controller.voucher?.voucherId ?? 0,
                   note: _messageController.text.toString())));
             },
-            child: Text('Đặt lịch hẹn', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white))),
+            child: Text(AppLocalizations.of(context)!.book_appointment,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white))),
       ),
     );
   }
@@ -325,7 +326,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                   // ),
                   // const SizedBox(height: 16),
                   Text(
-                    "Available Vouchers",
+                    " ",
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 16),
@@ -376,11 +377,11 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                                         Text(formatMoney(voucher.discountAmount.toString())),
                                         if ((controller.user?.bonusPoint ?? 0) < voucher.requirePoint)
                                           Text(
-                                              'Cần thêm ${voucher.requirePoint - (controller.user?.bonusPoint ?? 0).toInt()} điểm để sử dụng mã này',
+                                              '${AppLocalizations.of(context)!.need_more} ${voucher.requirePoint - (user?.bonusPoint ?? 0).toInt()} ${AppLocalizations.of(context)!.points_required_to_use}',
                                               style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
                                         if (controller.routine.totalPrice < (voucher.minOrderAmount ?? 0))
                                           Text(
-                                              'Mua thêm ${formatMoney((voucher.minOrderAmount ?? 0 - controller.routine.totalPrice).toString())} để sử dụng mã này',
+                                              '${AppLocalizations.of(context)!.buy_more} ${formatMoney((voucher.minOrderAmount ?? 0 - controller.routine.totalPrice).toString())} ${AppLocalizations.of(context)!.to_use_this_code}',
                                               style: Theme.of(context).textTheme.labelMedium?.copyWith(color: TColors.darkerGrey)),
                                       ],
                                     ),
@@ -638,7 +639,7 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
                             ),
                             child: Text(
-                              "Set as default",
+                              AppLocalizations.of(context)!.set_as_default,
                               style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
                             ),
                           ),

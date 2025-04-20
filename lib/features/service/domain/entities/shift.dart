@@ -1,4 +1,6 @@
-class Shift {
+import 'package:equatable/equatable.dart';
+
+class Shift extends Equatable {
   final int id;
   final String name;
   final String startTime;
@@ -11,5 +13,12 @@ class Shift {
     required this.endTime,
   });
 
-
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        id,
+        name,
+        startTime,
+        endTime,
+      ];
 }

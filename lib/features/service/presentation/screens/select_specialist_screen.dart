@@ -70,7 +70,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
     final controller = widget.controller;
     final serviceId = controller.serviceIds;
     final isSingleService = serviceId.length == 1;
-    final int indexExtra = isSingleService ? 1 : 2;
+    final int indexExtra = isSingleService ? 0 : 1;
     final isChooseMultiStaff = serviceId.length > 1 && selectedStaffId == -1;
     final isChooseDiffSpecialist = controller.staffIds.map((x) {
       return x != controller.staffIds[0];
@@ -103,7 +103,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
-                  "Select specialist",
+                  AppLocalizations.of(context)!.choose_specialist,
                   style: Theme.of(context).textTheme.displaySmall ?? const TextStyle(),
                 ),
               ),
@@ -118,56 +118,8 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                           itemCount: state.intersectionStaff.length + indexExtra,
                           crossAxisCount: 2,
                           itemBuilder: (context, index) {
-                            if (index == 0) {
-                              final isSelected = selectedStaffId == 0;
-
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedStaffId = 0;
-                                  });
-                                  // controller.updateStaffIds(0);
-                                  controller.updateStaffIds(0);
-                                  // controller.updateStaff({});
-                                  goSelectTime([0], controller);
-                                  // if (selectedStaffId != null) {
-                                  //   goSelectTime([selectedStaffId ?? 0], controller);
-                                  // }
-                                },
-                                child: TRoundedContainer(
-                                  margin: const EdgeInsets.all(TSizes.xs),
-                                  padding: const EdgeInsets.all(TSizes.xs),
-                                  backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                                  borderColor: isSelected ? TColors.primary : Colors.transparent,
-                                  showBorder: true,
-                                  shadow: true,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      TRoundedContainer(
-                                        radius: 50,
-                                        width: 50,
-                                        height: 50,
-                                        backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                                        child: Center(
-                                          child: Text(
-                                            THelperFunctions.getFirstLetterOfLastName("Any"),
-                                            style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: TSizes.xs),
-                                      Text(
-                                        "Any specialist",
-                                        style: Theme.of(context).textTheme.bodyMedium,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            } else if (!isSingleService && index == 1) {
+                            if (index == 0 && !isSingleService) {
                               final isSelected = selectedStaffId == -1;
-
                               return GestureDetector(
                                 onTap: () {
                                   setState(() {
@@ -198,7 +150,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                       ),
                                       const SizedBox(height: TSizes.xs),
                                       Text(
-                                        "Select specialist per service",
+                                        AppLocalizations.of(context)!.select_specialist_per_service,
                                         style: Theme.of(context).textTheme.bodyMedium,
                                         textAlign: TextAlign.center,
                                       ),
@@ -206,9 +158,53 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                   ),
                                 ),
                               );
-                            } else {
+                            }
+                            // else
+                            // if (!isSingleService && index == 1) {
+                            // final isSelected = selectedStaffId == -1;
+                            //
+                            // return GestureDetector(
+                            //   onTap: () {
+                            //     setState(() {
+                            //       selectedStaffId = -1;
+                            //     });
+                            //   },
+                            //   child: TRoundedContainer(
+                            //     margin: const EdgeInsets.all(TSizes.xs),
+                            //     padding: const EdgeInsets.all(TSizes.xs),
+                            //     backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                            //     borderColor: isSelected ? TColors.primary : Colors.transparent,
+                            //     showBorder: true,
+                            //     shadow: true,
+                            //     child: Column(
+                            //       mainAxisAlignment: MainAxisAlignment.center,
+                            //       children: [
+                            //         TRoundedContainer(
+                            //           radius: 50,
+                            //           width: 50,
+                            //           height: 50,
+                            //           backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                            //           child: Center(
+                            //             child: Text(
+                            //               THelperFunctions.getFirstLetterOfLastName("Any"),
+                            //               style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         const SizedBox(height: TSizes.xs),
+                            //         Text(
+                            //           AppLocalizations.of(context)!.select_specialist_per_service,
+                            //           style: Theme.of(context).textTheme.bodyMedium,
+                            //           textAlign: TextAlign.center,
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
+                            // );
+                            // }
+                            else {
                               final staff = state.intersectionStaff[index - indexExtra];
-
+                              AppLogger.info(state.intersectionStaff[index - indexExtra]);
                               final isSelected = selectedStaffId == staff.staffId;
 
                               return GestureDetector(
@@ -217,7 +213,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                     selectedStaffId = staff.staffId;
                                   });
 
-                                  if (staff.staffId != 0) {
+                                  if (staff.staffId != -1) {
                                     controller.updateStaffIds(staff.staffId);
                                     controller.updateStaff(staff);
                                     goSelectTime([staff.staffId], controller);
@@ -271,7 +267,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                          final isAny = selectedStaffIds?[index] == 0;
+                          final isAny = selectedStaffIds?[index] == -1;
                           final staffs = state.listStaff[index].staffs;
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,7 +285,7 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                       (context.read<ListStaffBloc>().state as ListStaffLoaded).listStaff[index].staffs, index);
                                 },
                                 child: TRoundedContainer(
-                                  width: THelperFunctions.screenWidth(context) * 0.5,
+                                  width: THelperFunctions.screenWidth(context) * 0.6,
                                   radius: TSizes.lg,
                                   padding: const EdgeInsets.all(TSizes.sm),
                                   child: Row(
@@ -315,16 +311,13 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                                       ConstrainedBox(
                                         constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
                                         child: Text(
-                                          isAny
-                                              ? "Any specialist"
-                                              : staffs.firstWhere((x) => x.staffId == selectedStaffIds?[index]).staffInfo?.userName ?? "",
-                                          style: Theme.of(context).textTheme.labelLarge,
-                                        ),
+                                            isAny
+                                                ? AppLocalizations.of(context)!.any_specialist
+                                                : staffs.firstWhere((x) => x.staffId == selectedStaffIds?[index]).staffInfo?.userName ?? "",
+                                            style: Theme.of(context).textTheme.labelLarge,
+                                            textAlign: TextAlign.center),
                                       ),
                                       const Spacer(),
-                                      const SizedBox(
-                                        width: TSizes.sm,
-                                      ),
                                       const Icon(
                                         Iconsax.arrow_down_1,
                                         size: 15,
@@ -353,9 +346,11 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ElevatedButton(
-                  onPressed: () {
-                    goSelectTime(controller.staffIds, controller);
-                  },
+                  onPressed: !widget.controller.staffIds.contains(0)
+                      ? () {
+                          goSelectTime(controller.staffIds, controller);
+                        }
+                      : null,
                   child: Text(AppLocalizations.of(context)!.continue_book))
             ],
           ),
@@ -402,100 +397,101 @@ class _SelectSpecialistScreenState extends State<SelectSpecialistScreen> {
                       const SizedBox(height: TSizes.md),
                       TGridLayout(
                         mainAxisExtent: 150,
-                        itemCount: staffs.length + 1,
+                        itemCount: staffs.length,
                         crossAxisCount: 2,
                         itemBuilder: (context, index) {
-                          if (index == 0) {
-                            final isSelected = widget.controller.staffIds[indexService] == 0;
-                            return GestureDetector(
-                              onTap: () {
-                                setModalState(() {
-                                  selectedStaffIds?[indexService] = 0;
-                                });
-                                setState(() {
-                                  selectedStaffIds?[indexService] = 0;
-                                });
-                                widget.controller.addStaffId(indexService, 0);
-                                Navigator.pop(context);
-                              },
-                              child: TRoundedContainer(
-                                margin: const EdgeInsets.all(TSizes.xs),
-                                padding: const EdgeInsets.all(TSizes.xs),
-                                backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                                borderColor: isSelected ? TColors.primary : Colors.transparent,
-                                showBorder: true,
-                                shadow: true,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    TRoundedContainer(
-                                      radius: 50,
-                                      width: 50,
-                                      height: 50,
-                                      backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                                      child: Center(
-                                        child: Text(
-                                          THelperFunctions.getFirstLetterOfLastName("Any"),
-                                          style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                                        ),
+                          // if (index == 0) {
+                          //   final isSelected = widget.controller.staffIds[indexService] == 0;
+                          //   return GestureDetector(
+                          //     onTap: () {
+                          //       setModalState(() {
+                          //         selectedStaffIds?[indexService] = 0;
+                          //       });
+                          //       setState(() {
+                          //         selectedStaffIds?[indexService] = 0;
+                          //       });
+                          //       widget.controller.addStaffId(indexService, 0);
+                          //       Navigator.pop(context);
+                          //     },
+                          //     child: TRoundedContainer(
+                          //       margin: const EdgeInsets.all(TSizes.xs),
+                          //       padding: const EdgeInsets.all(TSizes.xs),
+                          //       backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                          //       borderColor: isSelected ? TColors.primary : Colors.transparent,
+                          //       showBorder: true,
+                          //       shadow: true,
+                          //       child: Column(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           TRoundedContainer(
+                          //             radius: 50,
+                          //             width: 50,
+                          //             height: 50,
+                          //             backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                          //             child: Center(
+                          //               child: Text(
+                          //                 THelperFunctions.getFirstLetterOfLastName("Any"),
+                          //                 style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           const SizedBox(height: TSizes.xs),
+                          //           Text(
+                          //             AppLocalizations.of(context)!.any_specialist,
+                          //             style: Theme.of(context).textTheme.bodyMedium,
+                          //             textAlign: TextAlign.center,
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   );
+                          // } else {
+                          final staff = staffs[index];
+                          final isSelected = widget.controller.staffIds[indexService] == staff.staffId;
+                          return GestureDetector(
+                            onTap: () {
+                              setModalState(() {
+                                selectedStaffIds?[indexService] = staff.staffId;
+                              });
+                              setState(() {
+                                selectedStaffIds?[indexService] = staff.staffId;
+                              });
+                              widget.controller.addStaffId(indexService, staff.staffId);
+                              widget.controller.addStaff(indexService, staff);
+                              Navigator.pop(context);
+                            },
+                            child: TRoundedContainer(
+                              margin: const EdgeInsets.all(TSizes.xs),
+                              padding: const EdgeInsets.all(TSizes.xs),
+                              backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                              borderColor: isSelected ? TColors.primary : Colors.transparent,
+                              showBorder: true,
+                              shadow: true,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TRoundedContainer(
+                                    radius: 50,
+                                    width: 50,
+                                    height: 50,
+                                    backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+                                    child: Center(
+                                      child: Text(
+                                        THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
+                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
                                       ),
                                     ),
-                                    const SizedBox(height: TSizes.xs),
-                                    Text(
-                                      "Any specialist",
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(height: TSizes.xs),
+                                  Text(
+                                    staff.staffInfo?.userName ?? "",
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ],
                               ),
-                            );
-                          } else {
-                            final staff = staffs[index - 1];
-                            final isSelected = widget.controller.staffIds[indexService] == staff.staffId;
-                            return GestureDetector(
-                              onTap: () {
-                                setModalState(() {
-                                  selectedStaffIds?[indexService] = staff.staffId;
-                                });
-                                setState(() {
-                                  selectedStaffIds?[indexService] = staff.staffId;
-                                });
-                                widget.controller.addStaffId(indexService, staff.staffId);
-                                widget.controller.addStaff(indexService, staff);
-                                Navigator.pop(context);
-                              },
-                              child: TRoundedContainer(
-                                margin: const EdgeInsets.all(TSizes.xs),
-                                padding: const EdgeInsets.all(TSizes.xs),
-                                backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                                borderColor: isSelected ? TColors.primary : Colors.transparent,
-                                showBorder: true,
-                                shadow: true,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    TRoundedContainer(
-                                      radius: 50,
-                                      width: 50,
-                                      height: 50,
-                                      backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                                      child: Center(
-                                        child: Text(
-                                          THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
-                                          style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: TSizes.xs),
-                                    Text(
-                                      staff.staffInfo?.userName ?? "",
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
+                            ),
+                          );
+                          // }
                         },
                       ),
                     ],

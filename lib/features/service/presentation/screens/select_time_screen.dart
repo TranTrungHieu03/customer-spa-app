@@ -2,6 +2,7 @@ import "dart:math";
 
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import "package:iconsax/iconsax.dart";
 import "package:intl/intl.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -110,7 +111,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   }
 
   bool _isOverlapping(TimeModel slot1, TimeModel slot2) {
-    const buffer = Duration(minutes: 5);
+    const buffer = Duration(seconds: 1);
 
     return slot1.startTime.isBefore(slot2.endTime.add(buffer)) && slot1.endTime.isAfter(slot2.startTime.subtract(buffer));
   }
@@ -221,6 +222,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   Widget build(BuildContext context) {
     final controller = widget.controller;
     final isChooseDiffSpecialist = widget.staffIds.map((x) {
+      AppLogger.info(x);
       return x != controller.staffIds[0];
     }).contains(true);
     final isAllAny = widget.staffIds.map((x) {
@@ -265,7 +267,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
-                    "Select time",
+                    AppLocalizations.of(context)!.select_time,
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                 ),
@@ -300,7 +302,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                               ConstrainedBox(
                                 constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
                                 child: Text(
-                                  !isAllAny ? "Any Specialist" : widget.controller.staff[0]?.staffInfo?.userName ?? "",
+                                  !isAllAny
+                                      ? AppLocalizations.of(context)!.any_specialist
+                                      : widget.controller.staff[0]?.staffInfo?.userName ?? "",
                                   style: Theme.of(context).textTheme.labelLarge,
                                 ),
                               ),
@@ -321,7 +325,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text("Multiple Specialist", style: Theme.of(context).textTheme.labelLarge),
+                              Text(AppLocalizations.of(context)!.multiple_specialist, style: Theme.of(context).textTheme.labelLarge),
                               const SizedBox(
                                 width: TSizes.sm,
                               ),
@@ -441,9 +445,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                       builder: (context, state) {
                         if (state is ListTimeLoaded) {
                           if (availableTimeSlots.isEmpty) {
-                            return const Center(
+                            return Center(
                               child: Text(
-                                'No available time slots for selected date',
+                                AppLocalizations.of(context)!.no_available_slots,
                                 style: TextStyle(fontSize: 16),
                               ),
                             );
@@ -502,9 +506,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                             },
                           );
                         } else if (state is ListTimeEmpty) {
-                          return const Center(
+                          return Center(
                             child: Text(
-                              'No available time slots for selected date',
+                              AppLocalizations.of(context)!.no_available_slots,
                               style: TextStyle(fontSize: 16),
                             ),
                           );
