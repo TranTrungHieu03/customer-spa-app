@@ -14,3 +14,4 @@ final class AnalysisViaFormEvent extends SkinAnalysisEvent {
 
   AnalysisViaFormEvent(this.params);
 }
+final class ResetSkinAnalysisEvent extends SkinAnalysisEvent {}

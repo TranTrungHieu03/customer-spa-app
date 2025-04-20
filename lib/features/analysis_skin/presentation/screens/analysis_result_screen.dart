@@ -35,9 +35,11 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
         title: Text(AppLocalizations.of(context)!.analysis_result),
         actions: [
           TRoundedIcon(
-            icon: Iconsax.home_2,
-            onPressed: () => goHome(),
-          )
+              icon: Iconsax.home_2,
+              onPressed: () {
+                goHome();
+                // context.read<SkinAnalysisBloc>().add(ResetSkinAnalysisEvent());
+              })
         ],
       ),
       body: BlocConsumer<SkinAnalysisBloc, SkinAnalysisState>(
@@ -47,6 +49,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
           }
         },
         builder: (context, state) {
+          AppLogger.debug("SkinAnalysisState: $state");
           if (state is SkinAnalysisLoading) {
             return const Center(child: TLoader());
           } else if (state is SkinAnalysisLoaded) {
@@ -131,7 +134,7 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                     height: TSizes.md,
                   ),
                   Text(
-                   AppLocalizations.of(context)!.please_visit_store,
+                    AppLocalizations.of(context)!.please_visit_store,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(
@@ -154,50 +157,57 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
-                  // Instead of ListView.separated, we use Column to display routine items
-                  Column(
-                    children: List.generate(routines.length, (index) {
-                      final routine = routines[index];
-                      return Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
-                            child: TRoundedContainer(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ListTile(
-                                    title: Text(routine.name, style: Theme.of(context).textTheme.titleLarge),
-                                    subtitle: Column(
+                  (routines.isEmpty)
+                      ? Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.no_suitable_treatment,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                      :
+                      // Instead of ListView.separated, we use Column to display routine items
+                      Column(
+                          children: List.generate(routines.length, (index) {
+                            final routine = routines[index];
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
+                                  child: TRoundedContainer(
+                                    child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(routine.description),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            formatMoney(routine.totalPrice.toString()),
-                                            style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+                                        ListTile(
+                                          title: Text(routine.name, style: Theme.of(context).textTheme.titleLarge),
+                                          subtitle: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(routine.description),
+                                              Align(
+                                                alignment: Alignment.centerRight,
+                                                child: Text(
+                                                  formatMoney(routine.totalPrice.toString()),
+                                                  style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+                                                ),
+                                              ),
+                                            ],
                                           ),
+                                          onTap: () {
+                                            goRoutineDetail(routine.skincareRoutineId.toString());
+                                          },
+                                        ),
+                                        const SizedBox(
+                                          height: TSizes.md,
                                         ),
                                       ],
                                     ),
-                                    onTap: () {
-                                      goRoutineDetail(routine.skincareRoutineId.toString());
-                                    },
                                   ),
-                                  const SizedBox(
-                                    height: TSizes.md,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          if (index < routines.length - 1)
-                            const SizedBox(height: TSizes.sm),
-                        ],
-                      );
-                    }),
-                  ),
+                                ),
+                                if (index < routines.length - 1) const SizedBox(height: TSizes.sm),
+                              ],
+                            );
+                          }),
+                        ),
                 ],
               ),
             );

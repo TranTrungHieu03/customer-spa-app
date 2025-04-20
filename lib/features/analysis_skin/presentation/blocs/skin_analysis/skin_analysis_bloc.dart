@@ -19,6 +19,7 @@ class SkinAnalysisBloc extends Bloc<SkinAnalysisEvent, SkinAnalysisState> {
         super(SkinAnalysisInitial()) {
     on<AnalysisViaImageEvent>(_onAnalysisViaImage);
     on<AnalysisViaFormEvent>(_onAnalysisViaForm);
+    on<ResetSkinAnalysisEvent>(_onResetSkinAnalysis);
   }
 
   Future<void> _onAnalysisViaImage(AnalysisViaImageEvent event, Emitter<SkinAnalysisState> emit) async {
@@ -34,12 +35,21 @@ class SkinAnalysisBloc extends Bloc<SkinAnalysisEvent, SkinAnalysisState> {
   Future<void> _onAnalysisViaForm(AnalysisViaFormEvent event, Emitter<SkinAnalysisState> emit) async {
     emit(SkinAnalysisLoading());
     final result = await _skinAnalysisViaForm(event.params);
+
     result.fold(
-      (failure) => emit(SkinAnalysisError(failure.message)),
-      (data) {
+      (failure) {
         AppLogger.debug(">>>>>>> result: $result");
+        emit(SkinAnalysisError(failure.message));
+      },
+      (data) {
+        AppLogger.debug(">>>>>>> result: ${data.skinhealth}");
+        emit(SkinAnalysisLoading());
         emit(SkinAnalysisLoaded(routines: data.routines, skinHealth: data.skinhealth));
       },
     );
+  }
+
+  Future<void> _onResetSkinAnalysis(ResetSkinAnalysisEvent event, Emitter<SkinAnalysisState> emit) async {
+    emit(SkinAnalysisInitial());
   }
 }

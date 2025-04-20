@@ -279,5 +279,7 @@
   "steps": "Step",
   "routine": "Treatment",
   "no_product_available": "No product available.",
-  "arrived": "Arrived"
+  "arrived": "Arrived",
+  "no_suitable_treatment": "No suitable treatment found for you"
+
 }

@@ -15,11 +15,9 @@ import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.d
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_type_model.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/form_data_skin/form_data_skin_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/form_skin/form_skin_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/submit_form_screen.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/form_item_page.dart';
 import 'package:spa_mobile/features/home/presentation/widgets/introduction_form.dart';
-import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperFormCollectData extends StatelessWidget {
   const WrapperFormCollectData({super.key, required this.skinHealth, this.isFromAI = true});
@@ -276,13 +274,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                           );
                                     },
                                   ),
-                                  BlocProvider(
-                                    create: (context) => SkinAnalysisBloc(
-                                      skinAnalysisViaImage: serviceLocator(),
-                                      skinAnalysisViaForm: serviceLocator(),
-                                    ),
-                                    child: SubmitFormScreen(pageController: pageController, model: state.values),
-                                  )
+                                  SubmitFormScreen(pageController: pageController, model: state.values),
                                 ]);
                           }
                           return const SizedBox();

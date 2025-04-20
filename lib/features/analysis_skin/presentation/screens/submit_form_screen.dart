@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
@@ -41,32 +41,37 @@ class _SubmitFormScreenState extends State<SubmitFormScreen> {
       body: Padding(
         padding: const EdgeInsets.all(TSizes.sm),
         child: BlocConsumer<SkinAnalysisBloc, SkinAnalysisState>(builder: (context, state) {
-          if (state is SkinAnalysisInitial) {
-            return Column(
-              children: [
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.read<SkinAnalysisBloc>().add(
-                            AnalysisViaFormEvent(
-                              SkinAnalysisViaFormParams(widget.model),
-                            ),
-                          );
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)!.submit.toUpperCase(),
-                    ),
+          // if (state is SkinAnalysisInitial) {
+          return Column(
+            children: [
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    context.read<SkinAnalysisBloc>().add(
+                          AnalysisViaFormEvent(
+                            SkinAnalysisViaFormParams(widget.model),
+                          ),
+                        );
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.submit.toUpperCase(),
                   ),
                 ),
-                if (state is SkinAnalysisLoading) const TLoader()
-              ],
-            );
-          } else if (state is SkinAnalysisLoaded) {
-            return const SizedBox.shrink();
-          }
-          return const SizedBox.shrink();
+              ),
+              if (state is SkinAnalysisLoading)
+                const Center(
+                  child: CircularProgressIndicator(
+                    color: TColors.primary,
+                  ),
+                )
+            ],
+          );
+          // } else if (state is SkinAnalysisLoaded) {
+          //   return const SizedBox.shrink();
+          // }
+          // return const SizedBox.shrink();
         }, listener: (context, state) {
           if (state is SkinAnalysisError) {
             TSnackBar.errorSnackBar(context, message: state.message);
