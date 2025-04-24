@@ -259,6 +259,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                 )
                                               ],
                                             ),
+                                            if (orderDetail.status.toLowerCase() == "shipping")
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Text(AppLocalizations.of(context)!.shipping,
+                                                      style: Theme.of(context).textTheme.bodySmall),
+                                                ],
+                                              ),
                                             // if (order.status.toLowerCase() == 'completed')
                                             TextButton(
                                                 onPressed: () {

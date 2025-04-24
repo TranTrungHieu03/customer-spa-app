@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "email": "Email",
+  "email": "Email/Phone",
   "password": "Password",
   "login": "Login",
   "signup": "Sign Up",
@@ -280,6 +280,14 @@
   "routine": "Treatment",
   "no_product_available": "No product available.",
   "arrived": "Arrived",
-  "no_suitable_treatment": "No suitable treatment found for you"
-
+  "no_suitable_treatment": "No suitable treatment found for you",
+  "shipping": "Shipping",
+  "add_to_routine": "Add to Routine",
+  "no_items_selected": "No items selected",
+  "items_added_to_routine": "Items added to routine successfully",
+  "no_products_available": "No products available to add",
+  "no_services_available": "No services available to add",
+  "failed_to_load_products": "Failed to load products",
+  "failed_to_load_services": "Failed to load services",
+  "products_and_services": "Customize routine"
 }

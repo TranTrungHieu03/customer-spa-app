@@ -12,6 +12,7 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/add_to_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_list_view.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_list_view.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
@@ -103,43 +104,35 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: TSizes.sm),
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: const NeverScrollableScrollPhysics(),
-                    //   itemBuilder: (context, indexStep) {
-                    //     return Row(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Column(
-                    //           children: [
-                    //             CircleAvatar(
-                    //               radius: 12,
-                    //               backgroundColor: Colors.teal,
-                    //               child: Text(
-                    //                 '${indexStep + 1}',
-                    //                 style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
-                    //               ),
-                    //             ),
-                    //             if (indexStep != steps.length - 1)
-                    //               Container(
-                    //                 height: 20,
-                    //                 width: 2,
-                    //                 color: Colors.teal,
-                    //               ),
-                    //           ],
-                    //         ),
-                    //         const SizedBox(width: TSizes.md),
-                    //         Expanded(
-                    //           child: Text(
-                    //             steps[indexStep],
-                    //             style: Theme.of(context).textTheme.bodyMedium,
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     );
-                    //   },
-                    //   itemCount: steps.length,
-                    // ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          AppLocalizations.of(context)!.products_and_services,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        if (!widget.onlyShown)
+                          IconButton(
+                            icon: const Icon(Iconsax.arrow_right_1),
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WrapperAddToRoutine(
+                                    routineId: routine.skincareRoutineId.toString(),
+                                    routine: routine,
+                                  ),
+                                ),
+                              );
+
+                              // Refresh the routine if items were added
+                              if (result == true) {
+                                context.read<RoutineBloc>().add(GetRoutineDetailEvent(GetRoutineDetailParams(widget.id)));
+                              }
+                            },
+                          ),
+                      ],
+                    ),
                     const SizedBox(height: TSizes.sm),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

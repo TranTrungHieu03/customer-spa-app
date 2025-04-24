@@ -16,6 +16,12 @@ class AuthSuccess extends AuthState {
   const AuthSuccess(this.token, this.message);
 }
 
+class AuthSignUp extends AuthState {
+  final String message;
+
+  const AuthSignUp(this.message);
+}
+
 class AuthClear extends AuthState {
   final String message;
 
