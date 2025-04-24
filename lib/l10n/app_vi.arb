@@ -1,6 +1,6 @@
 {
   "@@locale": "vi",
-  "email": "Email",
+  "email": "Email/Số điện thoại",
   "password": "Mật khẩu",
   "login": "Đăng nhập",
   "signup": "Đăng ký",
@@ -280,6 +280,14 @@
   "routine": "Liệu trình",
   "no_product_available": "Không có sản phẩm nào",
   "arrived": "Đã đến",
-  "no_suitable_treatment": "Không có liệu trình nào phù hợp với bạn"
-
+  "no_suitable_treatment": "Không có liệu trình nào phù hợp với bạn",
+  "shipping": "Đang giao hàng",
+  "add_to_routine": "Thêm vào phác đồ",
+  "no_items_selected": "Chưa chọn mục nào",
+  "items_added_to_routine": "Đã thêm vào phác đồ thành công",
+  "no_products_available": "Không có sản phẩm nào để thêm",
+  "no_services_available": "Không có dịch vụ nào để thêm",
+  "failed_to_load_products": "Không thể tải danh sách sản phẩm",
+  "failed_to_load_services": "Không thể tải danh sách dịch vụ",
+  "products_and_services": "Tùy chỉnh gói"
 }

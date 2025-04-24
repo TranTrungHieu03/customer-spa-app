@@ -51,8 +51,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             goVerify(_emailController.text.toString(), 1);
           } else if (state is AuthFailure) {
             TSnackBar.errorSnackBar(context, message: state.message);
-          } else if (state is AuthSuccess) {
-            context.read<AuthBloc>().add(GetUserInformationEvent());
+          } else if (state is AuthSignUp) {
+            TSnackBar.successSnackBar(context, message: state.message);
+            goVerify(_emailController.text.toString(), 1);
+            // context.read<AuthBloc>().add(GetUserInformationEvent());
           } else if (state is AuthLoaded) {
             goHome();
           }

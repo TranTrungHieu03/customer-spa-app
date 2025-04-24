@@ -194,6 +194,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(width: TSizes.md),
                           ElevatedButton(
                             onPressed: () {
+                              if (districtId.isEmpty || wardCode.isEmpty) {
+                                TSnackBar.errorSnackBar(context, message: "Please select your address");
+                                return;
+                              }
+                              if (fullNameController.text.isEmpty ||
+                                  phoneController.text.isEmpty ||
+                                  cityController.text.isEmpty ||
+                                  userNameController.text.isEmpty ||
+                                  addressController.text.isEmpty) {
+                                TSnackBar.errorSnackBar(context, message: "Please fill all fields");
+                                return;
+                              }
                               if (context.read<ProfileBloc>().state is ProfileLoaded) {
                                 final updatedUser = (context.read<ProfileBloc>().state as ProfileLoaded).userInfo.copyWith(
                                     fullName: fullNameController.text.trim(),

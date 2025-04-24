@@ -13,6 +13,7 @@ import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart'
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/add_to_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysing_image_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysis_result_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/basic_screen_image.dart';

@@ -108,7 +108,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           Row(
                             children: [
                               Text(
-                               AppLocalizations.of(context)!.order_ref,
+                                AppLocalizations.of(context)!.order_ref,
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                               Text(

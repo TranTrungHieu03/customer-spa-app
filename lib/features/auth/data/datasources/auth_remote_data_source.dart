@@ -66,6 +66,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
+        AppLogger.info(apiResponse!.result!.message);
         return apiResponse.result!.message!;
       } else {
         throw AppException(apiResponse.result!.message);
