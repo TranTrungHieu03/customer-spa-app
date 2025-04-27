@@ -248,8 +248,16 @@ goSelectTime(List<int> staffIds, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) => BlocProvider(
-                create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+          builder: (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()),
+                  ),
+                ],
                 child: SelectTimeScreen(
                   staffIds: staffIds,
                   controller: controller,
@@ -261,8 +269,16 @@ goUpdateTime(List<int> staffIds, AppointmentDataController controller) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) => BlocProvider(
-                create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+          builder: (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+                  ),
+                  BlocProvider(
+                    create: (context) =>
+                        ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()),
+                  ),
+                ],
                 child: UpdateTimeScreen(
                   staffIds: staffIds,
                   controller: controller,
@@ -322,8 +338,51 @@ goChatList() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperChatListScreen()));
 }
 
+goCustomize(MixDataController controller) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CustomizeRoutineScreen(controller: controller)));
+}
+
+goUpdateStaffMix(MixDataController controller, int branchId) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => UpdateAppointmentsScreen(
+                controller: controller,
+                branchId: branchId,
+              )));
+}
+
+goUpdateTimeMix(MixDataController controller, List<int> staffIds, int index) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()),
+                    ),
+                    BlocProvider(
+                      create: (context) =>
+                          ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()),
+                    ),
+                  ],
+                  child: UpdateAppointmentsTimeScreen(
+                    controller: controller,
+                    staffIds: staffIds,
+                    indexOfAppointment: index,
+                  ))));
+}
+
 goRoutines() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperRoutineScreen()));
+}
+
+goReviewChangeRoutine(MixDataController controller) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider<MixBloc>(
+              create: (context) => MixBloc(orderMix: serviceLocator()), child: ConfirmCustomizeScreen(controller: controller))));
 }
 
 goRoutineStep(int id) async {
@@ -338,8 +397,11 @@ goSelectRoutineTime(RoutineDataController routine) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) => SelectRoutineTimeScreen(
-                controller: routine,
+          builder: (context) => BlocProvider(
+                create: (context) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()),
+                child: SelectRoutineTimeScreen(
+                  controller: routine,
+                ),
               )));
 }
 
@@ -388,4 +450,8 @@ goTableAppointments() async {
 goAppointmentDetail(String appointmentId) async {
   Navigator.push(
       navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => AppointmentDetailScreen(appointmentId: (appointmentId))));
+}
+
+goOrderMixDetail(int id) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderProductServiceDetailScreen(id: id)));
 }

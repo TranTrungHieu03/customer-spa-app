@@ -239,7 +239,7 @@
   "feedback": "Bình luận",
   "no_feedback_for_service": "Chưa có đánh giá cho dịch vụ này.",
   "no_feedback_for_product": "Chưa có đánh giá cho sản phẩm này.",
-  "please_visit_store": "Quý khách vui lòng đến cửa hàng để được hỗ trợ tư vấn tình trạng chính xác nhất.",
+  "please_visit_store": "Để đảm bảo thông tin chính xác nhất, kính mời quý khách đến cửa hàng để được hỗ trợ tư vấn.",
   "your_photo": "Ảnh của bạn",
   "step_details": "Chi tiết các bước",
   "go_back": "Quay lại",
@@ -282,12 +282,15 @@
   "arrived": "Đã đến",
   "no_suitable_treatment": "Không có liệu trình nào phù hợp với bạn",
   "shipping": "Đang giao hàng",
-  "add_to_routine": "Thêm vào phác đồ",
+  "add_to_routine": "Tùy chỉnh gói",
   "no_items_selected": "Chưa chọn mục nào",
   "items_added_to_routine": "Đã thêm vào phác đồ thành công",
   "no_products_available": "Không có sản phẩm nào để thêm",
   "no_services_available": "Không có dịch vụ nào để thêm",
   "failed_to_load_products": "Không thể tải danh sách sản phẩm",
   "failed_to_load_services": "Không thể tải danh sách dịch vụ",
-  "products_and_services": "Tùy chỉnh gói"
+  "products_and_services": "Tùy chỉnh gói",
+  "tracking_information": "Thông tin theo dõi",
+  "before_image": "Ảnh trước:",
+  "after_image": "Ảnh sau:"
 }

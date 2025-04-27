@@ -20,6 +20,7 @@ class AppointmentDataController extends ChangeNotifier {
   VoucherModel? _voucher;
   String _note = '';
   int _appointmentId = 0;
+  DateTime minDate = DateTime.now();
 
   int get appointmentId => _appointmentId;
 
@@ -56,6 +57,11 @@ class AppointmentDataController extends ChangeNotifier {
 
   void updateVoucher(VoucherModel newServices) {
     _voucher = newServices;
+    notifyListeners();
+  }
+
+  void updateMinDate(DateTime newServices) {
+    minDate = newServices;
     notifyListeners();
   }
 

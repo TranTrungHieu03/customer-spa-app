@@ -76,7 +76,7 @@ class ListServiceBloc extends Bloc<ListServiceEvent, ListServiceState> {
       pagination: PaginationModel.isEmty(),
     ));
 
-    final result = await _getListService(GetListServiceParams(1, event.branchId, 10));
+    final result = await _getListService(GetListServiceParams(1, event.branchId, 20));
     result.fold(
       (failure) => emit(ListServiceFailure(failure.message)),
       (result) {

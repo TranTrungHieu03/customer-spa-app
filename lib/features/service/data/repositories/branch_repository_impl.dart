@@ -3,6 +3,7 @@ import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/features/service/data/datasources/branch_remote_data_source.dart';
 import 'package:spa_mobile/features/service/domain/repository/branch_repository.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_branches_by_routine.dart';
 
 class BranchRepositoryImpl implements BranchRepository {
   final BranchRemoteDataSource _branchRemoteDataSrc;
@@ -23,6 +24,16 @@ class BranchRepositoryImpl implements BranchRepository {
   Future<Either<Failure, BranchModel>> getBranchDetail(params) async {
     try {
       BranchModel response = await _branchRemoteDataSrc.getBranchDetail(params);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BranchModel>>> getBranchesByRoutine(GetBranchesByRoutineParams params) async {
+    try {
+      List<BranchModel> response = await _branchRemoteDataSrc.getBranches();
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

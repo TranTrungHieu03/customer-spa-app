@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
 
@@ -15,7 +16,10 @@ class UserChatBloc extends Bloc<UserChatEvent, UserChatState> {
     on<GetUserChatInfoEvent>((event, emit) async {
       emit(UserChatLoading());
       final result = await _getUserChatInfo(event.params);
-      result.fold((failure) => emit(UserChatError(failure.message)), (data) => emit(UserChatLoaded(data)));
+      result.fold((failure) => emit(UserChatError(failure.message)), (data) {
+        AppLogger.info(data);
+        emit(UserChatLoaded(data));
+      });
     });
   }
 }

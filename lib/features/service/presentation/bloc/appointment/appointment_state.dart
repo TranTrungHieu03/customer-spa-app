@@ -45,3 +45,9 @@ final class CancelAppointmentSuccess extends AppointmentState {
 
   CancelAppointmentSuccess({required this.orderId, required this.error});
 }
+
+final class CancelAppointmentDetailSuccess extends AppointmentState {
+  final String message;
+
+  const CancelAppointmentDetailSuccess(this.message);
+}

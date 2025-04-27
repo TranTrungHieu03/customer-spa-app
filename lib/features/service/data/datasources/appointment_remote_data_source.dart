@@ -2,12 +2,15 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
+import 'package:spa_mobile/features/service/data/model/appointment_feedback_model.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_time_model.dart';
+import 'package:spa_mobile/features/service/domain/usecases/cancel_appointment_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment_detail.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_appointment_feedback.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
@@ -23,6 +26,8 @@ abstract class AppointmentRemoteDataSource {
 
   Future<int> updateAppointment(UpdateAppointmentParams params);
 
+  Future<String> cancelAppointmentDetail(CancelAppointmentDetailParams params);
+
   Future<String> payFull(PayFullParams params);
 
   Future<String> payDeposit(PayDepositParams params);
@@ -30,6 +35,8 @@ abstract class AppointmentRemoteDataSource {
   Future<List<AppointmentModel>> getHistoryBooking(GetListAppointmentParams params);
 
   Future<List<StaffTimeModel>> getTimeSlots(GetTimeSlotByDateParams params);
+
+  Future<AppointmentFeedbackModel> getFeedbackOfAppointment(GetFeedbackParams params);
 }
 
 class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
@@ -178,6 +185,44 @@ class AppointmentRemoteDataSourceImpl extends AppointmentRemoteDataSource {
 
       if (apiResponse.success) {
         return apiResponse.result!.data['appointmentId'];
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      AppLogger.info(e.toString());
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<AppointmentFeedbackModel> getFeedbackOfAppointment(GetFeedbackParams params) async {
+    try {
+      final response = await _apiService.getApi('/AppointmentFeedback/get-by-appointment/${params.appointmentId}');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      // if (apiResponse.success) {
+      AppLogger.info(apiResponse.result!.data!);
+      return (apiResponse.result!.data).isNotEmpty
+          ? AppointmentFeedbackModel.fromJson(apiResponse.result!.data[0])
+          : AppointmentFeedbackModel.isEmpty();
+      // } else {
+      //   throw AppException(apiResponse.result!.message!);
+      // }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> cancelAppointmentDetail(CancelAppointmentDetailParams params) async {
+    try {
+      final response = await _apiService.putApi('/Appointments/cancel-booking/${params.appointmentId}', {});
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return apiResponse.result!.message!;
       } else {
         throw AppException(apiResponse.result!.message!);
       }

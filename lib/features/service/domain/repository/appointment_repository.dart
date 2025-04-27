@@ -1,11 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
+import 'package:spa_mobile/features/service/data/model/appointment_feedback_model.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_time_model.dart';
+import 'package:spa_mobile/features/service/domain/usecases/cancel_appointment_detail.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_appointment_detail.dart';
+import 'package:spa_mobile/features/service/domain/usecases/get_appointment_feedback.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
@@ -28,4 +31,8 @@ abstract class AppointmentRepository {
   Future<Either<Failure, AppointmentModel>> getAppointmentDetail(GetAppointmentDetailParams params);
 
   Future<Either<Failure, List<StaffTimeModel>>> getTimeSlots(GetTimeSlotByDateParams params);
+
+  Future<Either<Failure, AppointmentFeedbackModel>> getFeedback(GetFeedbackParams params);
+
+  Future<Either<Failure, String>> cancelAppointmentDetail(CancelAppointmentDetailParams params);
 }

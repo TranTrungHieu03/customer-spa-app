@@ -17,11 +17,14 @@ import "package:spa_mobile/core/logger/logger.dart";
 import "package:spa_mobile/core/utils/constants/colors.dart";
 import "package:spa_mobile/core/utils/constants/exports_navigators.dart";
 import "package:spa_mobile/core/utils/constants/sizes.dart";
+import "package:spa_mobile/features/service/data/model/appointment_model.dart";
 import "package:spa_mobile/features/service/data/model/shift_model.dart";
 import "package:spa_mobile/features/service/data/model/time_model.dart";
+import "package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart";
 import "package:spa_mobile/features/service/domain/usecases/get_list_slot_working.dart";
 import "package:spa_mobile/features/service/domain/usecases/get_time_slot_by_date.dart";
 import "package:spa_mobile/features/service/presentation/bloc/appointment/appointment_bloc.dart";
+import "package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart";
 import "package:spa_mobile/features/service/presentation/bloc/list_time/list_time_bloc.dart";
 import "package:spa_mobile/features/service/presentation/bloc/staff_slot_working/staff_slot_working_bloc.dart";
 import "package:spa_mobile/features/service/presentation/widgets/leave_booking.dart";
@@ -45,6 +48,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   String lgCode = "";
   List<TimeModel> bookedSlots = [];
   List<ShiftModel> availableShifts = [];
+  List<AppointmentModel> existAppointment = [];
 
   void _scrollToSelectedDate() {
     int index = items.indexWhere((item) => item['date'] == DateFormat('yyyy-MM-dd').format(selectedDate));
@@ -100,11 +104,15 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
           int.parse(shift.endTime.split(':')[1]),
         );
 
-        return possibleSlot.startTime.isAtSameMomentAs(shiftStart) || // bắt đầu đúng lúc shift
+        return possibleSlot.startTime.isAtSameMomentAs(shiftStart) ||
             (possibleSlot.startTime.isAfter(shiftStart) && possibleSlot.endTime.isBefore(shiftEnd));
       });
 
-      return isNotBooked && isInFuture && isInShift;
+      final isNotConflictWithAppointments = !existAppointment.any((appointment) {
+        return _isOverlappingSlotAndAppointment(possibleSlot, appointment);
+      });
+
+      return isNotBooked && isInFuture && isInShift && isNotConflictWithAppointments;
     }).toList();
 
     setState(() {});
@@ -116,6 +124,18 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     return slot1.startTime.isBefore(slot2.endTime.add(buffer)) && slot1.endTime.isAfter(slot2.startTime.subtract(buffer));
   }
 
+  bool _isOverlappingSlotAndAppointment(TimeModel slot, AppointmentModel appointment) {
+    return slot.startTime.isBefore(appointment.appointmentEndTime) && slot.endTime.isAfter(appointment.appointmentsTime);
+  }
+
+  DateTime getStartOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  DateTime getEndOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -124,8 +144,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     context
         .read<StaffSlotWorkingBloc>()
         .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
+    context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
+        startTime: getStartOfDay(selectedDate).toIso8601String(), endTime: getEndOfDay(selectedDate).toIso8601String())));
     context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffIds, date: selectedDate)));
-
     generateAvailableTimeSlots();
   }
 
@@ -153,49 +174,56 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   }
 
   void _showCalendar(BuildContext context) {
+    final staffSlotWorkingBloc = context.read<StaffSlotWorkingBloc>();
+    final listAppointmentBloc = context.read<ListAppointmentBloc>();
+    final listTimeBloc = context.read<ListTimeBloc>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: TSizes.md,
-            right: TSizes.md,
-            top: TSizes.md,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Theme(
-            data: ThemeData(
-              colorScheme: const ColorScheme.light(
-                primary: TColors.primary,
-                onPrimary: Colors.white,
-                surface: Colors.white,
-                onSurface: Colors.black,
+      builder: (BuildContext bottomSheetContext) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: staffSlotWorkingBloc),
+            BlocProvider.value(value: listAppointmentBloc),
+            BlocProvider.value(value: listTimeBloc),
+          ],
+          child: Padding(
+              padding: EdgeInsets.only(
+                left: TSizes.md,
+                right: TSizes.md,
+                top: TSizes.md,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-            ),
-            child: CalendarDatePicker(
-              initialDate: selectedDate,
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 13)),
-              onDateChanged: (date) {
-                setState(() {
-                  selectedDate = date;
-                });
-                if (widget.staffIds[0] != 0) {
-                  context
-                      .read<ListTimeBloc>()
-                      .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
-                  context
-                      .read<StaffSlotWorkingBloc>()
-                      .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
-                }
-                _scrollToSelectedDate();
-              },
-            ),
-          ),
+              child: Theme(
+                data: ThemeData(
+                  colorScheme: const ColorScheme.light(
+                    primary: TColors.primary,
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
+                ),
+                child: CalendarDatePicker(
+                  initialDate: selectedDate,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 13)),
+                  onDateChanged: (date) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: date)));
+
+                    listAppointmentBloc.add(GetListAppointmentEvent(GetListAppointmentParams(
+                        startTime: getStartOfDay(date).toIso8601String(), endTime: getEndOfDay(date).toIso8601String())));
+
+                    listTimeBloc.add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
+                    _scrollToSelectedDate();
+                  },
+                ),
+              )),
         );
       },
     );
@@ -232,315 +260,328 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     AppLogger.info(isChooseDiffSpecialist);
     return WillPopScope(
       onWillPop: () async => false,
-      child: BlocListener<StaffSlotWorkingBloc, StaffSlotWorkingState>(
-        listener: (context, slotState) {
-          if (slotState is StaffSlotWorkingLoaded) {
-            availableShifts = slotState.staffSlotWorking;
+      child: BlocListener<ListAppointmentBloc, ListAppointmentState>(
+        listener: (context, state) {
+          if (state is ListAppointmentLoaded) {
+            existAppointment = state.appointments.where((x) => x.status.toLowerCase() == "pending").toList();
             generateAvailableTimeSlots();
           }
-          if (slotState is StaffSlotWorkingError) {
-            AppLogger.error(slotState.message);
-          }
         },
-        child: Scaffold(
-          appBar: TAppbar(
-            showBackArrow: false,
-            leadingIcon: Iconsax.arrow_left,
-            leadingOnPressed: () => goSelectSpecialist(controller.branchId, controller),
-            actions: [
-              TRoundedIcon(
-                icon: Iconsax.scissor_1,
-                onPressed: () {
-                  _showModelLeave(context);
-                },
-              ),
-              const SizedBox(
-                width: TSizes.md,
-              )
-            ],
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(TSizes.sm),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    AppLocalizations.of(context)!.select_time,
-                    style: Theme.of(context).textTheme.displaySmall,
-                  ),
+        child: BlocListener<StaffSlotWorkingBloc, StaffSlotWorkingState>(
+          listener: (context, slotState) {
+            if (slotState is StaffSlotWorkingLoaded) {
+              availableShifts = slotState.staffSlotWorking;
+              generateAvailableTimeSlots();
+            }
+            if (slotState is StaffSlotWorkingError) {
+              AppLogger.error(slotState.message);
+            }
+          },
+          child: Scaffold(
+            appBar: TAppbar(
+              showBackArrow: false,
+              leadingIcon: Iconsax.arrow_left,
+              leadingOnPressed: () => goSelectSpecialist(controller.branchId, controller),
+              actions: [
+                TRoundedIcon(
+                  icon: Iconsax.scissor_1,
+                  onPressed: () {
+                    _showModelLeave(context);
+                  },
                 ),
                 const SizedBox(
-                  height: TSizes.sm,
-                ),
-                GestureDetector(
-                  onTap: () => goSelectSpecialist(controller.branchId, controller),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (!isChooseDiffSpecialist)
-                        TRoundedContainer(
-                          radius: TSizes.lg,
-                          padding: const EdgeInsets.all(TSizes.sm),
-                          child: Row(
-                            children: [
-                              TRoundedContainer(
-                                radius: 35,
-                                width: 35,
-                                height: 35,
-                                backgroundColor: TColors.primaryBackground,
-                                child: Center(
-                                  child: Text(
-                                    THelperFunctions.getFirstLetterOfLastName(
-                                        !isAllAny ? "Any" : widget.controller.staff[0]?.staffInfo?.userName ?? ""),
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                  width: TSizes.md,
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(TSizes.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      AppLocalizations.of(context)!.select_time,
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: TSizes.sm,
+                  ),
+                  GestureDetector(
+                    onTap: () => goSelectSpecialist(controller.branchId, controller),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (!isChooseDiffSpecialist)
+                          TRoundedContainer(
+                            radius: TSizes.lg,
+                            padding: const EdgeInsets.all(TSizes.sm),
+                            child: Row(
+                              children: [
+                                TRoundedContainer(
+                                  radius: 35,
+                                  width: 35,
+                                  height: 35,
+                                  backgroundColor: TColors.primaryBackground,
+                                  child: Center(
+                                    child: Text(
+                                      THelperFunctions.getFirstLetterOfLastName(
+                                          !isAllAny ? "Any" : widget.controller.staff[0]?.staffInfo?.userName ?? ""),
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: TSizes.xs),
-                              ConstrainedBox(
-                                constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
-                                child: Text(
-                                  !isAllAny
-                                      ? AppLocalizations.of(context)!.any_specialist
-                                      : widget.controller.staff[0]?.staffInfo?.userName ?? "",
-                                  style: Theme.of(context).textTheme.labelLarge,
+                                const SizedBox(width: TSizes.xs),
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
+                                  child: Text(
+                                    !isAllAny
+                                        ? AppLocalizations.of(context)!.any_specialist
+                                        : widget.controller.staff[0]?.staffInfo?.userName ?? "",
+                                    style: Theme.of(context).textTheme.labelLarge,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: TSizes.sm,
-                              ),
-                              const Icon(
-                                Iconsax.arrow_down_1,
-                                size: 15,
-                              )
-                            ],
+                                const SizedBox(
+                                  width: TSizes.sm,
+                                ),
+                                const Icon(
+                                  Iconsax.arrow_down_1,
+                                  size: 15,
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      if (isChooseDiffSpecialist)
-                        TRoundedContainer(
-                          radius: TSizes.lg,
-                          padding: const EdgeInsets.all(TSizes.sm),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(AppLocalizations.of(context)!.multiple_specialist, style: Theme.of(context).textTheme.labelLarge),
-                              const SizedBox(
-                                width: TSizes.sm,
-                              ),
-                              Row(
-                                children: List.generate(
-                                  min(3, controller.staffIds.length), // Show max 3 items
-                                  (index) {
-                                    final isAny = controller.staffIds[index] == 0;
-                                    return Padding(
-                                      padding: EdgeInsets.only(right: index < min(3, controller.staffIds.length) - 1 ? TSizes.xs : 0),
-                                      child: TRoundedContainer(
-                                        radius: 35,
-                                        width: 35,
-                                        height: 35,
-                                        backgroundColor: TColors.primaryBackground,
-                                        child: Center(
-                                          child: Text(
-                                            THelperFunctions.getFirstLetterOfLastName(
-                                                isAny ? "A" : widget.controller.staff[index]?.staffInfo?.userName ?? ""),
-                                            style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                        if (isChooseDiffSpecialist)
+                          TRoundedContainer(
+                            radius: TSizes.lg,
+                            padding: const EdgeInsets.all(TSizes.sm),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(AppLocalizations.of(context)!.multiple_specialist, style: Theme.of(context).textTheme.labelLarge),
+                                const SizedBox(
+                                  width: TSizes.sm,
+                                ),
+                                Row(
+                                  children: List.generate(
+                                    min(3, controller.staffIds.length), // Show max 3 items
+                                    (index) {
+                                      final isAny = controller.staffIds[index] == 0;
+                                      return Padding(
+                                        padding: EdgeInsets.only(right: index < min(3, controller.staffIds.length) - 1 ? TSizes.xs : 0),
+                                        child: TRoundedContainer(
+                                          radius: 35,
+                                          width: 35,
+                                          height: 35,
+                                          backgroundColor: TColors.primaryBackground,
+                                          child: Center(
+                                            child: Text(
+                                              THelperFunctions.getFirstLetterOfLastName(
+                                                  isAny ? "A" : widget.controller.staff[index]?.staffInfo?.userName ?? ""),
+                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: TSizes.xs),
-                              const Icon(
-                                Iconsax.arrow_down_1,
-                                size: 15,
-                              )
-                            ],
+                                const SizedBox(width: TSizes.xs),
+                                const Icon(
+                                  Iconsax.arrow_down_1,
+                                  size: 15,
+                                )
+                              ],
+                            ),
                           ),
+                        TRoundedIcon(
+                          icon: Iconsax.calendar_1,
+                          borderRadius: 10,
+                          backgroundColor: TColors.primaryBackground,
+                          onPressed: () {
+                            _showCalendar(context);
+                          },
                         ),
-                      TRoundedIcon(
-                        icon: Iconsax.calendar_1,
-                        borderRadius: 10,
-                        backgroundColor: TColors.primaryBackground,
-                        onPressed: () {
-                          _showCalendar(context);
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(monthView, style: Theme.of(context).textTheme.titleMedium),
-                SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      var item = items[index];
-                      bool isSelected = item['date'] == DateFormat('yyyy-MM-dd').format(selectedDate);
-                      bool isToday = item['date'] == DateFormat('yyyy-MM-dd').format(DateTime.now());
+                  const SizedBox(height: 10),
+                  Text(monthView, style: Theme.of(context).textTheme.titleMedium),
+                  SizedBox(
+                    height: 150,
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        var item = items[index];
+                        bool isSelected = item['date'] == DateFormat('yyyy-MM-dd').format(selectedDate);
+                        bool isToday = item['date'] == DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedDate = DateTime.parse(item['date']!);
-                            context
-                                .read<ListTimeBloc>()
-                                .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds, date: selectedDate)));
-                            context
-                                .read<StaffSlotWorkingBloc>()
-                                .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
-                          });
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedDate = DateTime.parse(item['date']!);
 
-                          _scrollToSelectedDate();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(TSizes.sm),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              TRoundedContainer(
-                                padding: const EdgeInsets.all(TSizes.md),
-                                radius: 100,
-                                backgroundColor: (isSelected
-                                    ? TColors.primary
-                                    : isToday
-                                        ? TColors.primary.withOpacity(0.5)
-                                        : Colors.grey.shade200),
-                                child: Text(
-                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                                        color: isSelected || isToday ? Colors.white : Colors.black,
-                                      ),
-                                  item['dayNumber']!,
+                              context.read<StaffSlotWorkingBloc>().add(
+                                  GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
+                              context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
+                                  startTime: getStartOfDay(selectedDate).toIso8601String(),
+                                  endTime: getEndOfDay(selectedDate).toIso8601String())));
+                              context
+                                  .read<ListTimeBloc>()
+                                  .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds, date: selectedDate)));
+                            });
+
+                            _scrollToSelectedDate();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(TSizes.sm),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TRoundedContainer(
+                                  padding: const EdgeInsets.all(TSizes.md),
+                                  radius: 100,
+                                  backgroundColor: (isSelected
+                                      ? TColors.primary
+                                      : isToday
+                                          ? TColors.primary.withOpacity(0.5)
+                                          : Colors.grey.shade200),
+                                  child: Text(
+                                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                          color: isSelected || isToday ? Colors.white : Colors.black,
+                                        ),
+                                    item['dayNumber']!,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: TSizes.sm),
-                              Text(
-                                item['day']!,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                    ),
-                              ),
-                            ],
+                                const SizedBox(height: TSizes.sm),
+                                Text(
+                                  item['day']!,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: BlocListener<ListTimeBloc, ListTimeState>(
-                    listener: (context, state) {
-                      if (state is ListTimeLoaded) {
-                        bookedSlots = state.slots;
-                        generateAvailableTimeSlots();
-                      }
-                    },
-                    child: BlocBuilder<ListTimeBloc, ListTimeState>(
-                      builder: (context, state) {
+                  Expanded(
+                    child: BlocListener<ListTimeBloc, ListTimeState>(
+                      listener: (context, state) {
                         if (state is ListTimeLoaded) {
-                          if (availableTimeSlots.isEmpty) {
+                          bookedSlots = state.slots;
+                          generateAvailableTimeSlots();
+                        }
+                      },
+                      child: BlocBuilder<ListTimeBloc, ListTimeState>(
+                        builder: (context, state) {
+                          if (state is ListTimeLoaded) {
+                            if (availableTimeSlots.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.no_available_slots,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              );
+                            }
+                            return TGridLayout(
+                              itemCount: availableTimeSlots.length,
+                              mainAxisExtent: 50,
+                              crossAxisCount: 2,
+                              isScroll: true,
+                              itemBuilder: (context, index) {
+                                final slot = availableTimeSlots[index];
+                                final isSelected = selectedTime == slot.startTime.toString();
+                                return GestureDetector(
+                                  onTap: () {
+                                    final listTimes = <DateTime>[];
+                                    // If user choose different specialist, we don't need to check staff free time
+                                    DateTime currentTime = slot.startTime;
+
+                                    for (int i = 0; i < controller.services.length; i++) {
+                                      if (i == 0) {
+                                        listTimes.add(currentTime);
+                                      }
+
+                                      currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
+
+                                      if (i < controller.services.length - 1) {
+                                        listTimes.add(currentTime);
+                                      }
+                                    }
+
+                                    AppLogger.info(listTimes);
+                                    controller.updateTimeStart(listTimes);
+                                    setState(() {
+                                      selectedTime = slot.startTime.toString();
+                                    });
+                                    // if (listTimes.length == 1) {
+                                    goReview(controller);
+                                    // }
+                                  },
+                                  child: TRoundedContainer(
+                                    padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),
+                                    backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+                                    borderColor: isSelected ? TColors.primary : Colors.transparent,
+                                    width: double.infinity,
+                                    showBorder: true,
+                                    shadow: true,
+                                    child: Row(
+                                      children: [
+                                        Text(DateFormat('HH:mm').format(slot.startTime)),
+                                        const Text(" - "),
+                                        Text(DateFormat('HH:mm').format(slot.endTime))
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          } else if (state is ListTimeEmpty) {
                             return Center(
                               child: Text(
                                 AppLocalizations.of(context)!.no_available_slots,
                                 style: TextStyle(fontSize: 16),
                               ),
                             );
+                          } else if (state is ListTimeLoading &&
+                              context.read<ListAppointmentBloc>().state is ListAppointmentLoading &&
+                              context.read<StaffSlotWorkingBloc>().state is StaffSlotWorkingLoading) {
+                            return const TLoader();
                           }
-                          return TGridLayout(
-                            itemCount: availableTimeSlots.length,
-                            mainAxisExtent: 50,
-                            crossAxisCount: 2,
-                            isScroll: true,
-                            itemBuilder: (context, index) {
-                              final slot = availableTimeSlots[index];
-                              final isSelected = selectedTime == slot.startTime.toString();
-                              return GestureDetector(
-                                onTap: () {
-                                  final listTimes = <DateTime>[];
-                                  // If user choose different specialist, we don't need to check staff free time
-                                  DateTime currentTime = slot.startTime;
-
-                                  for (int i = 0; i < controller.services.length; i++) {
-                                    if (i == 0) {
-                                      listTimes.add(currentTime);
-                                    }
-
-                                    currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
-
-                                    if (i < controller.services.length - 1) {
-                                      listTimes.add(currentTime);
-                                    }
-                                  }
-
-                                  AppLogger.info(listTimes);
-                                  controller.updateTimeStart(listTimes);
-                                  setState(() {
-                                    selectedTime = slot.startTime.toString();
-                                  });
-                                  // if (listTimes.length == 1) {
-                                  goReview(controller);
-                                  // }
-                                },
-                                child: TRoundedContainer(
-                                  padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),
-                                  backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                                  borderColor: isSelected ? TColors.primary : Colors.transparent,
-                                  width: double.infinity,
-                                  showBorder: true,
-                                  shadow: true,
-                                  child: Row(
-                                    children: [
-                                      Text(DateFormat('HH:mm').format(slot.startTime)),
-                                      const Text(" - "),
-                                      Text(DateFormat('HH:mm').format(slot.endTime))
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else if (state is ListTimeEmpty) {
-                          return Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.no_available_slots,
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          );
-                        } else if (state is ListTimeLoading) {
-                          return const TLoader();
-                        }
-                        return const SizedBox.shrink();
-                      },
+                          return const SizedBox.shrink();
+                        },
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
+            // bottomNavigationBar: isChooseDiffSpecialist
+            //     ? Padding(
+            //         padding: const EdgeInsets.all(TSizes.sm),
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.end,
+            //           children: [
+            //             ElevatedButton(
+            //                 onPressed: !controller.time.map((x) => controller.time[0] == x).contains(false)
+            //                     ? null
+            //                     : () {
+            //                         AppLogger.info(controller.time);
+            //                         goReview(controller);
+            //                       },
+            //                 child: Text(AppLocalizations.of(context)!.continue_book))
+            //           ],
+            //         ),
+            //       )
+            //     : null,
           ),
-          // bottomNavigationBar: isChooseDiffSpecialist
-          //     ? Padding(
-          //         padding: const EdgeInsets.all(TSizes.sm),
-          //         child: Row(
-          //           mainAxisAlignment: MainAxisAlignment.end,
-          //           children: [
-          //             ElevatedButton(
-          //                 onPressed: !controller.time.map((x) => controller.time[0] == x).contains(false)
-          //                     ? null
-          //                     : () {
-          //                         AppLogger.info(controller.time);
-          //                         goReview(controller);
-          //                       },
-          //                 child: Text(AppLocalizations.of(context)!.continue_book))
-          //           ],
-          //         ),
-          //       )
-          //     : null,
         ),
       ),
     );

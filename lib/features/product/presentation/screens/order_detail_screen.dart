@@ -267,16 +267,16 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                                       style: Theme.of(context).textTheme.bodySmall),
                                                 ],
                                               ),
-                                            // if (order.status.toLowerCase() == 'completed')
-                                            TextButton(
-                                                onPressed: () {
-                                                  goFeedbackProduct(
-                                                      order.customer?.userId ?? 0, orderDetail.product.productId, widget.orderId);
-                                                },
-                                                child: Text(
-                                                  AppLocalizations.of(context)!.review,
-                                                  style: Theme.of(context).textTheme.bodyLarge,
-                                                ))
+                                            if (order.status.toLowerCase() == 'completed')
+                                              TextButton(
+                                                  onPressed: () {
+                                                    goFeedbackProduct(
+                                                        order.customer?.userId ?? 0, orderDetail.product.productId, widget.orderId);
+                                                  },
+                                                  child: Text(
+                                                    AppLocalizations.of(context)!.review,
+                                                    style: Theme.of(context).textTheme.bodyLarge,
+                                                  ))
                                           ],
                                         ),
                                       ),
@@ -372,7 +372,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 TProductPriceText(
-                                  price: (order.totalAmount).toString(),
+                                  price: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),
                                   isLarge: true,
                                 )
                               ],

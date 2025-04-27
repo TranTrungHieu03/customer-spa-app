@@ -13,6 +13,7 @@ import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/core/services/signalR.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -21,6 +22,9 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_ro
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
+import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,11 +36,49 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   UserModel? user;
   bool isLoading = true;
+  UserChatModel? userChatModel;
 
   @override
   void initState() {
     super.initState();
     _loadData();
+    _initializeSignalR();
+  }
+
+  void _initializeSignalR() {
+    // final authBloc = BlocProvider.of<AuthBloc>(context);
+    // final userChatBloc = BlocProvider.of<UserChatBloc>(context);
+    //
+    // // Listen for auth state changes
+    // authBloc.stream.listen((state) {
+    //   AppLogger.info('User state changed: ${state.runtimeType}');
+    //   if (state is AuthClear) {
+    //     // Disconnect SignalR when user logs out
+    //     AppLogger.info('Auth cleared, disconnecting SignalR');
+    //     SignalRService.disconnect();
+    //   }
+    // });
+    //
+    // // Listen for user chat state changes
+    // userChatBloc.stream.listen((state) {
+    //   AppLogger.info('UserChat state changed: ${state.runtimeType}');
+    //   if (state is UserChatLoaded) {
+    //     AppLogger.info('UserChat loaded, initializing SignalR with ID: ${state.user.id}');
+    //     SignalRService.initialize(state.user.id);
+    //   } else if (state is UserChatError) {
+    //     AppLogger.info('UserChat error, disconnecting SignalR');
+    //     SignalRService.disconnect();
+    //   }
+    // });
+    //
+    // // Check if user chat is already loaded
+    // if (userChatBloc.state is UserChatLoaded) {
+    //   final userState = userChatBloc.state as UserChatLoaded; // Fix: Cast to correct type
+    //   AppLogger.info('UserChat is already loaded, initializing SignalR with ID: ${userState.user.id}');
+    //   SignalRService.initialize(userState.user.id);
+    // } else {
+    //   AppLogger.info('UserChat not loaded yet, current state: ${userChatBloc.state.runtimeType}');
+    // }
   }
 
   void _loadData() async {
@@ -55,6 +97,23 @@ class _HomeScreenState extends State<HomeScreen> {
         isLoading = false;
       });
       goLoginNotBack();
+    }
+
+    final jsonUserChat = await LocalStorage.getData(LocalStorageKey.userChat);
+    if (jsonUserChat != null && jsonUserChat.isNotEmpty) {
+      // try {
+      //   userChatModel = UserChatModel.fromJson(jsonDecode(jsonUserChat));
+      //   SignalRService.initialize(userChatModel!.id);
+      // } catch (e) {
+      //   debugPrint('Lỗi parsing userChatModel: $e');
+      //   goLoginNotBack();
+      // }
+      // return;
+    } else {
+      if (user?.userId != 0 && user?.userId != null) {
+        context.read<RoutineBloc>().add(GetCurrentRoutineEvent(GetCurrentRoutineParams(user!.userId)));
+      }
+      goHome();
     }
   }
 
@@ -188,7 +247,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(AppLocalizations.of(context)!.current_treatment_package, style: Theme.of(context).textTheme.titleLarge),
+                                Text(AppLocalizations.of(context)!.current_treatment_package,
+                                    style: Theme.of(context).textTheme.titleLarge),
                               ],
                             ),
                             const SizedBox(

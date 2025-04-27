@@ -16,4 +16,14 @@ class BlackheadModel extends Blackhead {
         "value": value,
         "confidence": confidence,
       };
+
+  factory BlackheadModel.empty() => BlackheadModel(
+        value: 0,
+        confidence: 1,
+      );
+
+  factory BlackheadModel.value() => BlackheadModel(
+        value: 1,
+        confidence: 1,
+      );
 }

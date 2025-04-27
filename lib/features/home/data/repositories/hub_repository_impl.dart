@@ -9,6 +9,7 @@ import 'package:spa_mobile/features/home/data/models/message_channel_model.dart'
 import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
 import 'package:spa_mobile/features/home/domain/repositories/hub_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_channel.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_channel_by_appointment.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_list_channel.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_list_message.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_user_chat_info.dart';
@@ -53,6 +54,16 @@ class HubRepositoryImpl implements HubRepository {
   Future<Either<Failure, List<MessageChannelModel>>> getListMessages(GetListMessageParams params) async {
     try {
       final List<MessageChannelModel> response = await _dataSource.getListMessage(params);
+      return right(response);
+    } catch (e) {
+      return left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ChannelModel>> getChannelByAppointmentId(GetChannelByAppointmentParams params) async {
+    try {
+      final ChannelModel response = await _dataSource.getChannelByAppointmentId(params);
       return right(response);
     } catch (e) {
       return left(ApiFailure(message: e.toString()));

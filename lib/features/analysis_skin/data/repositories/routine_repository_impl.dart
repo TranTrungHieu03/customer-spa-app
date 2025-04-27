@@ -17,6 +17,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_de
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/order_mix.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 class RoutineRepositoryImpl implements RoutineRepository {
@@ -137,6 +138,18 @@ class RoutineRepositoryImpl implements RoutineRepository {
   Future<Either<Failure, List<AppointmentModel>>> getListAppointmentsByRoutine(GetListAppointmentByRoutineParams params) async {
     try {
       List<AppointmentModel> result = await _dataSource.getAppointmentsByRoutine(params);
+      return right(result);
+    } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> orderMix(OrderMixParams params) async {
+    try {
+      int result = await _dataSource.orderMix(params);
       return right(result);
     } catch (e) {
       return left(ApiFailure(

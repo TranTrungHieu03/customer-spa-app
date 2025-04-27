@@ -10,6 +10,7 @@ import 'package:spa_mobile/core/utils/constants/form_data_skin_analysis.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/acne_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/black_head_model.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/rectangle_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_age_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_type_model.dart';
@@ -54,7 +55,7 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final SkinHealthModel skinHealthModel = widget.skinHealth;
     final TextEditingController skinAgeController =
-        TextEditingController(text: skinHealthModel.skinAge.value > 0 ? skinHealthModel.skinAge.value.toString() : "");
+        TextEditingController(text: skinHealthModel.skinAge.value > 0 ? skinHealthModel.skinAge.value.toString() : "10");
 
     return MultiBlocProvider(
       providers: [
@@ -174,13 +175,20 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     child: formSkinType.answer,
                                     answerValue: values.skinType.skinType,
                                     onChanged: (newValue) {
+                                      AppLogger.info(newValue);
                                       final newFormData = values.copyWith(
-                                          skinType: SkinTypeModel(skinType: newValue.first, details: [
-                                        BlackheadModel(value: 0, confidence: 0),
-                                        BlackheadModel(value: 0, confidence: 0),
-                                        BlackheadModel(value: 0, confidence: 0),
-                                        BlackheadModel(value: 0, confidence: 0)
-                                      ]));
+                                        skinType: SkinTypeModel(
+                                          skinType: newValue.first,
+                                          details: List.generate(
+                                            4,
+                                            (index) => BlackheadModel(
+                                              value: index == newValue.first ? 1 : 0,
+                                              confidence: 1,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+
                                       context.read<FormDataSkinBloc>().add(
                                             UpdateSkinHealthEvent(newFormData),
                                           );
@@ -211,11 +219,19 @@ class _FormCollectDataScreenState extends State<FormCollectDataScreen> {
                                     onChanged: (newValue) {
                                       final newFormData = values.copyWith(
                                         acne: newValue.contains("acne")
-                                            ? AcneModel(length: 1, rectangle: values.acne.rectangle)
-                                            : AcneModel(length: 0, rectangle: values.acne.rectangle),
+                                            ? AcneModel(
+                                                length: 1,
+                                                rectangle: values.acne.rectangle.isEmpty
+                                                    ? List.of([RectangleModel.empty()])
+                                                    : values.acne.rectangle)
+                                            : AcneModel(length: 0, rectangle: []),
                                         closedComedones: newValue.contains("closedComedones")
-                                            ? AcneModel(rectangle: values.closedComedones.rectangle, length: 1)
-                                            : AcneModel(rectangle: values.closedComedones.rectangle, length: 0),
+                                            ? AcneModel(
+                                                rectangle: values.closedComedones.rectangle.isEmpty
+                                                    ? List.of([RectangleModel.empty()])
+                                                    : values.closedComedones.rectangle,
+                                                length: 1)
+                                            : AcneModel(rectangle: [], length: 0),
                                         blackhead: newValue.contains("blackHead")
                                             ? BlackheadModel(value: 1, confidence: values.blackhead.confidence)
                                             : BlackheadModel(value: 0, confidence: values.blackhead.confidence),

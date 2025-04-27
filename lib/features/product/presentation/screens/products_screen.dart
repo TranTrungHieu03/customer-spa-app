@@ -141,7 +141,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
     }
 
     if (userId?.district == 0 || userId?.wardCode == 0) {
-      TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.update_address_to_purchase);
+      // TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.update_address_to_purchase);
     }
     params = GetListProductParams.empty(selectedBranch ?? 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {

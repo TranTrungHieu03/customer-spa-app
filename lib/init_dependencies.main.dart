@@ -183,6 +183,14 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => GetChannel(serviceLocator()))
     ..registerLazySingleton(() => FeedbackService(serviceLocator()))
     ..registerLazySingleton(() => GetListServiceFeedback(serviceLocator()))
+    ..registerLazySingleton(() => GetBranchesByRoutine(serviceLocator()))
+    ..registerLazySingleton(() => GetFeedback(serviceLocator()))
+    ..registerLazySingleton(() => CancelAppointmentDetail(serviceLocator()))
+    ..registerLazySingleton(() => GetChannelByAppointment(serviceLocator()))
+    // ..registerLazySingleton(() => GetMessages(serviceLocator()))
+    // ..registerLazySingleton(() => ConnectHub(serviceLocator()))
+    // ..registerLazySingleton(() => DisconnectHub(serviceLocator()))
+    // ..registerLazySingleton(() => SendMessage(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => ServiceBloc(getServiceDetail: serviceLocator()))
@@ -191,11 +199,16 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => ListServiceBloc(getListService: serviceLocator()))
     ..registerLazySingleton(() => BranchBloc(getBranchDetail: serviceLocator()))
     ..registerLazySingleton(() => UserChatBloc(getUserChatInfo: serviceLocator()))
+    ..registerLazySingleton(() => AppointmentFeedbackBloc(getFeedback: serviceLocator()))
     ..registerLazySingleton(() => ListChannelBloc(getListChannel: serviceLocator()))
-    ..registerLazySingleton(() => ChannelBloc(getChannel: serviceLocator()))
+    ..registerLazySingleton(() => MixBloc(orderMix: serviceLocator()))
+
+    // ..registerLazySingleton(() =>
+    //     ChatBloc(getMessages: serviceLocator(), sendMessage: serviceLocator(), connect: serviceLocator(), disconnect: serviceLocator()))
+    ..registerLazySingleton(() => ChannelBloc(getChannel: serviceLocator(), getChannelByAppointment: serviceLocator()))
     ..registerLazySingleton(() => StaffBloc(getSingleStaff: serviceLocator()))
     ..registerLazySingleton(() => ListStaffBloc(getListStaff: serviceLocator(), getStaffFreeInTime: serviceLocator()))
-    ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator()));
+    ..registerLazySingleton(() => ListBranchesBloc(getListBranches: serviceLocator(), getBranchesByRoutine: serviceLocator()));
 }
 
 Future<void> _initCategory() async {
@@ -238,6 +251,7 @@ Future<void> _initAppointment() async {
         createAppointment: serviceLocator(),
         cancelOrder: serviceLocator(),
         updateAppointment: serviceLocator(),
+        cancelAppointmentDetail: serviceLocator(),
         getAppointmentDetail: serviceLocator()))
     ..registerLazySingleton(() => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()))
     ..registerLazySingleton(() => StaffSlotWorkingBloc(getListSlotWorking: serviceLocator()))
@@ -284,6 +298,7 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => GetHistoryRoutine(serviceLocator()))
     ..registerLazySingleton(() => GetOrderRoutine(serviceLocator()))
     ..registerLazySingleton(() => GetHistoryOrderRoutine(serviceLocator()))
+    ..registerLazySingleton(() => OrderMix(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
@@ -294,8 +309,8 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => ListOrderRoutineBloc(getHistoryOrderRoutine: serviceLocator()))
     ..registerLazySingleton(() => RoutineTrackingBloc(getRoutineTracking: serviceLocator()))
     ..registerLazySingleton(() => RoutineBloc(
-          getRoutineDetail: serviceLocator(),
-          bookRoutine: serviceLocator(),
-          getCurrentRoutine: serviceLocator(),
-        ));
+        getRoutineDetail: serviceLocator(),
+        bookRoutine: serviceLocator(),
+        getCurrentRoutine: serviceLocator(),
+        orderMix: serviceLocator()));
 }

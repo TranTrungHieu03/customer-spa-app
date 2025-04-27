@@ -161,7 +161,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                                 if (step.serviceRoutineSteps.isNotEmpty) _buildServiceSection(step, _lgCode),
 
                                 // Products Section
-                                // if (step.productRoutineSteps.isNotEmpty) _buildProductsSection(step.productRoutineSteps),
+                                if (step.productRoutineSteps.isNotEmpty) _buildProductsSection(step.productRoutineSteps),
                               ],
                             ),
                             state: _getStepState(routineSteps, step),

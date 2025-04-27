@@ -205,7 +205,7 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                                   backgroundColor: (appt.status.toLowerCase()) == 'completed'
                                       ? TColors.success.withOpacity(0.5)
                                       : appt.status.toLowerCase() == 'cancelled'
-                                          ? TColors.error
+                                          ? Colors.red.shade50
                                           : appt.status.toLowerCase() == 'arrived'
                                               ? Colors.tealAccent.withOpacity(0.5)
                                               : TColors.primaryBackground,

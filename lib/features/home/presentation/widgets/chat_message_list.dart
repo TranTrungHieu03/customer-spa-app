@@ -46,7 +46,7 @@ List<Widget> _buildMessageListWithDates(List<MessageChannelModel> messages, Stri
 
 Widget chatItemWidget(MessageChannelModel e, String currentUserId, List<UserChatModel> members) {
   bool isMyChat = e.sender == currentUserId;
-  final user = members.firstWhere((x) => x.id == currentUserId);
+  final user = members.firstWhere((x) => x.id == e.sender);
   return e.sender == "0"
       ? systemMessageWidget(e.content ?? '')
       : Padding(

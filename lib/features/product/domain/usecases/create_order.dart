@@ -6,10 +6,10 @@ import 'package:spa_mobile/features/product/domain/repository/order_repository.d
 
 class ProductQuantity {
   final int productBranchId;
-  final int quantity;
+  int quantity;
   final ProductModel product;
 
-  const ProductQuantity({required this.quantity, required this.productBranchId, required this.product});
+  ProductQuantity({required this.quantity, required this.productBranchId, required this.product});
 
   Map<String, dynamic> toJson() {
     return {'productBranchId': productBranchId, 'quantity': quantity};

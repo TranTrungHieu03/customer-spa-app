@@ -1,0 +1,1 @@
+final DateTime kDefaultDateTime = DateTime(2025, 1, 1, 0, 0, 0);
