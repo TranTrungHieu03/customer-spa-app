@@ -12,7 +12,6 @@ import "package:spa_mobile/core/common/widgets/rounded_icon.dart";
 import "package:spa_mobile/core/helpers/helper_functions.dart";
 import "package:spa_mobile/core/logger/logger.dart";
 import "package:spa_mobile/core/utils/constants/colors.dart";
-import "package:spa_mobile/core/utils/constants/exports_navigators.dart";
 import "package:spa_mobile/core/utils/constants/sizes.dart";
 import "package:spa_mobile/features/service/data/model/appointment_model.dart";
 import "package:spa_mobile/features/service/data/model/shift_model.dart";
@@ -47,6 +46,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
   List<TimeModel> bookedSlots = [];
   List<ShiftModel> availableShifts = [];
   List<AppointmentModel> existAppointment = [];
+  List<TimeModel> chooseSlot = [];
 
   void _scrollToSelectedDate() {
     int index = items.indexWhere((item) => item['date'] == DateFormat('yyyy-MM-dd').format(selectedDate));
@@ -73,7 +73,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
     AppLogger.info(widget.controller.totalDuration);
 
     while (true) {
-      final slotEnd = currentStart.add(Duration(minutes: widget.controller.totalDuration));
+      final slotEnd = currentStart.add(Duration(minutes: int.parse(widget.controller.services[widget.indexOfAppointment].duration)));
       if (slotEnd.isAfter(workDayEnd)) break;
 
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
@@ -81,10 +81,11 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
     }
 
     final now = DateTime.now();
-
+    chooseSlot = widget.controller.listChooseTime;
     availableTimeSlots = allPossibleSlots.where((possibleSlot) {
       final isNotBooked = !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
       final isInFuture = possibleSlot.startTime.isAfter(now);
+      final isNotChoose = !chooseSlot.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
       final isInShift = availableShifts.any((shift) {
         final shiftStart = DateTime(
           selectedDate.year,
@@ -110,7 +111,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
         return _isOverlappingSlotAndAppointment(possibleSlot, appointment);
       });
 
-      return isNotBooked && isInFuture && isInShift && isNotConflictWithAppointments;
+      return isNotBooked && isInFuture && isInShift && isNotConflictWithAppointments && isNotChoose;
     }).toList();
 
     setState(() {});
@@ -139,10 +140,11 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
     super.initState();
     _loadLanguageAndInit();
     if (widget.staffIds[0] != 0) {}
+    context.read<StaffSlotWorkingBloc>().add(
+        GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: [widget.staffIds[widget.indexOfAppointment]], workDate: selectedDate)));
     context
-        .read<StaffSlotWorkingBloc>()
-        .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
-    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffIds, date: selectedDate)));
+        .read<ListTimeBloc>()
+        .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: [widget.staffIds[widget.indexOfAppointment]], date: selectedDate)));
     context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
         startTime: getStartOfDay(selectedDate).toIso8601String(), endTime: getEndOfDay(selectedDate).toIso8601String())));
     generateAvailableTimeSlots();
@@ -172,51 +174,58 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
   }
 
   void _showCalendar(BuildContext context) {
+    final staffSlotWorkingBloc = context.read<StaffSlotWorkingBloc>();
+    final listAppointmentBloc = context.read<ListAppointmentBloc>();
+    final listTimeBloc = context.read<ListTimeBloc>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: TSizes.md,
-            right: TSizes.md,
-            top: TSizes.md,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Theme(
-            data: ThemeData(
-              colorScheme: const ColorScheme.light(
-                primary: TColors.primary,
-                onPrimary: Colors.white,
-                surface: Colors.white,
-                onSurface: Colors.black,
+      builder: (BuildContext bottomSheetContext) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: staffSlotWorkingBloc),
+            BlocProvider.value(value: listAppointmentBloc),
+            BlocProvider.value(value: listTimeBloc),
+          ],
+          child: Padding(
+              padding: EdgeInsets.only(
+                left: TSizes.md,
+                right: TSizes.md,
+                top: TSizes.md,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-            ),
-            child: CalendarDatePicker(
-              initialDate: selectedDate,
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 13)),
-              onDateChanged: (date) {
-                setState(() {
-                  selectedDate = date;
-                });
-                if (widget.staffIds[0] != 0) {
-                  context
-                      .read<ListTimeBloc>()
-                      .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
-                  context
-                      .read<StaffSlotWorkingBloc>()
-                      .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
-                  context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
-                      startTime: getStartOfDay(selectedDate).toIso8601String(), endTime: getEndOfDay(selectedDate).toIso8601String())));
-                }
-                _scrollToSelectedDate();
-              },
-            ),
-          ),
+              child: Theme(
+                data: ThemeData(
+                  colorScheme: const ColorScheme.light(
+                    primary: TColors.primary,
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
+                ),
+                child: CalendarDatePicker(
+                  initialDate: selectedDate,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 13)),
+                  onDateChanged: (date) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(
+                        GetListSlotWorkingParams(staffIds: [widget.staffIds[widget.indexOfAppointment]], workDate: date)));
+
+                    listAppointmentBloc.add(GetListAppointmentEvent(GetListAppointmentParams(
+                        startTime: getStartOfDay(date).toIso8601String(), endTime: getEndOfDay(date).toIso8601String())));
+
+                    listTimeBloc.add(GetListTimeByDateEvent(
+                        GetTimeSlotByDateParams(staffId: [widget.controller.staffIds[widget.indexOfAppointment]], date: date)));
+                    _scrollToSelectedDate();
+                  },
+                ),
+              )),
         );
       },
     );
@@ -306,43 +315,43 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          if (!isChooseDiffSpecialist)
-                            TRoundedContainer(
-                              radius: TSizes.lg,
-                              padding: const EdgeInsets.all(TSizes.sm),
-                              child: Row(
-                                children: [
-                                  TRoundedContainer(
-                                    radius: 35,
-                                    width: 35,
-                                    height: 35,
-                                    backgroundColor: TColors.primaryBackground,
-                                    child: Center(
-                                      child: Text(
-                                        THelperFunctions.getFirstLetterOfLastName(
-                                            !isAllAny ? "Any" : widget.controller.staff[0]?.staffInfo?.userName ?? ""),
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: TSizes.xs),
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
+                          // if (!isChooseDiffSpecialist)
+                          TRoundedContainer(
+                            radius: TSizes.lg,
+                            padding: const EdgeInsets.all(TSizes.sm),
+                            child: Row(
+                              children: [
+                                TRoundedContainer(
+                                  radius: 35,
+                                  width: 35,
+                                  height: 35,
+                                  backgroundColor: TColors.primaryBackground,
+                                  child: Center(
                                     child: Text(
-                                      !isAllAny ? "Any Specialist" : widget.controller.staff[0]?.staffInfo?.userName ?? "",
-                                      style: Theme.of(context).textTheme.labelLarge,
+                                      THelperFunctions.getFirstLetterOfLastName(
+                                          !isAllAny ? "Any" : widget.controller.staff[0]?.staffInfo?.userName ?? ""),
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: TSizes.sm,
+                                ),
+                                const SizedBox(width: TSizes.xs),
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
+                                  child: Text(
+                                    !isAllAny ? "Any Specialist" : widget.controller.staff[0]?.staffInfo?.userName ?? "",
+                                    style: Theme.of(context).textTheme.labelLarge,
                                   ),
-                                  const Icon(
-                                    Iconsax.arrow_down_1,
-                                    size: 15,
-                                  )
-                                ],
-                              ),
+                                ),
+                                const SizedBox(
+                                  width: TSizes.sm,
+                                ),
+                                const Icon(
+                                  Iconsax.arrow_down_1,
+                                  size: 15,
+                                )
+                              ],
                             ),
+                          ),
                           TRoundedIcon(
                             icon: Iconsax.calendar_1,
                             borderRadius: 10,
@@ -371,11 +380,10 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                             onTap: () {
                               setState(() {
                                 selectedDate = DateTime.parse(item['date']!);
-                                context
-                                    .read<ListTimeBloc>()
-                                    .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds, date: selectedDate)));
-                                context.read<StaffSlotWorkingBloc>().add(
-                                    GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
+                                context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(
+                                    staffId: [controller.staffIds[widget.indexOfAppointment]], date: selectedDate)));
+                                context.read<StaffSlotWorkingBloc>().add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(
+                                    staffIds: [widget.staffIds[widget.indexOfAppointment]], workDate: selectedDate)));
                                 context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
                                     startTime: getStartOfDay(selectedDate).toIso8601String(),
                                     endTime: getEndOfDay(selectedDate).toIso8601String())));
@@ -464,12 +472,15 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
 
                                       // AppLogger.info(listTimes);
                                       // controller.updateTimeStart(listTimes);
-                                      AppLogger.debug(currentTime);
+
                                       controller.updateTimeWithIndex(widget.indexOfAppointment, currentTime);
-                                      goUpdateStaffMix(controller, controller.branchId);
+                                      // goUpdateStaffMix(controller, controller.branchId);
+                                      controller.updateListChooseTime(TimeModel(startTime: slot.startTime, endTime: slot.endTime));
                                       setState(() {
                                         selectedTime = slot.startTime.toString();
                                       });
+                                      AppLogger.debug(controller.listChooseTime);
+                                      Navigator.pop(context);
                                       // if (listTimes.length == 1) {
                                       // goUpdateReview(controller);
                                       // }

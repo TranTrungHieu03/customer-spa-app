@@ -9,14 +9,14 @@ class BookRoutineParams {
   final int branchId;
   final String appointmentTime;
   final String note;
-  final int voucherId;
+  final int? voucherId;
 
   BookRoutineParams(
       {required this.userId,
       required this.routineId,
       required this.branchId,
       required this.appointmentTime,
-      required this.voucherId,
+      this.voucherId,
       required this.note});
 
   Map<String, dynamic> toJson() {

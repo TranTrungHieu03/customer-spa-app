@@ -8,6 +8,7 @@ import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/service/data/model/service_model.dart';
 import 'package:spa_mobile/features/service/data/model/staff_model.dart';
+import 'package:spa_mobile/features/service/data/model/time_model.dart';
 
 // Lớp quản lý state
 class MixDataController extends ChangeNotifier {
@@ -23,6 +24,7 @@ class MixDataController extends ChangeNotifier {
   List<int> _staffIds = [];
   VoucherModel? _voucher;
   bool isAuto = true;
+  List<TimeModel> listChooseTime = [];
 
   List<StaffModel?> _staffs = [];
 
@@ -57,6 +59,16 @@ class MixDataController extends ChangeNotifier {
 
   void updateVoucher(VoucherModel newServices) {
     _voucher = newServices;
+    notifyListeners();
+  }
+
+  void updateListChooseTime(TimeModel time) {
+    listChooseTime.add(time);
+    notifyListeners();
+  }
+
+  void removeListChooseTime(DateTime time) {
+    listChooseTime.removeWhere((element) => element.startTime == time);
     notifyListeners();
   }
 

@@ -46,7 +46,7 @@ class ServiceAppointmentListView extends StatelessWidget {
                   backgroundColor: (appt.status.toLowerCase()) == 'completed'
                       ? TColors.success.withOpacity(0.5)
                       : appt.status.toLowerCase() == 'cancelled'
-                          ? TColors.error
+                          ? Colors.red.shade50
                           : appt.status.toLowerCase() == 'arrived'
                               ? Colors.tealAccent.withOpacity(0.5)
                               : TColors.primaryBackground,
@@ -117,6 +117,7 @@ class ServiceAppointmentListView extends StatelessWidget {
                                       controller.updateUser(appt.customer ?? UserModel.empty());
                                       controller.updateId(appt.appointmentId);
                                       controller.updateNote(appt.notes ?? "");
+                                      controller.updateMinDate(appt.appointmentsTime);
                                       goUpdateSpecialist(appt.branch?.branchId ?? 0, controller);
                                     },
                                     child: Text(AppLocalizations.of(context)!.choose_specialist,

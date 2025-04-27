@@ -372,7 +372,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 TProductPriceText(
-                                  price: (order.totalAmount).toString(),
+                                  price: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),
                                   isLarge: true,
                                 )
                               ],

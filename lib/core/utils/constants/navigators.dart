@@ -378,7 +378,11 @@ goRoutines() async {
 }
 
 goReviewChangeRoutine(MixDataController controller) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ConfirmCustomizeScreen(controller: controller)));
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider<MixBloc>(
+              create: (context) => MixBloc(orderMix: serviceLocator()), child: ConfirmCustomizeScreen(controller: controller))));
 }
 
 goRoutineStep(int id) async {
@@ -393,8 +397,11 @@ goSelectRoutineTime(RoutineDataController routine) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
-          builder: (context) => SelectRoutineTimeScreen(
-                controller: routine,
+          builder: (context) => BlocProvider(
+                create: (context) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator()),
+                child: SelectRoutineTimeScreen(
+                  controller: routine,
+                ),
               )));
 }
 
@@ -443,4 +450,8 @@ goTableAppointments() async {
 goAppointmentDetail(String appointmentId) async {
   Navigator.push(
       navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => AppointmentDetailScreen(appointmentId: (appointmentId))));
+}
+
+goOrderMixDetail(int id) async {
+  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderProductServiceDetailScreen(id: id)));
 }

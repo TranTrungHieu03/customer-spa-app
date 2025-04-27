@@ -85,6 +85,7 @@ import 'package:spa_mobile/features/home/presentation/blocs/channel/channel_bloc
 import 'package:spa_mobile/features/home/presentation/blocs/chat/chat_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/list_channel/list_channel_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/list_message/list_message_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/mix/mix_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';

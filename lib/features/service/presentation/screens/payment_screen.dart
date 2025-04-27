@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/model/request_payos_model.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
-import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/payment_method.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
@@ -122,6 +122,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       const SizedBox(
                         height: TSizes.sm,
                       ),
+                      if ((order.statusPayment.toLowerCase() != "Paid" || order.statusPayment.toLowerCase() != "PaidDeposit") &&
+                          order.status.toLowerCase() == "pending")
+                        TRoundedContainer(
+                          padding: EdgeInsets.all(TSizes.sm),
+                          backgroundColor: TColors.warning,
+                          child: Text(
+                              'Vui lòng thanh toán trước  ${DateFormat('HH:mm, dd/MM/yyyy').format(order.createdDate.toUtc().toLocal().add(Duration(hours: 7, minutes: 15)))}'),
+                        ),
+                      const SizedBox(
+                        height: TSizes.sm,
+                      ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -195,7 +206,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           ),
                           Text(
                             "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime).toString()} - "
-                            "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
+                            "${DateFormat('HH:mm', lgCode).format(order.appointments![order.appointments!.length - 1].appointmentEndTime).toString()}",
+                            // "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
                           ),
                           const Spacer(),
                           TRoundedIcon(
@@ -212,70 +224,66 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       const SizedBox(
                         height: TSizes.md,
                       ),
-                      TGridLayout(
-                          mainAxisExtent: 180,
-                          crossAxisCount: 1,
-                          isScroll: false,
-                          itemCount: order.appointments.length,
-                          itemBuilder: (context, index) {
-                            final serviceState = order.appointments[index];
-                            return
-                                // Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                // children: [
-                                Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(serviceState.service.name, style: Theme.of(context).textTheme.bodyMedium),
-                                    if (order.status.toLowerCase() != 'cancelled')
-                                      TRoundedIcon(
-                                        icon: Icons.qr_code_scanner_rounded,
-                                        color: TColors.primary,
-                                        size: 30,
-                                        onPressed: () => _showModelQR(context, serviceState.appointmentId),
-                                      )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
-                                    ),
-                                    TProductPriceText(price: serviceState.service.price.toString()),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                Text('${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.staffInfo?.fullName ?? ""}',
-                                    style: Theme.of(context).textTheme.bodyMedium),
-                                if (serviceState.status.toLowerCase() == 'completed')
-                                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                                    TextButton(
-                                        onPressed: () {
-                                          goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
-                                        },
-                                        child: Text(
-                                          AppLocalizations.of(context)!.review,
-                                          style: Theme.of(context).textTheme.bodyLarge,
-                                        )),
-                                  ]),
-                                Divider(
-                                  color: dark ? TColors.darkGrey : TColors.grey,
-                                  thickness: 0.5,
-                                ),
-                              ],
-                            );
-                          }),
+                      ListView.builder(
+                        shrinkWrap: true, // Ensure the ListView takes only as much space as needed
+                        physics: NeverScrollableScrollPhysics(), // Disable scrolling if already in a scrollable container
+                        itemCount: order.appointments.length,
+                        itemBuilder: (context, index) {
+                          final serviceState = order.appointments[index];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(serviceState.service.name, style: Theme.of(context).textTheme.bodyMedium),
+                                  if (order.status.toLowerCase() != 'cancelled')
+                                    TRoundedIcon(
+                                      icon: Icons.qr_code_scanner_rounded,
+                                      color: TColors.primary,
+                                      size: 30,
+                                      onPressed: () => _showModelQR(context, serviceState.appointmentId),
+                                    )
+                                ],
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
+                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
+                                  ),
+                                  TProductPriceText(price: serviceState.service.price.toString()),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              Text('${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.staffInfo?.fullName ?? ""}',
+                                  style: Theme.of(context).textTheme.bodyMedium),
+                              if (serviceState.status.toLowerCase() == 'completed')
+                                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                                  TextButton(
+                                      onPressed: () {
+                                        goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                      },
+                                      child: Text(
+                                        AppLocalizations.of(context)!.review,
+                                        style: Theme.of(context).textTheme.bodyLarge,
+                                      )),
+                                ]),
+                              Divider(
+                                color: dark ? TColors.darkGrey : TColors.grey,
+                                thickness: 0.5,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                       TPaymentDetailService(
                         price: (totalPrice).toString(),
                         total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)).toString(),

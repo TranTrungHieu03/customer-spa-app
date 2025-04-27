@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
@@ -28,7 +29,7 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
     on<GetRoutineDetailEvent>(_onGetRoutineDetailEvent);
     on<BookRoutineDetailEvent>(_onBookRoutineEvent);
     on<RefreshRoutineEvent>(_onRefresh);
-    on<OrderMixEvent>(_onOrderMix);
+    // on<OrderMixEvent>(_onOrderMix);
 
     on<GetCurrentRoutineEvent>(_onGetCurrentRoutineEvent);
   }
@@ -51,14 +52,18 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
     );
   }
 
-  Future<void> _onOrderMix(OrderMixEvent event, Emitter<RoutineState> emit) async {
-    emit(RoutineLoading());
-    final result = await _orderMix(event.params);
-    result.fold(
-      (failure) => emit(RoutineError(failure.message)),
-      (data) => emit(OrderMixSuccess(data)),
-    );
-  }
+  // Future<void> _onOrderMix(OrderMixEvent event, Emitter<RoutineState> emit) async {
+  //   emit(RoutineLoading());
+  //   final result = await _orderMix(event.params);
+  //   result.fold(
+  //     (failure) => emit(RoutineError(failure.message)),
+  //     (data) {
+  //
+  //       emit(OrderMixSuccess(data));
+  //       AppLogger.info(data);
+  //     },
+  //   );
+  // }
 
   Future<void> _onRefresh(RefreshRoutineEvent event, Emitter<RoutineState> emit) async {
     emit(RoutineInitial());

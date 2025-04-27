@@ -10,6 +10,7 @@ import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
@@ -200,6 +201,7 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
     // Calculate initial price from products in routine
     for (var product in products) {
       if (_isProductInRoutine(product.productId) && !_manuallyRemovedProductIds.contains(product.productId)) {
+
         if (!_selectedProducts.any((p) => p.productId == product.productId)) {
           _selectedProducts.add(product);
           totalPrice += product.price;
@@ -283,12 +285,16 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
               padding: const EdgeInsets.all(TSizes.sm),
               child: ElevatedButton(
                 onPressed: () {
+                  if (_selectedServices.isEmpty && _selectedProducts.isEmpty){
+                    TSnackBar.warningSnackBar(context, message: "Vui lòng chọn ít nhất 1 sản phẩm hoặc dịch vụ để tiếp tục");
+                    return;
+                  }
                   widget.controller.updateProducts(_selectedProducts);
                   widget.controller.updateServices(_selectedServices);
                   widget.controller.updateUser(user ?? UserModel.empty());
                   goCustomize(widget.controller);
                 },
-                child: Text("${AppLocalizations.of(context)!.add_to_routine}"),
+                child: Text(AppLocalizations.of(context)!.add_to_routine),
               ))),
     );
   }

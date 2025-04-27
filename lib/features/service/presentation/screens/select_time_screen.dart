@@ -174,51 +174,56 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   }
 
   void _showCalendar(BuildContext context) {
+    final staffSlotWorkingBloc = context.read<StaffSlotWorkingBloc>();
+    final listAppointmentBloc = context.read<ListAppointmentBloc>();
+    final listTimeBloc = context.read<ListTimeBloc>();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: TSizes.md,
-            right: TSizes.md,
-            top: TSizes.md,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Theme(
-            data: ThemeData(
-              colorScheme: const ColorScheme.light(
-                primary: TColors.primary,
-                onPrimary: Colors.white,
-                surface: Colors.white,
-                onSurface: Colors.black,
+      builder: (BuildContext bottomSheetContext) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: staffSlotWorkingBloc),
+            BlocProvider.value(value: listAppointmentBloc),
+            BlocProvider.value(value: listTimeBloc),
+          ],
+          child: Padding(
+              padding: EdgeInsets.only(
+                left: TSizes.md,
+                right: TSizes.md,
+                top: TSizes.md,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-            ),
-            child: CalendarDatePicker(
-              initialDate: selectedDate,
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 13)),
-              onDateChanged: (date) {
-                setState(() {
-                  selectedDate = date;
-                });
-                if (widget.staffIds[0] != 0) {
-                  context
-                      .read<StaffSlotWorkingBloc>()
-                      .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
-                  context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
-                      startTime: getStartOfDay(selectedDate).toIso8601String(), endTime: getEndOfDay(selectedDate).toIso8601String())));
-                  context
-                      .read<ListTimeBloc>()
-                      .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
-                }
-                _scrollToSelectedDate();
-              },
-            ),
-          ),
+              child: Theme(
+                data: ThemeData(
+                  colorScheme: const ColorScheme.light(
+                    primary: TColors.primary,
+                    onPrimary: Colors.white,
+                    surface: Colors.white,
+                    onSurface: Colors.black,
+                  ),
+                ),
+                child: CalendarDatePicker(
+                  initialDate: selectedDate,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 13)),
+                  onDateChanged: (date) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: date)));
+
+                    listAppointmentBloc.add(GetListAppointmentEvent(GetListAppointmentParams(
+                        startTime: getStartOfDay(date).toIso8601String(), endTime: getEndOfDay(date).toIso8601String())));
+
+                    listTimeBloc.add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
+                    _scrollToSelectedDate();
+                  },
+                ),
+              )),
         );
       },
     );

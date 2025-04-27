@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,6 +26,7 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/rou
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/add_to_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_list_view.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_list_view.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_branches_by_routine.dart';
@@ -62,6 +65,7 @@ class RoutineDetailScreen extends StatefulWidget {
 class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
   int? selectedBranchId;
   BranchModel? branchInfo;
+  UserModel? user;
 
   @override
   void initState() {
@@ -78,6 +82,12 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
         selectedBranchId = int.parse(branchId);
       });
     }
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    if (jsonDecode(userJson) != null) {
+      user = UserModel.fromJson(jsonDecode(userJson));
+    } else {
+      goLoginNotBack();
+    }
   }
 
   @override
@@ -91,12 +101,14 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
         }
         if (state is ListBranchesLoaded) {
           final branches = state.branches;
-          AppLogger.info(branches);
           if (branches.isNotEmpty) {
             setState(() {
               branchInfo = branches.firstWhere((element) => element.branchId == selectedBranchId, orElse: () => branches.first);
               selectedBranchId = branchInfo?.branchId;
             });
+          } else {
+            TSnackBar.warningSnackBar(context,
+                message: "Rất tiếc, hiện tại chưa có chi nhánh nào khả dụng cho gói này. Bạn vui lòng kiểm tra lại sau!");
           }
         }
       },
@@ -161,6 +173,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                             IconButton(
                               icon: const Icon(Iconsax.arrow_right_1),
                               onPressed: () async {
+                                mixDataController.updateUser(user ?? UserModel.empty());
                                 _changeElement(context, mixDataController, routine);
                               },
                             ),
@@ -215,12 +228,14 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                   ),
                 ),
               ),
-              bottomNavigationBar: !widget.onlyShown
+              bottomNavigationBar: !widget.onlyShown || (branchInfo == null)
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
                           onPressed: () {
                             controller.updateRoutine(routine);
+                            AppLogger.info(branchInfo);
+                            controller.updateBranch(branchInfo ?? BranchModel.empty());
                             goSelectRoutineTime(controller);
                           },
                           child: Text(AppLocalizations.of(context)!.book_now)))
@@ -383,6 +398,7 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
                 if (result == true) {
                   context.read<RoutineBloc>().add(GetRoutineDetailEvent(GetRoutineDetailParams(widget.id)));
                 }
+                Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,

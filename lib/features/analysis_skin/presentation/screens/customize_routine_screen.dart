@@ -37,6 +37,10 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: true,
+        title: Text(
+          AppLocalizations.of(context)!.products_and_services,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -44,10 +48,6 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Customize Your Routine",
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
               const SizedBox(height: TSizes.md),
               TRoundedContainer(
                 padding: EdgeInsets.all(TSizes.sm),
@@ -81,6 +81,10 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
               const SizedBox(
                 height: TSizes.md,
               ),
+              Text(
+                AppLocalizations.of(context)!.products,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -97,11 +101,15 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                 },
               ),
               const SizedBox(height: TSizes.sm),
+              Text(
+                AppLocalizations.of(context)!.services,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               RadioListTile<bool>(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
                   'Chọn nhân viên sau',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 value: true,
                 groupValue: isAuto,
@@ -112,13 +120,14 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                   });
                   widget.controller.updateAuto(value!);
                 },
+                dense: true,
                 controlAffinity: ListTileControlAffinity.leading,
               ),
               RadioListTile<bool>(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
                   'Chọn nhân viên cho từng dịch vụ',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 value: false,
                 groupValue: isAuto,
@@ -133,6 +142,7 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                   widget.controller.updateAuto(value!);
                 },
                 controlAffinity: ListTileControlAffinity.leading,
+                dense: true,
               ),
               const SizedBox(height: TSizes.sm),
               ListView.builder(
@@ -183,9 +193,15 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                                     maxLines: 2,
                                     smallSize: true,
                                   ),
-                                  TProductPriceText(
-                                    price: service.price.toString(),
-                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TProductPriceText(
+                                        price: service.price.toString(),
+                                      ),
+                                      Text('x1')
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
@@ -193,6 +209,9 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                         ],
                       ));
                 },
+              ),
+              const SizedBox(
+                height: TSizes.md,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,

@@ -201,6 +201,7 @@ Future<void> _initService() async {
     ..registerLazySingleton(() => UserChatBloc(getUserChatInfo: serviceLocator()))
     ..registerLazySingleton(() => AppointmentFeedbackBloc(getFeedback: serviceLocator()))
     ..registerLazySingleton(() => ListChannelBloc(getListChannel: serviceLocator()))
+    ..registerLazySingleton(() => MixBloc(orderMix: serviceLocator()))
 
     // ..registerLazySingleton(() =>
     //     ChatBloc(getMessages: serviceLocator(), sendMessage: serviceLocator(), connect: serviceLocator(), disconnect: serviceLocator()))

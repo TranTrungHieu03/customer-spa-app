@@ -159,7 +159,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                               )
                             ],
                           ),
-                          if (appointment.status.toLowerCase() != 'pending')
+                          if (appointment.status.toLowerCase() == 'pending')
                             Align(
                               alignment: Alignment.centerRight,
                               child: TRoundedIcon(
@@ -393,7 +393,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           ),
                         ]),
                       ),
-                      TextButton(
+                     (state.appointment.status.toLowerCase() == "pending")  ? TextButton(
                           onPressed: () {
                             // _showModalCancel(context, order.orderId);
                             context
@@ -403,7 +403,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           child: Text(
                             AppLocalizations.of(context)!.cancel_appointment,
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
-                          ))
+                          )) : const SizedBox()
                     ])));
               } else if (state is AppointmentError) {
                 return Center(child: Text(state.message));

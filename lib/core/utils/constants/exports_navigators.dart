@@ -23,6 +23,7 @@ import 'package:spa_mobile/features/analysis_skin/presentation/screens/checkout_
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/confirm_customize_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/customize_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/order_product_service_detail_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/order_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_detail_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_history_screen.dart';
@@ -42,6 +43,7 @@ import 'package:spa_mobile/features/auth/presentation/screens/on_boarding_screen
 import 'package:spa_mobile/features/auth/presentation/screens/set_password_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/screens/verify_screen.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/mix/mix_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/screens/chat_ai_screen.dart';
 import 'package:spa_mobile/features/home/presentation/screens/chat_list_screen.dart';

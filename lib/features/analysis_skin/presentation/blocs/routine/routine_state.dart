@@ -21,11 +21,11 @@ final class RoutineBook extends RoutineState {
   const RoutineBook(this.id);
 }
 
-final class OrderMixSuccess extends RoutineState {
-  final int id;
-
-  const OrderMixSuccess(this.id);
-}
+// final class OrderMixSuccess extends RoutineState {
+//   final int id;
+//
+//   const OrderMixSuccess(this.id);
+// }
 
 final class RoutineError extends RoutineState {
   final String message;
