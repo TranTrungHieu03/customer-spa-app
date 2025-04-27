@@ -1,3 +1,4 @@
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/product/domain/entities/shipment.dart';
 
 class ShipmentResponseModel extends Shipment {
@@ -11,6 +12,7 @@ class ShipmentResponseModel extends Shipment {
       required super.cost});
 
   factory ShipmentResponseModel.fromJson(Map<String, dynamic> json) {
+    AppLogger.debug(json);
     return ShipmentResponseModel(
       name: json['recipientName'],
       phone: json['recipientPhone'],

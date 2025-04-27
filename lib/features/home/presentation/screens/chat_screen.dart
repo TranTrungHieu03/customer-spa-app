@@ -56,7 +56,6 @@ class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageTextController = TextEditingController();
 
   void _scrollToBottom() {
-    // if (!chatListScrollController.hasClients) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (chatListScrollController.hasClients) {
         chatListScrollController.animateTo(
@@ -148,7 +147,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    chatBloc.add(ChatDisconnectEvent());
     chatListScrollController.dispose();
     messageTextController.dispose();
     super.dispose();
@@ -157,7 +155,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChannelBloc(getChannel: serviceLocator())..add(GetChannelEvent(GetChannelParams(widget.channelId))),
+      create: (context) => ChannelBloc(getChannel: serviceLocator(), getChannelByAppointment: serviceLocator())
+        ..add(GetChannelEvent(GetChannelParams(widget.channelId))),
       child: BlocProvider.value(
         value: chatBloc,
         child: BlocListener<ChatBloc, ChatState>(
@@ -188,13 +187,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       BlocBuilder<ListMessageBloc, ListMessageState>(
                         builder: (context, state) {
                           if (state is ListMessageLoading) {
-                            return Center(child: CircularProgressIndicator());
+                            return const Center(child: CircularProgressIndicator());
                           } else if (state is ListMessageLoaded) {
                             _scrollToBottom();
                             final sortedMessages = state.messages..sort((a, b) => a.timestamp.compareTo(b.timestamp));
                             return Expanded(
-                                child: chatMessageWidget(
-                                    chatListScrollController, sortedMessages, widget.userId, channelState.channel.memberDetails!));
+                              child: chatMessageWidget(
+                                  chatListScrollController, sortedMessages, widget.userId, channelState.channel.memberDetails!),
+                            );
                           }
                           return const SizedBox();
                         },
@@ -213,6 +213,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         SendMessageParams(
                           channelId: widget.channelId,
                           senderId: widget.userId,
+                          messageType: 'text',
                           content: messageTextController.text.trim(),
                         ),
                       ));
@@ -222,7 +223,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 );
               } else if (channelState is ChannelLoading) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               return Scaffold(
                 body: Center(

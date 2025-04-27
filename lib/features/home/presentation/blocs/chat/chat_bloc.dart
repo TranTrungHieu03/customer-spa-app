@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/connect_hub.dart';
@@ -84,6 +85,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   void _onMessageReceived(ChatMessageReceivedEvent event, Emitter<ChatState> emit) {
+    AppLogger.info("Message received: ${event.message.toJson()}");
     if (state is ChatLoaded) {
       final currentState = state as ChatLoaded;
 

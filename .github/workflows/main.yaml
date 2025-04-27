@@ -56,11 +56,11 @@ jobs:
       - name:  Build APK & AAB
         run: flutter build appbundle --release
 
-      - name:  Upload AAB as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
+#      - name:  Upload AAB as artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: app-release-aab
+#          path: build/app/outputs/bundle/release/app-release.aab
 
       - name:  Deploy to Google Play
         uses: r0adkll/upload-google-play@v1

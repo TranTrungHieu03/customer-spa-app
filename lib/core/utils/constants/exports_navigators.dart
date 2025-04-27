@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
+import 'package:spa_mobile/core/common/inherited/mix_data.dart';
 import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/inherited/routine_data.dart';
 import 'package:spa_mobile/core/common/model/branch_model.dart';
@@ -19,6 +20,8 @@ import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysis_
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/basic_screen_image.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/book_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/checkout_routine_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/confirm_customize_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/customize_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/order_routine_detail.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_detail_screen.dart';
@@ -26,6 +29,8 @@ import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_h
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routines_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/select_time_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/tracking_routine_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/update_appointments_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/update_appointments_time_screen.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_confirm_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_cubit.dart';
 import 'package:spa_mobile/features/auth/presentation/cubit/password_match_cubit.dart';

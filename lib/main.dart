@@ -9,7 +9,6 @@ import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
 import 'package:spa_mobile/core/common/cubit/user/app_user_cubit.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/services/notification.dart';
 import 'package:spa_mobile/core/services/permission.dart';
@@ -136,8 +135,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getStartScreen(BuildContext context) async {
     final isLogin = await LocalStorage.getData(LocalStorageKey.isLogin);
     final isCompletedOnBoarding = await LocalStorage.getData(LocalStorageKey.isCompletedOnBoarding);
-    AppLogger.info('login: $isLogin');
-    AppLogger.info('onboarding: $isCompletedOnBoarding');
+    // AppLogger.info('login: $isLogin');
+    // AppLogger.info('onboarding: $isCompletedOnBoarding');
     if (isLogin == 'true') {
       goHome();
     } else if (isCompletedOnBoarding == 'true') {

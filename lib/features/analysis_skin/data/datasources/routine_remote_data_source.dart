@@ -1,4 +1,5 @@
 import 'package:spa_mobile/core/errors/exceptions.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/list_order_routine_model.dart';
@@ -15,6 +16,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_de
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/order_mix.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 abstract class RoutineRemoteDataSource {
@@ -37,6 +39,8 @@ abstract class RoutineRemoteDataSource {
   Future<RoutineTrackingModel> getRoutineTracking(GetRoutineTrackingParams params);
 
   Future<List<AppointmentModel>> getAppointmentsByRoutine(GetListAppointmentByRoutineParams params);
+
+  Future<int> orderMix(OrderMixParams params);
 }
 
 class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
@@ -206,6 +210,24 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
 
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((x) => AppointmentModel.fromJson(x)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<int> orderMix(OrderMixParams params) async {
+    try {
+      AppLogger.debug(params.toJson());
+      final response = await _apiService.postApi('/Order/create-order-with-products-and-services', params.toJson());
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.data);
       } else {
         throw AppException(apiResponse.result!.message!);
       }

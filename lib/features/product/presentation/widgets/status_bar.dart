@@ -138,7 +138,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                                                 width: TSizes.spacebtwItems / 2,
                                                               ),
                                                               Text(
-                                                                orderDetail.product.branch?.branchName ?? "",
+                                                                orderDetail.branch?.branchName ?? "",
                                                                 style: Theme.of(context).textTheme.bodyLarge,
                                                                 overflow: TextOverflow.ellipsis,
                                                               )
@@ -538,7 +538,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                             ],
                                           ),
                                           onTap: () {
-                                             goOrderRoutineDetail(order.orderId);
+                                            goOrderRoutineDetail(order.orderId);
                                           },
                                         ),
                                         // Padding(

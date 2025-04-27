@@ -148,14 +148,16 @@ class TProductCart extends StatelessWidget {
                                   }
 
                                   controller.updateProducts(checkoutItems);
+                                  controller.updateBranch(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId));
                                   if (controller.user?.wardCode == 0 || controller.user?.district == 0) {
-                                    goProfile();
+                                    // goProfile();
+                                    goShipmentInfo(controller);
                                     TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.update_address_to_purchase);
                                     return;
                                   }
                                   goCheckout(controller);
                                   AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).branchId);
-                                  controller.updateBranch(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId));
+
                                   AppLogger.info(branches.firstWhere((x) => x.branchId == checkoutItems.first.product.branchId).district);
                                 }
                               : null,

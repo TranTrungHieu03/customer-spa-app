@@ -8,3 +8,9 @@ final class GetChannelEvent extends ChannelEvent {
 
   GetChannelEvent(this.params);
 }
+
+final class GetChannelByAppointmentEvent extends ChannelEvent {
+  final GetChannelByAppointmentParams params;
+
+  GetChannelByAppointmentEvent(this.params);
+}

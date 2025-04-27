@@ -102,23 +102,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                AppLocalizations.of(context)!.order_ref,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                              Text(
-                                order.orderCode.toString(),
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Row(
+                      //       children: [
+                      //         Text(
+                      //           AppLocalizations.of(context)!.order_ref,
+                      //           style: Theme.of(context).textTheme.bodySmall,
+                      //         ),
+                      //         Text(
+                      //           order.orderCode.toString(),
+                      //           style: Theme.of(context).textTheme.bodySmall,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
                       const SizedBox(
                         height: TSizes.sm,
                       ),
@@ -258,16 +258,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 ),
                                 Text('${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.staffInfo?.fullName ?? ""}',
                                     style: Theme.of(context).textTheme.bodyMedium),
-                                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                                  TextButton(
-                                      onPressed: () {
-                                        goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
-                                      },
-                                      child: Text(
-                                        AppLocalizations.of(context)!.review,
-                                        style: Theme.of(context).textTheme.bodyLarge,
-                                      )),
-                                ]),
+                                if (serviceState.status.toLowerCase() == 'completed')
+                                  Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                                    TextButton(
+                                        onPressed: () {
+                                          goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                        },
+                                        child: Text(
+                                          AppLocalizations.of(context)!.review,
+                                          style: Theme.of(context).textTheme.bodyLarge,
+                                        )),
+                                  ]),
                                 Divider(
                                   color: dark ? TColors.darkGrey : TColors.grey,
                                   thickness: 0.5,

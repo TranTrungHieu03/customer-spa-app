@@ -7,6 +7,7 @@ import 'package:spa_mobile/core/common/widgets/form_divider.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/common/widgets/social_btn.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
@@ -49,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
             } else if (state is AuthFailure) {
               TSnackBar.errorSnackBar(context, message: state.message);
             } else if (state is AuthLoaded) {
+              AppLogger.info(state);
               context.read<UserChatBloc>().add(GetUserChatInfoEvent(GetUserChatInfoParams(state.user.userId)));
               goHome();
             }

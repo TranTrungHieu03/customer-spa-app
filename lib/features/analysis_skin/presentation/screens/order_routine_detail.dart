@@ -13,6 +13,7 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/order_routine/order_routine_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
@@ -86,7 +87,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                       children: [
                         if (order.statusPayment != 'Cash')
                           Text(
-                              '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.paid} ${(order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}'),
+                              '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.paid} ${formatMoney(((order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3).toString())}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}'),
                         const SizedBox(
                           height: TSizes.xs,
                         ),
@@ -370,3 +371,4 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
     );
   }
 }
+

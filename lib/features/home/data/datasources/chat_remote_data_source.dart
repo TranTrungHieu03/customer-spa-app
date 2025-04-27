@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:signalr_netcore/ihub_protocol.dart';
 import 'package:signalr_netcore/signalr_client.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 
@@ -39,13 +40,31 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
         try {
           final message = MessageChannelModel.fromJson(json.decode(json.encode(arguments[0])));
           handleMessageReceived(message);
-        } catch (e) {}
+        } catch (e) {
+          AppLogger.error("Error parsing message: $e");
+        }
+      }
+    });
+    _hubConnection.on("receiveNotification", (arguments) {
+      if (arguments != null && arguments.isNotEmpty) {
+        try {
+          AppLogger.debug(json.decode(json.encode(arguments[0])));
+          // final message = MessageChannelModel.fromJson(json.decode(json.encode(arguments[0])));
+          handleNotificationReceived(json.decode(json.encode(arguments[0])));
+        } catch (e) {
+          AppLogger.error("Error parsing message: $e");
+        }
       }
     });
   }
 
   void handleMessageReceived(MessageChannelModel message) {
+    AppLogger.info("Message received: ${message.toJson()}");
     _messageStreamController.add(message);
+  }
+
+  void handleNotificationReceived(dynamic message) {
+    AppLogger.info("Message received: ${message.toJson()}");
   }
 
   @override

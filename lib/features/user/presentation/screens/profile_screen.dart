@@ -200,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               }
                               if (fullNameController.text.isEmpty ||
                                   phoneController.text.isEmpty ||
-                                  cityController.text.isEmpty ||
+                                  emailController.text.isEmpty ||
                                   userNameController.text.isEmpty ||
                                   addressController.text.isEmpty) {
                                 TSnackBar.errorSnackBar(context, message: "Please fill all fields");

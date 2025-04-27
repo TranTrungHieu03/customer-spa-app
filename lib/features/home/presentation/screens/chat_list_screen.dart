@@ -99,7 +99,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         title: Text(
           "Solace Connect",
           style: Theme.of(context).textTheme.headlineMedium,
-        ),
+        )
       ),
       body: BlocListener<ListChannelBloc, ListChannelState>(
         listener: (context, state) {

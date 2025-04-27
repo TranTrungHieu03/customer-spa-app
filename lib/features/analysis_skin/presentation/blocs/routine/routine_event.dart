@@ -23,3 +23,8 @@ final class GetCurrentRoutineEvent extends RoutineEvent {
   GetCurrentRoutineEvent(this.params);
 }
 
+final class OrderMixEvent extends RoutineEvent {
+  final OrderMixParams params;
+
+  OrderMixEvent(this.params);
+}
