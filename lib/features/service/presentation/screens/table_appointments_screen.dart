@@ -200,7 +200,7 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                               }
                               AppLogger.info(appt.staff?.roleId);
                               return GestureDetector(
-                                onTap: () => goAppointmentDetail(appt.appointmentId.toString()),
+                                onTap: () => goAppointmentDetail(appt.appointmentId.toString(), false),
                                 child: TRoundedContainer(
                                   backgroundColor: (appt.status.toLowerCase()) == 'completed'
                                       ? TColors.success.withOpacity(0.5)

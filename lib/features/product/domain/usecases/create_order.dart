@@ -48,7 +48,7 @@ class CreateOrderParams {
       "paymentMethod": paymentMethod,
       "products": products.map((p) => p.toJson()).toList(),
       "estimatedDeliveryDate": estimatedDeliveryDate,
-      "shippingCost": shippingCost,
+      "shippingCost": shippingCost == 0 ? null : shippingCost,
       "recipientAddress": recipientAddress,
       "recipientName": recipientName,
       "recipientPhone": recipientPhone

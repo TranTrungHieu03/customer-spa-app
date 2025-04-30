@@ -32,9 +32,10 @@ import 'package:spa_mobile/features/service/presentation/widgets/qr_checkin.dart
 import 'package:spa_mobile/init_dependencies.dart';
 
 class AppointmentDetailScreen extends StatefulWidget {
-  const AppointmentDetailScreen({super.key, required this.appointmentId});
+  const AppointmentDetailScreen({super.key, required this.appointmentId, this.isEnableUpdateAll = false});
 
   final String appointmentId;
+  final bool isEnableUpdateAll;
 
   @override
   State<AppointmentDetailScreen> createState() => _AppointmentDetailScreenState();
@@ -106,6 +107,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                 createAppointment: serviceLocator(),
                 updateAppointment: serviceLocator(),
                 cancelAppointmentDetail: serviceLocator(),
+                updateAppointmentRoutine: serviceLocator(),
                 getAppointmentDetail: serviceLocator())
               ..add(GetAppointmentDetailEvent(GetAppointmentDetailParams(appointmentId: widget.appointmentId))),
           ),
@@ -393,17 +395,19 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           ),
                         ]),
                       ),
-                     (state.appointment.status.toLowerCase() == "pending")  ? TextButton(
-                          onPressed: () {
-                            // _showModalCancel(context, order.orderId);
-                            context
-                                .read<AppointmentBloc>()
-                                .add(CancelAppointmentDetailEvent(CancelAppointmentDetailParams(widget.appointmentId)));
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.cancel_appointment,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
-                          )) : const SizedBox()
+                      (state.appointment.status.toLowerCase() == "pending")
+                          ? TextButton(
+                              onPressed: () {
+                                // _showModalCancel(context, order.orderId);
+                                context
+                                    .read<AppointmentBloc>()
+                                    .add(CancelAppointmentDetailEvent(CancelAppointmentDetailParams(widget.appointmentId)));
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel_appointment,
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: TColors.darkGrey),
+                              ))
+                          : const SizedBox()
                     ])));
               } else if (state is AppointmentError) {
                 return Center(child: Text(state.message));

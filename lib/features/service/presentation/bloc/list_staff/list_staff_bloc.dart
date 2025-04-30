@@ -35,7 +35,6 @@ class ListStaffBloc extends Bloc<ListStaffEvent, ListStaffState> {
           for (int i = 1; i < result.length; i++) {
             intersectionStaff = intersectionStaff.intersection(result[i].staffs.toSet());
           }
-          AppLogger.info(intersectionStaff.length);
           emit(ListStaffLoaded(listStaff: result, intersectionStaff: intersectionStaff.toList()));
         }
       },

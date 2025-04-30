@@ -18,4 +18,9 @@ class TimeModel extends Time {
       'endTime': endTime.toIso8601String(),
     };
   }
+
+  @override
+  String toString() {
+    return 'TimeModel(startTime: ${startTime.toIso8601String()}, endTime: ${endTime.toIso8601String()})';
+  }
 }

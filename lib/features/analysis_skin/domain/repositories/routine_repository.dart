@@ -15,6 +15,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_hi
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/order_mix.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 abstract class RoutineRepository {
@@ -33,6 +34,8 @@ abstract class RoutineRepository {
   Future<Either<Failure, int>> bookRoutine(BookRoutineParams params);
 
   Future<Either<Failure, int>> orderMix(OrderMixParams params);
+
+  Future<Either<Failure, String>> updateAppointmentRoutine(UpdateAppointmentRoutineParams params);
 
   Future<Either<Failure, RoutineModel>> getCurrentRoutine(GetCurrentRoutineParams params);
 

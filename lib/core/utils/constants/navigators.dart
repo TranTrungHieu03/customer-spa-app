@@ -239,12 +239,12 @@ goShowRoutineDetail(String id) async {
       ));
 }
 
-goTrackingRoutineDetail(int id, int userId) async {
-  Navigator.push(
-      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => WrapperTrackingRoutineScreen(id: id, userId: userId)));
+goTrackingRoutineDetail(int id, int userId, int orderId) async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => WrapperTrackingRoutineScreen(id: id, userId: userId, orderId: orderId)));
 }
 
-goSelectTime(List<int> staffIds, AppointmentDataController controller) async {
+goSelectTime(List<int> staffIds, AppointmentDataController controller, int indexTime) async {
   Navigator.push(
       navigatorKey.currentContext!,
       MaterialPageRoute(
@@ -261,6 +261,7 @@ goSelectTime(List<int> staffIds, AppointmentDataController controller) async {
                 child: SelectTimeScreen(
                   staffIds: staffIds,
                   controller: controller,
+                  indexTime: indexTime,
                 ),
               )));
 }
@@ -286,14 +287,10 @@ goUpdateTime(List<int> staffIds, AppointmentDataController controller) async {
               )));
 }
 
-goSelectSpecialist(int branchId, AppointmentDataController controller) async {
-  Navigator.push(
-      navigatorKey.currentContext!,
-      MaterialPageRoute(
-          builder: (context) => SelectSpecialistScreen(
-                branchId: branchId,
-                controller: controller,
-              )));
+goSelectSpecialist(int branchId, AppointmentDataController controller, int isBack) async {
+  AppLogger.wtf(isBack);
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => SelectSpecialistScreen(branchId: branchId, controller: controller, isBack: isBack)));
 }
 
 goUpdateSpecialist(int branchId, AppointmentDataController controller) async {
@@ -342,14 +339,9 @@ goCustomize(MixDataController controller) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CustomizeRoutineScreen(controller: controller)));
 }
 
-goUpdateStaffMix(MixDataController controller, int branchId) async {
-  Navigator.push(
-      navigatorKey.currentContext!,
-      MaterialPageRoute(
-          builder: (context) => UpdateAppointmentsScreen(
-                controller: controller,
-                branchId: branchId,
-              )));
+goUpdateStaffMix(MixDataController controller, int branchId, int isBack) async {
+  Navigator.push(navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => UpdateAppointmentsScreen(controller: controller, branchId: branchId, isBack: isBack)));
 }
 
 goUpdateTimeMix(MixDataController controller, List<int> staffIds, int index) async {
@@ -447,9 +439,14 @@ goTableAppointments() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => TableAppointmentsScreen()));
 }
 
-goAppointmentDetail(String appointmentId) async {
+goAppointmentDetail(String appointmentId, bool isUpdateAll) async {
   Navigator.push(
-      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => AppointmentDetailScreen(appointmentId: (appointmentId))));
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => AppointmentDetailScreen(
+                appointmentId: (appointmentId),
+                isEnableUpdateAll: isUpdateAll,
+              )));
 }
 
 goOrderMixDetail(int id) async {

@@ -135,7 +135,7 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
                                     ],
                                   ),
                                   onTap: () {
-                                    goTrackingRoutineDetail(routine.skincareRoutineId, user?.userId ?? 0);
+                                    goTrackingRoutineDetail(routine.skincareRoutineId, user?.userId ?? 0, order.orderId);
                                   },
                                 ),
 

@@ -30,10 +30,11 @@ import "package:spa_mobile/features/service/presentation/bloc/staff_slot_working
 import "package:spa_mobile/features/service/presentation/widgets/leave_booking.dart";
 
 class SelectTimeScreen extends StatefulWidget {
-  const SelectTimeScreen({super.key, required this.staffIds, required this.controller});
+  const SelectTimeScreen({super.key, required this.staffIds, required this.controller, required this.indexTime});
 
   final List<int> staffIds;
   final AppointmentDataController controller;
+  final int indexTime;
 
   @override
   State<SelectTimeScreen> createState() => _SelectTimeScreenState();
@@ -46,9 +47,11 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   final ScrollController _scrollController = ScrollController();
   String monthView = "";
   String lgCode = "";
+  List<int> staffIds = [];
   List<TimeModel> bookedSlots = [];
   List<ShiftModel> availableShifts = [];
   List<AppointmentModel> existAppointment = [];
+  List<TimeModel> selectedSlots = [];
 
   void _scrollToSelectedDate() {
     int index = items.indexWhere((item) => item['date'] == DateFormat('yyyy-MM-dd').format(selectedDate));
@@ -72,14 +75,15 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
 
     List<TimeModel> allPossibleSlots = [];
     DateTime currentStart = workDayStart;
-    AppLogger.info(widget.controller.totalDuration);
+    final int durationTime =
+        (widget.indexTime != -1) ? (int.parse(widget.controller.services[widget.indexTime].duration) + 5) : widget.controller.totalDuration;
 
     while (true) {
-      final slotEnd = currentStart.add(Duration(minutes: widget.controller.totalDuration));
+      final slotEnd = currentStart.add(Duration(minutes: durationTime));
       if (slotEnd.isAfter(workDayEnd)) break;
 
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
-      currentStart = currentStart.add(const Duration(minutes: 15));
+      currentStart = currentStart.add(const Duration(minutes: 5));
     }
 
     final now = DateTime.now();
@@ -87,6 +91,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     availableTimeSlots = allPossibleSlots.where((possibleSlot) {
       final isNotBooked = !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
       final isInFuture = possibleSlot.startTime.isAfter(now);
+      final isNotSelected = widget.indexTime == -1
+          ? true
+          : !widget.controller.selectedSlots.any((selectedSlot) => _isOverlapping(possibleSlot, selectedSlot));
       final isInShift = availableShifts.any((shift) {
         final shiftStart = DateTime(
           selectedDate.year,
@@ -112,7 +119,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
         return _isOverlappingSlotAndAppointment(possibleSlot, appointment);
       });
 
-      return isNotBooked && isInFuture && isInShift && isNotConflictWithAppointments;
+      return isNotBooked && isInFuture && isInShift && isNotConflictWithAppointments && isNotSelected;
     }).toList();
 
     setState(() {});
@@ -125,7 +132,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   }
 
   bool _isOverlappingSlotAndAppointment(TimeModel slot, AppointmentModel appointment) {
-    return slot.startTime.isBefore(appointment.appointmentEndTime) && slot.endTime.isAfter(appointment.appointmentsTime);
+    const buffer = Duration(seconds: 1);
+    return slot.startTime.isBefore(appointment.appointmentEndTime.add(buffer)) &&
+        slot.endTime.isAfter(appointment.appointmentsTime.subtract(buffer));
   }
 
   DateTime getStartOfDay(DateTime date) {
@@ -139,14 +148,15 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   @override
   void initState() {
     super.initState();
+    staffIds = widget.indexTime == -1 ? widget.controller.staffIds : [widget.controller.staffIds[widget.indexTime]];
     _loadLanguageAndInit();
-    if (widget.staffIds[0] != 0) {}
+
     context
         .read<StaffSlotWorkingBloc>()
-        .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
+        .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: staffIds, workDate: selectedDate)));
     context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
         startTime: getStartOfDay(selectedDate).toIso8601String(), endTime: getEndOfDay(selectedDate).toIso8601String())));
-    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.staffIds, date: selectedDate)));
+    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: staffIds, date: selectedDate)));
     generateAvailableTimeSlots();
   }
 
@@ -214,12 +224,12 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                     setState(() {
                       selectedDate = date;
                     });
-                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: date)));
+                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: staffIds, workDate: date)));
 
                     listAppointmentBloc.add(GetListAppointmentEvent(GetListAppointmentParams(
                         startTime: getStartOfDay(date).toIso8601String(), endTime: getEndOfDay(date).toIso8601String())));
 
-                    listTimeBloc.add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: widget.controller.staffIds, date: date)));
+                    listTimeBloc.add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: staffIds, date: date)));
                     _scrollToSelectedDate();
                   },
                 ),
@@ -250,14 +260,11 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   Widget build(BuildContext context) {
     final controller = widget.controller;
     final isChooseDiffSpecialist = widget.staffIds.map((x) {
-      AppLogger.info(x);
       return x != controller.staffIds[0];
     }).contains(true);
     final isAllAny = widget.staffIds.map((x) {
       return x == 0;
     }).contains(false);
-    AppLogger.info(controller.staffIds);
-    AppLogger.info(isChooseDiffSpecialist);
     return WillPopScope(
       onWillPop: () async => false,
       child: BlocListener<ListAppointmentBloc, ListAppointmentState>(
@@ -273,15 +280,13 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
               availableShifts = slotState.staffSlotWorking;
               generateAvailableTimeSlots();
             }
-            if (slotState is StaffSlotWorkingError) {
-              AppLogger.error(slotState.message);
-            }
+            if (slotState is StaffSlotWorkingError) {}
           },
           child: Scaffold(
             appBar: TAppbar(
               showBackArrow: false,
               leadingIcon: Iconsax.arrow_left,
-              leadingOnPressed: () => goSelectSpecialist(controller.branchId, controller),
+              leadingOnPressed: () => goSelectSpecialist(controller.branchId, controller, 1),
               actions: [
                 TRoundedIcon(
                   icon: Iconsax.scissor_1,
@@ -310,11 +315,11 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                     height: TSizes.sm,
                   ),
                   GestureDetector(
-                    onTap: () => goSelectSpecialist(controller.branchId, controller),
+                    onTap: () => goSelectSpecialist(controller.branchId, controller, 1),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (!isChooseDiffSpecialist)
+                        if (!isChooseDiffSpecialist || (widget.indexTime != -1))
                           TRoundedContainer(
                             radius: TSizes.lg,
                             padding: const EdgeInsets.all(TSizes.sm),
@@ -337,9 +342,9 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                                 ConstrainedBox(
                                   constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
                                   child: Text(
-                                    !isAllAny
-                                        ? AppLocalizations.of(context)!.any_specialist
-                                        : widget.controller.staff[0]?.staffInfo?.userName ?? "",
+                                    widget.indexTime == -1
+                                        ? widget.controller.staff[0]?.staffInfo?.userName ?? ""
+                                        : widget.controller.staff[widget.indexTime]?.staffInfo?.userName ?? "",
                                     style: Theme.of(context).textTheme.labelLarge,
                                   ),
                                 ),
@@ -353,7 +358,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                               ],
                             ),
                           ),
-                        if (isChooseDiffSpecialist)
+                        if (isChooseDiffSpecialist && widget.indexTime == -1)
                           TRoundedContainer(
                             radius: TSizes.lg,
                             padding: const EdgeInsets.all(TSizes.sm),
@@ -425,14 +430,15 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                             setState(() {
                               selectedDate = DateTime.parse(item['date']!);
 
-                              context.read<StaffSlotWorkingBloc>().add(
-                                  GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: widget.staffIds, workDate: selectedDate)));
+                              context
+                                  .read<StaffSlotWorkingBloc>()
+                                  .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: staffIds, workDate: selectedDate)));
                               context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
                                   startTime: getStartOfDay(selectedDate).toIso8601String(),
                                   endTime: getEndOfDay(selectedDate).toIso8601String())));
                               context
                                   .read<ListTimeBloc>()
-                                  .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: controller.staffIds, date: selectedDate)));
+                                  .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: staffIds, date: selectedDate)));
                             });
 
                             _scrollToSelectedDate();
@@ -501,29 +507,55 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                                 return GestureDetector(
                                   onTap: () {
                                     final listTimes = <DateTime>[];
-                                    // If user choose different specialist, we don't need to check staff free time
+
                                     DateTime currentTime = slot.startTime;
 
-                                    for (int i = 0; i < controller.services.length; i++) {
-                                      if (i == 0) {
-                                        listTimes.add(currentTime);
-                                      }
+                                    if (widget.indexTime == -1) {
+                                      for (int i = 0; i < controller.services.length; i++) {
+                                        if (i == 0) {
+                                          listTimes.add(currentTime);
+                                        }
 
-                                      currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
+                                        currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
 
-                                      if (i < controller.services.length - 1) {
-                                        listTimes.add(currentTime);
+                                        if (i < controller.services.length - 1) {
+                                          listTimes.add(currentTime);
+                                        }
                                       }
                                     }
 
-                                    AppLogger.info(listTimes);
-                                    controller.updateTimeStart(listTimes);
-                                    setState(() {
-                                      selectedTime = slot.startTime.toString();
-                                    });
-                                    // if (listTimes.length == 1) {
-                                    goReview(controller);
-                                    // }
+                                    if (widget.indexTime == -1) {
+                                      controller.updateTimeStart(listTimes);
+                                    } else {
+                                      controller.updateTimeStartWithIndex(currentTime, widget.indexTime);
+                                    }
+                                    AppLogger.wtf(controller.selectedSlots);
+                                    if (widget.indexTime == -1) {
+                                      DateTime currentStart = slot.startTime;
+
+                                      for (final service in controller.services) {
+                                        final duration = int.parse(service.duration) + 5;
+                                        final currentEnd = currentStart.add(Duration(minutes: duration));
+                                        AppLogger.wtf(
+                                          TimeModel(
+                                            startTime: currentStart,
+                                            endTime: currentEnd,
+                                          ),
+                                        );
+                                        controller.addSlot(
+                                          TimeModel(
+                                            startTime: currentStart,
+                                            endTime: currentEnd,
+                                          ),
+                                        );
+
+                                        currentStart = currentEnd;
+                                      }
+                                    } else {
+                                      controller.addSlot(slot);
+                                    }
+                                    AppLogger.wtf(controller.selectedSlots);
+                                    goSelectSpecialist(controller.branchId, controller, 1);
                                   },
                                   child: TRoundedContainer(
                                     padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),
@@ -573,7 +605,6 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
             //                 onPressed: !controller.time.map((x) => controller.time[0] == x).contains(false)
             //                     ? null
             //                     : () {
-            //                         AppLogger.info(controller.time);
             //                         goReview(controller);
             //                       },
             //                 child: Text(AppLocalizations.of(context)!.continue_book))

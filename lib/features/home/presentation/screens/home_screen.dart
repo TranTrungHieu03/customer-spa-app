@@ -259,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Column(
                                 children: [
                                   ListTile(
-                                    onTap: () => goTrackingRoutineDetail(state.routineModel.skincareRoutineId, user?.userId ?? 0),
+                                    // onTap: () => goTrackingRoutineDetail(state.routineModel.skincareRoutineId, user?.userId ?? 0),
                                     title: Text(state.routineModel.name, style: Theme.of(context).textTheme.titleLarge),
                                     subtitle: Text(state.routineModel.description),
                                     trailing: const Icon(

@@ -17,6 +17,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_hi
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/order_mix.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 abstract class RoutineRemoteDataSource {
@@ -41,6 +42,8 @@ abstract class RoutineRemoteDataSource {
   Future<List<AppointmentModel>> getAppointmentsByRoutine(GetListAppointmentByRoutineParams params);
 
   Future<int> orderMix(OrderMixParams params);
+
+  Future<String> updateAppointmentRoutine(UpdateAppointmentRoutineParams params);
 }
 
 class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
@@ -228,6 +231,23 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
 
       if (apiResponse.success) {
         return (apiResponse.result!.data);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> updateAppointmentRoutine(UpdateAppointmentRoutineParams params) async {
+    try {
+      final response = await _apiService.patchApi('/Routine/update-start-time-of-routine', params.toJson());
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.message!);
       } else {
         throw AppException(apiResponse.result!.message!);
       }

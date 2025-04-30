@@ -74,3 +74,9 @@ final class CancelAppointmentDetailEvent extends AppointmentEvent {
 
   CancelAppointmentDetailEvent(this.params);
 }
+
+final class UpdateAppointmentRoutineEvent extends AppointmentEvent {
+  final UpdateAppointmentRoutineParams params;
+
+  UpdateAppointmentRoutineEvent(this.params);
+}

@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -14,12 +15,17 @@ import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 class ServiceAppointmentListView extends StatelessWidget {
   final RoutineStepModel data;
   final String lgCode;
+  final int orderId;
+  final int userId;
+  final int routineId;
 
-  const ServiceAppointmentListView({super.key, required this.data, required this.lgCode});
+  const ServiceAppointmentListView(
+      {super.key, required this.data, required this.lgCode, required this.orderId, required this.userId, required this.routineId});
 
   @override
   Widget build(BuildContext context) {
     final controller = AppointmentDataController();
+    var isEnableUpdateAll = false;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -34,14 +40,17 @@ class ServiceAppointmentListView extends StatelessWidget {
             itemCount: data.serviceRoutineSteps.length,
             separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
             itemBuilder: (context, index) {
-              final service = data.serviceRoutineSteps[index].service;
+              // final service = data.serviceRoutineSteps[index].;
               final AppointmentModel appt = data.appointments![index];
+              if (data.step == 1) {
+                isEnableUpdateAll = true;
+              }
               var isStaffReal = true;
               if (appt.staff?.roleId == 3) {
                 isStaffReal = false;
               }
               return GestureDetector(
-                onTap: () => goAppointmentDetail(appt.appointmentId.toString()),
+                onTap: () => goAppointmentDetail(appt.appointmentId.toString(), isEnableUpdateAll),
                 child: TRoundedContainer(
                   backgroundColor: (appt.status.toLowerCase()) == 'completed'
                       ? TColors.success.withOpacity(0.5)
@@ -78,7 +87,7 @@ class ServiceAppointmentListView extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Iconsax.clock,
                             size: 20,
                             color: TColors.primary,
@@ -118,6 +127,11 @@ class ServiceAppointmentListView extends StatelessWidget {
                                       controller.updateId(appt.appointmentId);
                                       controller.updateNote(appt.notes ?? "");
                                       controller.updateMinDate(appt.appointmentsTime);
+                                      AppLogger.info(appt.appointmentsTime);
+                                      controller.updateStep(data.step);
+                                      controller.updateOrderId(orderId);
+                                      controller.updateUserId(userId);
+                                      controller.updateRoutineId(routineId);
                                       goUpdateSpecialist(appt.branch?.branchId ?? 0, controller);
                                     },
                                     child: Text(AppLocalizations.of(context)!.choose_specialist,

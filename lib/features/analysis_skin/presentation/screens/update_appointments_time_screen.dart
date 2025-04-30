@@ -1,5 +1,8 @@
+import "dart:math";
+
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import "package:iconsax/iconsax.dart";
 import "package:intl/intl.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -12,6 +15,7 @@ import "package:spa_mobile/core/common/widgets/rounded_icon.dart";
 import "package:spa_mobile/core/helpers/helper_functions.dart";
 import "package:spa_mobile/core/logger/logger.dart";
 import "package:spa_mobile/core/utils/constants/colors.dart";
+import "package:spa_mobile/core/utils/constants/exports_navigators.dart";
 import "package:spa_mobile/core/utils/constants/sizes.dart";
 import "package:spa_mobile/features/service/data/model/appointment_model.dart";
 import "package:spa_mobile/features/service/data/model/shift_model.dart";
@@ -43,10 +47,11 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
   final ScrollController _scrollController = ScrollController();
   String monthView = "";
   String lgCode = "";
+  List<int> staffIds = [];
   List<TimeModel> bookedSlots = [];
   List<ShiftModel> availableShifts = [];
   List<AppointmentModel> existAppointment = [];
-  List<TimeModel> chooseSlot = [];
+  List<TimeModel> selectedSlots = [];
 
   void _scrollToSelectedDate() {
     int index = items.indexWhere((item) => item['date'] == DateFormat('yyyy-MM-dd').format(selectedDate));
@@ -70,22 +75,27 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
 
     List<TimeModel> allPossibleSlots = [];
     DateTime currentStart = workDayStart;
-    AppLogger.info(widget.controller.totalDuration);
+
+    final int durationTime = (widget.indexOfAppointment != -1)
+        ? (int.parse(widget.controller.services[widget.indexOfAppointment].duration) + 5)
+        : widget.controller.totalDuration;
 
     while (true) {
-      final slotEnd = currentStart.add(Duration(minutes: int.parse(widget.controller.services[widget.indexOfAppointment].duration)));
+      final slotEnd = currentStart.add(Duration(minutes: durationTime));
       if (slotEnd.isAfter(workDayEnd)) break;
 
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
-      currentStart = currentStart.add(const Duration(minutes: 15));
+      currentStart = currentStart.add(const Duration(minutes: 5));
     }
 
     final now = DateTime.now();
-    chooseSlot = widget.controller.listChooseTime;
+
     availableTimeSlots = allPossibleSlots.where((possibleSlot) {
       final isNotBooked = !bookedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
       final isInFuture = possibleSlot.startTime.isAfter(now);
-      final isNotChoose = !chooseSlot.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
+      final isNotChoose = widget.indexOfAppointment == -1
+          ? true
+          : !widget.controller.selectedSlots.any((bookedSlot) => _isOverlapping(possibleSlot, bookedSlot));
       final isInShift = availableShifts.any((shift) {
         final shiftStart = DateTime(
           selectedDate.year,
@@ -124,7 +134,9 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
   }
 
   bool _isOverlappingSlotAndAppointment(TimeModel slot, AppointmentModel appointment) {
-    return slot.startTime.isBefore(appointment.appointmentEndTime) && slot.endTime.isAfter(appointment.appointmentsTime);
+    const buffer = Duration(seconds: 1);
+    return slot.startTime.isBefore(appointment.appointmentEndTime.add(buffer)) &&
+        slot.endTime.isAfter(appointment.appointmentsTime.subtract(buffer));
   }
 
   DateTime getStartOfDay(DateTime date) {
@@ -138,13 +150,12 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
   @override
   void initState() {
     super.initState();
+    staffIds = widget.indexOfAppointment == -1 ? widget.controller.staffIds : [widget.controller.staffIds[widget.indexOfAppointment]];
     _loadLanguageAndInit();
-    if (widget.staffIds[0] != 0) {}
-    context.read<StaffSlotWorkingBloc>().add(
-        GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: [widget.staffIds[widget.indexOfAppointment]], workDate: selectedDate)));
     context
-        .read<ListTimeBloc>()
-        .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: [widget.staffIds[widget.indexOfAppointment]], date: selectedDate)));
+        .read<StaffSlotWorkingBloc>()
+        .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: staffIds, workDate: selectedDate)));
+    context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: staffIds, date: selectedDate)));
     context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
         startTime: getStartOfDay(selectedDate).toIso8601String(), endTime: getEndOfDay(selectedDate).toIso8601String())));
     generateAvailableTimeSlots();
@@ -214,14 +225,12 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                     setState(() {
                       selectedDate = date;
                     });
-                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(
-                        GetListSlotWorkingParams(staffIds: [widget.staffIds[widget.indexOfAppointment]], workDate: date)));
+                    staffSlotWorkingBloc.add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: staffIds, workDate: date)));
 
                     listAppointmentBloc.add(GetListAppointmentEvent(GetListAppointmentParams(
                         startTime: getStartOfDay(date).toIso8601String(), endTime: getEndOfDay(date).toIso8601String())));
 
-                    listTimeBloc.add(GetListTimeByDateEvent(
-                        GetTimeSlotByDateParams(staffId: [widget.controller.staffIds[widget.indexOfAppointment]], date: date)));
+                    listTimeBloc.add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: staffIds, date: date)));
                     _scrollToSelectedDate();
                   },
                 ),
@@ -257,8 +266,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
     final isAllAny = widget.staffIds.map((x) {
       return x == 0;
     }).contains(false);
-    AppLogger.info(controller.staffIds);
-    AppLogger.info(isChooseDiffSpecialist);
+
     return WillPopScope(
       onWillPop: () async => false,
       child: BlocListener<ListAppointmentBloc, ListAppointmentState>(
@@ -315,43 +323,91 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // if (!isChooseDiffSpecialist)
-                          TRoundedContainer(
-                            radius: TSizes.lg,
-                            padding: const EdgeInsets.all(TSizes.sm),
-                            child: Row(
-                              children: [
-                                TRoundedContainer(
-                                  radius: 35,
-                                  width: 35,
-                                  height: 35,
-                                  backgroundColor: TColors.primaryBackground,
-                                  child: Center(
-                                    child: Text(
-                                      THelperFunctions.getFirstLetterOfLastName(
-                                          !isAllAny ? "Any" : widget.controller.staff[0]?.staffInfo?.userName ?? ""),
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                          if (!isChooseDiffSpecialist || (widget.indexOfAppointment != -1))
+                            TRoundedContainer(
+                              radius: TSizes.lg,
+                              padding: const EdgeInsets.all(TSizes.sm),
+                              child: Row(
+                                children: [
+                                  TRoundedContainer(
+                                    radius: 35,
+                                    width: 35,
+                                    height: 35,
+                                    backgroundColor: TColors.primaryBackground,
+                                    child: Center(
+                                      child: Text(
+                                        THelperFunctions.getFirstLetterOfLastName(
+                                          widget.indexOfAppointment == -1
+                                              ? widget.controller.staff[0]?.staffInfo?.userName ?? ""
+                                              : widget.controller.staff[widget.indexOfAppointment]?.staffInfo?.userName ?? "",
+                                        ),
+                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: TSizes.xs),
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
-                                  child: Text(
-                                    !isAllAny ? "Any Specialist" : widget.controller.staff[0]?.staffInfo?.userName ?? "",
-                                    style: Theme.of(context).textTheme.labelLarge,
+                                  const SizedBox(width: TSizes.xs),
+                                  ConstrainedBox(
+                                    constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.3),
+                                    child: Text(
+                                      widget.indexOfAppointment == -1
+                                          ? widget.controller.staff[0]?.staffInfo?.userName ?? ""
+                                          : widget.controller.staff[widget.indexOfAppointment]?.staffInfo?.userName ?? "",
+                                      style: Theme.of(context).textTheme.labelLarge,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  width: TSizes.sm,
-                                ),
-                                const Icon(
-                                  Iconsax.arrow_down_1,
-                                  size: 15,
-                                )
-                              ],
+                                  const SizedBox(
+                                    width: TSizes.sm,
+                                  ),
+                                  const Icon(
+                                    Iconsax.arrow_down_1,
+                                    size: 15,
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
+                          if (isChooseDiffSpecialist && widget.indexOfAppointment == -1)
+                            TRoundedContainer(
+                              radius: TSizes.lg,
+                              padding: const EdgeInsets.all(TSizes.sm),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(AppLocalizations.of(context)!.multiple_specialist, style: Theme.of(context).textTheme.labelLarge),
+                                  const SizedBox(
+                                    width: TSizes.sm,
+                                  ),
+                                  Row(
+                                    children: List.generate(
+                                      min(3, controller.staffIds.length), // Show max 3 items
+                                      (index) {
+                                        final isAny = controller.staffIds[index] == 0;
+                                        return Padding(
+                                          padding: EdgeInsets.only(right: index < min(3, controller.staffIds.length) - 1 ? TSizes.xs : 0),
+                                          child: TRoundedContainer(
+                                            radius: 35,
+                                            width: 35,
+                                            height: 35,
+                                            backgroundColor: TColors.primaryBackground,
+                                            child: Center(
+                                              child: Text(
+                                                THelperFunctions.getFirstLetterOfLastName(
+                                                    isAny ? "A" : widget.controller.staff[index]?.staffInfo?.userName ?? ""),
+                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: TSizes.xs),
+                                  const Icon(
+                                    Iconsax.arrow_down_1,
+                                    size: 15,
+                                  )
+                                ],
+                              ),
+                            ),
                           TRoundedIcon(
                             icon: Iconsax.calendar_1,
                             borderRadius: 10,
@@ -380,10 +436,12 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                             onTap: () {
                               setState(() {
                                 selectedDate = DateTime.parse(item['date']!);
-                                context.read<ListTimeBloc>().add(GetListTimeByDateEvent(GetTimeSlotByDateParams(
-                                    staffId: [controller.staffIds[widget.indexOfAppointment]], date: selectedDate)));
-                                context.read<StaffSlotWorkingBloc>().add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(
-                                    staffIds: [widget.staffIds[widget.indexOfAppointment]], workDate: selectedDate)));
+                                context
+                                    .read<ListTimeBloc>()
+                                    .add(GetListTimeByDateEvent(GetTimeSlotByDateParams(staffId: staffIds, date: selectedDate)));
+                                context
+                                    .read<StaffSlotWorkingBloc>()
+                                    .add(GetStaffSlotWorkingEvent(GetListSlotWorkingParams(staffIds: staffIds, workDate: selectedDate)));
                                 context.read<ListAppointmentBloc>().add(GetListAppointmentEvent(GetListAppointmentParams(
                                     startTime: getStartOfDay(selectedDate).toIso8601String(),
                                     endTime: getEndOfDay(selectedDate).toIso8601String())));
@@ -455,35 +513,55 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                                   return GestureDetector(
                                     onTap: () {
                                       final listTimes = <DateTime>[];
-                                      // If user choose different specialist, we don't need to check staff free time
+
                                       DateTime currentTime = slot.startTime;
 
-                                      // for (int i = 0; i < controller.services.length; i++) {
-                                      //   if (i == 0) {
-                                      //     listTimes.add(currentTime);
-                                      //   }
-                                      //
-                                      //   currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
-                                      //
-                                      //   if (i < controller.services.length - 1) {
-                                      //     listTimes.add(currentTime);
-                                      //   }
-                                      // }
+                                      if (widget.indexOfAppointment == -1) {
+                                        for (int i = 0; i < controller.services.length; i++) {
+                                          if (i == 0) {
+                                            listTimes.add(currentTime);
+                                          }
 
-                                      // AppLogger.info(listTimes);
-                                      // controller.updateTimeStart(listTimes);
+                                          currentTime = currentTime.add(Duration(minutes: int.parse(controller.services[i].duration) + 5));
 
-                                      controller.updateTimeWithIndex(widget.indexOfAppointment, currentTime);
-                                      // goUpdateStaffMix(controller, controller.branchId);
-                                      controller.updateListChooseTime(TimeModel(startTime: slot.startTime, endTime: slot.endTime));
-                                      setState(() {
-                                        selectedTime = slot.startTime.toString();
-                                      });
-                                      AppLogger.debug(controller.listChooseTime);
-                                      Navigator.pop(context);
-                                      // if (listTimes.length == 1) {
-                                      // goUpdateReview(controller);
-                                      // }
+                                          if (i < controller.services.length - 1) {
+                                            listTimes.add(currentTime);
+                                          }
+                                        }
+                                      }
+
+                                      if (widget.indexOfAppointment == -1) {
+                                        controller.updateTimeStart(listTimes);
+                                      } else {
+                                        controller.updateTimeStartWithIndex(currentTime, widget.indexOfAppointment);
+                                      }
+                                      AppLogger.wtf(controller.selectedSlots);
+                                      if (widget.indexOfAppointment == -1) {
+                                        DateTime currentStart = slot.startTime;
+
+                                        for (final service in controller.services) {
+                                          final duration = int.parse(service.duration) + 5;
+                                          final currentEnd = currentStart.add(Duration(minutes: duration));
+                                          AppLogger.wtf(
+                                            TimeModel(
+                                              startTime: currentStart,
+                                              endTime: currentEnd,
+                                            ),
+                                          );
+                                          controller.addSlot(
+                                            TimeModel(
+                                              startTime: currentStart,
+                                              endTime: currentEnd,
+                                            ),
+                                          );
+
+                                          currentStart = currentEnd;
+                                        }
+                                      } else {
+                                        controller.addSlot(slot);
+                                      }
+                                      AppLogger.wtf(controller.selectedSlots);
+                                      goUpdateStaffMix(controller, controller.branchId, 1);
                                     },
                                     child: TRoundedContainer(
                                       padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),
@@ -510,7 +588,9 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                                   style: TextStyle(fontSize: 16),
                                 ),
                               );
-                            } else if (state is ListTimeLoading) {
+                            } else if (state is ListTimeLoading &&
+                                context.read<ListAppointmentBloc>().state is ListAppointmentLoading &&
+                                context.read<StaffSlotWorkingBloc>().state is StaffSlotWorkingLoading) {
                               return const TLoader();
                             }
                             return const SizedBox.shrink();
