@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
+import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/product_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_step_model.dart';
@@ -21,10 +23,11 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/l
 import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperTrackingRoutineScreen extends StatefulWidget {
-  const WrapperTrackingRoutineScreen({super.key, required this.id, required this.userId});
+  const WrapperTrackingRoutineScreen({super.key, required this.id, required this.userId, required this.orderId});
 
   final int id;
   final int userId;
+  final int orderId;
 
   @override
   State<WrapperTrackingRoutineScreen> createState() => _WrapperTrackingRoutineScreenState();
@@ -43,16 +46,22 @@ class _WrapperTrackingRoutineScreenState extends State<WrapperTrackingRoutineScr
             ..add(GetListAppointmentByRoutineEvent(GetListAppointmentByRoutineParams(id: widget.id.toString()))),
         ),
       ],
-      child: TrackingRoutineScreen(id: widget.id, userId: widget.userId),
+      child: TrackingRoutineScreen(
+        id: widget.id,
+        userId: widget.userId,
+        orderId: widget.orderId,
+      ),
     );
   }
 }
 
 class TrackingRoutineScreen extends StatefulWidget {
-  const TrackingRoutineScreen({super.key, required this.id, required this.userId});
+  const TrackingRoutineScreen({super.key, required this.id, required this.userId, required this.orderId});
 
   final int id;
   final int userId;
+
+  final int orderId;
 
   @override
   State<TrackingRoutineScreen> createState() => _TrackingRoutineScreenState();
@@ -92,21 +101,25 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                   final listAppointments = List<AppointmentModel>.from(apptState.appointments);
 
                   for (final step in state.routine.userRoutineSteps) {
-                    for (final serviceStep in step.serviceRoutineSteps) {
-                      final appointment = listAppointments.firstWhere(
-                        (element) => element.service.serviceId == serviceStep.service.serviceId,
-                      );
+                    // for (final serviceStep in step.serviceRoutineSteps) {
+                    final appointment = listAppointments
+                        .where(
+                          (element) => element.step == step.step,
+                        )
+                        .toList();
 
-                      step.appointments?.add(appointment);
-                      listAppointments.remove(appointment);
-                    }
+                    step.appointments?.addAll(appointment);
                   }
 
-                  AppLogger.info(routineSteps);
-
                   return Scaffold(
-                    appBar:   TAppbar(
+                    appBar: TAppbar(
                       showBackArrow: true,
+                      actions: [
+                        TRoundedIcon(
+                          icon: Iconsax.pet,
+                          onPressed: () => goHistoryOrderRoutine(),
+                        )
+                      ],
                       title: Text(AppLocalizations.of(context)!.progress_tracking,
                           style: Theme.of(context).textTheme.headlineMedium!.apply(color: TColors.black)),
                     ),
@@ -141,7 +154,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                               if (_currentStep > 0)
                                 OutlinedButton(
                                   onPressed: details.onStepCancel,
-                                  child:Text(AppLocalizations.of(context)!.back),
+                                  child: Text(AppLocalizations.of(context)!.back),
                                 ),
                             ],
                           );
@@ -158,7 +171,8 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Services Section
-                                if (step.serviceRoutineSteps.isNotEmpty) _buildServiceSection(step, _lgCode),
+                                if (step.serviceRoutineSteps.isNotEmpty)
+                                  _buildServiceSection(step, _lgCode, widget.orderId, widget.userId, widget.id),
 
                                 // Products Section
                                 if (step.productRoutineSteps.isNotEmpty) _buildProductsSection(step.productRoutineSteps),
@@ -217,12 +231,12 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
     return StepState.indexed;
   }
 
-  Widget _buildServiceSection(RoutineStepModel step, String lgCode) {
+  Widget _buildServiceSection(RoutineStepModel step, String lgCode, int orderId, int useId, int routineId) {
     return Container(
       padding: EdgeInsets.all(0),
       color: TColors.white,
       margin: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: 0),
-      child: ServiceAppointmentListView(data: step, lgCode: lgCode),
+      child: ServiceAppointmentListView(data: step, lgCode: lgCode, orderId: orderId, userId: useId, routineId: routineId),
     );
   }
 

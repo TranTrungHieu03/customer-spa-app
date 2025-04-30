@@ -25,6 +25,7 @@ class AppointmentModel extends Appointment {
     this.customer,
     this.staff,
     this.branch,
+    super.step,
     required this.service,
     required super.quantity,
     required super.unitPrice,
@@ -35,23 +36,47 @@ class AppointmentModel extends Appointment {
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
     AppLogger.debug(json);
     return AppointmentModel(
-      appointmentId: json['appointmentId'],
-      customerId: json['customerId'],
-      staffId: json['staffId'],
-      serviceId: json['serviceId'],
-      branchId: json['branchId'],
-      appointmentsTime: DateTime.parse(json['appointmentsTime']),
-      status: json['status'],
-      notes: json['notes'],
-      feedback: json['feedback'],
-      customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
-      staff: json['staff'] != null ? StaffModel.fromJson(json['staff']) : null,
-      branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
-      service: ServiceModel.fromJson(json['service']),
-      quantity: json['quantity'] ?? 0,
-      unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0.0,
-      subTotal: (json['subTotal'] as num?)?.toDouble() ?? 0.0,
-      appointmentEndTime: DateTime.parse(json['appointmentEndTime'] ?? '${DateTime.now()}'),
+        appointmentId: json['appointmentId'],
+        customerId: json['customerId'],
+        staffId: json['staffId'],
+        serviceId: json['serviceId'],
+        branchId: json['branchId'],
+        appointmentsTime: DateTime.parse(json['appointmentsTime']),
+        status: json['status'],
+        notes: json['notes'],
+        feedback: json['feedback'],
+        customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
+        staff: json['staff'] != null ? StaffModel.fromJson(json['staff']) : null,
+        branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
+        service: ServiceModel.fromJson(json['service']),
+        quantity: json['quantity'] ?? 0,
+        unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0.0,
+        subTotal: (json['subTotal'] as num?)?.toDouble() ?? 0.0,
+        appointmentEndTime: DateTime.parse(json['appointmentEndTime'] ?? '${DateTime.now()}'),
+        step: json['step'] ?? 0);
+  }
+
+  factory AppointmentModel.empty() {
+    final now = DateTime.now();
+    return AppointmentModel(
+      appointmentId: 0,
+      customerId: 0,
+      staffId: 0,
+      serviceId: 0,
+      branchId: 0,
+      appointmentsTime: now,
+      status: '',
+      notes: '',
+      feedback: '',
+      customer: null,
+      staff: null,
+      branch: null,
+      service: ServiceModel.empty(),
+      // giả sử ServiceModel cũng có ServiceModel.empty()
+      quantity: 0,
+      unitPrice: 0.0,
+      subTotal: 0.0,
+      appointmentEndTime: now,
     );
   }
 

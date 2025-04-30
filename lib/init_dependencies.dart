@@ -28,6 +28,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tr
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/order_mix.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/skin_analysis_via_form.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/skin_analysis_via_image.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';

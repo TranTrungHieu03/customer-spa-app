@@ -10,6 +10,7 @@ import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/screens/payment_web_view.dart';
 import 'package:spa_mobile/core/common/screens/redirect_screen.dart';
 import 'package:spa_mobile/core/common/screens/success_screen.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';

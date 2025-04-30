@@ -229,83 +229,89 @@ class _TProductCheckoutState extends State<TProductCheckout> {
           const SizedBox(
             height: TSizes.sm,
           ),
-          BlocListener<ShipFeeBloc, ShipFeeState>(
-            listener: (context, state) {
-              if (state is ShipFeeError) {
-                TSnackBar.errorSnackBar(context, message: state.message);
-              }
-              if (state is ShipFeeLoadedServiceId) {
-                AppLogger.info(branch?.district ?? 0);
-                widget.controller.updateServiceGHN(state.serviceId);
-                context.read<ShipFeeBloc>().add(GetLeadTimeEvent(GetLeadTimeParams(
-                      fromDistrictId: branch!.district,
-                      fromWardCode: branch.wardCode.toString(),
-                      toDistrictId: int.parse(shipment.districtId),
-                      toWardCode: shipment.wardCode,
-                      serviceId: state.serviceId,
-                    )));
-              }
-              if (state is ShipFeeLoaded && state.leadTime.isNotEmpty && state.fee == 0) {
-                controller.updateExpectedDate(state.leadTime);
-                context.read<ShipFeeBloc>().add(GetShipFeeEvent(GetFeeShippingParams(
-                      fromDistrictId: branch!.district,
-                      fromWardCode: branch.wardCode.toString(),
-                      serviceId: widget.controller.serviceGHN,
-                      toDistrictId: int.parse(shipment.districtId),
-                      toWardCode: shipment.wardCode,
-                      height: 50,
-                      length: 50,
-                      weight: 500,
-                      // weight: widget.products.fold<int>(0, (x, y) => x + y.product.volume.toInt()),
-                      width: 50,
-                    )));
-              }
-              if (state is ShipFeeLoaded && state.fee != 0) {
-                controller.updateShippingCost(state.fee);
-                controller.updateTotalPrice(widget.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) + state.fee);
-              }
-            },
-            child: BlocBuilder<ShipFeeBloc, ShipFeeState>(
-              builder: (context, state) {
-                if (state is ShipFeeLoaded && state.fee != 0) {
-                  AppLogger.info(DateTime.parse(state.leadTime).toLocal());
-                  return TRoundedContainer(
-                    borderColor: Colors.greenAccent,
-                    padding: const EdgeInsets.all(TSizes.sm),
-                    backgroundColor: Colors.greenAccent.withOpacity(0.4),
-                    showBorder: true,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Giao hàng nhanh", style: Theme.of(context).textTheme.bodyLarge),
-                            TProductPriceText(price: state.fee.toString()),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "${AppLocalizations.of(context)!.estimated_delivery} ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(state.leadTime).toUtc().toLocal())}.",
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                } else if (state is ShipFeeLoading) {
-                  return const CircularProgressIndicator(
-                    color: TColors.primary,
-                  );
-                }
-                return const SizedBox();
-              },
-            ),
-          ),
+          controller.isNeedShip
+              ? BlocListener<ShipFeeBloc, ShipFeeState>(
+                  listener: (context, state) {
+                    if (state is ShipFeeError) {
+                      TSnackBar.errorSnackBar(context, message: state.message);
+                    }
+                    if (state is ShipFeeLoadedServiceId) {
+                      AppLogger.info(branch?.district ?? 0);
+                      widget.controller.updateServiceGHN(state.serviceId);
+                      context.read<ShipFeeBloc>().add(GetLeadTimeEvent(GetLeadTimeParams(
+                            fromDistrictId: branch!.district,
+                            fromWardCode: branch.wardCode.toString(),
+                            toDistrictId: int.parse(shipment.districtId),
+                            toWardCode: shipment.wardCode,
+                            serviceId: state.serviceId,
+                          )));
+                    }
+                    if (state is ShipFeeLoaded && state.leadTime.isNotEmpty && state.fee == 0) {
+                      controller.updateExpectedDate(state.leadTime);
+                      context.read<ShipFeeBloc>().add(GetShipFeeEvent(GetFeeShippingParams(
+                            fromDistrictId: branch!.district,
+                            fromWardCode: branch.wardCode.toString(),
+                            serviceId: widget.controller.serviceGHN,
+                            toDistrictId: int.parse(shipment.districtId),
+                            toWardCode: shipment.wardCode,
+                            height: 50,
+                            length: 50,
+                            weight: 500,
+                            // weight: widget.products.fold<int>(0, (x, y) => x + y.product.volume.toInt()),
+                            width: 50,
+                          )));
+                    }
+                    if (state is ShipFeeLoaded && state.fee != 0) {
+                      controller.updateShippingCost(state.fee);
+                      controller
+                          .updateTotalPrice(widget.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) + state.fee);
+                    }
+                  },
+                  child: BlocBuilder<ShipFeeBloc, ShipFeeState>(
+                    builder: (context, state) {
+                      if (state is ShipFeeLoaded && state.fee != 0) {
+                        AppLogger.info(DateTime.parse(state.leadTime).toLocal());
+                        return TRoundedContainer(
+                          borderColor: Colors.greenAccent,
+                          padding: const EdgeInsets.all(TSizes.sm),
+                          backgroundColor: Colors.greenAccent.withOpacity(0.4),
+                          showBorder: true,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Giao hàng nhanh", style: Theme.of(context).textTheme.bodyLarge),
+                                  TProductPriceText(price: state.fee.toString()),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${AppLocalizations.of(context)!.estimated_delivery} ${DateFormat('EEEE, dd MMMM yyyy', "vi").format(DateTime.parse(state.leadTime).toUtc().toLocal())}.",
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      } else if (state is ShipFeeLoading) {
+                        return const CircularProgressIndicator(
+                          color: TColors.primary,
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
+                )
+              : Align(
+                  child: Text('Nhận hàng tại cửa hàng'),
+                  alignment: Alignment.centerRight,
+                ),
           // const Divider(),
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -347,7 +353,7 @@ class _TProductCheckoutState extends State<TProductCheckout> {
       }
 
       final shipFeeBloc = context.read<ShipFeeBloc>();
-      if (!shipFeeBloc.isClosed) {
+      if (!shipFeeBloc.isClosed && widget.controller.isNeedShip) {
         shipFeeBloc.add(GetAvailableServiceEvent(
             GetAvailableServiceParams(shopId: 3838500, fromDistrict: branch.district, toDistrict: int.parse(shipment.districtId))));
       }
@@ -513,45 +519,6 @@ void _showVoucherDetail(BuildContext context, VoucherModel voucher) {
       builder: (BuildContext context) {
         return FractionallySizedBox(heightFactor: 0.6, child: VoucherScreen(voucherModel: voucher));
       });
-}
-
-Widget _buildVoucherItem(BuildContext context, int index) {
-  final voucherTitles = [
-    "10% Off for First Order",
-    "Free Shipping on Orders Over \$50",
-    "Buy 2 Get 1 Free",
-    "Buy 3 Get 1 Free",
-    "Buy 5 Get 2 Free",
-  ];
-  final voucherCodes = ["FIRST10", "FREE_SHIP50", "B2G1FREE", "B3G1FREE", "B5G2FREE"];
-
-  return Card(
-    margin: const EdgeInsets.only(bottom: 10),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: ListTile(
-      leading: const Icon(
-        Icons.local_offer,
-        color: Colors.green,
-      ),
-      title: Text(voucherTitles[index]),
-      subtitle: Text("Code: ${voucherCodes[index]}"),
-      trailing: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
-        ),
-        child: Text(
-          AppLocalizations.of(context)!.apply,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.white,
-                fontSize: TSizes.md,
-              ),
-        ),
-      ),
-    ),
-  );
 }
 
 void _showMessageModal(BuildContext context) {

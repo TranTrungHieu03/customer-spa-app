@@ -380,7 +380,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                               .updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
                           widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
                           widget.controller.updateTotalPrice((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.price);
-                          goSelectSpecialist(widget.branchId, widget.controller);
+                          goSelectSpecialist(widget.branchId, widget.controller, 0);
                         },
                         child: Container(
                           height: 55,

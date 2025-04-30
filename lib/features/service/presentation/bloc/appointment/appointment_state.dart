@@ -27,6 +27,14 @@ final class AppointmentCreateSuccess extends AppointmentState {
   const AppointmentCreateSuccess(this.id);
 }
 
+final class AppointmentUpdateRoutineSuccess extends AppointmentState {
+  final int routineId;
+  final int orderId;
+  final int userId;
+
+  const AppointmentUpdateRoutineSuccess({required this.routineId, required this.userId, required this.orderId});
+}
+
 final class AppointmentError extends AppointmentState {
   final String message;
 

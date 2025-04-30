@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/inherited/mix_data.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
+import 'package:spa_mobile/core/common/model/branch_model.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
@@ -28,12 +30,22 @@ class CustomizeRoutineScreen extends StatefulWidget {
 }
 
 class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
+  late bool isShipping;
+  final purchasingController = PurchasingDataController();
+
+  @override
+  void initState() {
+    super.initState();
+    isShipping = purchasingController.isNeedShip;
+  }
+
   @override
   Widget build(BuildContext context) {
     final branch = widget.controller.branch;
     final listProduct = widget.controller.productQuantities;
     final listService = widget.controller.services;
     var isAuto = widget.controller.isAuto;
+
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: true,
@@ -81,6 +93,51 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
               const SizedBox(
                 height: TSizes.md,
               ),
+              if (widget.controller.services.isEmpty)
+                Column(
+                  children: [
+                    const SizedBox(height: TSizes.sm),
+                    RadioListTile<bool>(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Nhận hàng tại cửa hàng',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      value: false,
+                      groupValue: isShipping,
+                      onChanged: (value) {
+                        setState(() {
+                          isShipping = value ?? false;
+                        });
+                        purchasingController.updateIsNeedShip(false);
+                        // widget.controller.updateAuto(value!);
+                      },
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                    RadioListTile<bool>(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Nhận hàng tận nhà',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      value: true,
+                      groupValue: isShipping,
+                      onChanged: (value) {
+                        setState(() {
+                          isShipping = value ?? true;
+                        });
+                        purchasingController.updateIsNeedShip(true);
+                        // if (value == false) {
+                        //   goUpdateStaffMix(widget.controller, widget.controller.branchId, 0);
+                        // }
+                        // widget.controller.updateAuto(value!);
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      dense: true,
+                    ),
+                  ],
+                ),
               Text(
                 AppLocalizations.of(context)!.products,
                 style: Theme.of(context).textTheme.bodyLarge,
@@ -100,50 +157,55 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                   );
                 },
               ),
-              const SizedBox(height: TSizes.sm),
-              Text(
-                AppLocalizations.of(context)!.services,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              RadioListTile<bool>(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'Chọn nhân viên sau',
-                  style: Theme.of(context).textTheme.bodyMedium,
+              if (widget.controller.services.isNotEmpty)
+                Column(
+                  children: [
+                    const SizedBox(height: TSizes.sm),
+                    Text(
+                      AppLocalizations.of(context)!.services,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    RadioListTile<bool>(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Chọn nhân viên sau',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      value: true,
+                      groupValue: isAuto,
+                      onChanged: (value) {
+                        setState(() {
+                          isAuto = value ?? true;
+                          widget.controller.isAuto = value!;
+                        });
+                        widget.controller.updateAuto(value!);
+                      },
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                    RadioListTile<bool>(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Chọn nhân viên cho từng dịch vụ',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      value: false,
+                      groupValue: isAuto,
+                      onChanged: (value) {
+                        setState(() {
+                          isAuto = value ?? false;
+                          widget.controller.isAuto = value!;
+                        });
+                        if (value == false) {
+                          goUpdateStaffMix(widget.controller, widget.controller.branchId, 0);
+                        }
+                        widget.controller.updateAuto(value!);
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      dense: true,
+                    ),
+                  ],
                 ),
-                value: true,
-                groupValue: isAuto,
-                onChanged: (value) {
-                  setState(() {
-                    isAuto = value ?? true;
-                    widget.controller.isAuto = value!;
-                  });
-                  widget.controller.updateAuto(value!);
-                },
-                dense: true,
-                controlAffinity: ListTileControlAffinity.leading,
-              ),
-              RadioListTile<bool>(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  'Chọn nhân viên cho từng dịch vụ',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                value: false,
-                groupValue: isAuto,
-                onChanged: (value) {
-                  setState(() {
-                    isAuto = value ?? false;
-                    widget.controller.isAuto = value!;
-                  });
-                  if (value == false) {
-                    goUpdateStaffMix(widget.controller, widget.controller.branchId);
-                  }
-                  widget.controller.updateAuto(value!);
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                dense: true,
-              ),
               const SizedBox(height: TSizes.sm),
               ListView.builder(
                 shrinkWrap: true,
@@ -221,7 +283,25 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                         final totalPrice = widget.controller.productQuantities.fold(0.0, (a, b) => a + b.quantity * b.product.price) +
                             widget.controller.services.fold(0.0, (a, b) => a + b.price);
                         widget.controller.updateTotalPrice(totalPrice);
-                        goReviewChangeRoutine(widget.controller);
+                        if (widget.controller.services.isEmpty) {
+                          purchasingController.updateProducts(widget.controller.productQuantities);
+                          purchasingController.updateTotalPrice(totalPrice);
+                          purchasingController.updateBranch(branch ?? BranchModel.empty());
+                          purchasingController.updateBranchId(widget.controller.branchId);
+                          purchasingController.updateUser(widget.controller.user);
+                          if (!purchasingController.isNeedShip) {
+                            purchasingController.updateShippingCost(0);
+                          } else {
+                            if (widget.controller.user?.district == 0) {
+                              goShipmentInfo(purchasingController);
+                              TSnackBar.infoSnackBar(context, message: AppLocalizations.of(context)!.update_address_to_purchase);
+                              return;
+                            }
+                          }
+                          goCheckout(purchasingController);
+                        } else {
+                          goReviewChangeRoutine(widget.controller);
+                        }
                       },
                       child: Text(AppLocalizations.of(context)!.continue_book))
                 ],

@@ -76,7 +76,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        TContactInformation(controller: widget.controller),
+                        if (widget.controller.isNeedShip) TContactInformation(controller: widget.controller),
                         const SizedBox(
                           height: TSizes.md,
                         ),
@@ -149,26 +149,27 @@ class TPaymentDetail extends StatelessWidget {
                   )
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(AppLocalizations.of(context)!.shipping_fee, style: Theme.of(context).textTheme.bodyMedium),
-                  BlocBuilder<ShipFeeBloc, ShipFeeState>(
-                    builder: (context, state) {
-                      if (state is ShipFeeLoaded && state.fee != 0) {
-                        return TProductPriceText(
-                          price: (state.fee).toString(),
-                          isLarge: false,
-                        );
-                      } else if (state is ShipFeeLoaded && state.fee == 0) {
-                        return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                ],
-              ),
+              if (controller.isNeedShip)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(AppLocalizations.of(context)!.shipping_fee, style: Theme.of(context).textTheme.bodyMedium),
+                    BlocBuilder<ShipFeeBloc, ShipFeeState>(
+                      builder: (context, state) {
+                        if (state is ShipFeeLoaded && state.fee != 0) {
+                          return TProductPriceText(
+                            price: (state.fee).toString(),
+                            isLarge: false,
+                          );
+                        } else if (state is ShipFeeLoaded && state.fee == 0) {
+                          return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ],
+                ),
               if (controller.voucher != null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,28 +188,42 @@ class TPaymentDetail extends StatelessWidget {
                     )
                   ],
                 ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyMedium),
-                  BlocBuilder<ShipFeeBloc, ShipFeeState>(
-                    builder: (context, state) {
-                      if (state is ShipFeeLoaded && state.fee != 0) {
-                        return TProductPriceText(
-                          price: (controller.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) +
-                                  state.fee -
-                                  (controller.voucher?.discountAmount.toDouble() ?? 0))
-                              .toString(),
-                        );
-                      } else if (state is ShipFeeLoaded && state.fee == 0) {
-                        return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                ],
-              ),
+              if (controller.isNeedShip)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyMedium),
+                    BlocBuilder<ShipFeeBloc, ShipFeeState>(
+                      builder: (context, state) {
+                        if (state is ShipFeeLoaded && state.fee != 0) {
+                          return TProductPriceText(
+                            price: (controller.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) +
+                                    state.fee -
+                                    (controller.voucher?.discountAmount.toDouble() ?? 0))
+                                .toString(),
+                          );
+                        } else if (state is ShipFeeLoaded && state.fee == 0) {
+                          return const TShimmerEffect(width: TSizes.shimmerMd, height: TSizes.shimmerSx);
+                        }
+                        return const SizedBox();
+                      },
+                    ),
+                  ],
+                ),
+              if (!controller.isNeedShip)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(AppLocalizations.of(context)!.total_payment, style: Theme.of(context).textTheme.bodyMedium),
+                    TProductPriceText(
+                      price: (controller.products.fold(0.0, (x, y) => x += y.product.price.toDouble() * y.quantity) -
+                              (controller.voucher?.discountAmount.toDouble() ?? 0))
+                          .toString(),
+                    )
+                  ],
+                ),
             ],
           )
         ],

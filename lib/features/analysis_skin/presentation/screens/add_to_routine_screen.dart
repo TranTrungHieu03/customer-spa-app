@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/inherited/mix_data.dart';
+import 'package:spa_mobile/core/common/inherited/purchasing_data.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
@@ -201,7 +202,6 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
     // Calculate initial price from products in routine
     for (var product in products) {
       if (_isProductInRoutine(product.productId) && !_manuallyRemovedProductIds.contains(product.productId)) {
-
         if (!_selectedProducts.any((p) => p.productId == product.productId)) {
           _selectedProducts.add(product);
           totalPrice += product.price;
@@ -244,6 +244,8 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
+    final PurchasingDataController purchasingDataController = PurchasingDataController();
+    final AppointmentDataController appointmentDataController = AppointmentDataController();
     return Scaffold(
       appBar: TAppbar(
         showBackArrow: true,
@@ -285,12 +287,31 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
               padding: const EdgeInsets.all(TSizes.sm),
               child: ElevatedButton(
                 onPressed: () {
-                  if (_selectedServices.isEmpty && _selectedProducts.isEmpty){
+                  if (_selectedServices.isEmpty && _selectedProducts.isEmpty) {
                     TSnackBar.warningSnackBar(context, message: "Vui lòng chọn ít nhất 1 sản phẩm hoặc dịch vụ để tiếp tục");
                     return;
                   }
+
+                  if (_selectedProducts.isEmpty) {
+                    appointmentDataController.updateServices(_selectedServices);
+                    appointmentDataController.updateServiceIds(_selectedServices.map((x) => x.serviceId).toList());
+                    appointmentDataController.updateTotalPrice(_selectedServices.fold(0.0, (a, b) => a + b.price));
+                    appointmentDataController.updateBranchId(widget.branchId);
+                    appointmentDataController.updateBranch(widget.controller.branch);
+                    appointmentDataController.updateUserId(widget.controller.user?.userId ?? 0);
+                    appointmentDataController.updateUser(widget.controller.user ?? UserModel.empty());
+                    appointmentDataController.updateTime(_selectedServices.fold(0, (a, b) => a + int.parse(b.duration)));
+                    goSelectSpecialist(widget.branchId, appointmentDataController, 0);
+                    return;
+                  }
+                  // if (_selectedServices.isEmpty) {
+                  //
+                  //   return;
+                  // }
                   widget.controller.updateProducts(_selectedProducts);
                   widget.controller.updateServices(_selectedServices);
+                  widget.controller
+                      .updateTime(_selectedServices.fold(0, (a, b) => a + int.parse(b.duration)) + _selectedServices.length * 5);
                   widget.controller.updateUser(user ?? UserModel.empty());
                   goCustomize(widget.controller);
                 },

@@ -18,6 +18,7 @@ import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_voucher/list_voucher_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/screens/voucher_screen.dart';
@@ -99,6 +100,11 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
 
   void handlePaymentOptionChange(PaymentOption option) {
     _selectedPaymentOption.value = option;
+  }
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+    AppLogger.info('$date1 $date2');
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
   }
 
   @override
@@ -337,16 +343,6 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
                           const SizedBox(
                             height: TSizes.md,
                           ),
-                          Divider(
-                            color: dark ? TColors.darkGrey : TColors.grey,
-                            thickness: 0.5,
-                          ),
-                          const SizedBox(
-                            height: TSizes.sm,
-                          ),
-                          const SizedBox(
-                            height: TSizes.md,
-                          ),
                           Text(AppLocalizations.of(context)!.note, style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(
                             height: TSizes.xs,
@@ -395,16 +391,27 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
                               customerId: controller.user?.userId ?? 0,
                               appointmentId: controller.appointmentId,
                             )));
+                        if (!isSameDay(controller.minDate, controller.timeStart[0])) {
+                          context.read<AppointmentBloc>().add(UpdateAppointmentRoutineEvent(UpdateAppointmentRoutineParams(
+                              orderId: controller.orderId,
+                              fromStep: controller.step,
+                              startTime: controller.time[0],
+                              routineId: controller.routineId,
+                              userId: controller.userId)));
+                        }
                       },
                       child: Text(AppLocalizations.of(context)!.confirm),
                     );
                   },
                   listener: (context, state) {
-                    if (state is AppointmentCreateSuccess) {
-                      TSnackBar.successSnackBar(context, message: "Cap nhat lich hen thanh cong");
-                      goAppointmentDetail(state.id.toString());
-                    } else if (state is AppointmentError) {
+                    if (state is AppointmentError) {
                       TSnackBar.errorSnackBar(context, message: state.message);
+                    }
+                    if (state is AppointmentCreateSuccess && isSameDay(controller.minDate, controller.timeStart[0])) {
+                      goAppointmentDetail(state.id.toString(), false);
+                    }
+                    if (state is AppointmentUpdateRoutineSuccess) {
+                      goTrackingRoutineDetail(state.routineId, state.userId, state.orderId);
                     }
                   },
                 ),

@@ -142,7 +142,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
           appBar: TAppbar(
             showBackArrow: false,
             leadingIcon: Iconsax.arrow_left,
-            leadingOnPressed: () => goSelectTime(controller.staffIds, controller),
+            leadingOnPressed: () => goSelectSpecialist(controller.branchId, controller, 1),
             actions: [
               TRoundedIcon(
                 icon: Iconsax.scissor_1,
@@ -270,10 +270,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                     const SizedBox(
                                       width: TSizes.sm,
                                     ),
-                                    Text(
-                                      "${DateFormat('HH:mm', lgCode).format(controller.time[0]).toString()} - "
-                                      "${DateFormat('HH:mm', lgCode).format(controller.time[0].add(Duration(minutes: totalTime))).toString()}",
-                                    ),
+                                    Text("${DateFormat('HH:mm', lgCode).format(controller.time[0]).toString()}"),
                                     const Spacer(),
                                     TRoundedIcon(
                                       icon: Iconsax.info_circle,

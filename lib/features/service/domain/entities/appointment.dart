@@ -14,6 +14,7 @@ class Appointment extends Equatable {
   final int quantity;
   final double unitPrice;
   final double subTotal;
+  final int? step;
 
   const Appointment({
     required this.appointmentId,
@@ -29,6 +30,7 @@ class Appointment extends Equatable {
     required this.quantity,
     required this.unitPrice,
     required this.subTotal,
+    this.step
   });
 
   @override

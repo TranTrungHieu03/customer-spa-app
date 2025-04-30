@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/datasources/routine_remote_data_source.dart';
@@ -18,6 +19,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_hi
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/order_mix.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 class RoutineRepositoryImpl implements RoutineRepository {
@@ -152,6 +154,18 @@ class RoutineRepositoryImpl implements RoutineRepository {
       int result = await _dataSource.orderMix(params);
       return right(result);
     } catch (e) {
+      return left(ApiFailure(
+        message: e.toString(),
+      ));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> updateAppointmentRoutine(UpdateAppointmentRoutineParams params) async {
+    try {
+      String result = await _dataSource.updateAppointmentRoutine(params);
+      return right(result);
+    } on AppException catch (e) {
       return left(ApiFailure(
         message: e.toString(),
       ));

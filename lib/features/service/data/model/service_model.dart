@@ -45,4 +45,18 @@ class ServiceModel extends Service {
       'serviceCategoryId': serviceCategoryId
     };
   }
+
+  factory ServiceModel.empty() {
+    return const ServiceModel(
+      serviceId: 0,
+      name: '',
+      description: '',
+      price: 0.0,
+      duration: "",
+      status: "",
+      serviceCategoryId: 0,
+      steps: "",
+      images: [],
+    );
+  }
 }

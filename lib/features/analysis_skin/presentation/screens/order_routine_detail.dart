@@ -99,7 +99,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                             Text(AppLocalizations.of(context)!.treatment_steps,
                                 overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyLarge),
                             GestureDetector(
-                              onTap: () => goTrackingRoutineDetail(routine.skincareRoutineId, order.customerId),
+                              onTap: () => goTrackingRoutineDetail(routine.skincareRoutineId, order.customerId, order.orderId),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [

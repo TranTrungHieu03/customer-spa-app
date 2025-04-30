@@ -94,8 +94,8 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ListServiceBloc>().add(
-            GetListServicesForSelectionEvent(1, selectedBranch ?? 1, 100),
-          );
+        GetListServicesForSelectionEvent(1, selectedBranch ?? 1, 100),
+      );
     });
   }
 
@@ -113,7 +113,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
   // Handle tab selection changes (from user tapping tabs)
   void _handleTabSelection() {
     if (!_isTabHandlerActive && _tabController!.indexIsChanging) {
-      final state = context.read<ListServiceBloc>().state;
+      final state = context
+          .read<ListServiceBloc>()
+          .state;
       if (state is! ListServiceLoadedForSelection) return;
 
       final selectedCategoryId = state.categories[_tabController!.index].categoryId;
@@ -173,7 +175,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
   }
 
   void _updateTabBasedOnScroll() {
-    final state = context.read<ListServiceBloc>().state;
+    final state = context
+        .read<ListServiceBloc>()
+        .state;
     if (state is! ListServiceLoadedForSelection || _tabController == null) return;
 
     // Đặt cờ để ngăn chặn các hành động đệ quy
@@ -196,7 +200,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
       if (renderContext == null) continue;
 
       final box = renderContext.findRenderObject() as RenderBox;
-      final position = box.localToGlobal(Offset.zero).dy;
+      final position = box
+          .localToGlobal(Offset.zero)
+          .dy;
 
       // Kiểm tra xem phần tử này có nằm trong viewport không
       if (position >= viewportTop - 100 && position <= viewportTop + viewportHeight + 100) {
@@ -238,7 +244,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
   }
 
   void _scrollToCategory(int categoryId) {
-    final state = context.read<ListServiceBloc>().state;
+    final state = context
+        .read<ListServiceBloc>()
+        .state;
     if (state is! ListServiceLoadedForSelection) return;
 
     final index = state.categories.indexWhere((cat) => cat.categoryId == categoryId);
@@ -281,7 +289,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                 ),
                 collapseMode: CollapseMode.pin,
                 title: DefaultTextStyle(
-                  style: Theme.of(context).textTheme.titleLarge!,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleLarge!,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -302,7 +313,11 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                   if (!_isScrolled)
                                     Text(
                                       branch.branchAddress,
-                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 10),
+                                      style: Theme
+                                          .of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(fontSize: 10),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -320,7 +335,11 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                 if (!_isScrolled)
                                   Text(
                                     branchInfo?.branchAddress ?? "",
-                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 10),
+                                    style: Theme
+                                        .of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontSize: 10),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -336,7 +355,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                           icon: Iconsax.filter,
                           size: 16,
                           onPressed: () {
-                            final state = context.read<ListBranchesBloc>().state;
+                            final state = context
+                                .read<ListBranchesBloc>()
+                                .state;
                             if (state is ListBranchesLoaded) {
                               context.read<NearestBranchBloc>().add(GetNearestBranchEvent(params: GetDistanceParams(state.branches)));
                               _showFilterModel(context, state.branches);
@@ -356,21 +377,21 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
             ],
             bottom: _isScrolled
                 ? PreferredSize(
-                    preferredSize: const Size.fromHeight(1),
-                    child: Container(
-                      height: 1,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: TColors.darkGrey.withOpacity(0.3),
-                            blurRadius: 1,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
+              preferredSize: const Size.fromHeight(1),
+              child: Container(
+                height: 1,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: TColors.darkGrey.withOpacity(0.3),
+                      blurRadius: 1,
+                      offset: const Offset(0, 3),
                     ),
-                  )
+                  ],
+                ),
+              ),
+            )
                 : null,
           ),
           SliverPersistentHeader(
@@ -409,9 +430,13 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                   child: Text(
                                     category.name,
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                          color: _tabController!.index == state.categories.indexOf(category) ? TColors.white : TColors.dark,
-                                        ),
+                                    style: Theme
+                                        .of(context)
+                                        .textTheme
+                                        .labelLarge!
+                                        .copyWith(
+                                      color: _tabController!.index == state.categories.indexOf(category) ? TColors.white : TColors.dark,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -435,7 +460,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(AppLocalizations.of(context)!.view_treatment_packages, style: Theme.of(context).textTheme.titleLarge),
+                        Text(AppLocalizations.of(context)!.view_treatment_packages, style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleLarge),
                         const SizedBox(width: TSizes.sm),
                         const Icon(Iconsax.arrow_right_1)
                       ],
@@ -457,7 +485,7 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) {
+                        (context, index) {
                       final category = state.categories[index];
                       final services = state.groupedServices[category.categoryId] ?? [];
 
@@ -472,12 +500,19 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                               children: [
                                 Text(
                                   category.name,
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(
                                   height: TSizes.sm,
                                 ),
-                                Text(category.description, style: Theme.of(context).textTheme.bodyMedium),
+                                Text(category.description, style: Theme
+                                    .of(context)
+                                    .textTheme
+                                    .bodyMedium),
                               ],
                             ),
                           ),
@@ -508,13 +543,23 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                                 TProductTitleText(title: service.name, smallSize: true),
                                                 const SizedBox(height: TSizes.xs),
                                                 Text(
-                                                  "${service.duration} ${AppLocalizations.of(context)?.minutes ?? 'minutes'}",
-                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
+                                                  "${service.duration} ${AppLocalizations
+                                                      .of(context)
+                                                      ?.minutes ?? 'minutes'}",
+                                                  style: Theme
+                                                      .of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(color: TColors.darkerGrey),
                                                 ),
                                                 const SizedBox(height: TSizes.xs),
                                                 Text(
                                                   formatMoney(service.price.toString()),
-                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
+                                                  style: Theme
+                                                      .of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(fontWeight: FontWeight.w500),
                                                 ),
                                               ],
                                             ),
@@ -565,10 +610,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
               return const SliverToBoxAdapter(child: SizedBox());
             },
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
               child: SizedBox(
-            height: 200,
-          ))
+                height: 200,
+              ))
         ],
       ),
       bottomNavigationBar: BlocBuilder<ListServiceBloc, ListServiceState>(
@@ -594,12 +639,18 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                   children: [
                     Text(
                       formatMoney(totalAmount.toString()),
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w500),
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(fontWeight: FontWeight.w500),
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('${_selectedServiceIds.length} ${AppLocalizations.of(context)?.services}'),
+                        Text('${_selectedServiceIds.length} ${AppLocalizations
+                            .of(context)
+                            ?.services}'),
                         const SizedBox(
                           width: TSizes.xs,
                         ),
@@ -614,16 +665,19 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                 ),
                 OutlinedButton(
                   onPressed: () {
-                    controller.updateServiceIds(_selectedServiceIds.toList()..sort());
-                    controller.updateServices((_selectedServiceIds.toList()..sort())
+                    controller.updateServiceIds(_selectedServiceIds.toList()
+                      ..sort());
+                    controller.updateServices((_selectedServiceIds.toList()
+                      ..sort())
                         .map((id) => state.services.firstWhere((service) => service.serviceId == id))
                         .toList());
-                    controller.updateTime(totalTime);
+                    AppLogger.wtf(_selectedServiceIds.length);
+                    controller.updateTime(totalTime + _selectedServiceIds.length * 5);
                     controller.updateTotalPrice(totalAmount);
                     controller.updateBranchId(selectedBranch ?? 0);
                     controller.updateBranch(branchInfo);
                     controller.updateUser(user);
-                    goSelectSpecialist(selectedBranch ?? 0, controller);
+                    goSelectSpecialist(selectedBranch ?? 0, controller, 0);
                   },
                   child: Text(
                     AppLocalizations.of(context)!.continue_book,
@@ -662,7 +716,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
       context.read<ListServiceBloc>().add(RefreshListServiceEvent());
       previousBranch = selectedBranch;
       setState(() {
-        branchInfo = listBranches.where((e) => e.branchId == selectedBranch).first;
+        branchInfo = listBranches
+            .where((e) => e.branchId == selectedBranch)
+            .first;
       });
       _selectedServiceIds.clear();
       context.read<ListServiceBloc>().add(GetListServicesForSelectionEvent(1, selectedBranch ?? 0, 100));
@@ -681,7 +737,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
               left: TSizes.md,
               right: TSizes.md,
               top: TSizes.sm,
-              bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.md,
+              bottom: MediaQuery
+                  .of(context)
+                  .viewInsets
+                  .bottom + TSizes.md,
             ),
             child: BlocBuilder<ListBranchesBloc, ListBranchesState>(
               builder: (context, state) {
@@ -694,7 +753,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     children: [
                       Text(
                         AppLocalizations.of(context)!.branch,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodyLarge,
                       ),
                       const SizedBox(height: TSizes.sm),
                       ListView.builder(
@@ -727,7 +789,10 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                                     children: [
                                       Text(
                                         branch.branchName,
-                                        style: Theme.of(context).textTheme.bodyMedium,
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                       ),
                                       BlocBuilder<NearestBranchBloc, NearestBranchState>(builder: (context, distanceState) {
                                         if (distanceState is NearestBranchLoaded) {
@@ -755,9 +820,13 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                               if (selectedBranch != null) {
                                 await LocalStorage.saveData(LocalStorageKey.defaultBranch, selectedBranch.toString());
                                 if (selectedBranch != 0) {
-                                  AppLogger.info(jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
+                                  AppLogger.info(jsonEncode(branches
+                                      .where((e) => e.branchId == selectedBranch)
+                                      .first));
                                   await LocalStorage.saveData(
-                                      LocalStorageKey.branchInfo, jsonEncode(branches.where((e) => e.branchId == selectedBranch).first));
+                                      LocalStorageKey.branchInfo, jsonEncode(branches
+                                      .where((e) => e.branchId == selectedBranch)
+                                      .first));
                                 }
                                 Navigator.of(context).pop();
                               }
@@ -767,7 +836,11 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                             ),
                             child: Text(
                               AppLocalizations.of(context)!.set_as_default,
-                              style: Theme.of(context).textTheme.bodyMedium!.apply(color: Colors.white),
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .apply(color: Colors.white),
                             ),
                           ),
                         ],

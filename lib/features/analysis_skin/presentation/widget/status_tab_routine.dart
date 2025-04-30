@@ -74,7 +74,7 @@ class _TStatusBarRoutineState extends State<TStatusBarRoutine> with AutomaticKee
                                   ],
                                 ),
                                 onTap: () {
-                                  goTrackingRoutineDetail(routine.skincareRoutineId, widget.userId);
+                                  // goTrackingRoutineDetail(routine.skincareRoutineId, widget.userId);
                                 },
                               ),
                               // Padding(

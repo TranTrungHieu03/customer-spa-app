@@ -61,7 +61,7 @@ class SignalRService {
     serviceLocator
       ..registerLazySingleton<ChatRemoteDataSource>(
         () => SignalRChatRemoteDataSource(
-          hubUrl: "https://solaceapi.ddnsking.com/chat",
+          hubUrl: "https://solaceapi.ddnsking.com/notification",
           userId: userId,
         ),
       )

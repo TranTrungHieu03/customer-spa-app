@@ -30,22 +30,17 @@ class NetworkApiService implements BaseApiServices {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           AppLogger.info(options.path);
-          if (options.path != '/register' && options.path != '/Auth/login' && options.path != '/Auth/first-step') {
+          if (options.path != '/Auth/login' && options.path != '/Auth/first-step') {
             _cachedToken = _cachedToken ??= await authService.getToken();
             options.headers['Authorization'] = 'Bearer $_cachedToken';
           }
-          // _cachedToken = _cachedToken ??= await authService.getToken();
-
-          // options.headers['Authorization'] = 'Bearer $_cachedToken';
           if (options.data is! FormData) {
             options.headers['Content-Type'] = 'application/json';
           }
           if (options.data is FormData) {
             _cachedToken = await _refreshToken();
           }
-          if (kDebugMode) {
-            // AppLogger.info("==> Request Interceptor Triggered \nToken: $_cachedToken\nURL: ${options.uri}\nHeaders: ${options.headers}");
-          }
+          options.headers['Authorization'] = 'Bearer $_cachedToken';
           return handler.next(options);
         },
         onError: (DioException error, handler) async {

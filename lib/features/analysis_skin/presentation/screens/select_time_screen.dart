@@ -62,7 +62,7 @@ class _SelectRoutineTimeScreenState extends State<SelectRoutineTimeScreen> {
       final slotEnd = currentStart.add(const Duration(minutes: 60));
       if (slotEnd.isAfter(workDayEnd)) break;
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
-      currentStart = currentStart.add(const Duration(minutes: 15));
+      currentStart = currentStart.add(const Duration(minutes: 5));
     }
 
     final now = DateTime.now();

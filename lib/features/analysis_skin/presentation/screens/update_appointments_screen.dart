@@ -4,8 +4,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/inherited/mix_data.dart';
+import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
+import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
@@ -22,10 +24,16 @@ import 'package:spa_mobile/features/service/presentation/bloc/list_staff/list_st
 import 'package:spa_mobile/features/service/presentation/widgets/leave_booking.dart';
 
 class UpdateAppointmentsScreen extends StatefulWidget {
-  const UpdateAppointmentsScreen({super.key, required this.branchId, required this.controller});
+  const UpdateAppointmentsScreen({
+    super.key,
+    required this.branchId,
+    required this.controller,
+    required this.isBack,
+  });
 
   final int branchId;
   final MixDataController controller;
+  final int isBack;
 
   @override
   State<UpdateAppointmentsScreen> createState() => _UpdateAppointmentsScreenState();
@@ -35,16 +43,21 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
   List<int>? selectedStaffIds;
   int? selectedStaffId;
   late List<int> serviceCategoryIds;
+  late int _currentIsBack;
 
   @override
   void initState() {
+    super.initState();
+    _currentIsBack = widget.isBack;
     serviceCategoryIds = widget.controller.services.map((e) => e.serviceCategoryId).toList();
     AppLogger.info(serviceCategoryIds);
-    context
-        .read<ListStaffBloc>()
-        .add(GetListStaffEvent(params: GetListStaffParams(branchId: widget.branchId, serviceCategoryIds: serviceCategoryIds)));
+    if (widget.isBack == 0) {
+      context
+          .read<ListStaffBloc>()
+          .add(GetListStaffEvent(params: GetListStaffParams(branchId: widget.branchId, serviceCategoryIds: serviceCategoryIds)));
+    }
+
     selectedStaffIds = widget.controller.staffIds;
-    super.initState();
   }
 
   void _showModelLeave(BuildContext context) {
@@ -65,53 +78,71 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
     );
   }
 
+  void _handleStaffLoaded(ListStaffLoaded state, MixDataController controller, bool isChooseMultiStaff) {
+    if (state.intersectionStaff.isNotEmpty) {
+      controller.updateStaff(state.intersectionStaff.first);
+      controller.updateStaffIds(state.intersectionStaff.first.staffId);
+
+      if (controller.staffIds.isNotEmpty && !isChooseMultiStaff) {
+        selectedStaffId = controller.staffIds[0];
+      }
+
+      selectedStaffIds = controller.staffIds;
+    } else {
+      controller.staffIds.asMap().forEach((index, id) {
+        if (state.listStaff.isNotEmpty && index < state.listStaff.length && state.listStaff[index].staffs.isNotEmpty) {
+          controller.addStaff(index, state.listStaff[index].staffs[0]);
+          controller.addStaffId(index, state.listStaff[index].staffs[0].staffId);
+        }
+      });
+
+      if (controller.staffIds.isNotEmpty && !isChooseMultiStaff) {
+        selectedStaffId = controller.staffIds[0];
+      }
+
+      selectedStaffIds = controller.staffIds;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = widget.controller;
-    final serviceId = controller.services.map((e) => e.serviceId).toList();
-    final isSingleService = serviceId.length == 1;
+    final serviceIds = controller.services.map((x) => x.serviceCategoryId);
+    final isSingleService = serviceIds.length == 1;
     final int indexExtra = isSingleService ? 0 : 1;
-    final isChooseMultiStaff = serviceId.length > 1 && selectedStaffId == -1;
-    var isChooseDiffSpecialist = controller.staffIds.map((x) {
-      return x != controller.staffIds[0];
-    }).contains(true);
-    if (!isChooseMultiStaff) {
+    final isChooseMultiStaff = serviceIds.length > 1 && selectedStaffId == -1;
+
+    final isChooseDiffSpecialist =
+        controller.staffIds.isNotEmpty && controller.staffIds.length > 1 && controller.staffIds.any((id) => id != controller.staffIds[0]);
+
+    if (!isChooseMultiStaff && controller.staffIds.isNotEmpty) {
       selectedStaffId = controller.staffIds[0];
     }
+
     return WillPopScope(
       onWillPop: () async => false,
       child: BlocListener<ListStaffBloc, ListStaffState>(
+        listenWhen: (previous, current) {
+          bool shouldListen = previous is! ListStaffLoaded && current is ListStaffLoaded;
+          return shouldListen;
+        },
         listener: (context, state) {
           if (state is ListStaffLoaded) {
-            if (state.intersectionStaff.isNotEmpty) {
-              AppLogger.debug("choose staff");
-              controller.updateStaff(state.intersectionStaff.first);
-              controller.updateStaffIds(state.intersectionStaff.first.staffId);
-
-              if (!isChooseMultiStaff) {
-                selectedStaffId = controller.staffIds[0];
-              }
-              selectedStaffIds = controller.staffIds;
-            } else {
-              controller.staffIds.asMap().forEach((index, id) {
-                controller.addStaff(index, state.listStaff[index].staffs[0]);
-                controller.addStaffId(index, state.listStaff[index].staffs[0].staffId);
-              });
-              isChooseDiffSpecialist = true;
-
-              if (!isChooseMultiStaff) {
-                selectedStaffId = controller.staffIds[0];
-              }
-              selectedStaffIds = controller.staffIds;
+            AppLogger.wtf('Widget isBack value in listener: $_currentIsBack');
+            if (_currentIsBack == 0) {
+              AppLogger.info("go here");
+              _handleStaffLoaded(state, controller, isChooseMultiStaff);
             }
           }
         },
         child: Scaffold(
           appBar: TAppbar(
-            showBackArrow: true,
+            showBackArrow: false,
             leadingIcon: Iconsax.arrow_left,
             leadingOnPressed: () {
-              // goSelectTime([selectedStaffId ?? 1], controller);
+              if (selectedStaffId != null) {
+                _goToSelectTime([selectedStaffId!], controller, -1);
+              }
             },
             actions: [
               TRoundedIcon(
@@ -129,250 +160,273 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text(
-                    AppLocalizations.of(context)!.choose_specialist,
+                    AppLocalizations.of(context)?.choose_specialist ?? 'Choose specialist',
                     style: Theme.of(context).textTheme.displaySmall ?? const TextStyle(),
                   ),
                 ),
                 const SizedBox(height: TSizes.md),
-                // if (!isChooseMultiStaff && !isChooseDiffSpecialist)
-                //   Expanded(
-                //     child: BlocBuilder<ListStaffBloc, ListStaffState>(
-                //       builder: (context, state) {
-                //         if (state is ListStaffLoaded) {
-                //           return TGridLayout(
-                //             mainAxisExtent: 150,
-                //             itemCount: state.intersectionStaff.length + indexExtra,
-                //             crossAxisCount: 2,
-                //             itemBuilder: (context, index) {
-                //               if (index == 0 && !isSingleService) {
-                //                 final isSelected = selectedStaffId == -1;
-                //                 return GestureDetector(
-                //                   onTap: () {
-                //                     setState(() {
-                //                       selectedStaffId = -1;
-                //                     });
-                //                   },
-                //                   child: TRoundedContainer(
-                //                     margin: const EdgeInsets.all(TSizes.xs),
-                //                     padding: const EdgeInsets.all(TSizes.xs),
-                //                     backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                //                     borderColor: isSelected ? TColors.primary : Colors.transparent,
-                //                     showBorder: true,
-                //                     shadow: true,
-                //                     child: Column(
-                //                       mainAxisAlignment: MainAxisAlignment.center,
-                //                       children: [
-                //                         TRoundedContainer(
-                //                           radius: 50,
-                //                           width: 50,
-                //                           height: 50,
-                //                           backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                //                           child: Center(
-                //                             child: Text(
-                //                               THelperFunctions.getFirstLetterOfLastName("Any"),
-                //                               style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                //                             ),
-                //                           ),
-                //                         ),
-                //                         const SizedBox(height: TSizes.xs),
-                //                         Text(
-                //                           AppLocalizations.of(context)!.select_specialist_per_service,
-                //                           style: Theme.of(context).textTheme.bodyMedium,
-                //                           textAlign: TextAlign.center,
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 );
-                //               } else {
-                //                 final staff = state.intersectionStaff[index - indexExtra];
-                //                 AppLogger.info(state.intersectionStaff[index - indexExtra]);
-                //                 final isSelected = selectedStaffId == staff.staffId;
-                //
-                //                 return GestureDetector(
-                //                   onTap: () {
-                //                     setState(() {
-                //                       selectedStaffId = staff.staffId;
-                //                     });
-                //
-                //                     if (staff.staffId != -1) {
-                //                       // controller.updateStaffIds(staff.staffId);
-                //                       // controller.updateStaff(staff);
-                //                       // goSelectTime([staff.staffId], controller);
-                //                       controller.updateStaffIdForAll(staff);
-                //                     }
-                //                   },
-                //                   child: TRoundedContainer(
-                //                     margin: const EdgeInsets.all(TSizes.xs),
-                //                     padding: const EdgeInsets.all(TSizes.xs),
-                //                     backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                //                     borderColor: isSelected ? TColors.primary : Colors.transparent,
-                //                     showBorder: true,
-                //                     shadow: true,
-                //                     child: Column(
-                //                       mainAxisAlignment: MainAxisAlignment.center,
-                //                       children: [
-                //                         TRoundedContainer(
-                //                           radius: 50,
-                //                           width: 50,
-                //                           height: 50,
-                //                           backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                //                           child: Center(
-                //                             child: Text(
-                //                               THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
-                //                               style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                //                             ),
-                //                           ),
-                //                         ),
-                //                         const SizedBox(height: TSizes.xs),
-                //                         Text(
-                //                           staff.staffInfo?.userName ?? "",
-                //                           style: Theme.of(context).textTheme.bodyMedium,
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   ),
-                //                 );
-                //               }
-                //             },
-                //           );
-                //         } else if (state is ListStaffLoading) {
-                //           return const TLoader();
-                //         }
-                //         return const TErrorBody();
-                //       },
-                //     ),
-                //   ),
-                // if (isChooseMultiStaff || isChooseDiffSpecialist)
-                BlocBuilder<ListStaffBloc, ListStaffState>(builder: (context, state) {
-                  if (state is ListStaffLoaded) {
-                    return ListView.separated(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final isAny = selectedStaffIds?[index] == -1;
-                          final staffs = state.listStaff[index].staffs;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                controller.services[index].name,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              const SizedBox(
-                                height: TSizes.md,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      _showModelSpecialist(context, controller.services[index],
-                                          (context.read<ListStaffBloc>().state as ListStaffLoaded).listStaff[index].staffs, index);
-                                      controller.timeStart[index] = kDefaultDateTime;
-                                      controller.removeListChooseTime(controller.timeStart[index]);
-                                    },
-                                    child: TRoundedContainer(
-                                      width: THelperFunctions.screenWidth(context) * 0.5,
-                                      radius: TSizes.lg,
-                                      padding: const EdgeInsets.all(TSizes.sm),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          TRoundedContainer(
-                                            radius: 35,
-                                            width: 35,
-                                            height: 35,
-                                            backgroundColor: TColors.primaryBackground,
-                                            child: Center(
-                                              child: Text(
-                                                isAny
-                                                    ? THelperFunctions.getFirstLetterOfLastName("A")
-                                                    : THelperFunctions.getFirstLetterOfLastName(staffs
-                                                            .firstWhere((x) => x.staffId == selectedStaffIds?[index])
-                                                            .staffInfo
-                                                            ?.userName ??
-                                                        ""),
-                                                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: TColors.primary),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: TSizes.sm),
-                                          ConstrainedBox(
-                                            constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.2),
-                                            child: Text(
-                                                isAny
-                                                    ? AppLocalizations.of(context)!.any_specialist
-                                                    : staffs.firstWhere((x) => x.staffId == selectedStaffIds?[index]).staffInfo?.userName ??
-                                                        "",
-                                                style: Theme.of(context).textTheme.labelLarge,
-                                                textAlign: TextAlign.center),
-                                          ),
-                                          const Spacer(),
-                                          const Icon(
-                                            Iconsax.arrow_down_1,
-                                            size: 15,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  (controller.timeStart[index] == kDefaultDateTime)
-                                      ? TRoundedIcon(
-                                          icon: Iconsax.edit,
-                                          onPressed: () {
-                                            goUpdateTimeMix(controller, [controller.staffIds[index]], index);
-                                          },
-                                        )
-                                      : GestureDetector(
-                                          onTap: () {
-                                            controller.removeListChooseTime(controller.timeStart[index]);
-                                            goUpdateTimeMix(controller, [controller.staffIds[index]], index);
-                                          },
-                                          child: ConstrainedBox(
-                                              constraints: BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.4),
-                                              child: Text(
-                                                DateFormat("HH:mm, EEEE dd MMMM yyyy", "vi").format(controller.timeStart[index]),
-                                                maxLines: 2,
-                                              )),
-                                        )
-                                ],
-                              ),
-                            ],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(height: TSizes.md);
-                        },
-                        itemCount: controller.services.length);
-                  } else {
-                    return const SizedBox();
-                  }
-                }),
+                if (!isChooseMultiStaff && !isChooseDiffSpecialist && widget.isBack == 0)
+                  _buildSingleSpecialistSection(controller, indexExtra),
+                if (isChooseMultiStaff || isChooseDiffSpecialist || widget.isBack != 0) _buildMultiSpecialistSection(controller),
               ],
             ),
           ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.all(TSizes.sm),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                    onPressed: !widget.controller.staffIds.contains(0)
-                        ? () {
-                            goReviewChangeRoutine(controller);
-                          }
-                        : null,
-                    child: Text(AppLocalizations.of(context)!.continue_book))
-              ],
-            ),
-          ),
+          bottomNavigationBar: _buildBottomNavBar(controller),
         ),
       ),
     );
   }
 
-  void _showModelSpecialist(BuildContext context, ServiceModel service, List<StaffModel> staffs, int indexService) {
+  Widget _buildBottomNavBar(MixDataController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(TSizes.sm),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          ElevatedButton(
+            onPressed: (!controller.staffIds.contains(-1) && !controller.timeStart.contains(kDefaultDateTime))
+                ? () => _goToReview(controller)
+                : null,
+            child: Text(AppLocalizations.of(context)?.continue_book ?? 'Continue'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnySpecialistCard(BuildContext context) {
+    final isSelected = selectedStaffId == -1;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedStaffId = -1;
+        });
+      },
+      child: TRoundedContainer(
+        margin: const EdgeInsets.all(TSizes.xs),
+        padding: const EdgeInsets.all(TSizes.xs),
+        backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+        borderColor: isSelected ? TColors.primary : Colors.transparent,
+        showBorder: true,
+        shadow: true,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TRoundedContainer(
+              radius: 50,
+              width: 50,
+              height: 50,
+              backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+              child: Center(
+                child: Text(
+                  THelperFunctions.getFirstLetterOfLastName("Any"),
+                  style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+                ),
+              ),
+            ),
+            const SizedBox(height: TSizes.xs),
+            Text(
+              AppLocalizations.of(context)?.select_specialist_per_service ?? 'Select specialist per service',
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSpecialistCard(StaffModel staff, MixDataController controller) {
+    final isSelected = selectedStaffId == staff.staffId;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedStaffId = staff.staffId;
+        });
+
+        if (staff.staffId != -1) {
+          controller.updateStaffIds(staff.staffId);
+          controller.updateStaff(staff);
+          _goToSelectTime(controller.staffIds, controller, -1);
+        }
+      },
+      child: SpecialistCard(
+        staff: staff,
+        isSelected: isSelected,
+      ),
+    );
+  }
+
+  Widget _buildSingleSpecialistSection(MixDataController controller, int indexExtra) {
+    return Expanded(
+      child: BlocBuilder<ListStaffBloc, ListStaffState>(
+        builder: (context, state) {
+          if (state is ListStaffLoaded) {
+            return TGridLayout(
+              mainAxisExtent: 150,
+              itemCount: state.intersectionStaff.length + indexExtra,
+              crossAxisCount: 2,
+              itemBuilder: (context, index) {
+                if (index == 0 && indexExtra == 1) {
+                  return _buildAnySpecialistCard(context);
+                } else {
+                  final adjustedIndex = index - indexExtra;
+                  if (adjustedIndex >= 0 && adjustedIndex < state.intersectionStaff.length) {
+                    final staff = state.intersectionStaff[adjustedIndex];
+                    return _buildSpecialistCard(staff, controller);
+                  } else {}
+                }
+              },
+            );
+          } else if (state is ListStaffLoading) {
+            return const TLoader();
+          }
+          return const TErrorBody();
+        },
+      ),
+    );
+  }
+
+  Widget _buildMultiSpecialistSection(MixDataController controller) {
+    return BlocBuilder<ListStaffBloc, ListStaffState>(
+      builder: (context, state) {
+        if (state is ListStaffLoaded) {
+          return Column(
+            children: [
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  if (index >= controller.services.length || index >= state.listStaff.length || index >= controller.staffIds.length) {
+                    return const SizedBox();
+                  }
+
+                  final isAny = selectedStaffIds != null && index < selectedStaffIds!.length && selectedStaffIds![index] == -1;
+
+                  final staffs = state.listStaff[index].staffs;
+
+                  return _buildServiceSpecialistItem(context, controller, index, isAny, staffs);
+                },
+                separatorBuilder: (context, index) {
+                  return const SizedBox(height: TSizes.md);
+                },
+                itemCount: controller.services.length,
+              ),
+              state.intersectionStaff.isNotEmpty
+                  ? GestureDetector(
+                      onTap: () {
+                        controller.clearSlot();
+                        controller.updateStaffIds(-1);
+                        goUpdateStaffMix(controller, controller.branchId, 0);
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Chọn một nhân viên cho toàn bộ dịch vụ.",
+                            style: Theme.of(context)!.textTheme.bodyLarge,
+                          ),
+                          const Icon(Iconsax.arrow_right_1)
+                        ],
+                      ),
+                    )
+                  : const SizedBox()
+            ],
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+  Widget _buildServiceSpecialistItem(BuildContext context, MixDataController controller, int index, bool isAny, List<StaffModel> staffs) {
+    StaffModel? selectedStaff;
+    if (!isAny && selectedStaffIds != null && index < selectedStaffIds!.length && index < staffs.length) {
+      selectedStaff = staffs.firstWhere(
+        (x) => x.staffId == selectedStaffIds![index],
+        orElse: () => staffs.first,
+      );
+    }
+
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          controller.services[index].name,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+        const SizedBox(height: TSizes.md),
+        GestureDetector(
+          onTap: () {
+            _showSpecialistSelectionModal(context, controller.services[index], staffs, index);
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TRoundedContainer(
+                width: screenWidth * 0.6,
+                radius: TSizes.lg,
+                padding: const EdgeInsets.all(TSizes.sm),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TRoundedContainer(
+                      radius: 35,
+                      width: 35,
+                      height: 35,
+                      backgroundColor: TColors.primaryBackground,
+                      child: Center(
+                        child: Text(
+                          isAny
+                              ? THelperFunctions.getFirstLetterOfLastName("A")
+                              : THelperFunctions.getFirstLetterOfLastName(selectedStaff?.staffInfo?.userName ?? ""),
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(color: TColors.primary),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: TSizes.sm),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: screenWidth * 0.3),
+                      child: Text(
+                          isAny
+                              ? AppLocalizations.of(context)?.any_specialist ?? 'Any specialist'
+                              : selectedStaff?.staffInfo?.userName ?? "",
+                          style: Theme.of(context).textTheme.labelLarge,
+                          textAlign: TextAlign.center),
+                    ),
+                    const Spacer(),
+                    const Icon(
+                      Iconsax.arrow_down_1,
+                      size: 15,
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: TSizes.sm),
+              _buildTimeSelectionWidget(controller, index),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: TSizes.lg,
+        ),
+      ],
+    );
+  }
+
+  void _goToSelectTime(List<int> staffIds, MixDataController controller, int serviceIndex) {
+    goUpdateTimeMix(controller, staffIds, serviceIndex);
+  }
+
+  void _goToReview(MixDataController controller) {
+    goReviewChangeRoutine(controller);
+  }
+
+  void _showSpecialistSelectionModal(BuildContext context, ServiceModel service, List<StaffModel> staffs, int serviceIndex) {
     if (!mounted) return;
 
     showModalBottomSheet(
@@ -408,59 +462,7 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: TSizes.md),
-                      TGridLayout(
-                        mainAxisExtent: 150,
-                        itemCount: staffs.length,
-                        crossAxisCount: 2,
-                        itemBuilder: (context, index) {
-                          final staff = staffs[index];
-                          final isSelected = widget.controller.staffIds[indexService] == staff.staffId;
-                          return GestureDetector(
-                            onTap: () {
-                              setModalState(() {
-                                selectedStaffIds?[indexService] = staff.staffId;
-                              });
-                              setState(() {
-                                selectedStaffIds?[indexService] = staff.staffId;
-                              });
-                              widget.controller.addStaffId(indexService, staff.staffId);
-                              widget.controller.addStaff(indexService, staff);
-                              Navigator.pop(context);
-                            },
-                            child: TRoundedContainer(
-                              margin: const EdgeInsets.all(TSizes.xs),
-                              padding: const EdgeInsets.all(TSizes.xs),
-                              backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
-                              borderColor: isSelected ? TColors.primary : Colors.transparent,
-                              showBorder: true,
-                              shadow: true,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TRoundedContainer(
-                                    radius: 50,
-                                    width: 50,
-                                    height: 50,
-                                    backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
-                                    child: Center(
-                                      child: Text(
-                                        THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
-                                        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: TSizes.xs),
-                                  Text(
-                                    staff.staffInfo?.userName ?? "",
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                          // }
-                        },
-                      ),
+                      _buildSpecialistsGrid(staffs, serviceIndex, setModalState),
                     ],
                   ),
                 ),
@@ -469,6 +471,133 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildSpecialistsGrid(List<StaffModel> staffs, int serviceIndex, StateSetter setModalState) {
+    return TGridLayout(
+      mainAxisExtent: 150,
+      itemCount: staffs.length,
+      crossAxisCount: 2,
+      itemBuilder: (context, index) {
+        final staff = staffs[index];
+        final oldSpec = widget.controller.staffIds[serviceIndex];
+        final isSelected = widget.controller.staffIds.isNotEmpty &&
+            serviceIndex < widget.controller.staffIds.length &&
+            widget.controller.staffIds[serviceIndex] == staff.staffId;
+
+        return GestureDetector(
+          onTap: () {
+            setModalState(() {
+              if (selectedStaffIds != null && serviceIndex < selectedStaffIds!.length) {
+                selectedStaffIds![serviceIndex] = staff.staffId;
+              }
+            });
+
+            setState(() {
+              if (selectedStaffIds != null && serviceIndex < selectedStaffIds!.length) {
+                selectedStaffIds![serviceIndex] = staff.staffId;
+              }
+            });
+            if (oldSpec != staff.staffId) {
+              widget.controller.addStaffId(serviceIndex, staff.staffId);
+              widget.controller.addStaff(serviceIndex, staff);
+              widget.controller.updateTimeStartWithIndex(kDefaultDateTime, serviceIndex);
+              widget.controller.removeSlot(widget.controller.timeStart[serviceIndex]);
+            }
+
+            Navigator.pop(context);
+          },
+          child: SpecialistCard(
+            staff: staff,
+            isSelected: isSelected,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTimeSelectionWidget(MixDataController controller, int index) {
+    final isDefaultTime = controller.timeStart.length > index && controller.timeStart[index].isAtSameMomentAs(kDefaultDateTime);
+
+    return Align(
+      alignment: Alignment.centerRight,
+      child: isDefaultTime
+          ? TextButton(
+              onPressed: () {
+                _goToSelectTime([controller.staffIds[index]], controller, index);
+              },
+              child: Text('Choose time'),
+            )
+          : GestureDetector(
+              onTap: () {
+                AppLogger.wtf(controller.selectedSlots);
+                controller.removeSlot(controller.timeStart[index]);
+                AppLogger.wtf(controller.selectedSlots);
+                _goToSelectTime([controller.staffIds[index]], controller, index);
+              },
+              child: Text(
+                _formatAppointmentTime(controller, index),
+              ),
+            ),
+    );
+  }
+
+  String _formatAppointmentTime(MixDataController controller, int index) {
+    if (controller.timeStart.length <= index || controller.services.length <= index) {
+      return '';
+    }
+
+    final startTime = controller.timeStart[index];
+    final duration = int.tryParse(controller.services[index].duration) ?? 30;
+    final endTime = startTime.add(Duration(minutes: duration + 5));
+
+    return '${DateFormat('HH:mm', "vi").format(startTime)} - '
+        '${DateFormat('HH:mm, dd MMMM yyyy', "vi").format(endTime)}';
+  }
+}
+
+class SpecialistCard extends StatelessWidget {
+  final StaffModel staff;
+  final bool isSelected;
+
+  const SpecialistCard({
+    super.key,
+    required this.staff,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TRoundedContainer(
+      margin: const EdgeInsets.all(TSizes.xs),
+      padding: const EdgeInsets.all(TSizes.xs),
+      backgroundColor: isSelected ? TColors.primaryBackground : Colors.white,
+      borderColor: isSelected ? TColors.primary : Colors.transparent,
+      showBorder: true,
+      shadow: true,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TRoundedContainer(
+            radius: 50,
+            width: 50,
+            height: 50,
+            backgroundColor: isSelected ? Colors.white : TColors.primaryBackground,
+            child: Center(
+              child: Text(
+                THelperFunctions.getFirstLetterOfLastName(staff.staffInfo?.userName ?? ""),
+                style: Theme.of(context).textTheme.displaySmall!.copyWith(color: TColors.primary),
+              ),
+            ),
+          ),
+          const SizedBox(height: TSizes.xs),
+          Text(
+            staff.staffInfo?.userName ?? "",
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
     );
   }
 }

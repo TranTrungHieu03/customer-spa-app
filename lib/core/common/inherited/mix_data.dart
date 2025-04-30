@@ -24,7 +24,7 @@ class MixDataController extends ChangeNotifier {
   List<int> _staffIds = [];
   VoucherModel? _voucher;
   bool isAuto = true;
-  List<TimeModel> listChooseTime = [];
+  List<TimeModel> _selectedSlots = [];
 
   List<StaffModel?> _staffs = [];
 
@@ -37,6 +37,8 @@ class MixDataController extends ChangeNotifier {
   double get totalPrice => _totalPrice;
 
   int get totalDuration => _totalDuration;
+
+  List<TimeModel> get selectedSlots => _selectedSlots;
 
   int get branchId => _branchId;
 
@@ -62,18 +64,34 @@ class MixDataController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateListChooseTime(TimeModel time) {
-    listChooseTime.add(time);
-    notifyListeners();
-  }
-
-  void removeListChooseTime(DateTime time) {
-    listChooseTime.removeWhere((element) => element.startTime == time);
-    notifyListeners();
-  }
-
   void updateUser(UserModel user) {
     _user = user;
+    notifyListeners();
+  }
+
+  void addSlot(TimeModel value) {
+    AppLogger.info(value);
+    _selectedSlots.add(value);
+    notifyListeners();
+  }
+
+  void updateTimeStartWithIndex(DateTime time, int index) {
+    timeStart[index] = time;
+    notifyListeners();
+  }
+
+  void removeSlot(DateTime value) {
+    _selectedSlots.removeWhere((x) =>
+        x.startTime.year == value.year &&
+        x.startTime.month == value.month &&
+        x.startTime.day == value.day &&
+        x.startTime.hour == value.hour &&
+        x.startTime.minute == value.minute);
+    notifyListeners();
+  }
+
+  void clearSlot() {
+    _selectedSlots.clear();
     notifyListeners();
   }
 

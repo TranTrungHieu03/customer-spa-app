@@ -38,7 +38,7 @@ class UpdateTimeScreen extends StatefulWidget {
 
 class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
   List<Map<String, String>> items = [];
-  DateTime selectedDate = DateTime.now();
+  late DateTime selectedDate;
   String selectedTime = "";
   final ScrollController _scrollController = ScrollController();
   String monthView = "";
@@ -76,7 +76,7 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
       if (slotEnd.isAfter(workDayEnd)) break;
 
       allPossibleSlots.add(TimeModel(startTime: currentStart, endTime: slotEnd));
-      currentStart = currentStart.add(const Duration(minutes: 15));
+      currentStart = currentStart.add(const Duration(minutes: 5));
     }
 
     final now = DateTime.now();
@@ -160,6 +160,7 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
   void _initializeDates() {
     // DateTime now = DateTime.now();
     DateTime now = widget.controller.minDate;
+    AppLogger.wtf(now);
     items.clear();
     for (int i = 0; i < 14; i++) {
       DateTime date = now.add(Duration(days: i));
@@ -228,6 +229,11 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
     );
   }
 
+  bool isSameDay(DateTime date1, DateTime date2) {
+    AppLogger.info('$date1 $date2');
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+  }
+
   void _showModelLeave(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -254,8 +260,7 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
     final isAllAny = widget.staffIds.map((x) {
       return x == 0;
     }).contains(false);
-    AppLogger.info(controller.staffIds);
-    AppLogger.info(isChooseDiffSpecialist);
+
     return WillPopScope(
       onWillPop: () async => false,
       child: BlocListener<ListAppointmentBloc, ListAppointmentState>(
@@ -470,12 +475,53 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
 
                                       AppLogger.info(listTimes);
                                       controller.updateTimeStart(listTimes);
+
                                       setState(() {
                                         selectedTime = slot.startTime.toString();
                                       });
+                                      AppLogger.info(controller.appt.appointmentsTime);
+                                      AppLogger.info(selectedDate);
                                       // if (listTimes.length == 1) {
-                                      goUpdateReview(controller);
-                                      // }
+                                      if (!isSameDay(controller.minDate, controller.timeStart[0])) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              backgroundColor: Colors.white,
+                                              title: const Text('Cập nhật lịch hẹn'),
+                                              content:
+                                                  const Text("Các lịch hẹn ở các bước sau sẽ được dời ngày để phù hợp với liệu trình."),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(context).pop();
+                                                    goUpdateReview(controller);
+
+                                                    //api update time after
+                                                  },
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: TColors.primary,
+                                                    side: const BorderSide(color: TColors.primary),
+                                                  ),
+                                                  child: const Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                                                    child: Text('Ok'),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        // }
+                                        goUpdateReview(controller);
+                                      }
                                     },
                                     child: TRoundedContainer(
                                       padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.xs),

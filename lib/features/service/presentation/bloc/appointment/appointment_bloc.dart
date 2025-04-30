@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/data/model/order_appointment_model.dart';
@@ -20,20 +21,23 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
   final GetAppointmentDetail _getAppointmentDetail;
   final UpdateAppointment _updateAppointment;
   final CancelAppointmentDetail _cancelAppointmentDetail;
+  final UpdateAppointmentRoutine _updateAppointmentRoutine;
 
-  AppointmentBloc({
-    required GetAppointment getAppointment,
-    required GetAppointmentDetail getAppointmentDetail,
-    required CreateAppointment createAppointment,
-    required CancelOrder cancelOrder,
-    required UpdateAppointment updateAppointment,
-    required CancelAppointmentDetail cancelAppointmentDetail,
-  })  : _getAppointment = getAppointment,
+  AppointmentBloc(
+      {required GetAppointment getAppointment,
+      required GetAppointmentDetail getAppointmentDetail,
+      required CreateAppointment createAppointment,
+      required CancelOrder cancelOrder,
+      required UpdateAppointment updateAppointment,
+      required CancelAppointmentDetail cancelAppointmentDetail,
+      required UpdateAppointmentRoutine updateAppointmentRoutine})
+      : _getAppointment = getAppointment,
         _createAppointment = createAppointment,
         _cancelOrder = cancelOrder,
         _getAppointmentDetail = getAppointmentDetail,
         _updateAppointment = updateAppointment,
         _cancelAppointmentDetail = cancelAppointmentDetail,
+        _updateAppointmentRoutine = updateAppointmentRoutine,
         super(AppointmentInitial()) {
     on<GetAppointmentEvent>(_onGetAppointmentEvent);
     on<GetAppointmentDetailEvent>(_onGetAppointmentDetailEvent);
@@ -47,6 +51,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     on<CancelAppointmentEvent>(_onCancelAppointment);
     on<UpdateAppointmentEvent>(_onUpdateAppointmentEvent);
     on<CancelAppointmentDetailEvent>(_onCancelAppointmentDetailEvent);
+    on<UpdateAppointmentRoutineEvent>(_onUpdateAppointmentRoutineEvent);
   }
 
   Future<void> _onGetAppointmentEvent(GetAppointmentEvent event, Emitter<AppointmentState> emit) async {
@@ -108,6 +113,16 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
     result.fold(
       (failure) => emit(AppointmentError(failure.message)),
       (appointment) => emit(AppointmentCreateSuccess(appointment)),
+    );
+  }
+
+  Future<void> _onUpdateAppointmentRoutineEvent(UpdateAppointmentRoutineEvent event, Emitter<AppointmentState> emit) async {
+    emit(AppointmentLoading());
+    final result = await _updateAppointmentRoutine(event.params);
+    result.fold(
+      (failure) => emit(AppointmentError(failure.message)),
+      (appointment) => emit(
+          AppointmentUpdateRoutineSuccess(userId: event.params.userId, orderId: event.params.orderId, routineId: event.params.routineId)),
     );
   }
 
