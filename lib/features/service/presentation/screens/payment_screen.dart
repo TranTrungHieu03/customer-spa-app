@@ -123,7 +123,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: TSizes.sm,
                       ),
                       if ((order.statusPayment.toLowerCase() != "Paid" || order.statusPayment.toLowerCase() != "PaidDeposit") &&
-                          order.status.toLowerCase() == "pending")
+                          order.status.toLowerCase() == "pending" &&
+                          order.paymentMethod.toLowerCase() != 'cash')
                         TRoundedContainer(
                           padding: EdgeInsets.all(TSizes.sm),
                           backgroundColor: TColors.warning,
@@ -188,7 +189,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             width: TSizes.sm,
                           ),
                           Text(
-                            DateFormat('EEEE, dd MMMM yyyy', lgCode).format(order.appointments[0].appointmentsTime).toString(),
+                            DateFormat('EEEE, dd MMMM yyyy', lgCode)
+                                .format(order.appointments
+                                    .reduce((a, b) => a.appointmentsTime.isBefore(b.appointmentsTime) ? a : b)
+                                    .appointmentsTime)
+                                .toString(),
                           )
                         ],
                       ),
@@ -205,8 +210,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             width: TSizes.sm,
                           ),
                           Text(
-                            "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime).toString()} - "
-                            "${DateFormat('HH:mm', lgCode).format(order.appointments![order.appointments!.length - 1].appointmentEndTime).toString()}",
+                            "${DateFormat('HH:mm', lgCode).format(order.appointments.reduce((a, b) => a.appointmentsTime.isBefore(b.appointmentsTime) ? a : b).appointmentsTime).toString()} ",
                             // "${DateFormat('HH:mm', lgCode).format(order.appointments[0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
                           ),
                           const Spacer(),
@@ -303,12 +307,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: TSizes.sm,
                       ),
                       if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
-                          order.status.toLowerCase() != "cancelled")
+                          order.status.toLowerCase() != "cancelled" &&
+                          order.paymentMethod.toLowerCase() != "cash")
                         TPaymentSelection(
                           total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                           onOptionChanged: handlePaymentOptionChange,
                           selectedOption: _selectedPaymentOption,
                         ),
+                      if (order.paymentMethod.toLowerCase() == "cash") Text('Thanh toan tai cua hang'),
                       Divider(
                         color: dark ? TColors.darkGrey : TColors.grey,
                         thickness: 0.5,

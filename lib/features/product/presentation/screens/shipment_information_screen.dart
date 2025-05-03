@@ -121,6 +121,20 @@ class _ShipmentInformationScreenState extends State<ShipmentInformationScreen> {
                   OutlinedButton(
                       onPressed: () async {
                         final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+                        if (addressController.text.trim().isEmpty) {
+                          TSnackBar.infoSnackBar(context, message: "Vui long nhap thong tin dia chi");
+                          return;
+                        }
+                        if (fullNameController.text.trim().isEmpty) {
+                          TSnackBar.infoSnackBar(context, message: "Vui long nhap thong tin ten");
+
+                          return;
+                        }
+                        if (phoneController.text.trim().isEmpty) {
+                          TSnackBar.infoSnackBar(context, message: "Vui long nhap thong tin so dien thoai");
+
+                          return;
+                        }
                         if (jsonDecode(userJson) != null) {
                           final user = UserModel.fromJson(jsonDecode(userJson));
 
@@ -155,6 +169,20 @@ class _ShipmentInformationScreenState extends State<ShipmentInformationScreen> {
                   ),
                   ElevatedButton(
                       onPressed: () {
+                        if (addressController.text.trim().isEmpty) {
+                          TSnackBar.infoSnackBar(context, message: "Vui long nhap thong tin dia chi");
+                          return;
+                        }
+                        if (fullNameController.text.trim().isEmpty) {
+                          TSnackBar.infoSnackBar(context, message: "Vui long nhap thong tin ten");
+
+                          return;
+                        }
+                        if (phoneController.text.trim().isEmpty) {
+                          TSnackBar.infoSnackBar(context, message: "Vui long nhap thong tin so dien thoai");
+
+                          return;
+                        }
                         widget.controller.updateShipment(ShipmentModel(
                             address: addressController.text.trim(),
                             name: fullNameController.text.trim(),

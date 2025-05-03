@@ -23,9 +23,11 @@ class MixDataController extends ChangeNotifier {
   List<DateTime> timeStart = [];
   List<int> _staffIds = [];
   VoucherModel? _voucher;
+  String _method = 'PayOs';
   bool isAuto = true;
   List<TimeModel> _selectedSlots = [];
 
+  String get method => _method;
   List<StaffModel?> _staffs = [];
 
   UserModel? get user => _user;
@@ -56,11 +58,17 @@ class MixDataController extends ChangeNotifier {
     _services = newServices;
     timeStart = List.generate(_services.length, (index) => kDefaultDateTime);
     _staffIds = List.filled(_services.length, -1);
+    _staffs = List.filled(_services.length, null);
     notifyListeners();
   }
 
   void updateVoucher(VoucherModel newServices) {
     _voucher = newServices;
+    notifyListeners();
+  }
+
+  void updateMethod(String method) {
+    _method = method;
     notifyListeners();
   }
 

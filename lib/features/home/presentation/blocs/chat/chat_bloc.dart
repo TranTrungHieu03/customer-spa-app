@@ -52,7 +52,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     _messagesSubscription?.cancel();
 
     final stream = getMessages(NoParams());
-
+    AppLogger.wtf("Setup");
     _messagesSubscription = stream.listen(
       (message) => add(ChatMessageReceivedEvent(message)),
       cancelOnError: false,

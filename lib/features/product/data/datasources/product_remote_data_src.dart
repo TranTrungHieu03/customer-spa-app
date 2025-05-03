@@ -47,7 +47,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   Future<ListProductModel> getProducts(GetListProductParams params) async {
     try {
       final response = await _apiServices.getApi(
-          '/Product/filter?BranchId=${params.branchId}&Brand=${params.brand}&CategoryIds=${params.categoryId?.isNotEmpty ?? false ? params.categoryId : ""}&MinPrice=${params.minPrice == -1.0 ? "" : params.minPrice}&MaxPrice=${params.maxPrice == -1.0 ? "" : params.maxPrice}&SortBy=${params.sortBy}&PageNumber=${params.page}&PageSize=20');
+          '/Product/filter?BranchId=${params.branchId}&Brand=${params.brand}&CategoryIds=${params.categoryId?.isNotEmpty ?? false ? params.categoryId : ""}&MinPrice=${params.minPrice == -1.0 ? "" : params.minPrice}&MaxPrice=${params.maxPrice == -1.0 ? "" : params.maxPrice}&SortBy=${params.sortBy}&PageNumber=${params.page}&PageSize=${params.pageSize}');
 
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {

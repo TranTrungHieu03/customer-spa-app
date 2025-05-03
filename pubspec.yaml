@@ -2,7 +2,7 @@ name: spa_mobile
 description: "A spa center"
 publish_to: 'none'
 
-version: 1.1.0+16
+version: 1.2.0+17
 
 environment:
   sdk: ^3.5.3
@@ -97,6 +97,8 @@ dependencies:
   table_calendar: ^3.1.3
   geolocator: ^9.0.0
   scrollable_positioned_list: ^0.3.8
+  #Check face
+  google_mlkit_face_detection: ^0.11.0
 
 
 dev_dependencies:

@@ -10,3 +10,9 @@ final class GetHistoryRoutineEvent extends ListRoutineEvent {
 
   GetHistoryRoutineEvent(this.params);
 }
+
+final class GetSuitableRoutineEvent extends ListRoutineEvent {
+  final GetRoutineHistoryParams params;
+
+  GetSuitableRoutineEvent(this.params);
+}

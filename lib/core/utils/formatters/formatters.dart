@@ -35,3 +35,20 @@ String formatDuration(int totalMinutes) {
   return result.isNotEmpty ? result : '0 phút';
 }
 
+String formatDateTime(DateTime input, {String locale = 'vi'}) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final yesterday = today.subtract(const Duration(days: 1));
+  final inputDate = DateTime(input.year, input.month, input.day);
+
+  final timePart = DateFormat('HH:mm', locale).format(input);
+
+  if (inputDate == today) {
+    return locale == 'vi' ? 'Hôm nay, $timePart' : 'Today, $timePart';
+  } else if (inputDate == yesterday) {
+    return locale == 'vi' ? 'Hôm qua, $timePart' : 'Yesterday, $timePart';
+  } else {
+    final datePart = DateFormat('dd/MM/yyyy', locale).format(input);
+    return '$datePart, $timePart';
+  }
+}

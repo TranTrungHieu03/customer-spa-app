@@ -5,6 +5,7 @@ import 'package:spa_mobile/core/errors/failure.dart';
 import 'package:spa_mobile/core/usecase/usecase.dart';
 import 'package:spa_mobile/features/home/data/datasources/chat_remote_data_source.dart';
 import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
+import 'package:spa_mobile/features/home/data/models/notification_model.dart';
 import 'package:spa_mobile/features/home/domain/repositories/chat_repository.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 
@@ -46,5 +47,10 @@ class ChatRepositoryImpl implements ChatRepository {
     } catch (e) {
       return left(ApiFailure(message: e.toString()));
     }
+  }
+
+  @override
+  Stream<NotificationModel> getNotifications(NoParams params) {
+    return _remoteDataSource.getNotifications();
   }
 }

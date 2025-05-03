@@ -22,6 +22,7 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/rou
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_voucher/list_voucher_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/screens/voucher_screen.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/payment_method.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/payment_detail_service.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
@@ -146,43 +147,6 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                       const SizedBox(
                         height: TSizes.md,
                       ),
-                      // ListView.builder(
-                      //   shrinkWrap: true,
-                      //   physics: const NeverScrollableScrollPhysics(),
-                      //   itemBuilder: (context, indexStep) {
-                      //     return Row(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         Column(
-                      //           children: [
-                      //             CircleAvatar(
-                      //               radius: 12,
-                      //               backgroundColor: Colors.teal,
-                      //               child: Text(
-                      //                 '${indexStep + 1}',
-                      //                 style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.white),
-                      //               ),
-                      //             ),
-                      //             if (indexStep != steps.length - 1)
-                      //               Container(
-                      //                 height: 20,
-                      //                 width: 2,
-                      //                 color: Colors.teal,
-                      //               ),
-                      //           ],
-                      //         ),
-                      //         const SizedBox(width: TSizes.md),
-                      //         Expanded(
-                      //           child: Text(
-                      //             steps[indexStep],
-                      //             style: Theme.of(context).textTheme.bodyMedium,
-                      //           ),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      //   itemCount: steps.length,
-                      // ),
                     ],
                   ),
                 ),
@@ -218,6 +182,12 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
                   color: dark ? TColors.darkGrey : TColors.grey,
                   thickness: 0.5,
                 ),
+                TPaymentMethod(
+                  initialMethod: 'PayOs',
+                  onChanged: (method) {
+                    widget.controller.updateMethod(method);
+                  },
+                ),
                 Text(AppLocalizations.of(context)!.note, style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(
                   height: TSizes.xs,
@@ -251,9 +221,10 @@ class _CheckoutRoutineScreenState extends State<CheckoutRoutineScreen> {
               context.read<RoutineBloc>().add(BookRoutineDetailEvent(BookRoutineParams(
                   userId: user?.userId ?? 0,
                   routineId: widget.controller.routine.skincareRoutineId,
-                  branchId: widget.controller.branch?.branchId??0,
+                  branchId: widget.controller.branch?.branchId ?? 0,
                   appointmentTime: widget.controller.time,
                   voucherId: widget.controller.voucher?.voucherId ?? null,
+                  paymentMethod: widget.controller.method,
                   note: _messageController.text.toString())));
             },
             child: Text(AppLocalizations.of(context)!.book_appointment,

@@ -31,12 +31,14 @@ class CustomizeRoutineScreen extends StatefulWidget {
 
 class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
   late bool isShipping;
+  late bool isAuto;
   final purchasingController = PurchasingDataController();
 
   @override
   void initState() {
     super.initState();
     isShipping = purchasingController.isNeedShip;
+    isAuto = widget.controller.isAuto;
   }
 
   @override
@@ -44,7 +46,6 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
     final branch = widget.controller.branch;
     final listProduct = widget.controller.productQuantities;
     final listService = widget.controller.services;
-    var isAuto = widget.controller.isAuto;
 
     return Scaffold(
       appBar: TAppbar(
@@ -176,7 +177,6 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                       onChanged: (value) {
                         setState(() {
                           isAuto = value ?? true;
-                          widget.controller.isAuto = value!;
                         });
                         widget.controller.updateAuto(value!);
                       },
@@ -194,11 +194,7 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                       onChanged: (value) {
                         setState(() {
                           isAuto = value ?? false;
-                          widget.controller.isAuto = value!;
                         });
-                        if (value == false) {
-                          goUpdateStaffMix(widget.controller, widget.controller.branchId, 0);
-                        }
                         widget.controller.updateAuto(value!);
                       },
                       controlAffinity: ListTileControlAffinity.leading,
@@ -300,6 +296,10 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                           }
                           goCheckout(purchasingController);
                         } else {
+                          if (isAuto == false) {
+                            goUpdateStaffMix(widget.controller, widget.controller.branchId, 0);
+                            return;
+                          }
                           goReviewChangeRoutine(widget.controller);
                         }
                       },

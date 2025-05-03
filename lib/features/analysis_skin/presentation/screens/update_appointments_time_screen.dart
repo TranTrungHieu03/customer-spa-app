@@ -340,7 +340,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                                           widget.indexOfAppointment == -1
                                               ? widget.controller.staff[0]?.staffInfo?.userName ?? ""
                                               : widget.controller.staff[widget.indexOfAppointment]?.staffInfo?.userName ?? "",
-                                        ),
+                                            ),
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
                                       ),
                                     ),

@@ -24,6 +24,7 @@ class CreateAppointmentParams {
   final String? feedback;
   final int totalMinutes;
   final int userId;
+  final String paymentMethod;
 
   CreateAppointmentParams({
     required this.userId,
@@ -32,6 +33,7 @@ class CreateAppointmentParams {
     required this.branchId,
     required this.appointmentsTime,
     required this.notes,
+    required this.paymentMethod,
     this.feedback,
     this.voucherId = 0,
     this.totalMinutes = 0,
@@ -48,7 +50,8 @@ class CreateAppointmentParams {
       'voucherId': voucherId,
       'feedback': feedback,
       'totalMinutes': totalMinutes,
-      'userId': userId
+      'userId': userId,
+      'paymentMedhod': paymentMethod
     };
   }
 
@@ -62,6 +65,7 @@ class CreateAppointmentParams {
       int? voucherId,
       String? feedback,
       int? totalMinutes,
+      String? paymentMethod,
       int? userId}) {
     return CreateAppointmentParams(
         staffId: staffId ?? this.staffId,
@@ -72,6 +76,7 @@ class CreateAppointmentParams {
         voucherId: voucherId ?? this.voucherId,
         feedback: feedback ?? this.feedback,
         totalMinutes: totalMinutes ?? this.totalMinutes,
+        paymentMethod: paymentMethod ?? this.paymentMethod,
         userId: userId ?? this.userId);
   }
 }

@@ -18,14 +18,16 @@ class RoutineStepModel extends RoutineStep {
       required super.intervalBeforeNextStep,
       required this.productRoutineSteps,
       required this.serviceRoutineSteps,
+      required super.userRoutineStepId,
       this.appointments,
       this.stepStatus});
 
-  factory RoutineStepModel.fromJson(Map<String, dynamic> json) {
-    AppLogger.info(json);
+  factory RoutineStepModel.fromJson(Map<String, dynamic> json, int? userRoutineStepId, String stepStatus) {
+    AppLogger.info(json['stepStatus']);
     return RoutineStepModel(
         skinCareRoutineStepId: json['skinCareRoutineStepId'] as int,
         skincareRoutineId: json['skincareRoutineId'] as int,
+        userRoutineStepId: userRoutineStepId ?? 0,
         name: json['name'] != null ? json['name'] as String : "",
         step: json['step'] as int,
         intervalBeforeNextStep: json['intervalBeforeNextStep'] ?? 0,
@@ -37,7 +39,7 @@ class RoutineStepModel extends RoutineStep {
                 ?.map((item) => ServiceRoutineModel.fromJson(item as Map<String, dynamic>))
                 .toList() ??
             [],
-        stepStatus: json['stepStatus'] != null ? json['stepStatus'] as String : "",
+        stepStatus: stepStatus ,
         appointments: []);
   }
 }

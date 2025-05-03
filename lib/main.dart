@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,9 +11,11 @@ import 'package:spa_mobile/core/common/bloc/web_view/web_view_bloc.dart';
 import 'package:spa_mobile/core/common/cubit/user/app_user_cubit.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/provider/language_provider.dart';
 import 'package:spa_mobile/core/services/notification.dart';
 import 'package:spa_mobile/core/services/permission.dart';
+import 'package:spa_mobile/core/services/signalR.dart';
 import 'package:spa_mobile/core/themes/theme.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/form_skin/form_skin_bloc.dart';
@@ -19,7 +23,10 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
 import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/ai_chat/ai_chat_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/home_state/home_state_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/list_notification/list_notification_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/navigation_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
@@ -84,6 +91,8 @@ void main() async {
         BlocProvider(create: (_) => serviceLocator<ServiceCartBloc>()),
         BlocProvider(create: (_) => serviceLocator<CartBloc>()),
         BlocProvider(create: (_) => serviceLocator<OrderBloc>()),
+        BlocProvider(create: (_) => serviceLocator<ListNotificationBloc>()),
+        BlocProvider(create: (_) => serviceLocator<HomeStateBloc>()),
       ],
       child: ChangeNotifierProvider<LanguageProvider>(
         create: (_) => languageProvider,
@@ -100,7 +109,61 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    context.read<UserChatBloc>().stream.listen((state) {
+      if (state is UserChatLoaded) {
+        SignalRService.initialize(state.user.id);
+      } else if (state is UserChatError) {
+        AppLogger.wtf("signal R disconnect");
+        SignalRService.disconnect();
+      }
+    });
+    context.read<AuthBloc>().stream.listen((state) {
+      if (state is AuthFailure || state is AuthClear) {
+        AppLogger.wtf("signal R disconnect");
+        SignalRService.disconnect();
+      }
+    });
+    if (context.read<UserChatBloc>().state is UserChatInitial) {
+      AppLogger.wtf("Init signalR init");
+      _loadUserChat();
+    }
+  }
+
+  void _loadUserChat() async {
+    final jsonUserChat = await LocalStorage.getData(LocalStorageKey.userChat);
+    if (jsonUserChat.isNotEmpty) {
+      final user = UserChatModel.fromJson(jsonDecode(jsonUserChat));
+      SignalRService.initialize(user.id);
+      AppLogger.wtf("Init signalR");
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      final state = context.read<UserChatBloc>().state;
+      if (state is UserChatLoaded) {
+        SignalRService.initialize(state.user.id);
+      } else {
+        _loadUserChat();
+      }
+    } else if (state == AppLifecycleState.detached) {
+      SignalRService.disconnect();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LanguageProvider>(
@@ -121,12 +184,11 @@ class _MyAppState extends State<MyApp> {
           supportedLocales: const [Locale('en'), Locale('vi')],
           locale: languageProvider.locale,
           home: FutureBuilder(
-              future: _getStartScreen(context),
-              builder: (context, snapshot) {
-                // if (snapshot.connectionState == ConnectionState.waiting) {
-                return const TLoader();
-                // } //
-              }),
+            future: _getStartScreen(context),
+            builder: (context, snapshot) {
+              return const TLoader();
+            },
+          ),
         );
       },
     );
@@ -135,8 +197,6 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getStartScreen(BuildContext context) async {
     final isLogin = await LocalStorage.getData(LocalStorageKey.isLogin);
     final isCompletedOnBoarding = await LocalStorage.getData(LocalStorageKey.isCompletedOnBoarding);
-    // AppLogger.info('login: $isLogin');
-    // AppLogger.info('onboarding: $isCompletedOnBoarding');
     if (isLogin == 'true') {
       goHome();
     } else if (isCompletedOnBoarding == 'true') {

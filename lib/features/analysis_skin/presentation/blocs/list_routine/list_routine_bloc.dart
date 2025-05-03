@@ -18,15 +18,43 @@ class ListRoutineBloc extends Bloc<ListRoutineEvent, ListRoutineState> {
         super(ListRoutineInitial()) {
     on<GetListRoutineEvent>(_onGetListRoutineEvent);
     on<GetHistoryRoutineEvent>(_onGetHistory);
+    on<GetSuitableRoutineEvent>(_onGetSuitable);
   }
 
   Future<void> _onGetListRoutineEvent(GetListRoutineEvent event, Emitter<ListRoutineState> emit) async {
-    emit(ListRoutineLoading());
-    final result = await _getListRoutine(NoParams());
-    result.fold(
-      (failure) => emit(ListRoutineError(failure.message)),
-      (data) => emit(ListRoutineLoaded(data)),
-    );
+    final currentState = state;
+    if (currentState is ListRoutineLoaded) {
+      final result = await _getListRoutine(NoParams());
+      result.fold(
+        (failure) => emit(ListRoutineError(failure.message)),
+        (data) => emit(ListRoutineLoaded(routines: data, suitable: currentState.suitable)),
+      );
+    } else {
+      emit(ListRoutineLoading());
+      final result = await _getListRoutine(NoParams());
+      result.fold(
+        (failure) => emit(ListRoutineError(failure.message)),
+        (data) => emit(ListRoutineLoaded(routines: data, suitable: [])),
+      );
+    }
+  }
+
+  Future<void> _onGetSuitable(GetSuitableRoutineEvent event, Emitter<ListRoutineState> emit) async {
+    final currentState = state;
+    if (currentState is ListRoutineLoaded) {
+      final result = await _getHistoryRoutine(event.params);
+      result.fold(
+        (failure) => emit(ListRoutineError(failure.message)),
+        (data) => emit(ListRoutineLoaded(routines: currentState.routines, suitable: data)),
+      );
+    } else {
+      emit(ListRoutineLoading());
+      final result = await _getHistoryRoutine(event.params);
+      result.fold(
+        (failure) => emit(ListRoutineError(failure.message)),
+        (data) => emit(ListRoutineLoaded(routines: [], suitable: data)),
+      );
+    }
   }
 
   Future<void> _onGetHistory(GetHistoryRoutineEvent event, Emitter<ListRoutineState> emit) async {

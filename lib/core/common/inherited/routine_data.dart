@@ -12,7 +12,7 @@ class RoutineDataController extends ChangeNotifier {
   double _totalPrice = 0;
   String _time = '';
 
-  String _method = 'bank_transfer';
+  String _method = 'PayOS';
 
   String get time => _time;
 

@@ -23,6 +23,7 @@ class GetListProductParams {
   final double? maxPrice;
   final String sortBy;
   final int page;
+  final int pageSize;
 
   GetListProductParams({
     required this.brand,
@@ -31,39 +32,26 @@ class GetListProductParams {
     required this.categoryId,
     required this.minPrice,
     required this.maxPrice,
+    required this.pageSize,
     required String sortBy,
   }) : sortBy = sortBy.isEmpty ? sortBy : (sortBy == "0" ? SortBy.priceAsc.value : SortBy.priceDesc.value);
 
   factory GetListProductParams.empty(int branchId) {
     return GetListProductParams(
-      brand: "",
-      page: 1,
-      branchId: branchId,
-      categoryId: [],
-      minPrice: -1.0,
-      maxPrice: -1.0,
-      sortBy: "",
-    );
+        brand: "", page: 1, branchId: branchId, categoryId: [], minPrice: -1.0, maxPrice: -1.0, sortBy: "", pageSize: 20);
   }
 
-  GetListProductParams copyWith({
-    int? branchId,
-    String? brand,
-    List<int>? categoryId,
-    double? minPrice,
-    double? maxPrice,
-    String? sortBy,
-    int? page,
-  }) {
+  GetListProductParams copyWith(
+      {int? branchId, String? brand, List<int>? categoryId, double? minPrice, double? maxPrice, String? sortBy, int? page, int? pageSize}) {
     return GetListProductParams(
-      branchId: branchId ?? this.branchId,
-      brand: brand ?? this.brand,
-      categoryId: categoryId ?? this.categoryId,
-      minPrice: minPrice ?? this.minPrice,
-      maxPrice: maxPrice ?? this.maxPrice,
-      sortBy: sortBy ?? this.sortBy,
-      page: page ?? this.page,
-    );
+        branchId: branchId ?? this.branchId,
+        brand: brand ?? this.brand,
+        categoryId: categoryId ?? this.categoryId,
+        minPrice: minPrice ?? this.minPrice,
+        maxPrice: maxPrice ?? this.maxPrice,
+        sortBy: sortBy ?? this.sortBy,
+        page: page ?? this.page,
+        pageSize: pageSize ?? this.pageSize);
   }
 }
 

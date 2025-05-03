@@ -20,6 +20,7 @@ import 'package:spa_mobile/features/analysis_skin/presentation/widget/payment_de
 import 'package:spa_mobile/features/home/presentation/blocs/mix/mix_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_voucher/list_voucher_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/screens/voucher_screen.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/payment_method.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
@@ -39,278 +40,284 @@ class _ConfirmCustomizeScreenState extends State<ConfirmCustomizeScreen> {
     final listProduct = widget.controller.productQuantities;
     final listService = widget.controller.services;
     var isAuto = widget.controller.isAuto;
-    return  Scaffold(
-        appBar: TAppbar(
-          showBackArrow: true,
-          title: Text(
-            AppLocalizations.of(context)!.review_and_confirm,
-            style: Theme.of(context)!.textTheme.titleLarge,
-          ),
+    return Scaffold(
+      appBar: TAppbar(
+        showBackArrow: true,
+        title: Text(
+          AppLocalizations.of(context)!.review_and_confirm,
+          style: Theme.of(context)!.textTheme.titleLarge,
         ),
-        body: Padding(
-          padding: EdgeInsets.all(TSizes.sm),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: TSizes.md),
-                TRoundedContainer(
-                  padding: EdgeInsets.all(TSizes.sm),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Iconsax.building,
-                        color: TColors.primary,
-                      ),
-                      const SizedBox(
-                        width: TSizes.sm,
-                      ),
-                      Expanded(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            branch?.branchName ?? "",
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          Text(
-                            branch?.branchAddress ?? "",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      )),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: TSizes.md,
-                ),
-                if (listProduct.isNotEmpty)
-                  Text(
-                    AppLocalizations.of(context)!.products,
-                    style: Theme.of(context)!.textTheme.bodyLarge,
-                  ),
-                if (listProduct.isNotEmpty)
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                if (listProduct.isNotEmpty)
-                  TRoundedContainer(
-                    padding: EdgeInsets.all(TSizes.sm),
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: listProduct.length,
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          height: TSizes.md,
-                        );
-                      },
-                      itemBuilder: (context, itemIndex) {
-                        final productCart = listProduct[itemIndex];
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            TRoundedImage(
-                              imageUrl: productCart.product.images!.isNotEmpty ? productCart.product.images![0] : TImages.product1,
-                              applyImageRadius: true,
-                              isNetworkImage: productCart.product.images!.isNotEmpty,
-                              onPressed: () => {},
-                              border: Border.all(
-                                color: Colors.grey.withOpacity(0.5),
-                                width: 1,
-                              ),
-                              width: THelperFunctions.screenWidth(context) * 0.28,
-                              height: THelperFunctions.screenWidth(context) * 0.28,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: TSizes.sm),
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: THelperFunctions.screenWidth(context) * 0.6,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      productCart.product.productName,
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(productCart.product.brand,
-                                        maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "x${productCart.quantity}",
-                                          style: Theme.of(context).textTheme.bodySmall,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          formatMoney(productCart.product.price.toString()),
-                                          style: Theme.of(context).textTheme.bodySmall,
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                const SizedBox(
-                  height: TSizes.lg,
-                ),
-                if (listService.isNotEmpty)
-                  Text(
-                    AppLocalizations.of(context)!.services,
-                    style: Theme.of(context)!.textTheme.bodyLarge,
-                  ),
-                if (listService.isNotEmpty)
-                  const SizedBox(
-                    height: TSizes.sm,
-                  ),
-                if (listService.isNotEmpty)
-                  TRoundedContainer(
-                    padding: EdgeInsets.all(
-                      TSizes.sm,
-                    ),
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: widget.controller.services.length,
-                      itemBuilder: (context, index) {
-                        final service = widget.controller.services[index];
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(service.name, style: Theme.of(context).textTheme.bodyMedium),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                Text(
-                                  "${service.duration} ${AppLocalizations.of(context)!.minutes}",
-                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
-                                ),
-                                const SizedBox(
-                                  height: TSizes.sm,
-                                ),
-                                if (!widget.controller.isAuto)
-                                  Text(
-                                      '${AppLocalizations.of(context)!.specialist}: ${widget.controller.staff[index]?.staffInfo?.fullName ?? ""}',
-                                      style: Theme.of(context).textTheme.bodyMedium),
-                              ],
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                TProductPriceText(
-                                  price: service.price.toString(),
-                                  isLarge: false,
-                                ),
-                              ],
-                            )
-                          ],
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          height: TSizes.sm,
-                        );
-                      },
-                    ),
-                  ),
-                const SizedBox(
-                  height: TSizes.lg,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(TSizes.sm),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: TSizes.md),
+              TRoundedContainer(
+                padding: EdgeInsets.all(TSizes.sm),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(AppLocalizations.of(context)!.shop_voucher, style: Theme.of(context).textTheme.bodyMedium),
-                    GestureDetector(
-                        onTap: () {
-                          _showVoucherModal(context, widget.controller.totalPrice, widget.controller);
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            if (widget.controller.voucher != null)
-                              Text(
-                                widget.controller.voucher?.code ?? "",
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            if (widget.controller.voucher == null)
-                              Text(AppLocalizations.of(context)!.select_or_enter_code, style: Theme.of(context).textTheme.bodySmall),
-                            const Icon(
-                              Icons.chevron_right,
-                              color: Colors.grey,
-                            )
-                          ],
-                        ))
+                    const Icon(
+                      Iconsax.building,
+                      color: TColors.primary,
+                    ),
+                    const SizedBox(
+                      width: TSizes.sm,
+                    ),
+                    Expanded(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          branch?.branchName ?? "",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Text(
+                          branch?.branchAddress ?? "",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    )),
                   ],
                 ),
-                const SizedBox(height: TSizes.md),
-                TRoundedContainer(
-                  padding: const EdgeInsets.all(TSizes.sm),
-                  child: TPaymentDetailMix(
-                      total: widget.controller.totalPrice,
-                      promotePrice: widget.controller.voucher?.discountAmount ?? 0,
-                      priceProduct: widget.controller.productQuantities.fold(0.0, (a, b) => a + b.quantity * b.product.price),
-                      priceService: widget.controller.services.fold(0.0, (a, b) => a + b.price)),
+              ),
+              const SizedBox(
+                height: TSizes.md,
+              ),
+              if (listProduct.isNotEmpty)
+                Text(
+                  AppLocalizations.of(context)!.products,
+                  style: Theme.of(context)!.textTheme.bodyLarge,
                 ),
-                const SizedBox(height: TSizes.md),
-                BlocListener<MixBloc, MixState>(
-                    listener: (context, state) {
-                      if (state is OrderMixError) {
-                        TSnackBar.errorSnackBar(context, message: state.message);
-                      }
-                      if (state is OrderMixSuccess) {
-                        TSnackBar.successSnackBar(context, message: "Đơn hàng đã được tạo thành công.");
-                        goOrderMixDetail(state.id);
-                      }
+              if (listProduct.isNotEmpty)
+                const SizedBox(
+                  height: TSizes.sm,
+                ),
+              if (listProduct.isNotEmpty)
+                TRoundedContainer(
+                  padding: EdgeInsets.all(TSizes.sm),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listProduct.length,
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        height: TSizes.md,
+                      );
                     },
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            context.read<MixBloc>().add(OrderMixEvent(OrderMixParams(
-                                customerId: widget.controller.user?.userId ?? 0,
-                                branchId: widget.controller.branchId,
-                                voucherId: widget.controller.voucher?.voucherId ?? null,
-                                productBranchIds: widget.controller.productQuantities.map((x) => x.productBranchId).toList(),
-                                productQuantities: widget.controller.productQuantities.map((x) => x.quantity).toList(),
-                                serviceIds: widget.controller.services.map((x) => x.serviceId).toList(),
-                                serviceQuantities: List.generate(widget.controller.services.length, (index) => 1),
-                                staffIds: widget.controller.staffIds,
-                                appointmentDates: isAuto ? [DateTime.now().add(const Duration(days: 1))] : widget.controller.timeStart,
-                                totalAmount: widget.controller.totalPrice,
-                                isAuto: widget.controller.isAuto)));
-                          },
-                          child: Text(AppLocalizations.of(context)!.order)),
-                    ))
-              ],
-            ),
+                    itemBuilder: (context, itemIndex) {
+                      final productCart = listProduct[itemIndex];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TRoundedImage(
+                            imageUrl: productCart.product.images!.isNotEmpty ? productCart.product.images![0] : TImages.product1,
+                            applyImageRadius: true,
+                            isNetworkImage: productCart.product.images!.isNotEmpty,
+                            onPressed: () => {},
+                            border: Border.all(
+                              color: Colors.grey.withOpacity(0.5),
+                              width: 1,
+                            ),
+                            width: THelperFunctions.screenWidth(context) * 0.28,
+                            height: THelperFunctions.screenWidth(context) * 0.28,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: TSizes.sm),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    productCart.product.productName,
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Text(productCart.product.brand,
+                                      maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodySmall),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "x${productCart.quantity}",
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        formatMoney(productCart.product.price.toString()),
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              const SizedBox(
+                height: TSizes.lg,
+              ),
+              if (listService.isNotEmpty)
+                Text(
+                  AppLocalizations.of(context)!.services,
+                  style: Theme.of(context)!.textTheme.bodyLarge,
+                ),
+              if (listService.isNotEmpty)
+                const SizedBox(
+                  height: TSizes.sm,
+                ),
+              if (listService.isNotEmpty)
+                TRoundedContainer(
+                  padding: EdgeInsets.all(
+                    TSizes.sm,
+                  ),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.controller.services.length,
+                    itemBuilder: (context, index) {
+                      final service = widget.controller.services[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(service.name, style: Theme.of(context).textTheme.bodyMedium),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              Text(
+                                "${service.duration} ${AppLocalizations.of(context)!.minutes}",
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
+                              ),
+                              const SizedBox(
+                                height: TSizes.sm,
+                              ),
+                              if (!widget.controller.isAuto)
+                                Text(
+                                    '${AppLocalizations.of(context)!.specialist}: ${widget.controller.staff[index]?.staffInfo?.fullName ?? ""}',
+                                    style: Theme.of(context).textTheme.bodyMedium),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TProductPriceText(
+                                price: service.price.toString(),
+                                isLarge: false,
+                              ),
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(
+                        height: TSizes.sm,
+                      );
+                    },
+                  ),
+                ),
+              const SizedBox(
+                height: TSizes.lg,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(AppLocalizations.of(context)!.shop_voucher, style: Theme.of(context).textTheme.bodyMedium),
+                  GestureDetector(
+                      onTap: () {
+                        _showVoucherModal(context, widget.controller.totalPrice, widget.controller);
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (widget.controller.voucher != null)
+                            Text(
+                              widget.controller.voucher?.code ?? "",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          if (widget.controller.voucher == null)
+                            Text(AppLocalizations.of(context)!.select_or_enter_code, style: Theme.of(context).textTheme.bodySmall),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                          )
+                        ],
+                      ))
+                ],
+              ),
+              const SizedBox(height: TSizes.md),
+              TRoundedContainer(
+                padding: const EdgeInsets.all(TSizes.sm),
+                child: TPaymentDetailMix(
+                    total: widget.controller.totalPrice,
+                    promotePrice: widget.controller.voucher?.discountAmount ?? 0,
+                    priceProduct: widget.controller.productQuantities.fold(0.0, (a, b) => a + b.quantity * b.product.price),
+                    priceService: widget.controller.services.fold(0.0, (a, b) => a + b.price)),
+              ),
+              TPaymentMethod(
+                initialMethod: 'PayOs',
+                onChanged: (method) {
+                  widget.controller.updateMethod(method);
+                },
+              ),
+              const SizedBox(height: TSizes.md),
+              BlocListener<MixBloc, MixState>(
+                  listener: (context, state) {
+                    if (state is OrderMixError) {
+                      TSnackBar.errorSnackBar(context, message: state.message);
+                    }
+                    if (state is OrderMixSuccess) {
+                      TSnackBar.successSnackBar(context, message: "Đơn hàng đã được tạo thành công.");
+                      goOrderMixDetail(state.id);
+                    }
+                  },
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          context.read<MixBloc>().add(OrderMixEvent(OrderMixParams(
+                              customerId: widget.controller.user?.userId ?? 0,
+                              branchId: widget.controller.branchId,
+                              voucherId: widget.controller.voucher?.voucherId ?? null,
+                              productBranchIds: widget.controller.productQuantities.map((x) => x.productBranchId).toList(),
+                              productQuantities: widget.controller.productQuantities.map((x) => x.quantity).toList(),
+                              serviceIds: widget.controller.services.map((x) => x.serviceId).toList(),
+                              serviceQuantities: List.generate(widget.controller.services.length, (index) => 1),
+                              staffIds: widget.controller.staffIds,
+                              appointmentDates: isAuto ? [DateTime.now().add(const Duration(days: 1))] : widget.controller.timeStart,
+                              totalAmount: widget.controller.totalPrice,
+                              paymentMethod: widget.controller.method,
+                              isAuto: widget.controller.isAuto)));
+                        },
+                        child: Text(AppLocalizations.of(context)!.order)),
+                  ))
+            ],
           ),
-
+        ),
       ),
     );
   }

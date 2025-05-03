@@ -452,3 +452,14 @@ goAppointmentDetail(String appointmentId, bool isUpdateAll) async {
 goOrderMixDetail(int id) async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => OrderProductServiceDetailScreen(id: id)));
 }
+
+goNotification(int userId) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider<NotificationBloc>(
+              create: (context) => NotificationBloc(markAsRead: serviceLocator(), markAsReadAll: serviceLocator()),
+              child: NotificationScreen(
+                userId: userId,
+              ))));
+}

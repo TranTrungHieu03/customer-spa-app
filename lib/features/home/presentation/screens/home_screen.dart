@@ -12,19 +12,33 @@ import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
-import 'package:spa_mobile/core/logger/logger.dart';
-import 'package:spa_mobile/core/services/signalR.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine/routine_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
-import 'package:spa_mobile/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
-import 'package:spa_mobile/features/home/presentation/blocs/user_chat/user_chat_bloc.dart';
+import 'package:spa_mobile/features/home/domain/usecases/get_all_notification.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/home_state/home_state_bloc.dart';
+import 'package:spa_mobile/features/home/presentation/blocs/list_notification/list_notification_bloc.dart';
+import 'package:spa_mobile/init_dependencies.dart';
+
+class WrapperHomeScreen extends StatelessWidget {
+  const WrapperHomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()))
+    ], child: HomeScreen());
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,55 +56,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadData();
-    _initializeSignalR();
-  }
-
-  void _initializeSignalR() {
-    // final authBloc = BlocProvider.of<AuthBloc>(context);
-    // final userChatBloc = BlocProvider.of<UserChatBloc>(context);
-    //
-    // // Listen for auth state changes
-    // authBloc.stream.listen((state) {
-    //   AppLogger.info('User state changed: ${state.runtimeType}');
-    //   if (state is AuthClear) {
-    //     // Disconnect SignalR when user logs out
-    //     AppLogger.info('Auth cleared, disconnecting SignalR');
-    //     SignalRService.disconnect();
-    //   }
-    // });
-    //
-    // // Listen for user chat state changes
-    // userChatBloc.stream.listen((state) {
-    //   AppLogger.info('UserChat state changed: ${state.runtimeType}');
-    //   if (state is UserChatLoaded) {
-    //     AppLogger.info('UserChat loaded, initializing SignalR with ID: ${state.user.id}');
-    //     SignalRService.initialize(state.user.id);
-    //   } else if (state is UserChatError) {
-    //     AppLogger.info('UserChat error, disconnecting SignalR');
-    //     SignalRService.disconnect();
-    //   }
-    // });
-    //
-    // // Check if user chat is already loaded
-    // if (userChatBloc.state is UserChatLoaded) {
-    //   final userState = userChatBloc.state as UserChatLoaded; // Fix: Cast to correct type
-    //   AppLogger.info('UserChat is already loaded, initializing SignalR with ID: ${userState.user.id}');
-    //   SignalRService.initialize(userState.user.id);
-    // } else {
-    //   AppLogger.info('UserChat not loaded yet, current state: ${userChatBloc.state.runtimeType}');
-    // }
   }
 
   void _loadData() async {
     final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
-    AppLogger.info("User: $userJson");
     if (jsonDecode(userJson) != null) {
       setState(() {
         user = UserModel.fromJson(jsonDecode(userJson));
         isLoading = false;
       });
       if (user?.userId != 0 && user?.userId != null) {
-        context.read<RoutineBloc>().add(GetCurrentRoutineEvent(GetCurrentRoutineParams(user!.userId)));
+        // context.read<RoutineBloc>().add(GetCurrentRoutineEvent(GetCurrentRoutineParams(user!.userId)));
+        context
+            .read<ListNotificationBloc>()
+            .add(GetAllNotificationEvent(GetAllNotificationParams(userId: user!.userId, pageIndex: 1, pageSize: 10)));
+        context.read<HomeStateBloc>().add(ResetDataEvent());
+        context
+            .read<HomeStateBloc>()
+            .add(GetNotificationEvent(GetAllNotificationParams(userId: user!.userId, pageIndex: 1, pageSize: 10, isRead: false)));
+        context.read<ListRoutineBloc>().add(GetSuitableRoutineEvent(GetRoutineHistoryParams(userId: user!.userId, status: "Suitable")));
       }
     } else {
       setState(() {
@@ -101,14 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final jsonUserChat = await LocalStorage.getData(LocalStorageKey.userChat);
     if (jsonUserChat != null && jsonUserChat.isNotEmpty) {
-      // try {
-      //   userChatModel = UserChatModel.fromJson(jsonDecode(jsonUserChat));
-      //   SignalRService.initialize(userChatModel!.id);
-      // } catch (e) {
-      //   debugPrint('Lỗi parsing userChatModel: $e');
-      //   goLoginNotBack();
-      // }
-      // return;
     } else {
       if (user?.userId != 0 && user?.userId != null) {
         context.read<RoutineBloc>().add(GetCurrentRoutineEvent(GetCurrentRoutineParams(user!.userId)));
@@ -167,7 +143,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   actions: [
-                    TNotificationIcon(onPressed: () {}, iconColor: TColors.primary),
+                    BlocBuilder<HomeStateBloc, HomeStateState>(
+                      builder: (context, state) {
+                        if (state is HomeStateLoaded) {
+                          return TNotificationIcon(
+                              onPressed: () {
+                                goNotification(user?.userId ?? 0);
+                              },
+                              iconColor: TColors.primary,
+                              newNotifications: state.newNoti);
+                        } else if (state is ListNotificationLoading) {
+                          return const TShimmerEffect(width: TSizes.shimmerSx, height: TSizes.shimmerSx);
+                        }
+                        return const SizedBox();
+                      },
+                    ),
                     const SizedBox(
                       width: TSizes.md,
                     ),
@@ -239,134 +229,85 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
-                  BlocBuilder<RoutineBloc, RoutineState>(
-                    builder: (context, state) {
-                      if (state is RoutineLoaded) {
-                        return Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(AppLocalizations.of(context)!.current_treatment_package,
-                                    style: Theme.of(context).textTheme.titleLarge),
-                              ],
-                            ),
-                            const SizedBox(
+                  Text("Gói liệu trình phù hợp", style: Theme.of(context).textTheme.titleLarge),
+                  BlocBuilder<ListRoutineBloc, ListRoutineState>(builder: (context, state) {
+                    if (state is ListRoutineLoaded) {
+                      return ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final routine = state.suitable[index];
+                            return GestureDetector(
+                              onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
+                              child: Stack(children: [
+                                TRoundedContainer(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ListTile(
+                                        title: Text(routine.name, style: Theme.of(context).textTheme.titleLarge),
+                                        subtitle: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(routine.description),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                formatMoney(routine.totalPrice.toString()),
+                                                style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          goRoutineDetail(routine.skincareRoutineId.toString());
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: TSizes.md,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                            );
+                          },
+                          separatorBuilder: (context, state) {
+                            return const SizedBox(
                               height: TSizes.sm,
-                            ),
-                            TRoundedContainer(
-                              padding: EdgeInsets.all(0),
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    // onTap: () => goTrackingRoutineDetail(state.routineModel.skincareRoutineId, user?.userId ?? 0),
-                                    title: Text(state.routineModel.name, style: Theme.of(context).textTheme.titleLarge),
-                                    subtitle: Text(state.routineModel.description),
-                                    trailing: const Icon(
-                                      Iconsax.arrow_right_1,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: TSizes.sm,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                      if (state is RoutineLoading) {
-                        return TShimmerEffect(width: THelperFunctions.screenWidth(context), height: TSizes.shimmerSm);
-                      }
-                      return const SizedBox.shrink();
-                    },
+                            );
+                          },
+                          itemCount: state.suitable.length);
+                    } else if (state is ListRoutineLoading) {
+                      return SizedBox(
+                        height: 230,
+                        child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            return TShimmerEffect(width: THelperFunctions.screenWidth(context), height: TSizes.shimmerMd);
+                          },
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(
+                              height: TSizes.sm,
+                            );
+                          },
+                          itemCount: 2,
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  }),
+                  const SizedBox(
+                    height: TSizes.sm,
                   ),
-                  // Text("Gói liệu trình phù hợp", style: Theme.of(context).textTheme.titleLarge),
-                  // Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
-                  // const SizedBox(
-                  //   height: TSizes.sm,
-                  // ),
+
+                  Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(
+                    height: TSizes.sm,
+                  ),
                   // Text("Sản phẩm đề xuất", style: Theme.of(context).textTheme.titleLarge),
                   // const SizedBox(
                   //   height: TSizes.spacebtwItems,
                   // ),
-                  // const TProductBanner(),
-                  // const SizedBox(
-                  //   height: TSizes.sm,
-                  // ),
-                  //
-                  // Text("Lịch hẹn sắp tới", style: Theme.of(context).textTheme.titleLarge),
-                  // const SizedBox(
-                  //   height: TSizes.sm,
-                  // ),
-                  // Text(AppLocalizations.of(context)!.bannerTitle, style: Theme.of(context).textTheme.titleLarge),
-                  // const TBanner(),
-                  // const SizedBox(
-                  //   height: TSizes.defaultSpace,
-                  // ),
-                  // Text(AppLocalizations.of(context)!.service_type, style: Theme.of(context).textTheme.titleLarge),
-                  // const SizedBox(
-                  //   height: TSizes.sm,
-                  // ),
-                  // const TServiceCategories(),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Text(AppLocalizations.of(context)!.featured_service, style: Theme.of(context).textTheme.titleLarge),
-                  //     GestureDetector(
-                  //         onTap: () {},
-                  //         child: Row(
-                  //           children: [
-                  //             Text(AppLocalizations.of(context)!.view_all, style: Theme.of(context).textTheme.bodySmall),
-                  //             const TRoundedIcon(icon: Icons.chevron_right)
-                  //           ],
-                  //         ))
-                  //   ],
-                  // ),
-                  // // TGridLayout(
-                  // //     itemCount: 2,
-                  // //     crossAxisCount: 2,
-                  // //     itemBuilder: (context, index) {
-                  // //       return null;
-                  // //
-                  // //       // return const TServiceCard();
-                  // //     }),
-                  // const SizedBox(
-                  //   height: TSizes.md,
-                  // ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Text(AppLocalizations.of(context)!.best_selling_product, style: Theme.of(context).textTheme.titleLarge),
-                  //     GestureDetector(
-                  //         onTap: () {},
-                  //         child: Row(
-                  //           children: [
-                  //             Text(AppLocalizations.of(context)!.view_all, style: Theme.of(context).textTheme.bodySmall),
-                  //             const TRoundedIcon(icon: Icons.chevron_right)
-                  //           ],
-                  //         ))
-                  //   ],
-                  // ),
-                  // // TGridLayout(
-                  // //     crossAxisCount: 2,
-                  // //     itemCount: 2,
-                  // //     itemBuilder: (_, index) => const TProductCardVertical()),
-                  // const SizedBox(
-                  //   height: TSizes.md,
-                  // ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //    goTableAppointments();
-                  //   },
-                  //   child: Text("QR CODE"),
-                  // ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     goRoutines();
-                  //   },
-                  //   child: Text("Statistics"),
-                  // )
                 ],
               ),
             )

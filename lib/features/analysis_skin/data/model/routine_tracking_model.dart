@@ -41,8 +41,9 @@ class RoutineTrackingModel {
       progressNote: json['progressNote'],
       startDate: json['startDate'],
       endDate: json['endDate'],
-      userRoutineSteps:
-          (json['userRoutineSteps'] as List<dynamic>).map((step) => RoutineStepModel.fromJson(step['skinCareRoutineStep'])).toList(),
+      userRoutineSteps: (json['userRoutineSteps'] as List<dynamic>)
+          .map((step) => RoutineStepModel.fromJson(step['skinCareRoutineStep'], step['userRoutineStepId'] ?? 0, step['stepStatus']))
+          .toList(),
     );
   }
 

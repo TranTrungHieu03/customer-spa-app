@@ -14,6 +14,7 @@ class OrderMixParams {
   final List<DateTime> appointmentDates;
   final double totalAmount;
   final bool isAuto;
+  final String paymentMethod;
 
   OrderMixParams({
     required this.customerId,
@@ -27,6 +28,7 @@ class OrderMixParams {
     required this.appointmentDates,
     required this.totalAmount,
     required this.isAuto,
+    required this.paymentMethod,
   });
 
   Map<String, dynamic> toJson() => {
@@ -41,6 +43,7 @@ class OrderMixParams {
         "appointmentDates": List<String>.from(appointmentDates.map((x) => x.toIso8601String())),
         "totalAmount": totalAmount,
         "isAuto": isAuto,
+        'paymentMethod': paymentMethod
       };
 }
 

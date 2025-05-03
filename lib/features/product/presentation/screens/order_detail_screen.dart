@@ -93,7 +93,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         const SizedBox(
                           height: TSizes.xs,
                         ),
-                        if (order.status != 'Cancelled' && order.status != 'Completed')
+                        if (order.status != 'Cancelled' && order.status != 'Completed' && (order.shipment?.cost ?? 0) > 0)
                           TRoundedContainer(
                             backgroundColor: Colors.teal.shade100,
                             padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.sm),
@@ -159,7 +159,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     ],
                                   ),
                                   SizedBox(
-                                    width: THelperFunctions.screenWidth(context) * 0.8,
+                                    width: THelperFunctions.screenWidth(context) * 0.9,
                                     child: Text(
                                       state.order.shipment?.address ?? "",
                                       style: Theme.of(context).textTheme.bodyMedium,
@@ -314,6 +314,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
                           ),
+                        if (order.paymentMethod.toLowerCase() == "cash") Text('Thanh toan tai cua hang'),
                         Divider(
                           color: TColors.darkGrey,
                           thickness: 0.5,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
@@ -63,6 +64,8 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
 
       final File file = event.image;
 
+      var inputImage = InputImage.fromFile(File(file.path));
+
       final String extension = file.path.split('.').last.toLowerCase();
       if (extension != 'jpg' && extension != 'jpeg') {
         emit(ImageInvalid("Invalid format. Only JPG or JPEG are allowed."));
@@ -98,16 +101,76 @@ class ImageBloc extends Bloc<ImageEvent, ImageState> {
         final String tempPath = '${tempDir.path}/cropped_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
         final File croppedImageFile = File(tempPath);
 
-// Lưu ảnh đã cắt ra file tạm thời
         await croppedImageFile.writeAsBytes(img.encodeJpg(croppedImage));
         AppLogger.debug("${croppedImage.width} and ${croppedImage.height}");
         if (!await croppedImageFile.exists()) {
           emit(ImageInvalid("Cropped image file does not exist."));
           return;
         }
+        inputImage = InputImage.fromFile(File(croppedImageFile.path));
+        final options = FaceDetectorOptions(
+          enableContours: true,
+          enableLandmarks: true,
+          enableClassification: true,
+          enableTracking: true,
+          minFaceSize: 0.15,
+          performanceMode: FaceDetectorMode.accurate,
+        );
+        final faceDetector = FaceDetector(options: options);
+        final List<Face> faces = await faceDetector.processImage(inputImage);
+
+        if (faces.isEmpty) {
+          emit(ImageInvalid("Chưa tìm thấy khuôn mặt nào"));
+          return;
+        }
+
+        if (faces.length > 1) {
+          emit(ImageInvalid("Không được có nhiều hơn 1 khuôn mặt"));
+          return;
+        }
+
+        final face = faces.first;
+        final rect = face.boundingBox;
+        final width = rect.right - rect.left;
+        final height = rect.bottom - rect.top;
+
+        if (width <= 400 || height <= 400) {
+          emit(ImageInvalid("Khuôn mặt phải đưa gần vào khung hình"));
+          return;
+        }
+
         emit(ImageValid(croppedImageFile));
-        // emit(ImageInvalid(
-        //     "Image resolution is too large. Maximum allowed resolution is 4096x4096 pixels."));
+
+        return;
+      }
+      final options = FaceDetectorOptions(
+        enableContours: true,
+        enableLandmarks: true,
+        enableClassification: true,
+        enableTracking: true,
+        minFaceSize: 0.15,
+        performanceMode: FaceDetectorMode.accurate,
+      );
+      final faceDetector = FaceDetector(options: options);
+      final List<Face> faces = await faceDetector.processImage(inputImage);
+
+      if (faces.isEmpty) {
+        emit(ImageInvalid("Chưa tìm thấy khuôn mặt nào"));
+        return;
+      }
+
+      if (faces.length > 1) {
+        emit(ImageInvalid("Không được có nhiều hơn 1 khuôn mặt"));
+        return;
+      }
+
+      final face = faces.first;
+      final rect = face.boundingBox;
+      final width = rect.right - rect.left;
+      final height = rect.bottom - rect.top;
+
+      if (width <= 400 || height <= 400) {
+        emit(ImageInvalid("Khuôn mặt phải đưa gần vào khung hình"));
         return;
       }
 
