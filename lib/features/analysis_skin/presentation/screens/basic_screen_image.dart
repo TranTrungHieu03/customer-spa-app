@@ -28,7 +28,7 @@ class _BasicScreenImageState extends State<BasicScreenImage> {
         listener: (context, state) {
           if (state is ImageInvalid) {
             TSnackBar.warningSnackBar(context, message: state.error);
-            // goHome();
+            goHome();
           } else if (state is ImageValid) {
             goSkinAnalysing(state.image);
           } else if (state is ImageLoading) {

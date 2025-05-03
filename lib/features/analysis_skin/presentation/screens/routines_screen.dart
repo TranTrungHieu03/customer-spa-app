@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperRoutineScreen extends StatefulWidget {
@@ -34,6 +39,8 @@ class RoutinesScreen extends StatefulWidget {
 }
 
 class _RoutinesScreenState extends State<RoutinesScreen> {
+  UserModel? user;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,55 +62,69 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
               builder: (context, state) {
                 if (state is ListRoutineLoaded) {
                   final routines = state.routines;
+                  final suitable = state.suitable;
                   return ListView.separated(
                       itemBuilder: (context, index) {
                         final routine = routines[index];
                         // final List<String> listSteps = routine.steps.split(", ");
                         return GestureDetector(
                           onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
-                          child: TRoundedContainer(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ListTile(
-                                  title: Text(routine.name, style: Theme.of(context).textTheme.titleLarge),
-                                  subtitle: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(routine.description),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          formatMoney(routine.totalPrice.toString()),
-                                          style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.w600),
+                          child: Stack(
+                            children: [
+                              TRoundedContainer(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        routine.name,
+                                        style: Theme.of(context).textTheme.titleLarge,
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(routine.description),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                              formatMoney(routine.totalPrice.toString()),
+                                              style: const TextStyle(
+                                                color: Colors.teal,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        goRoutineDetail(routine.skincareRoutineId.toString());
+                                      },
+                                    ),
+                                    const SizedBox(height: TSizes.md),
+                                  ],
+                                ),
+                              ),
+                              if (suitable.any((s) => s.skincareRoutineId == routine.skincareRoutineId))
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Transform.rotate(
+                                    angle: 0.185398, // 45 degrees in radians
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      color: Colors.red,
+                                      child: const Text(
+                                        'Phù hợp',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                  onTap: () {
-                                    goRoutineDetail(routine.skincareRoutineId.toString());
-                                  },
                                 ),
-                                // Padding(
-                                //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                                //   child: Text("Các bước thực hiện:", style: Theme.of(context).textTheme.bodyMedium),
-                                // ),
-                                // Padding(
-                                //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                                //   child: ListView.builder(
-                                //     shrinkWrap: true,
-                                //     physics: const NeverScrollableScrollPhysics(),
-                                //     itemBuilder: (context, indexStep) {
-                                //       return Text('${indexStep + 1}. ${listSteps[indexStep]}');
-                                //     },
-                                //     itemCount: listSteps.length,
-                                //   ),
-                                // ),
-                                const SizedBox(
-                                  height: TSizes.md,
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
                         );
                       },
@@ -123,9 +144,26 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     );
   }
 
+  void _loadData() async {
+    final userJson = await LocalStorage.getData(LocalStorageKey.userKey);
+    if (userJson != null) {
+      user = UserModel.fromJson(jsonDecode(userJson));
+      if (user?.userId != null && user!.userId != 0) {
+        final bloc = context.read<ListRoutineBloc>();
+        bloc.stream.firstWhere((state) => state is ListRoutineLoaded).then((state) {
+          bloc.add(GetSuitableRoutineEvent(GetRoutineHistoryParams(
+            userId: user!.userId,
+            status: "Suitable",
+          )));
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     context.read<ListRoutineBloc>().add(GetListRoutineEvent());
+    _loadData();
   }
 }

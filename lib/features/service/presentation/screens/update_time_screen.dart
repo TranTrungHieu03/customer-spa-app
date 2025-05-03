@@ -482,7 +482,7 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
                                       AppLogger.info(controller.appt.appointmentsTime);
                                       AppLogger.info(selectedDate);
                                       // if (listTimes.length == 1) {
-                                      if (!isSameDay(controller.minDate, controller.timeStart[0])) {
+                                      if (!isSameDay(controller.minDate, controller.timeStart[0]) && controller.step != 0) {
                                         showDialog(
                                           context: context,
                                           builder: (BuildContext context) {

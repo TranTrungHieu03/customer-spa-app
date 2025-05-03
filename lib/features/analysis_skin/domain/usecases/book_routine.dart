@@ -10,12 +10,14 @@ class BookRoutineParams {
   final String appointmentTime;
   final String note;
   final int? voucherId;
+  final String paymentMethod;
 
   BookRoutineParams(
       {required this.userId,
       required this.routineId,
       required this.branchId,
       required this.appointmentTime,
+      required this.paymentMethod,
       this.voucherId,
       required this.note});
 
@@ -26,7 +28,8 @@ class BookRoutineParams {
       'branchId': branchId,
       'appointmentTime': appointmentTime,
       'voucherId': voucherId,
-      'note': note
+      'note': note,
+      'paymentMethod': paymentMethod
     };
   }
 }

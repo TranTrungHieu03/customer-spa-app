@@ -98,14 +98,7 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
 
     context.read<ListProductBloc>().add(GetListProductsEvent(
           GetListProductParams(
-            brand: "",
-            page: 1,
-            branchId: widget.branchId,
-            categoryId: [],
-            minPrice: -1,
-            maxPrice: -1,
-            sortBy: "",
-          ),
+              brand: "", page: 1, branchId: widget.branchId, categoryId: [], minPrice: -1, maxPrice: -1, sortBy: "", pageSize: 100),
         ));
 
     context.read<ListServiceBloc>().add(GetListServicesForSelectionEvent(
@@ -237,6 +230,7 @@ class _AddToRoutineScreenState extends State<AddToRoutineScreen> with SingleTick
             categoryId: [],
             minPrice: -1,
             maxPrice: -1,
+            pageSize: 100,
             sortBy: "")));
       }
     }

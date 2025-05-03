@@ -132,11 +132,11 @@ class _SettingScreenState extends State<SettingScreen> {
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
                   const Divider(),
-                  TSettingsMenuTile(
-                    icon: Iconsax.profile_remove,
-                    title: AppLocalizations.of(context)!.delete_account,
-                    onTap: () => _deleteAccountWarningPopup(context),
-                  ),
+                  // TSettingsMenuTile(
+                  //   icon: Iconsax.profile_remove,
+                  //   title: AppLocalizations.of(context)!.delete_account,
+                  //   onTap: () => _deleteAccountWarningPopup(context),
+                  // ),
                   BlocConsumer<AuthBloc, AuthState>(
                     listener: (context, state) {
                       if (state is AuthClear) {

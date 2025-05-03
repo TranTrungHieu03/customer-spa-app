@@ -4,11 +4,14 @@ import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/list_order_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/order_routine_model.dart';
+import 'package:spa_mobile/features/analysis_skin/data/model/routine_logger_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_step_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_tracking_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/book_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/feedback_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_current_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_feedback_steps.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_appointment_by_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
@@ -44,6 +47,10 @@ abstract class RoutineRemoteDataSource {
   Future<int> orderMix(OrderMixParams params);
 
   Future<String> updateAppointmentRoutine(UpdateAppointmentRoutineParams params);
+
+  Future<String> feedbackStep(FeedbackStepParams params);
+
+  Future<List<RoutineLoggerModel>> getFeedbackStepByRoutineId(GetFeedbackStepParams params);
 }
 
 class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
@@ -93,7 +100,7 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
       final apiResponse = ApiResponse.fromJson(response);
 
       if (apiResponse.success) {
-        return (apiResponse.result!.data as List).map((x) => RoutineStepModel.fromJson(x)).toList();
+        return (apiResponse.result!.data as List).map((x) => RoutineStepModel.fromJson(x, null, "")).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }
@@ -248,6 +255,41 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
 
       if (apiResponse.success) {
         return (apiResponse.result!.message!);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<String> feedbackStep(FeedbackStepParams params) async {
+    try {
+      final response = await _apiService.postApi('/UserRoutineLogger/create', params.toJson());
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.message!);
+      } else {
+        throw AppException(apiResponse.result!.message!);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<RoutineLoggerModel>> getFeedbackStepByRoutineId(GetFeedbackStepParams params) async {
+    try {
+      final response =
+          await _apiService.getApi('/UserRoutineLogger/get-all?userRoutineId=${params.userRoutineId}&pageIndex=1&pageSize=100');
+
+      final apiResponse = ApiResponse.fromJson(response);
+
+      if (apiResponse.success) {
+        return (apiResponse.result!.data as List).map((e) => RoutineLoggerModel.fromJson(e)).toList();
       } else {
         throw AppException(apiResponse.result!.message!);
       }

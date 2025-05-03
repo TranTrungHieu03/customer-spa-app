@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
@@ -13,8 +14,12 @@ import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/product_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_step_model.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/feedback_step.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_feedback_steps.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_appointment_by_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine_logger/list_routine_logger_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine_logger/routine_logger_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine_tracking/routine_tracking_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_list_view.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_appointment_list_view.dart';
@@ -40,6 +45,9 @@ class _WrapperTrackingRoutineScreenState extends State<WrapperTrackingRoutineScr
       providers: [
         BlocProvider<RoutineTrackingBloc>(
           create: (context) => RoutineTrackingBloc(getRoutineTracking: serviceLocator()),
+        ),
+        BlocProvider<ListRoutineLoggerBloc>(
+          create: (context) => ListRoutineLoggerBloc(getFeedbackStep: serviceLocator()),
         ),
         BlocProvider(
           create: (context) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator())
@@ -86,8 +94,9 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
           TSnackBar.errorSnackBar(context, message: state.message);
         }
         if (state is RoutineTracking) {
+          context.read<ListRoutineLoggerBloc>().add(GetListRoutineLoggerEvent(GetFeedbackStepParams(state.routine.userRoutineId)));
           final routineSteps = state.routine.userRoutineSteps;
-          _currentStep = routineSteps.indexWhere((element) => element.stepStatus == "InProgress");
+          _currentStep = routineSteps.indexWhere((element) => element.stepStatus == "Pending");
           _currentStep = (_currentStep == -1) ? 0 : _currentStep;
         }
       },
@@ -162,20 +171,83 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                         steps: routineSteps.map((step) {
                           return Step(
                             title: Text(step.name),
-                            subtitle: Text(step.stepStatus?.toUpperCase() == "InProgress".toUpperCase()
+                            subtitle: Text(step.stepStatus?.toLowerCase() == "InProgress".toLowerCase()
                                 ? AppLocalizations.of(context)!.in_progress
-                                : step.stepStatus?.toUpperCase() == "Completed".toUpperCase()
+                                : step.stepStatus?.toLowerCase() == "completed".toLowerCase()
                                     ? AppLocalizations.of(context)!.completed
                                     : AppLocalizations.of(context)!.pending),
                             content: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Services Section
                                 if (step.serviceRoutineSteps.isNotEmpty)
                                   _buildServiceSection(step, _lgCode, widget.orderId, widget.userId, widget.id),
-
-                                // Products Section
                                 if (step.productRoutineSteps.isNotEmpty) _buildProductsSection(step.productRoutineSteps),
+                                // if (step.stepStatus?.toLowerCase() == "completed")
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (step.stepStatus?.toLowerCase() == "completed")
+                                      Text('Feedback', style: Theme.of(context).textTheme.titleLarge),
+                                    const SizedBox(
+                                      height: TSizes.sm,
+                                    ),
+                                    BlocBuilder<ListRoutineLoggerBloc, ListRoutineLoggerState>(builder: (context, fbState) {
+                                      if (fbState is ListRoutineLoggerLoaded) {
+                                        final fbs = fbState.feedbacks;
+                                        return Column(
+                                          children: [
+                                            ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: fbState.feedbacks.length,
+                                                itemBuilder: (context, index) {
+                                                  if (fbs[index].stepId == step.userRoutineStepId) {
+                                                    return Column(
+                                                      crossAxisAlignment:
+                                                          fbs[index].userId != 0 ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                                      children: [
+                                                        if (fbs[index].staff != null)
+                                                          Align(
+                                                            alignment: Alignment.centerLeft,
+                                                            child: Text(
+                                                              fbs[index].staff?.staffInfo?.fullName ?? "",
+                                                              style: Theme.of(context)!.textTheme.bodyLarge,
+                                                            ),
+                                                          ),
+                                                        if (fbs[index].customer != null)
+                                                          Align(
+                                                            alignment: Alignment.centerRight,
+                                                            child: Text(fbs[index].customer?.fullName ?? "",
+                                                                style: Theme.of(context)!.textTheme.bodyLarge),
+                                                          ),
+                                                        TRoundedContainer(
+                                                          padding: EdgeInsets.all(TSizes.sm),
+                                                          margin: EdgeInsets.only(bottom: TSizes.sm),
+                                                          child: Column(
+                                                            children: [Text(fbs[index].stepLogger)],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }
+                                                  return const SizedBox();
+                                                }),
+                                            if (step.stepStatus?.toLowerCase() == "completed")
+                                              TextButton(
+                                                  onPressed: () {
+                                                    _showMessageModal(
+                                                        context, widget.userId, step.userRoutineStepId, widget.orderId, widget.id);
+                                                  },
+                                                  child: const Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [Text('Feedback for this step'), Icon(Iconsax.arrow_right_1)],
+                                                  )),
+                                          ],
+                                        );
+                                      }
+                                      return SizedBox();
+                                    })
+                                  ],
+                                )
                               ],
                             ),
                             state: _getStepState(routineSteps, step),
@@ -233,7 +305,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
 
   Widget _buildServiceSection(RoutineStepModel step, String lgCode, int orderId, int useId, int routineId) {
     return Container(
-      padding: EdgeInsets.all(0),
+      padding: const EdgeInsets.all(0),
       color: TColors.white,
       margin: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: 0),
       child: ServiceAppointmentListView(data: step, lgCode: lgCode, orderId: orderId, userId: useId, routineId: routineId),
@@ -243,7 +315,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
   Widget _buildProductsSection(List<ProductRoutineModel> products) {
     return Container(
         color: TColors.white,
-        padding: EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
         margin: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: 0),
         child: ProductListView(products: products.map((x) => x.product).toList()));
   }
@@ -254,4 +326,102 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
     _loadLanguage();
     context.read<RoutineTrackingBloc>().add(GetRoutineTrackingEvent(GetRoutineTrackingParams(userId: widget.userId, routineId: widget.id)));
   }
+}
+
+void _showMessageModal(BuildContext context, int userId, int stepId, int orderId, int routineId) {
+  TextEditingController messageController = TextEditingController();
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (BuildContext context) {
+      return BlocProvider(
+        create: (context) => RoutineLoggerBloc(feedbackStep: serviceLocator()),
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: TSizes.md,
+            right: TSizes.md,
+            top: TSizes.md,
+            bottom: MediaQuery.of(context).viewInsets.bottom + TSizes.md,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.feedback,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                autofocus: true,
+                controller: messageController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context)!.enter_your_message,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              BlocListener<RoutineLoggerBloc, RoutineLoggerState>(
+                listener: (context, state) {
+                  if (state is RoutineLoggerCreated) {
+                    Navigator.pop(context);
+                    goTrackingRoutineDetail(routineId, userId, orderId);
+                  } else if (state is RoutineLoggerError) {
+                    TSnackBar.errorSnackBar(context, message: state.message);
+                  }
+                },
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: BlocBuilder<RoutineLoggerBloc, RoutineLoggerState>(
+                        builder: (context, state) {
+                          if (state is RoutineLoggerLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                color: TColors.primary,
+                              ),
+                            );
+                          }
+                          return ElevatedButton(
+                            onPressed: () {
+                              if (messageController.text.trim().isEmpty) {
+                                TSnackBar.warningSnackBar(context, message: AppLocalizations.of(context)!.enter_your_feedback);
+                                return;
+                              }
+                              context.read<RoutineLoggerBloc>().add(CreateRoutineLoggerEvent(FeedbackStepParams(
+                                  stepId: stepId,
+                                  userId: userId,
+                                  actionDate: DateTime.now(),
+                                  stepLogger: messageController.text.trim(),
+                                  notes: "")));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: TSizes.md, vertical: 10),
+                            ),
+                            child: Text(
+                              AppLocalizations.of(context)!.submit,
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontSize: TSizes.md,
+                                  ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }

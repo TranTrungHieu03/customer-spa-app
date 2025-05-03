@@ -89,7 +89,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           height: TSizes.md,
                         ),
                         TPaymentMethod(
-                          initialMethod: 'payOs',
+                          initialMethod: 'PayOs',
                           onChanged: (method) {
                             widget.controller.updateMethod(method);
                           },

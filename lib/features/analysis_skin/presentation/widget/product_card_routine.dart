@@ -7,7 +7,6 @@ import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 class TProductCardRoutine extends StatelessWidget {
@@ -79,17 +78,17 @@ class TProductCardRoutine extends StatelessWidget {
                 ],
               ),
             ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //Price
-                Padding(
-                  padding: const EdgeInsets.all(TSizes.sm),
-                  child: TProductPriceText(price: productModel.price.toString()),
-                ),
-              ],
-            )
+            // const Spacer(),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     //Price
+            //     Padding(
+            //       padding: const EdgeInsets.all(TSizes.sm),
+            //       child: TProductPriceText(price: productModel.price.toString()),
+            //     ),
+            //   ],
+            // )
           ],
         ),
       ),

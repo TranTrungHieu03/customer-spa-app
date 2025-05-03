@@ -11,6 +11,7 @@ class OrderAppointmentModel extends Order {
   const OrderAppointmentModel({
     required super.orderId,
     required super.orderCode,
+    required super.paymentMethod,
     required super.customerId,
     required super.voucherId,
     required super.totalAmount,
@@ -47,6 +48,7 @@ class OrderAppointmentModel extends Order {
       unitPrice: (json['unitPrice'] as num?)?.toDouble() ?? 0.0,
       subTotal: (json['subTotal'] as num?)?.toDouble() ?? 0.0,
       statusPayment: json['statusPayment'] ?? '',
+      paymentMethod: json['paymentMethod'] ?? '',
       note: json['note'] ?? '',
       createdDate: json['createdDate'] != null ? DateTime.tryParse(json['createdDate']) ?? DateTime(1970, 1, 1) : DateTime(1970, 1, 1),
       updatedDate: json['updatedDate'] != null ? DateTime.tryParse(json['updatedDate']) ?? DateTime(1970, 1, 1) : DateTime(1970, 1, 1),

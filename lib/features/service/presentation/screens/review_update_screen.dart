@@ -131,6 +131,7 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     final controller = widget.controller;
+    AppLogger.wtf(controller.step);
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -391,7 +392,7 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
                               customerId: controller.user?.userId ?? 0,
                               appointmentId: controller.appointmentId,
                             )));
-                        if (!isSameDay(controller.minDate, controller.timeStart[0])) {
+                        if (!isSameDay(controller.minDate, controller.timeStart[0]) && controller.step != 0) {
                           context.read<AppointmentBloc>().add(UpdateAppointmentRoutineEvent(UpdateAppointmentRoutineParams(
                               orderId: controller.orderId,
                               fromStep: controller.step,
@@ -407,11 +408,11 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
                     if (state is AppointmentError) {
                       TSnackBar.errorSnackBar(context, message: state.message);
                     }
-                    if (state is AppointmentCreateSuccess && isSameDay(controller.minDate, controller.timeStart[0])) {
+                    if (state is AppointmentCreateSuccess && controller.step == 0) {
                       goAppointmentDetail(state.id.toString(), false);
                     }
-                    if (state is AppointmentUpdateRoutineSuccess) {
-                      goTrackingRoutineDetail(state.routineId, state.userId, state.orderId);
+                    if (state is AppointmentCreateSuccess && controller.step != 0) {
+                      goTrackingRoutineDetail(controller.routineId, controller.userId, controller.orderId);
                     }
                   },
                 ),

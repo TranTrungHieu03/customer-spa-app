@@ -22,6 +22,7 @@ import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/list_voucher/list_voucher_bloc.dart';
 import 'package:spa_mobile/features/product/presentation/screens/voucher_screen.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/payment_method.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/domain/usecases/create_appointment.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_staff_free_in_time.dart';
@@ -254,7 +255,9 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                       width: TSizes.sm,
                                     ),
                                     Text(
-                                      DateFormat('EEEE, dd MMMM yyyy', lgCode).format(controller.time[0]).toString(),
+                                      DateFormat('EEEE, dd MMMM yyyy', lgCode)
+                                          .format(controller.time.reduce((a, b) => a.isBefore(b) ? a : b))
+                                          .toString(),
                                     )
                                   ],
                                 ),
@@ -270,7 +273,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                     const SizedBox(
                                       width: TSizes.sm,
                                     ),
-                                    Text("${DateFormat('HH:mm', lgCode).format(controller.time[0]).toString()}"),
+                                    Text("${DateFormat('HH:mm', lgCode).format(controller.time.reduce((a, b) => a.isBefore(b) ? a : b)).toString()}"),
                                     const Spacer(),
                                     TRoundedIcon(
                                       icon: Iconsax.info_circle,
@@ -385,6 +388,12 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             color: dark ? TColors.darkGrey : TColors.grey,
                             thickness: 0.5,
                           ),
+                          TPaymentMethod(
+                            initialMethod: 'PayOs',
+                            onChanged: (method) {
+                              widget.controller.updateMethod(method);
+                            },
+                          ),
                           const SizedBox(
                             height: TSizes.sm,
                           ),
@@ -437,6 +446,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             appointmentsTime: controller.time,
                             notes: _messageController.text,
                             userId: controller.user?.userId ?? 0,
+                            paymentMethod: controller.method,
                             voucherId: controller.voucher?.voucherId ?? 0)));
                       },
                       child: Text(AppLocalizations.of(context)!.confirm),

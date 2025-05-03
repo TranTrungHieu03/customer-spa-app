@@ -89,15 +89,27 @@ Future<void> _initAuth() async {
 
 Future<void> _initMenu() async {
   serviceLocator
+
+    //data src
+    ..registerFactory<NotificationRemoteDataSource>(() => NotificationRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<NotificationRepository>(() => NotificationRepositoryImpl(serviceLocator<NotificationRemoteDataSource>()))
+
+    //usecase
+    ..registerLazySingleton(() => PayDeposit(serviceLocator()))
+    ..registerLazySingleton(() => GetAllNotification(serviceLocator()))
+    ..registerLazySingleton(() => MarkAsReadAll(serviceLocator()))
+    ..registerLazySingleton(() => MarkAsRead(serviceLocator()))
+    ..registerLazySingleton(() => PayFull(serviceLocator()))
+    //bloc
     ..registerLazySingleton(() => NavigationBloc())
+    ..registerLazySingleton(() => HomeStateBloc(getAllNotification: serviceLocator()))
+    ..registerLazySingleton(() => NotificationBloc(markAsRead: serviceLocator(), markAsReadAll: serviceLocator()))
+    ..registerLazySingleton(() => ListNotificationBloc(getAllNotification: serviceLocator()))
     ..registerLazySingleton(() => ImageBloc())
     ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator(), payDeposit: serviceLocator()))
     ..registerLazySingleton(() => PayosBloc())
     ..registerLazySingleton(() => ServiceCartBloc())
-    ..registerLazySingleton(() => WebViewBloc())
-    //usecase
-    ..registerLazySingleton(() => PayDeposit(serviceLocator()))
-    ..registerLazySingleton(() => PayFull(serviceLocator()));
+    ..registerLazySingleton(() => WebViewBloc());
 }
 
 Future<void> _initProduct() async {
@@ -301,6 +313,8 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => GetOrderRoutine(serviceLocator()))
     ..registerLazySingleton(() => GetHistoryOrderRoutine(serviceLocator()))
     ..registerLazySingleton(() => OrderMix(serviceLocator()))
+    ..registerLazySingleton(() => GetFeedbackStep(serviceLocator()))
+    ..registerLazySingleton(() => FeedbackStep(serviceLocator()))
 
     //bloc
     ..registerLazySingleton(() => SkinAnalysisBloc(skinAnalysisViaImage: serviceLocator(), skinAnalysisViaForm: serviceLocator()))
@@ -310,6 +324,8 @@ Future<void> _initSkinAnalysis() async {
     ..registerLazySingleton(() => OrderRoutineBloc(getOrderRoutine: serviceLocator()))
     ..registerLazySingleton(() => ListOrderRoutineBloc(getHistoryOrderRoutine: serviceLocator()))
     ..registerLazySingleton(() => RoutineTrackingBloc(getRoutineTracking: serviceLocator()))
+    ..registerLazySingleton(() => RoutineLoggerBloc(feedbackStep: serviceLocator()))
+    ..registerLazySingleton(() => ListRoutineLoggerBloc(getFeedbackStep: serviceLocator()))
     ..registerLazySingleton(() => RoutineBloc(
         getRoutineDetail: serviceLocator(),
         bookRoutine: serviceLocator(),

@@ -37,6 +37,7 @@ class AppointmentDetailScreen extends StatefulWidget {
   final String appointmentId;
   final bool isEnableUpdateAll;
 
+
   @override
   State<AppointmentDetailScreen> createState() => _AppointmentDetailScreenState();
 }

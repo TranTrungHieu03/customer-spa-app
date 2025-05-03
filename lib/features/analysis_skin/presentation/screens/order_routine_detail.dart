@@ -87,10 +87,13 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                       children: [
                         if (order.statusPayment != 'Cash')
                           Text(
-                              '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.paid} ${formatMoney(((order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3).toString())}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}'),
+                            '${AppLocalizations.of(context)!.payment_status}: ${order.statusPayment == 'PaidDeposit' ? '${AppLocalizations.of(context)!.paid} ${formatMoney(((order.totalAmount - (order.voucher?.discountAmount ?? 0)) * 0.3).toString())}' : order.statusPayment == 'Paid' ? AppLocalizations.of(context)!.fully_paid : AppLocalizations.of(context)!.unpaid}',
+                            style: Theme.of(context)!.textTheme.bodyLarge,
+                          ),
                         const SizedBox(
                           height: TSizes.xs,
                         ),
+                        Text(routine.name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                         Text(routine.description, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                         const SizedBox(height: TSizes.sm),
                         Row(
@@ -173,12 +176,14 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                           height: TSizes.sm,
                         ),
                         if ((order.statusPayment == "Pending" || order.statusPayment == "PendingDeposit") &&
-                            order.status.toLowerCase() != "cancelled")
+                            order.status.toLowerCase() != "cancelled" &&
+                            order.paymentMethod?.toLowerCase() != "cash")
                           TPaymentSelection(
                             total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
                           ),
+                        if (order.paymentMethod?.toLowerCase() == "cash") Text('Thanh toán tại cửa hàng'),
                         Divider(
                           color: TColors.darkGrey,
                           thickness: 0.5,
@@ -371,4 +376,3 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
     );
   }
 }
-

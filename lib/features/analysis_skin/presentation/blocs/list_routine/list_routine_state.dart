@@ -7,8 +7,22 @@ final class ListRoutineInitial extends ListRoutineState {}
 
 final class ListRoutineLoaded extends ListRoutineState {
   final List<RoutineModel> routines;
+  final List<RoutineModel> suitable;
 
-  ListRoutineLoaded(this.routines);
+  ListRoutineLoaded({
+    required this.routines,
+    required this.suitable,
+  });
+
+  ListRoutineLoaded copyWith({
+    List<RoutineModel>? routines,
+    List<RoutineModel>? suitable,
+  }) {
+    return ListRoutineLoaded(
+      routines: routines ?? this.routines,
+      suitable: suitable ?? this.suitable,
+    );
+  }
 }
 
 final class ListRoutineHistoryLoaded extends ListRoutineState {

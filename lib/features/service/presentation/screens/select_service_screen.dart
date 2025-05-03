@@ -368,13 +368,13 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> with TickerPr
                     ],
                   ),
                 )),
-            actions: [
-              TRoundedIcon(
-                icon: Iconsax.search_normal,
-                onPressed: () => goSearch(),
-              ),
-              const SizedBox(width: TSizes.md),
-            ],
+            // actions: [
+            //   TRoundedIcon(
+            //     onPressed: () => goSearch(),
+            //     icon: Iconsax.search_normal,
+            //  ),
+            //   const SizedBox(width: TSizes.md),
+            // ],
             bottom: _isScrolled
                 ? PreferredSize(
               preferredSize: const Size.fromHeight(1),

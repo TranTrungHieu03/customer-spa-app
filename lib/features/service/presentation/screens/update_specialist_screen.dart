@@ -268,9 +268,8 @@ class _UpdateSpecialistScreenState extends State<UpdateSpecialistScreen> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                      goUpdateTime(controller.staffIds, controller);
-                    }
-                  ,
+                    goUpdateTime(controller.staffIds, controller);
+                  },
                   child: Text(AppLocalizations.of(context)!.continue_book))
             ],
           ),

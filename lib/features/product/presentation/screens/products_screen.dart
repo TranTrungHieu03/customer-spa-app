@@ -101,6 +101,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             categoryId: [],
             minPrice: -1,
             maxPrice: -1,
+            pageSize: 10,
             sortBy: "")));
       }
     }
@@ -145,8 +146,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
     }
     params = GetListProductParams.empty(selectedBranch ?? 0);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ListProductBloc>().add(GetListProductsEvent(
-          GetListProductParams(brand: "", page: 1, branchId: selectedBranch ?? 1, categoryId: [], minPrice: -1, maxPrice: -1, sortBy: "")));
+      context.read<ListProductBloc>().add(GetListProductsEvent(GetListProductParams(
+          brand: "", page: 1, branchId: selectedBranch ?? 1, pageSize: 10, categoryId: [], minPrice: -1, maxPrice: -1, sortBy: "")));
       controller = PurchasingData.of(context)
         ..updateBranchId(selectedBranch ?? 1)
         ..updateUser(userId);
@@ -823,6 +824,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   context.read<ListProductBloc>().add(GetListProductsEvent(GetListProductParams(
                       brand: "",
                       page: 1,
+                      pageSize: 10,
                       branchId: selectedBranch ?? 1,
                       categoryId: [],
                       minPrice: _priceRange.start,

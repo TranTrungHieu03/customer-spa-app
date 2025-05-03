@@ -30,6 +30,9 @@ class AppointmentDataController extends ChangeNotifier {
   int _orderId = 0;
   int routineId = 0;
   int userId = 0;
+  String _method = 'PayOs';
+
+  String get method => _method;
 
   int get orderId => _orderId;
 
@@ -69,6 +72,11 @@ class AppointmentDataController extends ChangeNotifier {
 
   void updateServices(List<ServiceModel> newServices) {
     _services = newServices;
+    notifyListeners();
+  }
+
+  void updateMethod(String method) {
+    _method = method;
     notifyListeners();
   }
 

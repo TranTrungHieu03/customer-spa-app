@@ -5,10 +5,13 @@ import 'package:signalr_netcore/ihub_protocol.dart';
 import 'package:signalr_netcore/signalr_client.dart';
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/home/data/models/message_channel_model.dart';
+import 'package:spa_mobile/features/home/data/models/notification_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/send_message.dart';
 
 abstract class ChatRemoteDataSource {
   Stream<MessageChannelModel> getMessages();
+
+  Stream<NotificationModel> getNotifications();
 
   Future<void> sendMessage(SendMessageParams message);
 
@@ -21,6 +24,7 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
   late HubConnection _hubConnection;
 
   final StreamController<MessageChannelModel> _messageStreamController = StreamController<MessageChannelModel>.broadcast();
+  final StreamController<NotificationModel> _notificationStreamController = StreamController<NotificationModel>.broadcast();
 
   SignalRChatRemoteDataSource({required String hubUrl, required String userId}) {
     var defaultHeaders = MessageHeaders();
@@ -48,9 +52,8 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
     _hubConnection.on("receiveNotification", (arguments) {
       if (arguments != null && arguments.isNotEmpty) {
         try {
-          AppLogger.debug(json.decode(json.encode(arguments[0])));
-          // final message = MessageChannelModel.fromJson(json.decode(json.encode(arguments[0])));
-          handleNotificationReceived(json.decode(json.encode(arguments[0])));
+          final notification = NotificationModel.fromJson(json.decode(json.encode(arguments[0])));
+          handleNotificationReceived(notification);
         } catch (e) {
           AppLogger.error("Error parsing message: $e");
         }
@@ -59,12 +62,13 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
   }
 
   void handleMessageReceived(MessageChannelModel message) {
-    AppLogger.info("Message received: ${message.toJson()}");
     _messageStreamController.add(message);
+    AppLogger.info("Message received: ${message.toJson()}");
   }
 
-  void handleNotificationReceived(dynamic message) {
-    AppLogger.info("Message received: ${message.toJson()}");
+  void handleNotificationReceived(NotificationModel notification) {
+    _notificationStreamController.add(notification);
+    AppLogger.info("Notification received: ${notification.toJson()}");
   }
 
   @override
@@ -95,7 +99,10 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
   @override
   Future<void> connect() async {
     if (_hubConnection.state == HubConnectionState.Disconnected) {
-      await _hubConnection.start()?.then((_) {}).catchError((error) {});
+      await _hubConnection.start()?.then((_) {
+        AppLogger.wtf(_hubConnection.baseUrl);
+        AppLogger.wtf(_hubConnection.connectionId);
+      }).catchError((error) {});
     }
   }
 
@@ -103,5 +110,10 @@ class SignalRChatRemoteDataSource implements ChatRemoteDataSource {
   Future<void> disconnect() async {
     await _hubConnection.stop();
     _messageStreamController.close();
+  }
+
+  @override
+  Stream<NotificationModel> getNotifications() {
+    return _notificationStreamController.stream;
   }
 }

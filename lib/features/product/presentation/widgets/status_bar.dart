@@ -384,7 +384,9 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                               ),
                                               Text(
                                                 DateFormat('EEEE, dd MMMM yyyy', lgCode)
-                                                    .format(order.appointments![0].appointmentsTime)
+                                                    .format(order.appointments!
+                                                        .reduce((a, b) => a.appointmentsTime.isBefore(b.appointmentsTime) ? a : b)
+                                                        .appointmentsTime)
                                                     .toString(),
                                               )
                                             ],
@@ -400,11 +402,13 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                               const SizedBox(
                                                 width: TSizes.sm,
                                               ),
-                                              Text(
-                                                "${DateFormat('HH:mm', lgCode).format(order.appointments![0].appointmentsTime).toString()} - "
-                                                "${DateFormat('HH:mm', lgCode).format(order.appointments![order.appointments!.length - 1].appointmentEndTime).toString()}",
-                                                // "${DateFormat('HH:mm', lgCode).format(order.appointments![0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
-                                              )
+                                              Text(DateFormat('HH:mm', lgCode)
+                                                      .format(order.appointments!
+                                                          .reduce((a, b) => a.appointmentsTime.isBefore(b.appointmentsTime) ? a : b)
+                                                          .appointmentsTime)
+                                                      .toString()
+                                                  // "${DateFormat('HH:mm', lgCode).format(order.appointments![0].appointmentsTime.add(Duration(minutes: totalTime))).toString()}",
+                                                  )
                                             ],
                                           ),
                                           const SizedBox(
@@ -482,6 +486,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                   return
                                       // onTap: () => goTrackingRoutineDetail(order.routine!.skincareRoutineId, order.customerId),
                                       TRoundedContainer(
+                                    padding: EdgeInsets.all(TSizes.sm),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -496,7 +501,7 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                                     width: TSizes.spacebtwItems / 2,
                                                   ),
                                                   Text(
-                                                    order.appointments![0].branch?.branchName ?? "",
+                                                    order.orderDetails![0].branch?.branchName ?? "",
                                                     style: Theme.of(context).textTheme.bodyLarge,
                                                     overflow: TextOverflow.ellipsis,
                                                   )
@@ -542,21 +547,6 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                             goOrderRoutineDetail(order.orderId);
                                           },
                                         ),
-                                        // Padding(
-                                        //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                                        //   child: Text("Các bước thực hiện:", style: Theme.of(context).textTheme.bodyMedium),
-                                        // ),
-                                        // Padding(
-                                        //   padding: const EdgeInsets.symmetric(horizontal: TSizes.md),
-                                        //   child: ListView.builder(
-                                        //     shrinkWrap: true,
-                                        //     physics: const NeverScrollableScrollPhysics(),
-                                        //     itemBuilder: (context, indexStep) {
-                                        //       return Text('${indexStep + 1}. ${listSteps[indexStep]}');
-                                        //     },
-                                        //     itemCount: listSteps.length,
-                                        //   ),
-                                        // ),
                                         const SizedBox(
                                           height: TSizes.md,
                                         ),
@@ -565,211 +555,263 @@ class _TStatusBarProductState extends State<TStatusBarProduct> with AutomaticKee
                                   );
                                 } else {
                                   return GestureDetector(
-                                    onTap: () => goOrderProductDetail(order.orderId),
+                                    onTap: () => goOrderMixDetail(order.orderId),
                                     child: TRoundedContainer(
-                                      padding: EdgeInsets.all(TSizes.sm),
+                                      padding: const EdgeInsets.all(TSizes.sm),
                                       child: Column(
                                         children: [
-                                          ListView.separated(
-                                            shrinkWrap: true,
-                                            physics: const NeverScrollableScrollPhysics(),
-                                            itemBuilder: (BuildContext context, int indexDetail) {
-                                              final orderDetail = order.orderDetails![indexDetail];
-                                              if (indexDetail == 0) {
-                                                return Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        ConstrainedBox(
-                                                          constraints:
-                                                              BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.9),
-                                                          child: Row(
-                                                            children: [
-                                                              const Icon(Iconsax.shop),
-                                                              const SizedBox(
-                                                                width: TSizes.spacebtwItems / 2,
-                                                              ),
-                                                              Text(
-                                                                orderDetail.branch?.branchName ?? "",
-                                                                style: Theme.of(context).textTheme.bodyLarge,
-                                                                overflow: TextOverflow.ellipsis,
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        // Text(
-                                                        //   "Đang xử lý",
-                                                        //   style: Theme.of(context).textTheme.bodyLarge,
-                                                        // )
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                        width: THelperFunctions.screenWidth(context),
-                                                        child: const Divider(
-                                                          thickness: 0.2,
-                                                        )),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: [
-                                                        TRoundedImage(
-                                                          imageUrl: orderDetail.product.images!.isNotEmpty
-                                                              ? orderDetail.product.images![0]
-                                                              : TImages.product1,
-                                                          applyImageRadius: true,
-                                                          isNetworkImage: orderDetail.product.images!.isNotEmpty,
-                                                          onPressed: () => {},
-                                                          border: Border.all(
-                                                            color: Colors.grey.withOpacity(0.5),
-                                                            width: 1,
-                                                          ),
-                                                          width: THelperFunctions.screenWidth(context) * 0.28,
-                                                          height: THelperFunctions.screenWidth(context) * 0.28,
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(left: TSizes.sm),
-                                                          child: ConstrainedBox(
-                                                            constraints: BoxConstraints(
-                                                              maxWidth: THelperFunctions.screenWidth(context) * 0.6,
-                                                            ),
-                                                            child: Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                          if (orders[index].orderDetails?.isNotEmpty ?? false)
+                                            ListView.separated(
+                                              shrinkWrap: true,
+                                              physics: const NeverScrollableScrollPhysics(),
+                                              itemBuilder: (BuildContext context, int indexDetail) {
+                                                final orderDetail = order.orderDetails![indexDetail];
+                                                if (indexDetail == 0) {
+                                                  return Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          ConstrainedBox(
+                                                            constraints:
+                                                                BoxConstraints(maxWidth: THelperFunctions.screenWidth(context) * 0.9),
+                                                            child: Row(
                                                               children: [
+                                                                const Icon(Iconsax.shop),
+                                                                const SizedBox(
+                                                                  width: TSizes.spacebtwItems / 2,
+                                                                ),
                                                                 Text(
-                                                                  orderDetail.product.productName,
-                                                                  style: Theme.of(context).textTheme.bodyMedium,
-                                                                  maxLines: 2,
+                                                                  orderDetail.branch?.branchName ?? "",
+                                                                  style: Theme.of(context).textTheme.bodyLarge,
                                                                   overflow: TextOverflow.ellipsis,
-                                                                ),
-                                                                Text(orderDetail.product.brand,
-                                                                    maxLines: 1,
-                                                                    overflow: TextOverflow.ellipsis,
-                                                                    style: Theme.of(context).textTheme.bodySmall),
-                                                                Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                                  children: [
-                                                                    Text(
-                                                                      "x${orderDetail.quantity}",
-                                                                      style: Theme.of(context).textTheme.bodySmall,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.end,
-                                                                  children: [
-                                                                    Text(
-                                                                      formatMoney(orderDetail.unitPrice.toString()),
-                                                                      style: Theme.of(context).textTheme.bodySmall,
-                                                                    )
-                                                                  ],
                                                                 )
                                                               ],
                                                             ),
                                                           ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                );
-                                              } else {
-                                                final quantityOfHide = order.orderDetails!.fold(0, (x, y) => x + y.quantity) -
-                                                    (order.orderDetails?[0].quantity ?? 0);
-                                                return indexDetail == 1 && (order.orderDetails?.length ?? 0) > 1
-                                                    ? ExpansionTile(
-                                                        title: Text(AppLocalizations.of(context)!.view_more),
-                                                        tilePadding: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
-                                                        childrenPadding: EdgeInsets.zero,
-                                                        collapsedBackgroundColor: Colors.transparent,
-                                                        backgroundColor: Colors.transparent,
-                                                        subtitle: Text(
-                                                          "$quantityOfHide ${AppLocalizations.of(context)!.other_products}",
-                                                          style: Theme.of(context).textTheme.bodySmall,
-                                                        ),
-                                                        children: order.orderDetails!
-                                                            .asMap()
-                                                            .entries
-                                                            .where((entry) => entry.key != 0) // chỉ lấy từ sản phẩm thứ 2 trở đi
-                                                            .map((entry) {
-                                                          final orderDetail = entry.value;
-                                                          return Column(
-                                                            children: [
-                                                              const Divider(thickness: 0.2),
-                                                              Row(
-                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                          // Text(
+                                                          //   "Đang xử lý",
+                                                          //   style: Theme.of(context).textTheme.bodyLarge,
+                                                          // )
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                          width: THelperFunctions.screenWidth(context),
+                                                          child: const Divider(
+                                                            thickness: 0.2,
+                                                          )),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          TRoundedImage(
+                                                            imageUrl: orderDetail.product.images!.isNotEmpty
+                                                                ? orderDetail.product.images![0]
+                                                                : TImages.product1,
+                                                            applyImageRadius: true,
+                                                            isNetworkImage: orderDetail.product.images!.isNotEmpty,
+                                                            onPressed: () => {},
+                                                            border: Border.all(
+                                                              color: Colors.grey.withOpacity(0.5),
+                                                              width: 1,
+                                                            ),
+                                                            width: THelperFunctions.screenWidth(context) * 0.28,
+                                                            height: THelperFunctions.screenWidth(context) * 0.28,
+                                                          ),
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(left: TSizes.sm),
+                                                            child: ConstrainedBox(
+                                                              constraints: BoxConstraints(
+                                                                maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                                                              ),
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisAlignment: MainAxisAlignment.start,
                                                                 children: [
-                                                                  TRoundedImage(
-                                                                    imageUrl: orderDetail.product.images!.isNotEmpty
-                                                                        ? orderDetail.product.images![0]
-                                                                        : TImages.product1,
-                                                                    applyImageRadius: true,
-                                                                    isNetworkImage: orderDetail.product.images!.isNotEmpty,
-                                                                    onPressed: () => {},
-                                                                    border: Border.all(
-                                                                      color: Colors.grey.withOpacity(0.5),
-                                                                      width: 1,
-                                                                    ),
-                                                                    width: THelperFunctions.screenWidth(context) * 0.28,
-                                                                    height: THelperFunctions.screenWidth(context) * 0.28,
+                                                                  Text(
+                                                                    orderDetail.product.productName,
+                                                                    style: Theme.of(context).textTheme.bodyMedium,
+                                                                    maxLines: 2,
+                                                                    overflow: TextOverflow.ellipsis,
                                                                   ),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(left: TSizes.sm),
-                                                                    child: ConstrainedBox(
-                                                                      constraints: BoxConstraints(
-                                                                        maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                                                                  Text(orderDetail.product.brand,
+                                                                      maxLines: 1,
+                                                                      overflow: TextOverflow.ellipsis,
+                                                                      style: Theme.of(context).textTheme.bodySmall),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      Text(
+                                                                        "x${orderDetail.quantity}",
+                                                                        style: Theme.of(context).textTheme.bodySmall,
                                                                       ),
-                                                                      child: Column(
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            orderDetail.product.productName,
-                                                                            style: Theme.of(context).textTheme.bodyMedium,
-                                                                            maxLines: 2,
-                                                                            overflow: TextOverflow.ellipsis,
-                                                                          ),
-                                                                          Text(
-                                                                            orderDetail.product.brand,
-                                                                            maxLines: 1,
-                                                                            overflow: TextOverflow.ellipsis,
-                                                                            style: Theme.of(context).textTheme.bodySmall,
-                                                                          ),
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                                            children: [
-                                                                              Text("x${orderDetail.quantity}",
-                                                                                  style: Theme.of(context).textTheme.bodySmall),
-                                                                            ],
-                                                                          ),
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.end,
-                                                                            children: [
-                                                                              Text(
-                                                                                formatMoney(orderDetail.unitPrice.toString()),
-                                                                                style: Theme.of(context).textTheme.bodySmall,
-                                                                              )
-                                                                            ],
-                                                                          )
-                                                                        ],
+                                                                    ],
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      Text(
+                                                                        formatMoney(orderDetail.unitPrice.toString()),
+                                                                        style: Theme.of(context).textTheme.bodySmall,
+                                                                      )
+                                                                    ],
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  );
+                                                } else {
+                                                  final quantityOfHide = order.orderDetails!.fold(0, (x, y) => x + y.quantity) -
+                                                      (order.orderDetails?[0].quantity ?? 0);
+                                                  return indexDetail == 1 && (order.orderDetails?.length ?? 0) > 1
+                                                      ? ExpansionTile(
+                                                          title: Text(AppLocalizations.of(context)!.view_more),
+                                                          tilePadding:
+                                                              const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: TSizes.md),
+                                                          childrenPadding: EdgeInsets.zero,
+                                                          collapsedBackgroundColor: Colors.transparent,
+                                                          backgroundColor: Colors.transparent,
+                                                          subtitle: Text(
+                                                            "$quantityOfHide ${AppLocalizations.of(context)!.other_products}",
+                                                            style: Theme.of(context).textTheme.bodySmall,
+                                                          ),
+                                                          children: order.orderDetails!
+                                                              .asMap()
+                                                              .entries
+                                                              .where((entry) => entry.key != 0) // chỉ lấy từ sản phẩm thứ 2 trở đi
+                                                              .map((entry) {
+                                                            final orderDetail = entry.value;
+                                                            return Column(
+                                                              children: [
+                                                                const Divider(thickness: 0.2),
+                                                                Row(
+                                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                                  children: [
+                                                                    TRoundedImage(
+                                                                      imageUrl: orderDetail.product.images!.isNotEmpty
+                                                                          ? orderDetail.product.images![0]
+                                                                          : TImages.product1,
+                                                                      applyImageRadius: true,
+                                                                      isNetworkImage: orderDetail.product.images!.isNotEmpty,
+                                                                      onPressed: () => {},
+                                                                      border: Border.all(
+                                                                        color: Colors.grey.withOpacity(0.5),
+                                                                        width: 1,
                                                                       ),
+                                                                      width: THelperFunctions.screenWidth(context) * 0.28,
+                                                                      height: THelperFunctions.screenWidth(context) * 0.28,
+                                                                    ),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(left: TSizes.sm),
+                                                                      child: ConstrainedBox(
+                                                                        constraints: BoxConstraints(
+                                                                          maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                                                                        ),
+                                                                        child: Column(
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Text(
+                                                                              orderDetail.product.productName,
+                                                                              style: Theme.of(context).textTheme.bodyMedium,
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                            Text(
+                                                                              orderDetail.product.brand,
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: Theme.of(context).textTheme.bodySmall,
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              children: [
+                                                                                Text("x${orderDetail.quantity}",
+                                                                                    style: Theme.of(context).textTheme.bodySmall),
+                                                                              ],
+                                                                            ),
+                                                                            Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              children: [
+                                                                                Text(
+                                                                                  formatMoney(orderDetail.unitPrice.toString()),
+                                                                                  style: Theme.of(context).textTheme.bodySmall,
+                                                                                )
+                                                                              ],
+                                                                            )
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: TSizes.sm),
+                                                              ],
+                                                            );
+                                                          }).toList(),
+                                                        )
+                                                      : const SizedBox.shrink();
+                                                }
+                                              },
+                                              separatorBuilder: (BuildContext context, int index) => const SizedBox(
+                                                height: TSizes.sm,
+                                              ),
+                                              itemCount: order.orderDetails?.length ?? order.appointments?.length ?? 1,
+                                            ),
+                                          if (orders[index].appointments?.isNotEmpty ?? false)
+                                            TGridLayout(
+                                                itemCount: orders[index].appointments!.length,
+                                                mainAxisExtent: 50,
+                                                crossAxisCount: 1,
+                                                itemBuilder: (context, indexItem) {
+                                                  final appointment = order.appointments![indexItem];
+
+                                                  return Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(left: TSizes.sm),
+                                                        child: ConstrainedBox(
+                                                          constraints: BoxConstraints(
+                                                            maxWidth: THelperFunctions.screenWidth(context) * 0.8,
+                                                          ),
+                                                          child: Column(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                    child: TProductTitleText(
+                                                                      title: appointment.service.name,
+                                                                      smallSize: true,
+                                                                      maxLines: 2,
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
-                                                              const SizedBox(height: TSizes.sm),
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    AppLocalizations.of(context)!.duration + ": ",
+                                                                    style: Theme.of(context).textTheme.labelLarge,
+                                                                  ),
+                                                                  Text(appointment.service.duration),
+                                                                  Text(AppLocalizations.of(context)!.minutes)
+                                                                ],
+                                                              ),
                                                             ],
-                                                          );
-                                                        }).toList(),
-                                                      )
-                                                    : const SizedBox.shrink();
-                                              }
-                                            },
-                                            separatorBuilder: (BuildContext context, int index) => const SizedBox(
-                                              height: TSizes.spacebtwItems,
-                                            ),
-                                            itemCount: order.orderDetails?.length ?? order.appointments?.length ?? 1,
-                                          ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }),
                                           const SizedBox(
                                             height: TSizes.sm,
                                           ),

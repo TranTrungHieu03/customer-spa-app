@@ -14,6 +14,7 @@ class Order extends Equatable {
   final double unitPrice;
   final double subTotal;
   final String statusPayment;
+  final String paymentMethod;
   final String note;
   final DateTime createdDate;
   final DateTime updatedDate;
@@ -35,6 +36,7 @@ class Order extends Equatable {
     required this.note,
     required this.createdDate,
     required this.updatedDate,
+    required this.paymentMethod,
   });
 
   @override

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -13,6 +14,7 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
+import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 import 'package:spa_mobile/features/service/domain/usecases/get_list_appointment.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
@@ -64,6 +66,7 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppointmentDataController controller = AppointmentDataController();
     return Scaffold(
       appBar: TAppbar(title: Text(AppLocalizations.of(context)!.appointment_schedule), showBackArrow: true),
       body: BlocProvider(
@@ -243,13 +246,41 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                                                 Text(appt.staff?.staffInfo?.fullName ?? ""),
                                               ],
                                             )
-                                          : Align(
-                                              alignment: Alignment.centerRight,
-                                              child: TextButton(
-                                                  onPressed: () {},
-                                                  child: Text(AppLocalizations.of(context)!.update_staff_from_package,
-                                                      style: Theme.of(context).textTheme.labelLarge)),
-                                            ),
+                                          : (appt.step != 0)
+                                              ? Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: TextButton(
+                                                      onPressed: () {},
+                                                      child: Text(AppLocalizations.of(context)!.update_staff_from_package,
+                                                          style: Theme.of(context).textTheme.labelLarge)),
+                                                )
+                                              : Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: AppointmentData(
+                                                    controller: controller,
+                                                    child: Align(
+                                                      alignment: Alignment.centerRight,
+                                                      child: TextButton(
+                                                          onPressed: () {
+                                                            controller.updateServiceIds([appt.service.serviceId]);
+                                                            controller.updateServices([appt.service]);
+                                                            controller.updateTime(int.parse(appt.service.duration));
+                                                            controller.updateTotalPrice(0);
+                                                            controller.updateBranchId(appt.branch?.branchId ?? 0);
+                                                            controller.updateBranch(appt.branch);
+                                                            controller.updateUser(appt.customer ?? UserModel.empty());
+                                                            controller.updateId(appt.appointmentId);
+                                                            controller.updateNote(appt.notes ?? "");
+                                                            controller.updateMinDate(appt.appointmentsTime);
+                                                            AppLogger.info(appt.appointmentsTime);
+
+                                                            goUpdateSpecialist(appt.branch?.branchId ?? 0, controller);
+                                                          },
+                                                          child: Text(AppLocalizations.of(context)!.choose_specialist,
+                                                              style: Theme.of(context).textTheme.labelLarge)),
+                                                    ),
+                                                  ),
+                                                ),
                                     ],
                                   ),
                                 ),
