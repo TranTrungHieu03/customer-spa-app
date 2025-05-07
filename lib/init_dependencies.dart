@@ -33,6 +33,7 @@ import 'package:spa_mobile/features/analysis_skin/domain/usecases/skin_analysis_
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/update_appointment_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/image/image_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_product_branch/list_product_branch_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine_logger/list_routine_logger_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine_step/list_routine_step_bloc.dart';
@@ -123,6 +124,7 @@ import 'package:spa_mobile/features/product/domain/usecases/cancel_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/feedback_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_available_service.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_branch_has_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_cart.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_district.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_fee_shipping.dart';
@@ -130,6 +132,7 @@ import 'package:spa_mobile/features/product/domain/usecases/get_history_product.
 import 'package:spa_mobile/features/product/domain/usecases/get_lead_time.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_order_product_detail.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_product_by_product_id.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_product_detail.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_province.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_vouchers.dart';
@@ -198,9 +201,17 @@ import 'package:spa_mobile/features/service/presentation/bloc/service/service_bl
 import 'package:spa_mobile/features/service/presentation/bloc/service_cart/service_cart_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff/staff_bloc.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/staff_slot_working/staff_slot_working_bloc.dart';
+import 'package:spa_mobile/features/user/data/datasources/statistic_remote_data_source.dart';
+import 'package:spa_mobile/features/user/data/datasources/statistic_remote_data_source.dart';
+import 'package:spa_mobile/features/user/data/repositories/statistic_repository_impl.dart';
+import 'package:spa_mobile/features/user/domain/repository/statitis_repository.dart';
+import 'package:spa_mobile/features/user/domain/usecases/get_recommend.dart';
+import 'package:spa_mobile/features/user/domain/usecases/list_skinhealth.dart';
 import 'package:spa_mobile/features/user/domain/usecases/update_profile.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/address/address_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/list_skinhealth/list_skinhealth_bloc.dart';
 import 'package:spa_mobile/features/user/presentation/bloc/profile/profile_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/recommend/recommend_bloc.dart';
 
 import 'features/service/domain/usecases/get_list_branches.dart';
 

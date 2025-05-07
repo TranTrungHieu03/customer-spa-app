@@ -308,7 +308,7 @@ class _ConfirmCustomizeScreenState extends State<ConfirmCustomizeScreen> {
                               serviceIds: widget.controller.services.map((x) => x.serviceId).toList(),
                               serviceQuantities: List.generate(widget.controller.services.length, (index) => 1),
                               staffIds: widget.controller.staffIds,
-                              appointmentDates: isAuto ? [DateTime.now().add(const Duration(days: 1))] : widget.controller.timeStart,
+                              appointmentDates: isAuto ? [DateTime.now().add(const Duration(days: 2))] : widget.controller.timeStart,
                               totalAmount: widget.controller.totalPrice,
                               paymentMethod: widget.controller.method,
                               isAuto: widget.controller.isAuto)));

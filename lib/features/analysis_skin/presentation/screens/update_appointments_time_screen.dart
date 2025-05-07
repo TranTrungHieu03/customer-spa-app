@@ -311,7 +311,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                     Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: Text(
-                        "Select time",
+                        AppLocalizations.of(context)!.select_time,
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
                     ),

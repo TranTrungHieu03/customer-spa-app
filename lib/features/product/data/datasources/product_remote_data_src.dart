@@ -2,10 +2,12 @@ import 'package:spa_mobile/core/errors/exceptions.dart';
 import 'package:spa_mobile/core/network/network.dart';
 import 'package:spa_mobile/core/response/api_response.dart';
 import 'package:spa_mobile/features/product/data/model/list_product_model.dart';
+import 'package:spa_mobile/features/product/data/model/product_branch_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_category_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_feedback_model.dart';
 import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/domain/usecases/feedback_product.dart';
+import 'package:spa_mobile/features/product/domain/usecases/get_branch_has_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_list_products.dart';
 import 'package:spa_mobile/features/product/domain/usecases/list_feedback_product.dart';
 
@@ -14,6 +16,8 @@ abstract class ProductRemoteDataSource {
 
   Future<ProductModel> getProduct(int productId);
 
+  Future<ProductModel> getProductByProductId(int productId);
+
   Future<ListProductModel> searchProducts(String query);
 
   Future<ProductFeedbackModel> feedbackProduct(FeedbackProductParams params);
@@ -21,6 +25,8 @@ abstract class ProductRemoteDataSource {
   Future<List<ProductFeedbackModel>> getlistFeedbackProduct(ListProductFeedbackParams params);
 
   Future<List<ProductCategoryModel>> getAllProductCategories();
+
+  Future<List<ProductBranchModel>> getBranchHasProduct(GetBranchHasProductParams params);
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
@@ -106,6 +112,38 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
       final apiResponse = ApiResponse.fromJson(response);
       if (apiResponse.success) {
         return (apiResponse.result!.data as List).map((x) => ProductCategoryModel.fromJson(x)).toList();
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<ProductModel> getProductByProductId(int productId) async {
+    try {
+      final response = await _apiServices.getApi('/Product/$productId');
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return ProductModel.fromJson(apiResponse.result!.data);
+      } else {
+        throw AppException(apiResponse.result!.message);
+      }
+    } catch (e) {
+      throw AppException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ProductBranchModel>> getBranchHasProduct(GetBranchHasProductParams params) async {
+    try {
+      final response = await _apiServices.getApi('/Product/branches-has-product?productId=${params.productId}');
+      final apiResponse = ApiResponse.fromJson(response);
+      if (apiResponse.success) {
+        return (apiResponse.result!.data) != null
+            ? (apiResponse.result!.data['branches'] as List).map((e) => ProductBranchModel.fromJson(e)).toList()
+            : [];
       } else {
         throw AppException(apiResponse.result!.message);
       }

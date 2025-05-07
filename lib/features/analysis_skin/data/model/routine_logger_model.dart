@@ -1,9 +1,8 @@
 import 'package:spa_mobile/features/analysis_skin/domain/entities/routine_logger.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
-import 'package:spa_mobile/features/service/data/model/staff_model.dart';
 
 class RoutineLoggerModel extends RoutineLogger {
-  final StaffModel? staff;
+  final UserModel? staff;
   final UserModel? customer;
 
   RoutineLoggerModel(
@@ -23,7 +22,7 @@ class RoutineLoggerModel extends RoutineLogger {
   factory RoutineLoggerModel.fromJson(Map<String, dynamic> json) => RoutineLoggerModel(
       userRoutineLoggerId: json["userRoutineLoggerId"],
       stepId: json["stepId"],
-      staffId: json["staffId"] ?? 0,
+      staffId: json["managerId"] ?? 0,
       userId: json["userId"] ?? 0,
       actionDate: DateTime.parse(json["actionDate"]),
       status: json["status"],
@@ -31,6 +30,6 @@ class RoutineLoggerModel extends RoutineLogger {
       notes: json["notes"],
       createdDate: DateTime.parse(json["createdDate"]),
       updatedDate: DateTime.parse(json["updatedDate"]),
-      staff: json['staff'] != null ? StaffModel.fromJson(json['staff']) : null,
+      staff: json['manager'] != null ? UserModel.fromJson(json['manager']) : null,
       customer: json['user'] != null ? UserModel.fromJson(json['user']) : null);
 }

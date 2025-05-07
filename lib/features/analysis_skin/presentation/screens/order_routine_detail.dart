@@ -6,12 +6,15 @@ import 'package:intl/intl.dart';
 import 'package:spa_mobile/core/common/model/request_payos_model.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/payment_method.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/enum.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
@@ -20,6 +23,7 @@ import 'package:spa_mobile/features/product/presentation/widgets/product_price.d
 import 'package:spa_mobile/features/service/domain/usecases/pay_deposit.dart';
 import 'package:spa_mobile/features/service/domain/usecases/pay_full.dart';
 import 'package:spa_mobile/features/service/presentation/bloc/payment/payment_bloc.dart';
+import 'package:spa_mobile/features/service/presentation/widgets/qr_checkin.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 class OrderRoutineDetail extends StatefulWidget {
@@ -66,7 +70,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
               listener: (context, state) {
                 if (state is OrderRoutineLoaded) {
                   setState(() {
-                    isPaid = state.order.statusPayment == "Paid" || state.order.statusPayment == "PaidDeposit";
+                    isPaid = state.order.statusPayment == "Paid" || state.order.paymentMethod?.toLowerCase() == 'cash';
                   });
                 }
                 if (state is OrderRoutineError) {
@@ -80,6 +84,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                   } else if (state is OrderRoutineLoaded) {
                     final order = state.order;
                     final routine = order.routine;
+                    final branch = order.appointments[0].branch;
                     // final List<String> steps = routine.steps.split(", ");
                     totalAmount = order.totalAmount - (order.voucher?.discountAmount ?? 0);
                     return Column(
@@ -93,6 +98,35 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                         const SizedBox(
                           height: TSizes.xs,
                         ),
+                        TRoundedContainer(
+                          padding: EdgeInsets.all(TSizes.sm),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Iconsax.building,
+                                color: TColors.primary,
+                              ),
+                              const SizedBox(
+                                width: TSizes.sm,
+                              ),
+                              Expanded(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    branch?.branchName ?? "",
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                  Text(
+                                    branch?.branchAddress ?? "",
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ],
+                              )),
+                            ],
+                          ),
+                        ),
                         Text(routine.name, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                         Text(routine.description, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyMedium),
                         const SizedBox(height: TSizes.sm),
@@ -102,7 +136,8 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                             Text(AppLocalizations.of(context)!.treatment_steps,
                                 overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.bodyLarge),
                             GestureDetector(
-                              onTap: () => goTrackingRoutineDetail(routine.skincareRoutineId, order.customerId, order.orderId),
+                              onTap: () => goTrackingRoutineDetail(
+                                  routine.skincareRoutineId, order.customerId, order.orderId, order.userRoutineId ?? 0),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
@@ -117,6 +152,193 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                           ],
                         ),
                         const SizedBox(height: TSizes.sm),
+                        Text(
+                          AppLocalizations.of(context)!.products,
+                          style: Theme.of(context)!.textTheme.bodyLarge,
+                        ),
+                        const SizedBox(
+                          height: TSizes.md,
+                        ),
+                        if (order.orderDetails?.isNotEmpty ?? false)
+                          ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (BuildContext context, int indexDetail) {
+                              final orderDetail = order.orderDetails![indexDetail];
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                      width: THelperFunctions.screenWidth(context),
+                                      child: const Divider(
+                                        thickness: 0.2,
+                                      )),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      TRoundedImage(
+                                        imageUrl:
+                                            orderDetail.product.images!.isNotEmpty ? orderDetail.product.images![0] : TImages.product1,
+                                        applyImageRadius: true,
+                                        isNetworkImage: orderDetail.product.images!.isNotEmpty,
+                                        onPressed: () => {},
+                                        border: Border.all(
+                                          color: Colors.grey.withOpacity(0.5),
+                                          width: 1,
+                                        ),
+                                        width: THelperFunctions.screenWidth(context) * 0.28,
+                                        height: THelperFunctions.screenWidth(context) * 0.28,
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: TSizes.sm),
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            maxWidth: THelperFunctions.screenWidth(context) * 0.6,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                orderDetail.product.productName,
+                                                style: Theme.of(context).textTheme.bodyMedium,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(orderDetail.product.brand,
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: Theme.of(context).textTheme.bodySmall),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    "x${orderDetail.quantity}",
+                                                    style: Theme.of(context).textTheme.bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    formatMoney(orderDetail.unitPrice.toString()),
+                                                    style: Theme.of(context).textTheme.bodySmall,
+                                                  )
+                                                ],
+                                              ),
+                                              if (orderDetail.status.toLowerCase() == "shipping")
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(AppLocalizations.of(context)!.shipping,
+                                                        style: Theme.of(context).textTheme.bodySmall),
+                                                  ],
+                                                ),
+                                              if (order.status.toLowerCase() == 'completed')
+                                                TextButton(
+                                                    onPressed: () {
+                                                      goFeedbackProduct(
+                                                          order.customer?.userId ?? 0, orderDetail.product.productId, order.orderId);
+                                                    },
+                                                    child: Text(
+                                                      AppLocalizations.of(context)!.review,
+                                                      style: Theme.of(context).textTheme.bodyLarge,
+                                                    ))
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                            separatorBuilder: (BuildContext context, int index) => const SizedBox(
+                              height: TSizes.spacebtwItems,
+                            ),
+                            itemCount: order.orderDetails?.length ?? 0,
+                          ),
+                        const SizedBox(
+                          height: TSizes.md,
+                        ),
+                        Text(
+                          AppLocalizations.of(context)!.services,
+                          style: Theme.of(context)!.textTheme.bodyLarge,
+                        ),
+                        const SizedBox(
+                          height: TSizes.md,
+                        ),
+                        if (order.appointments?.isNotEmpty ?? false)
+                          ListView.builder(
+                            shrinkWrap: true, // Ensure the ListView takes only as much space as needed
+                            physics: const NeverScrollableScrollPhysics(), // Disable scrolling if already in a scrollable container
+                            itemCount: order.appointments?.length,
+                            itemBuilder: (context, index) {
+                              final serviceState = order.appointments![index];
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(serviceState?.service?.name ?? "", style: Theme.of(context).textTheme.bodyMedium),
+                                      if (order.status.toLowerCase() != 'cancelled')
+                                        TRoundedIcon(
+                                          icon: Icons.qr_code_scanner_rounded,
+                                          color: TColors.primary,
+                                          size: 30,
+                                          onPressed: () {
+                                            _showModelQR(context, serviceState.appointmentId);
+                                          },
+                                        )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: TSizes.sm,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "${serviceState.service.duration} ${AppLocalizations.of(context)!.minutes}",
+                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.darkerGrey),
+                                      ),
+                                      TProductPriceText(price: serviceState.service.price.toString()),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: TSizes.sm,
+                                  ),
+                                  (serviceState.staff?.staffId != 3)
+                                      ? Text(
+                                          '${AppLocalizations.of(context)!.specialist}: ${serviceState.staff?.staffInfo?.fullName ?? ""}',
+                                          style: Theme.of(context).textTheme.bodyMedium)
+                                      : Text('${AppLocalizations.of(context)!.specialist}: Chưa xác định',
+                                          style: Theme.of(context).textTheme.bodyMedium),
+                                  if (serviceState.status.toLowerCase() == 'completed')
+                                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                                      TextButton(
+                                          onPressed: () {
+                                            goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                          },
+                                          child: Text(
+                                            AppLocalizations.of(context)!.review,
+                                            style: Theme.of(context).textTheme.bodyLarge,
+                                          )),
+                                    ]),
+                                  Divider(
+                                    color: TColors.grey,
+                                    thickness: 0.5,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        const SizedBox(height: TSizes.md),
                         // ListView.builder(
                         //   shrinkWrap: true,
                         //   physics: const NeverScrollableScrollPhysics(),
@@ -154,15 +376,15 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                         //   },
                         //   itemCount: steps.length,
                         // ),
-                        const SizedBox(height: TSizes.sm),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text("Chi phí: ", style: Theme.of(context).textTheme.bodyLarge),
-                            const SizedBox(width: TSizes.sm),
-                            TProductPriceText(price: routine.totalPrice.toString()),
-                          ],
-                        ),
+                        // const SizedBox(height: TSizes.sm),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.end,
+                        //   children: [
+                        //     // Text("Chi phí: ", style: Theme.of(context).textTheme.bodyLarge),
+                        //     const SizedBox(width: TSizes.sm),
+                        //     TProductPriceText(price: routine.totalPrice.toString()),
+                        //   ],
+                        // ),
                         const Divider(
                           thickness: 0.2,
                         ),
@@ -373,6 +595,28 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
           )
         ],
       ),
+    );
+  }
+
+  void _showModelQR(BuildContext context, int id) {
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.6,
+          child: Column(
+            children: [
+              Padding(padding: const EdgeInsets.all(TSizes.spacebtwSections), child: TQrCheckIn(id: id.toString(), time: DateTime.now())),
+            ],
+          ),
+        );
+      },
     );
   }
 }

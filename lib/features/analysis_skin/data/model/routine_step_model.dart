@@ -2,12 +2,14 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/product_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/service_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/entities/routine_step.dart';
+import 'package:spa_mobile/features/product/data/model/order_detail_model.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
 
 class RoutineStepModel extends RoutineStep {
   final List<ServiceRoutineModel> serviceRoutineSteps;
   final List<ProductRoutineModel> productRoutineSteps;
   final List<AppointmentModel>? appointments;
+  final List<OrderDetailModel>? orderDetails;
   final String? stepStatus;
 
   const RoutineStepModel(
@@ -20,6 +22,7 @@ class RoutineStepModel extends RoutineStep {
       required this.serviceRoutineSteps,
       required super.userRoutineStepId,
       this.appointments,
+      this.orderDetails,
       this.stepStatus});
 
   factory RoutineStepModel.fromJson(Map<String, dynamic> json, int? userRoutineStepId, String stepStatus) {
@@ -39,7 +42,8 @@ class RoutineStepModel extends RoutineStep {
                 ?.map((item) => ServiceRoutineModel.fromJson(item as Map<String, dynamic>))
                 .toList() ??
             [],
-        stepStatus: stepStatus ,
-        appointments: []);
+        stepStatus: stepStatus,
+        appointments: [],
+        orderDetails: []);
   }
 }

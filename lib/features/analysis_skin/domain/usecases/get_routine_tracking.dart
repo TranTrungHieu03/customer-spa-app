@@ -5,12 +5,10 @@ import 'package:spa_mobile/features/analysis_skin/data/model/routine_tracking_mo
 import 'package:spa_mobile/features/analysis_skin/domain/repositories/routine_repository.dart';
 
 class GetRoutineTrackingParams {
-  final int userId;
-  final int routineId;
+  final int userRoutineId;
 
   GetRoutineTrackingParams({
-    required this.userId,
-    required this.routineId,
+    required this.userRoutineId,
   });
 }
 

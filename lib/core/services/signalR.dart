@@ -66,9 +66,9 @@ class SignalRService {
       serviceLocator.unregister<ChatRepository>();
     }
 
-    // if (serviceLocator.isRegistered<GetNotification>()) {
-    //   serviceLocator.unregister<GetNotification>();
-    // }
+    if (serviceLocator.isRegistered<GetNotification>()) {
+      serviceLocator.unregister<GetNotification>();
+    }
     if (serviceLocator.isRegistered<ConnectHub>()) {
       serviceLocator.unregister<ConnectHub>();
     }

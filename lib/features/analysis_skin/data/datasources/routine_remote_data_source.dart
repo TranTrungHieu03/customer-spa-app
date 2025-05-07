@@ -146,7 +146,7 @@ class RoutineRemoteDateSourceImpl implements RoutineRemoteDataSource {
   @override
   Future<RoutineTrackingModel> getRoutineTracking(GetRoutineTrackingParams params) async {
     try {
-      final response = await _apiService.getApi('/Routine/tracking-user-routine/${params.routineId}/${params.userId}');
+      final response = await _apiService.getApi('/Routine/tracking-user-routine/${params.userRoutineId}');
 
       final apiResponse = ApiResponse.fromJson(response);
 

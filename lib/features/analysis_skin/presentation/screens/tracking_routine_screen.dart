@@ -12,27 +12,29 @@ import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
-import 'package:spa_mobile/features/analysis_skin/data/model/product_routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_step_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/feedback_step.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_feedback_steps.dart';
-import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_list_appointment_by_routine.dart';
+import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_tracking.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine_logger/list_routine_logger_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/order_routine/order_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine_logger/routine_logger_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/routine_tracking/routine_tracking_bloc.dart';
-import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_list_view.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/widget/product_order_list_view.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/service_appointment_list_view.dart';
+import 'package:spa_mobile/features/product/data/model/order_detail_model.dart';
 import 'package:spa_mobile/features/service/data/model/appointment_model.dart';
-import 'package:spa_mobile/features/service/presentation/bloc/list_appointment/list_appointment_bloc.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperTrackingRoutineScreen extends StatefulWidget {
-  const WrapperTrackingRoutineScreen({super.key, required this.id, required this.userId, required this.orderId});
+  const WrapperTrackingRoutineScreen(
+      {super.key, required this.id, required this.userId, required this.orderId, required this.userRoutineId});
 
   final int id;
   final int userId;
   final int orderId;
+  final int userRoutineId;
 
   @override
   State<WrapperTrackingRoutineScreen> createState() => _WrapperTrackingRoutineScreenState();
@@ -50,25 +52,25 @@ class _WrapperTrackingRoutineScreenState extends State<WrapperTrackingRoutineScr
           create: (context) => ListRoutineLoggerBloc(getFeedbackStep: serviceLocator()),
         ),
         BlocProvider(
-          create: (context) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator())
-            ..add(GetListAppointmentByRoutineEvent(GetListAppointmentByRoutineParams(id: widget.id.toString()))),
+          create: (context) =>
+              OrderRoutineBloc(getOrderRoutine: serviceLocator())..add(GetOrderRoutineDetailEvent(GetOrderRoutineParams(widget.orderId))),
         ),
+        // BlocProvider(
+        //   create: (context) => ListAppointmentBloc(getListAppointment: serviceLocator(), getAppointmentsByRoutine: serviceLocator())
+        //     ..add(GetListAppointmentByRoutineEvent(GetListAppointmentByRoutineParams(id: widget.id.toString()))),
+        // ),
       ],
-      child: TrackingRoutineScreen(
-        id: widget.id,
-        userId: widget.userId,
-        orderId: widget.orderId,
-      ),
+      child: TrackingRoutineScreen(id: widget.id, userId: widget.userId, orderId: widget.orderId, userRoutineId: widget.userRoutineId),
     );
   }
 }
 
 class TrackingRoutineScreen extends StatefulWidget {
-  const TrackingRoutineScreen({super.key, required this.id, required this.userId, required this.orderId});
+  const TrackingRoutineScreen({super.key, required this.id, required this.userId, required this.orderId, required this.userRoutineId});
 
   final int id;
   final int userId;
-
+  final int userRoutineId;
   final int orderId;
 
   @override
@@ -94,7 +96,6 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
           TSnackBar.errorSnackBar(context, message: state.message);
         }
         if (state is RoutineTracking) {
-          context.read<ListRoutineLoggerBloc>().add(GetListRoutineLoggerEvent(GetFeedbackStepParams(state.routine.userRoutineId)));
           final routineSteps = state.routine.userRoutineSteps;
           _currentStep = routineSteps.indexWhere((element) => element.stepStatus == "Pending");
           _currentStep = (_currentStep == -1) ? 0 : _currentStep;
@@ -103,11 +104,12 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
       child: BlocBuilder<RoutineTrackingBloc, RoutineTrackingState>(
         builder: (context, state) {
           if (state is RoutineTracking) {
-            return BlocBuilder<ListAppointmentBloc, ListAppointmentState>(
+            return BlocBuilder<OrderRoutineBloc, OrderRoutineState>(
               builder: (context, apptState) {
-                if (apptState is ListAppointmentLoaded) {
+                if (apptState is OrderRoutineLoaded) {
                   final routineSteps = state.routine.userRoutineSteps;
-                  final listAppointments = List<AppointmentModel>.from(apptState.appointments);
+                  final listAppointments = List<AppointmentModel>.from(apptState.order.appointments);
+                  final listOrderDetails = List<OrderDetailModel>.from(apptState.order.orderDetails);
 
                   for (final step in state.routine.userRoutineSteps) {
                     // for (final serviceStep in step.serviceRoutineSteps) {
@@ -118,6 +120,13 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                         .toList();
 
                     step.appointments?.addAll(appointment);
+                    final orderDetail = listOrderDetails.where((e) => e.step == step.step).toList();
+                    step.orderDetails?.addAll(orderDetail);
+                    // for (final productStep in step.productRoutineSteps) {
+                    //   final matchProduct = listOrderDetails.firstWhere((order) => order.product.productId == productStep.product.productId);
+                    //   step.orderDetails?.add(matchProduct);
+                    //   listOrderDetails.remove(matchProduct);
+                    // }
                   }
 
                   return Scaffold(
@@ -180,14 +189,14 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 if (step.serviceRoutineSteps.isNotEmpty)
-                                  _buildServiceSection(step, _lgCode, widget.orderId, widget.userId, widget.id),
-                                if (step.productRoutineSteps.isNotEmpty) _buildProductsSection(step.productRoutineSteps),
+                                  _buildServiceSection(step, _lgCode, widget.orderId, widget.userId, widget.id, widget.userRoutineId),
+                                if (step.productRoutineSteps.isNotEmpty) _buildProductsSection(step),
                                 // if (step.stepStatus?.toLowerCase() == "completed")
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     if (step.stepStatus?.toLowerCase() == "completed")
-                                      Text('Feedback', style: Theme.of(context).textTheme.titleLarge),
+                                      Text(AppLocalizations.of(context)!.feedback, style: Theme.of(context).textTheme.titleLarge),
                                     const SizedBox(
                                       height: TSizes.sm,
                                     ),
@@ -209,7 +218,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                                                           Align(
                                                             alignment: Alignment.centerLeft,
                                                             child: Text(
-                                                              fbs[index].staff?.staffInfo?.fullName ?? "",
+                                                              fbs[index].staff?.fullName ?? "",
                                                               style: Theme.of(context)!.textTheme.bodyLarge,
                                                             ),
                                                           ),
@@ -231,21 +240,24 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                                                   }
                                                   return const SizedBox();
                                                 }),
-                                            if (step.stepStatus?.toLowerCase() == "completed")
-                                              TextButton(
-                                                  onPressed: () {
-                                                    _showMessageModal(
-                                                        context, widget.userId, step.userRoutineStepId, widget.orderId, widget.id);
-                                                  },
-                                                  child: const Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [Text('Feedback for this step'), Icon(Iconsax.arrow_right_1)],
-                                                  )),
+                                            const SizedBox(
+                                              height: TSizes.sm,
+                                            ),
                                           ],
                                         );
                                       }
                                       return SizedBox();
-                                    })
+                                    }),
+                                    if (step.stepStatus?.toLowerCase() == "completed")
+                                      TextButton(
+                                          onPressed: () {
+                                            _showMessageModal(context, widget.userId, step.userRoutineStepId, widget.orderId, widget.id,
+                                                widget.userRoutineId);
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [Text(AppLocalizations.of(context)!.step_feedback), Icon(Iconsax.arrow_right_1)],
+                                          )),
                                   ],
                                 )
                               ],
@@ -257,7 +269,7 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
                       ),
                     ),
                   );
-                } else if (apptState is ListAppointmentLoading) {
+                } else if (apptState is OrderRoutineLoading) {
                   const Scaffold(
                     appBar: TAppbar(
                       showBackArrow: true,
@@ -303,32 +315,40 @@ class _TrackingRoutineScreenState extends State<TrackingRoutineScreen> {
     return StepState.indexed;
   }
 
-  Widget _buildServiceSection(RoutineStepModel step, String lgCode, int orderId, int useId, int routineId) {
+  Widget _buildServiceSection(RoutineStepModel step, String lgCode, int orderId, int useId, int routineId, int userRoutineId) {
     return Container(
       padding: const EdgeInsets.all(0),
       color: TColors.white,
       margin: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: 0),
-      child: ServiceAppointmentListView(data: step, lgCode: lgCode, orderId: orderId, userId: useId, routineId: routineId),
+      child: ServiceAppointmentListView(
+        data: step,
+        lgCode: lgCode,
+        orderId: orderId,
+        userId: useId,
+        routineId: routineId,
+        userRoutineId: userRoutineId,
+      ),
     );
   }
 
-  Widget _buildProductsSection(List<ProductRoutineModel> products) {
+  Widget _buildProductsSection(RoutineStepModel products) {
     return Container(
         color: TColors.white,
         padding: const EdgeInsets.all(0),
         margin: const EdgeInsets.symmetric(vertical: TSizes.xs, horizontal: 0),
-        child: ProductListView(products: products.map((x) => x.product).toList()));
+        child: ProductOrderListView(data: products));
   }
 
   @override
   void initState() {
     super.initState();
     _loadLanguage();
-    context.read<RoutineTrackingBloc>().add(GetRoutineTrackingEvent(GetRoutineTrackingParams(userId: widget.userId, routineId: widget.id)));
+    context.read<RoutineTrackingBloc>().add(GetRoutineTrackingEvent(GetRoutineTrackingParams(userRoutineId: widget.userRoutineId)));
+    context.read<ListRoutineLoggerBloc>().add(GetListRoutineLoggerEvent(GetFeedbackStepParams(widget.userRoutineId)));
   }
 }
 
-void _showMessageModal(BuildContext context, int userId, int stepId, int orderId, int routineId) {
+void _showMessageModal(BuildContext context, int userId, int stepId, int orderId, int routineId, int userRoutineId) {
   TextEditingController messageController = TextEditingController();
   showModalBottomSheet(
     context: context,
@@ -371,7 +391,7 @@ void _showMessageModal(BuildContext context, int userId, int stepId, int orderId
                 listener: (context, state) {
                   if (state is RoutineLoggerCreated) {
                     Navigator.pop(context);
-                    goTrackingRoutineDetail(routineId, userId, orderId);
+                    goTrackingRoutineDetail(routineId, userId, orderId, userRoutineId);
                   } else if (state is RoutineLoggerError) {
                     TSnackBar.errorSnackBar(context, message: state.message);
                   }

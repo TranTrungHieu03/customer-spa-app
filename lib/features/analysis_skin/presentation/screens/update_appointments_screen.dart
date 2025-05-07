@@ -152,23 +152,25 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
               const SizedBox(width: TSizes.md),
             ],
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(TSizes.sm),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    AppLocalizations.of(context)?.choose_specialist ?? 'Choose specialist',
-                    style: Theme.of(context).textTheme.displaySmall ?? const TextStyle(),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(TSizes.sm),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      AppLocalizations.of(context)?.choose_specialist ?? 'Choose specialist',
+                      style: Theme.of(context).textTheme.displaySmall ?? const TextStyle(),
+                    ),
                   ),
-                ),
-                const SizedBox(height: TSizes.md),
-                if (!isChooseMultiStaff && !isChooseDiffSpecialist && widget.isBack == 0)
-                  _buildSingleSpecialistSection(controller, indexExtra),
-                if (isChooseMultiStaff || isChooseDiffSpecialist || widget.isBack != 0) _buildMultiSpecialistSection(controller),
-              ],
+                  const SizedBox(height: TSizes.md),
+                  if (!isChooseMultiStaff && !isChooseDiffSpecialist && widget.isBack == 0)
+                    _buildSingleSpecialistSection(controller, indexExtra),
+                  if (isChooseMultiStaff || isChooseDiffSpecialist || widget.isBack != 0) _buildMultiSpecialistSection(controller),
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: _buildBottomNavBar(controller),
@@ -259,32 +261,31 @@ class _UpdateAppointmentsScreenState extends State<UpdateAppointmentsScreen> {
   }
 
   Widget _buildSingleSpecialistSection(MixDataController controller, int indexExtra) {
-    return Expanded(
-      child: BlocBuilder<ListStaffBloc, ListStaffState>(
-        builder: (context, state) {
-          if (state is ListStaffLoaded) {
-            return TGridLayout(
-              mainAxisExtent: 150,
-              itemCount: state.intersectionStaff.length + indexExtra,
-              crossAxisCount: 2,
-              itemBuilder: (context, index) {
-                if (index == 0 && indexExtra == 1) {
-                  return _buildAnySpecialistCard(context);
-                } else {
-                  final adjustedIndex = index - indexExtra;
-                  if (adjustedIndex >= 0 && adjustedIndex < state.intersectionStaff.length) {
-                    final staff = state.intersectionStaff[adjustedIndex];
-                    return _buildSpecialistCard(staff, controller);
-                  } else {}
-                }
-              },
-            );
-          } else if (state is ListStaffLoading) {
-            return const TLoader();
-          }
-          return const TErrorBody();
-        },
-      ),
+    return BlocBuilder<ListStaffBloc, ListStaffState>(
+      builder: (context, state) {
+        if (state is ListStaffLoaded) {
+          return TGridLayout(
+            mainAxisExtent: 150,
+            isScroll: false,
+            itemCount: state.intersectionStaff.length + indexExtra,
+            crossAxisCount: 2,
+            itemBuilder: (context, index) {
+              if (index == 0 && indexExtra == 1) {
+                return _buildAnySpecialistCard(context);
+              } else {
+                final adjustedIndex = index - indexExtra;
+                if (adjustedIndex >= 0 && adjustedIndex < state.intersectionStaff.length) {
+                  final staff = state.intersectionStaff[adjustedIndex];
+                  return _buildSpecialistCard(staff, controller);
+                } else {}
+              }
+            },
+          );
+        } else if (state is ListStaffLoading) {
+          return const TLoader();
+        }
+        return const TErrorBody();
+      },
     );
   }
 

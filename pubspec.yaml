@@ -68,7 +68,6 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
-  #feedback
 
   #image
   image_picker: ^1.1.2
@@ -89,7 +88,8 @@ dependencies:
 
   #  payment
   webview_flutter: ^4.4.2
-  fl_chart: ^0.70.1
+  fl_chart: ^0.69.0
+  flutter_radar_chart: ^0.2.1
   #qr code
   qr_flutter: ^4.1.0
   signalr_netcore: 1.4.0

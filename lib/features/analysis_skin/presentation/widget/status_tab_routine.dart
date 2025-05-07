@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_routine_history.dart';
@@ -52,7 +52,7 @@ class _TStatusBarRoutineState extends State<TStatusBarRoutine> with AutomaticKee
                 }
                 if (routines.isEmpty) {
                   return Center(
-                    child: Text('Chua co goi lieu trinh nao'),
+                    child: Text(AppLocalizations.of(context)!.no_package),
                   );
                 }
                 return ListView.separated(

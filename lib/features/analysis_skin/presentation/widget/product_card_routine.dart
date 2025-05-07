@@ -10,10 +10,11 @@ import 'package:spa_mobile/features/product/data/model/product_model.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
 
 class TProductCardRoutine extends StatelessWidget {
-  const TProductCardRoutine({super.key, required this.productModel, required this.width});
+  const TProductCardRoutine({super.key, required this.productModel, required this.width, this.status});
 
   final double width;
   final ProductModel productModel;
+  final String? status;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class TProductCardRoutine extends StatelessWidget {
     return GestureDetector(
       child: Container(
         width: width + 19,
-        padding: const EdgeInsets.all(0),
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
             boxShadow: [TShadowStyle.verticalProductShadow],
             borderRadius: BorderRadius.circular(TSizes.productImageRadius),
@@ -78,17 +79,22 @@ class TProductCardRoutine extends StatelessWidget {
                 ],
               ),
             ),
-            // const Spacer(),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     //Price
-            //     Padding(
-            //       padding: const EdgeInsets.all(TSizes.sm),
-            //       child: TProductPriceText(price: productModel.price.toString()),
-            //     ),
-            //   ],
-            // )
+            const SizedBox(
+              height: TSizes.md,
+            ),
+            if (status != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TRoundedContainer(
+                    padding: EdgeInsets.symmetric(horizontal: TSizes.xs, vertical: TSizes.xs * 0.5),
+                    backgroundColor: TColors.primaryBackground,
+                    child: Text(
+                      '${status == "pending" ? "Chưa nhận" : status == "completed" ? 'Da nhan' : "Dang cho"}',
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium,
+                      maxLines: 1,
+                    )),
+              )
           ],
         ),
       ),

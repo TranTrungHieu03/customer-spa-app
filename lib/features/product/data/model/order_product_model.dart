@@ -22,6 +22,7 @@ class OrderProductModel {
   final ShipmentResponseModel? shipment;
   final String updatedDate;
   final String createdDate;
+  final int? userRoutineId;
   final String paymentMethod;
   final RoutineModel? routine;
   final List<AppointmentModel>? appointments;
@@ -44,6 +45,7 @@ class OrderProductModel {
       required this.paymentMethod,
       this.shipment,
       this.routine,
+      this.userRoutineId,
       required this.orderType,
       this.appointments,
       required this.createdDate});
@@ -51,25 +53,25 @@ class OrderProductModel {
   factory OrderProductModel.fromJson(Map<String, dynamic> json) {
     AppLogger.debug(json);
     return OrderProductModel(
-      orderId: json['orderId'],
-      orderCode: json['orderCode'],
-      customerId: json['customerId'],
-      customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
-      voucherId: json['voucherId'],
-      voucher: json['voucher'] != null ? VoucherModel.fromJson(json['voucher']) : null,
-      totalAmount: json['totalAmount'],
-      discountAmount: json['discountAmount'] ??0,
-      status: json['status'],
-      statusPayment: json['statusPayment'],
-      note: json['note'] ??"",
-      paymentMethod: json['paymentMethod'] ?? "",
-      orderDetails: (json['orderDetails'] as List<dynamic>).map((e) => OrderDetailModel.fromJson(e)).toList(),
-      appointments: (json['appointments'] as List<dynamic>).map((e) => AppointmentModel.fromJson(e)).toList(),
-      shipment: json['shipment'] != null ? ShipmentResponseModel.fromJson(json['shipment']) : null,
-      routine: json['routine'] != null ? RoutineModel.fromJson(json['routine']) : null,
-      updatedDate: json['updatedDate'],
-      createdDate: json['createdDate'],
-      orderType: json['orderType'] ?? "",
-    );
+        orderId: json['orderId'],
+        orderCode: json['orderCode'],
+        customerId: json['customerId'],
+        customer: json['customer'] != null ? UserModel.fromJson(json['customer']) : null,
+        voucherId: json['voucherId'],
+        voucher: json['voucher'] != null ? VoucherModel.fromJson(json['voucher']) : null,
+        totalAmount: json['totalAmount'],
+        discountAmount: json['discountAmount'] ?? 0,
+        status: json['status'],
+        statusPayment: json['statusPayment'],
+        note: json['note'] ?? "",
+        paymentMethod: json['paymentMethod'] ?? "",
+        orderDetails: (json['orderDetails'] as List<dynamic>).map((e) => OrderDetailModel.fromJson(e)).toList(),
+        appointments: (json['appointments'] as List<dynamic>).map((e) => AppointmentModel.fromJson(e)).toList(),
+        shipment: json['shipment'] != null ? ShipmentResponseModel.fromJson(json['shipment']) : null,
+        routine: json['routine'] != null ? RoutineModel.fromJson(json['routine']) : null,
+        updatedDate: json['updatedDate'],
+        createdDate: json['createdDate'],
+        orderType: json['orderType'] ?? "",
+        userRoutineId: json['userRoutineId'] ?? 0);
   }
 }

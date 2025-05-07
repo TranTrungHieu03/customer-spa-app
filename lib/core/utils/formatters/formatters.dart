@@ -52,3 +52,19 @@ String formatDateTime(DateTime input, {String locale = 'vi'}) {
     return '$datePart, $timePart';
   }
 }
+
+double normalizeWinkle(int forehead, int crowFeet, int glabella, int nasolable) {
+  return 1.0 - (forehead == 1 ? 0.2 : 0) - (crowFeet == 1 ? 0.2 : 0) - (glabella == 1 ? 0.2 : 0) - (nasolable == 1 ? 0.2 : 0);
+}
+
+double normalizeSpot(int spot) {
+  return 1.0 - spot / 20;
+}
+
+double normalizeAcne(int acne, int close_comedone, int blackHead) {
+  return 1.0 - (acne + close_comedone + blackHead * 5) / 100;
+}
+
+double normalizePore(int left, int right, int jaw, int forehead) {
+  return 1.0 - (left == 1 ? 0.2 : 0) - (right == 1 ? 0.2 : 0) - (jaw == 1 ? 0.2 : 0) - (forehead == 1 ? 0.2 : 0);
+}

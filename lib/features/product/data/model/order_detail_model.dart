@@ -15,6 +15,7 @@ class OrderDetailModel extends OrderDetail {
       // required super.productId,
       required super.quantity,
       this.branch,
+      super.step,
       required super.unitPrice,
       required super.subTotal,
       required super.status,
@@ -26,19 +27,19 @@ class OrderDetailModel extends OrderDetail {
   factory OrderDetailModel.fromJson(Map<String, dynamic> json) {
     AppLogger.debug(json);
     return OrderDetailModel(
-      orderDetailId: json['orderDetailId'],
-      // orderId: json['orderId'],
-      // productId: json['productId'],
-      quantity: json['quantity'],
-      unitPrice: json['unitPrice'],
-      subTotal: json['subTotal'],
-      status: json['status'],
+        orderDetailId: json['orderDetailId'],
+        // orderId: json['orderId'],
+        // productId: json['productId'],
+        quantity: json['quantity'],
+        unitPrice: json['unitPrice'],
+        subTotal: json['subTotal'],
+        status: json['status'],
 
-      // promotionId: json['promotionId'],
-      statusPayment: json['statusPayment'],
-      product: ProductModel.fromJson(json['product']),
-      promotion: json['promotion'] != null ? PromotionModel.fromJson(json['promotion']) : null,
-      branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
-    );
+        // promotionId: json['promotionId'],
+        statusPayment: json['statusPayment'],
+        product: ProductModel.fromJson(json['product']),
+        promotion: json['promotion'] != null ? PromotionModel.fromJson(json['promotion']) : null,
+        branch: json['branch'] != null ? BranchModel.fromJson(json['branch']) : null,
+        step: json['step']);
   }
 }

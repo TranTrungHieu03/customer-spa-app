@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/acne_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/black_head_model.dart';
@@ -31,33 +33,36 @@ class SkinHealthModel {
   final AcneModel closedComedones;
   final SkintoneItaModel skintoneIta;
   final SkinHueHaModel skinHueHa;
+  final String? images;
+  final DateTime? createdDate;
 
-  SkinHealthModel({
-    required this.skinColor,
-    required this.skinAge,
-    required this.leftEyelids,
-    required this.rightEyelids,
-    required this.eyePouch,
-    required this.darkCircle,
-    required this.foreheadWrinkle,
-    required this.crowsFeet,
-    required this.eyeFinelines,
-    required this.glabellaWrinkle,
-    required this.nasolabialFold,
-    this.nasolabialFoldSeverity,
-    required this.skinType,
-    required this.poresForehead,
-    required this.poresLeftCheek,
-    required this.poresRightCheek,
-    required this.poresJaw,
-    required this.blackhead,
-    required this.acne,
-    required this.mole,
-    required this.skinSpot,
-    required this.closedComedones,
-    required this.skintoneIta,
-    required this.skinHueHa,
-  });
+  SkinHealthModel(
+      {required this.skinColor,
+      required this.skinAge,
+      required this.leftEyelids,
+      required this.rightEyelids,
+      required this.eyePouch,
+      required this.darkCircle,
+      required this.foreheadWrinkle,
+      required this.crowsFeet,
+      required this.eyeFinelines,
+      required this.glabellaWrinkle,
+      required this.nasolabialFold,
+      this.nasolabialFoldSeverity,
+      required this.skinType,
+      required this.poresForehead,
+      required this.poresLeftCheek,
+      required this.poresRightCheek,
+      required this.poresJaw,
+      required this.blackhead,
+      required this.acne,
+      required this.mole,
+      required this.skinSpot,
+      required this.closedComedones,
+      required this.skintoneIta,
+      required this.skinHueHa,
+      this.createdDate,
+      this.images});
 
   factory SkinHealthModel.fromJson(Map<String, dynamic> json) {
     AppLogger.info("fromJson SkinHealthModel $json");
@@ -87,6 +92,39 @@ class SkinHealthModel {
       skintoneIta: SkintoneItaModel.fromJson(json["skintone_ita"]),
       skinHueHa: SkinHueHaModel.fromJson(json["skin_hue_ha"]),
     );
+  }
+
+  factory SkinHealthModel.fromJsonDB(Map<String, dynamic> json) {
+    AppLogger.info("fromJson SkinHealthModelDB $json");
+
+    return SkinHealthModel(
+        skinColor: BlackheadModel.fromJson(jsonDecode(json["skinColor"])),
+        skinAge: SkinAgeModel.fromJson(jsonDecode(json["skinAge"])),
+        leftEyelids: BlackheadModel.fromJson(jsonDecode(json["leftEyelids"])),
+        rightEyelids: BlackheadModel.fromJson(jsonDecode(json["rightEyelids"])),
+        eyePouch: BlackheadModel.fromJson(jsonDecode(json["eyePouch"])),
+        darkCircle: BlackheadModel.fromJson(jsonDecode(json["darkCircle"])),
+        foreheadWrinkle: BlackheadModel.fromJson(jsonDecode(json["foreheadWrinkle"])),
+        crowsFeet: BlackheadModel.fromJson(jsonDecode(json["crowsFeet"])),
+        eyeFinelines: BlackheadModel.fromJson(jsonDecode(json["eyeFineLines"])),
+        glabellaWrinkle: BlackheadModel.fromJson(jsonDecode(json["glabellaWrinkle"])),
+        nasolabialFold: BlackheadModel.fromJson(jsonDecode(json["nasolabialFold"])),
+        nasolabialFoldSeverity:
+            jsonDecode(json["nasolabialFoldSeverity"]) != null ? BlackheadModel.fromJson(jsonDecode(json["nasolabialFoldSeverity"])) : null,
+        skinType: SkinTypeModel.fromJson(jsonDecode(json["skinType"])),
+        poresForehead: BlackheadModel.fromJson(jsonDecode(json["poresForehead"])),
+        poresLeftCheek: BlackheadModel.fromJson(jsonDecode(json["poresLeftCheek"])),
+        poresRightCheek: BlackheadModel.fromJson(jsonDecode(json["poresRightCheek"])),
+        poresJaw: BlackheadModel.fromJson(jsonDecode(json["poresJaw"])),
+        blackhead: BlackheadModel.fromJson(jsonDecode(json["blackHead"])),
+        acne: AcneModel.fromJson(jsonDecode(json["acne"])),
+        mole: AcneModel.fromJson(jsonDecode(json["mole"])),
+        skinSpot: AcneModel.fromJson(jsonDecode(json["skinSpot"])),
+        closedComedones: AcneModel.fromJson(jsonDecode(json["closedComedones"])),
+        skintoneIta: SkintoneItaModel.fromJson(jsonDecode(json["skinToneIta"])),
+        skinHueHa: SkinHueHaModel.fromJson(jsonDecode(json["skinHueHa"])),
+        images: json["images"],
+        createdDate: DateTime.parse(json["createdDate"]));
   }
 
   Map<String, dynamic> toJson() => {
