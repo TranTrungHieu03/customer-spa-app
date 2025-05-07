@@ -241,14 +241,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   Text(AppLocalizations.of(context)!.recommended_package, style: Theme.of(context).textTheme.titleLarge),
                   BlocBuilder<ListRoutineBloc, ListRoutineState>(builder: (context, state) {
                     if (state is ListRoutineLoaded) {
-                      if (state.suitable.isEmpty) {
+                      if (state.suitable.where((e) => e.status.toLowerCase() == 'active').toList().isEmpty) {
                         return Text(AppLocalizations.of(context)!.no_package_found);
                       }
                       return ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            final routine = state.suitable[index];
+                            final activeRoutine = state.suitable.where((e) => e.status.toLowerCase() == 'active').toList();
+                            final routine = activeRoutine[index];
                             return GestureDetector(
                               onTap: () => goRoutineDetail(routine.skincareRoutineId.toString()),
                               child: Stack(children: [
@@ -289,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: TSizes.sm,
                             );
                           },
-                          itemCount: state.suitable.length);
+                          itemCount: state.suitable.where((e) => e.status.toLowerCase() == 'active').length);
                     } else if (state is ListRoutineLoading) {
                       return SizedBox(
                         height: 230,

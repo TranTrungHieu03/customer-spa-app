@@ -288,8 +288,8 @@ class _SkinAgeComparisonChartState extends State<SkinAgeComparisonChart> with Si
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 String text = '';
-                if (value == 0) text = 'Real Age';
-                if (value == 1) text = 'Skin Age';
+                if (value == 0) text = AppLocalizations.of(context)!.real_age;
+                if (value == 1) text = AppLocalizations.of(context)!.skin_age;
 
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -365,9 +365,9 @@ class _SkinAgeComparisonChartState extends State<SkinAgeComparisonChart> with Si
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _legendItem(widget.realAgeColor, 'Real Age'),
+        _legendItem(widget.realAgeColor, AppLocalizations.of(context)!.real_age),
         const SizedBox(width: 24),
-        _legendItem(widget.skinAgeColor, 'Skin Age'),
+        _legendItem(widget.skinAgeColor, AppLocalizations.of(context)!.skin_age),
       ],
     );
   }

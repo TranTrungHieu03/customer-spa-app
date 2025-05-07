@@ -124,11 +124,11 @@ class _RoutineDetailScreenState extends State<RoutineDetailScreen> {
             // final List<String> steps = routine.steps.split(", ");
             return Scaffold(
               appBar: TAppbar(
-                showBackArrow: false,
-                leadingIcon: Iconsax.arrow_left,
-                leadingOnPressed: () {
-                  goRoutines();
-                },
+                showBackArrow: true,
+                // leadingIcon: Iconsax.arrow_left,
+                // leadingOnPressed: () {
+                //   goRoutines();
+                // },
                 actions: [
                   TRoundedIcon(
                     icon: Iconsax.home_2,

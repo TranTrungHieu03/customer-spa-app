@@ -12,10 +12,12 @@ class TPaymentSelection extends StatefulWidget {
     required this.total,
     required this.selectedOption,
     required this.onOptionChanged,
+    required this.isDeposit,
   });
 
   final double total;
   final PaymentOption selectedOption;
+  final bool isDeposit;
   final Function(PaymentOption) onOptionChanged; // Callback để báo về component cha
 
   @override
@@ -77,23 +79,24 @@ class _PaymentSelectionState extends State<TPaymentSelection> {
                 padding: const EdgeInsets.all(TSizes.sm),
                 labelStyle: TextStyle(color: _selectedOption == PaymentOption.full ? Colors.white : Colors.black),
               ),
-              ChoiceChip(
-                label: Column(
-                  children: [
-                    Text(AppLocalizations.of(context)!.deposit30),
-                    TProductPriceText(
-                        price: (widget.total * 0.3).toString(),
-                        isLarge: false,
-                        color: _selectedOption == PaymentOption.deposit ? Colors.white : Colors.black)
-                  ],
+              if (widget.isDeposit)
+                ChoiceChip(
+                  label: Column(
+                    children: [
+                      Text(AppLocalizations.of(context)!.deposit30),
+                      TProductPriceText(
+                          price: (widget.total * 0.3).toString(),
+                          isLarge: false,
+                          color: _selectedOption == PaymentOption.deposit ? Colors.white : Colors.black)
+                    ],
+                  ),
+                  selected: _selectedOption == PaymentOption.deposit,
+                  onSelected: (selected) => _onOptionSelected(PaymentOption.deposit),
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  selectedColor: TColors.primary,
+                  labelStyle: TextStyle(color: _selectedOption == PaymentOption.deposit ? Colors.white : Colors.black),
                 ),
-                selected: _selectedOption == PaymentOption.deposit,
-                onSelected: (selected) => _onOptionSelected(PaymentOption.deposit),
-                backgroundColor: Colors.white,
-                padding: const EdgeInsets.all(TSizes.sm),
-                selectedColor: TColors.primary,
-                labelStyle: TextStyle(color: _selectedOption == PaymentOption.deposit ? Colors.white : Colors.black),
-              ),
             ],
           ),
         ],

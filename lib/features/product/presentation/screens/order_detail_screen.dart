@@ -47,6 +47,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   double totalAmount = 0;
   String paymentMethod = '';
   bool isPaid = true;
+  bool isCancel = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +76,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     isPaid = state.order.statusPayment == "Paid" || state.order.statusPayment == "PaidDeposit";
                     totalAmount = state.order.totalAmount;
                     paymentMethod = state.order.paymentMethod.toLowerCase();
+                    isCancel = state.order.status.toLowerCase() == 'cancelled';
                   });
                 }
               },
@@ -271,7 +273,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               TextButton(
                                                   onPressed: () {
                                                     goFeedbackProduct(
-                                                        order.customer?.userId ?? 0, orderDetail.product.productId, widget.orderId);
+                                                        order.customer?.userId ?? 0, orderDetail.product.productId, widget.orderId, 0);
                                                   },
                                                   child: Text(
                                                     AppLocalizations.of(context)!.review,
@@ -310,10 +312,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             order.status.toLowerCase() != "cancelled" &&
                             order.paymentMethod.toLowerCase() != 'cash')
                           TPaymentSelection(
-                            total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
-                            onOptionChanged: handlePaymentOptionChange,
-                            selectedOption: _selectedPaymentOption,
-                          ),
+                              total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
+                              onOptionChanged: handlePaymentOptionChange,
+                              selectedOption: _selectedPaymentOption,
+                              isDeposit: false),
                         if (order.paymentMethod.toLowerCase() == "cash") Text(AppLocalizations.of(context)!.pay_at_store),
                         Divider(
                           color: TColors.darkGrey,
@@ -501,7 +503,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       bottomNavigationBar: Row(
         children: [
           const Spacer(),
-          if (!isPaid && paymentMethod != 'cash')
+          if (!isPaid && paymentMethod != 'cash' && !isCancel)
             ElevatedButton(
                 onPressed: () {
                   if (_selectedPaymentOption == PaymentOption.full) {
