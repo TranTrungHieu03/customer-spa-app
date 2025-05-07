@@ -131,6 +131,12 @@ class _SettingScreenState extends State<SettingScreen> {
                     onTap: () => goHistoryOrderRoutine(),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   ),
+                  TSettingsMenuTile(
+                    icon: Iconsax.gas_station,
+                    title: AppLocalizations.of(context)!.statistic,
+                    onTap: () => goStatistic(user?.userId ?? 0),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  ),
                   const Divider(),
                   // TSettingsMenuTile(
                   //   icon: Iconsax.profile_remove,
@@ -213,15 +219,15 @@ class _SettingScreenState extends State<SettingScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          title: const Text('Change Language'),
+          title: Text(AppLocalizations.of(context)!.change_language),
           content: Text(
-              'Are you sure you want to change to ${Provider.of<LanguageProvider>(context, listen: false).getLanguageName(languageChange)}? '),
+              '${AppLocalizations.of(context)!.confirm_change_language} ${Provider.of<LanguageProvider>(context, listen: false).getLanguageName(languageChange)}? '),
           actions: [
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -232,9 +238,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 backgroundColor: Colors.redAccent,
                 side: const BorderSide(color: Colors.red),
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text('Change'),
+                child: Text(AppLocalizations.of(context)!.change),
               ),
             ),
           ],

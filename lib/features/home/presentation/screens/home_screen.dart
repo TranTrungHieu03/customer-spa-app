@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:spa_mobile/core/common/styles/shadow_styles.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/notification.dart';
 import 'package:spa_mobile/core/common/widgets/primary_header_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_image.dart';
 import 'package:spa_mobile/core/common/widgets/shimmer.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
+import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
@@ -27,6 +30,9 @@ import 'package:spa_mobile/features/home/data/models/user_chat_model.dart';
 import 'package:spa_mobile/features/home/domain/usecases/get_all_notification.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/home_state/home_state_bloc.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/list_notification/list_notification_bloc.dart';
+import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
+import 'package:spa_mobile/features/user/domain/usecases/get_recommend.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/recommend/recommend_bloc.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 class WrapperHomeScreen extends StatelessWidget {
@@ -35,7 +41,8 @@ class WrapperHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [
-      BlocProvider(create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator()))
+      BlocProvider(create: (context) => ListRoutineBloc(getListRoutine: serviceLocator(), getHistoryRoutine: serviceLocator())),
+      BlocProvider(create: (context) => RecommendBloc(getRcm: serviceLocator()))
     ], child: HomeScreen());
   }
 }
@@ -75,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .read<HomeStateBloc>()
             .add(GetNotificationEvent(GetAllNotificationParams(userId: user!.userId, pageIndex: 1, pageSize: 10, isRead: false)));
         context.read<ListRoutineBloc>().add(GetSuitableRoutineEvent(GetRoutineHistoryParams(userId: user!.userId, status: "Suitable")));
+        context.read<RecommendBloc>().add(GetListRecommendEvent(GetRecommendParams(user!.userId)));
       }
     } else {
       setState(() {
@@ -95,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dark = THelperFunctions.isDarkMode(context);
     return BlocListener<ImageBloc, ImageState>(
       listener: (context, state) {
         if (state is ImagePicked) {
@@ -229,9 +238,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
-                  Text("Gói liệu trình phù hợp", style: Theme.of(context).textTheme.titleLarge),
+                  Text(AppLocalizations.of(context)!.recommended_package, style: Theme.of(context).textTheme.titleLarge),
                   BlocBuilder<ListRoutineBloc, ListRoutineState>(builder: (context, state) {
                     if (state is ListRoutineLoaded) {
+                      if (state.suitable.isEmpty) {
+                        return Text(AppLocalizations.of(context)!.no_package_found);
+                      }
                       return ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -299,15 +311,199 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: TSizes.sm,
                   ),
-
-                  Text("Dịch vụ đề xuất", style: Theme.of(context).textTheme.titleLarge),
+                  BlocBuilder<RecommendBloc, RecommendState>(
+                    builder: (context, state) {
+                      if (state is RecommendLoaded && state.data.services.isNotEmpty) {
+                        final services = state.data.services;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(AppLocalizations.of(context)!.recommended_service, style: Theme.of(context).textTheme.titleLarge),
+                            const SizedBox(
+                              height: TSizes.spacebtwItems,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: TSizes.xs),
+                              margin: const EdgeInsets.symmetric(vertical: TSizes.xs),
+                              height: 250,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: services.length,
+                                separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
+                                itemBuilder: (context, index) {
+                                  final service = services[index];
+                                  return GestureDetector(
+                                    onTap: () => goServiceDetailWithBranch(service.serviceId),
+                                    child: TRoundedContainer(
+                                      width: THelperFunctions.screenWidth(context) * 0.45,
+                                      // height: 150,
+                                      radius: 10,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          TRoundedImage(
+                                            applyImageRadius: true,
+                                            imageUrl: service.images.isNotEmpty ? service.images[0] : TImages.thumbnailService,
+                                            isNetworkImage: service.images.isNotEmpty,
+                                            width: THelperFunctions.screenWidth(context) * 0.45,
+                                            height: 120,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(TSizes.sm),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      if (service.serviceCategory != null)
+                                                        ConstrainedBox(
+                                                            constraints: BoxConstraints(
+                                                              maxWidth: THelperFunctions.screenWidth(context) * 0.44,
+                                                            ),
+                                                            child: TRoundedContainer(
+                                                              padding:
+                                                                  EdgeInsets.symmetric(horizontal: TSizes.xs, vertical: TSizes.xs * 0.5),
+                                                              backgroundColor: TColors.primaryBackground,
+                                                              child: Text(
+                                                                service.serviceCategory?.name ?? "",
+                                                                overflow: TextOverflow.ellipsis,
+                                                                style: Theme.of(context).textTheme.labelMedium,
+                                                                maxLines: 1,
+                                                              ),
+                                                            )),
+                                                      ConstrainedBox(
+                                                          constraints: BoxConstraints(
+                                                            maxWidth: THelperFunctions.screenWidth(context) * 0.44,
+                                                          ),
+                                                          child: TProductTitleText(
+                                                            title: service.name,
+                                                            smallSize: true,
+                                                            maxLines: 2,
+                                                          )),
+                                                      // TProductPriceText(price: service.price.toString())
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                   const SizedBox(
                     height: TSizes.sm,
                   ),
-                  // Text("Sản phẩm đề xuất", style: Theme.of(context).textTheme.titleLarge),
-                  // const SizedBox(
-                  //   height: TSizes.spacebtwItems,
-                  // ),
+                  BlocBuilder<RecommendBloc, RecommendState>(
+                    builder: (context, state) {
+                      if (state is RecommendLoaded && state.data.products.isNotEmpty) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(AppLocalizations.of(context)!.recommended_product, style: Theme.of(context).textTheme.titleLarge),
+                            const SizedBox(
+                              height: TSizes.spacebtwItems,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: TSizes.xs),
+                              color: Colors.white,
+                              height: 310,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: state.data.products.length,
+                                separatorBuilder: (context, index) => const SizedBox(width: TSizes.md),
+                                itemBuilder: (context, index) {
+                                  final product = state.data.products[index];
+                                  return Container(
+                                      margin: const EdgeInsets.symmetric(vertical: TSizes.sm),
+                                      child: GestureDetector(
+                                        child: Container(
+                                          // width: ,
+                                          padding: const EdgeInsets.all(2),
+                                          decoration: BoxDecoration(
+                                              boxShadow: [TShadowStyle.verticalProductShadow],
+                                              borderRadius: BorderRadius.circular(TSizes.productImageRadius),
+                                              color: dark ? TColors.darkerGrey : TColors.white),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              TRoundedContainer(
+                                                height: TSizes.productHeight,
+                                                width: THelperFunctions.screenWidth(context) * 0.45 + 15,
+                                                padding: const EdgeInsets.all(TSizes.sm),
+                                                backgroundColor: dark ? TColors.dark : TColors.light,
+                                                child: Stack(
+                                                  children: [
+                                                    TRoundedImage(
+                                                      width: THelperFunctions.screenWidth(context) * 0.45,
+                                                      imageUrl: product.images!.isNotEmpty ? product.images![0] : TImages.product1,
+                                                      applyImageRadius: true,
+                                                      isNetworkImage: product.images!.isNotEmpty,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: TSizes.spacebtwItems / 2,
+                                              ),
+
+                                              //details
+
+                                              GestureDetector(
+                                                onTap: () => goProductDetailWithBranch(product.productId),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(left: TSizes.sm),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          ConstrainedBox(
+                                                            constraints: BoxConstraints(
+                                                              maxWidth: THelperFunctions.screenWidth(context) * 0.45,
+                                                            ),
+                                                            child: TProductTitleText(
+                                                              title: product.productName,
+                                                              smallSize: true,
+                                                              maxLines: 2,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: TSizes.md,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ));
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                 ],
               ),
             )

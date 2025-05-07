@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import "package:iconsax/iconsax.dart";
 import "package:intl/intl.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -305,7 +306,7 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
                     Align(
                       alignment: AlignmentDirectional.centerStart,
                       child: Text(
-                        "Select time",
+                        AppLocalizations.of(context)!.select_time,
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
                     ),

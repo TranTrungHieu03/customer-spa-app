@@ -16,32 +16,33 @@ class OrderRoutineModel {
   final String status;
   final String statusPayment;
   final String? note;
-  // final List<OrderDetailModel> orderDetails;
-  // final List<AppointmentModel> appointments;
+  final List<OrderDetailModel> orderDetails;
+  final List<AppointmentModel> appointments;
   final String updatedDate;
   final String createdDate;
   final String? paymentMethod;
   final RoutineModel routine;
+  final int? userRoutineId;
 
-  OrderRoutineModel({
-    required this.orderId,
-    required this.orderCode,
-    required this.customerId,
-    this.customer,
-    this.voucherId,
-    this.voucher,
-    required this.totalAmount,
-    this.discountAmount,
-    required this.status,
-    required this.statusPayment,
-    this.note,
-    // required this.orderDetails,
-    // required this.appointments,
-    required this.updatedDate,
-    required this.createdDate,
-    this.paymentMethod,
-    required this.routine,
-  });
+  OrderRoutineModel(
+      {required this.orderId,
+      required this.orderCode,
+      required this.customerId,
+      this.customer,
+      this.voucherId,
+      this.voucher,
+      required this.totalAmount,
+      this.discountAmount,
+      required this.status,
+      required this.statusPayment,
+      this.note,
+      required this.orderDetails,
+      required this.appointments,
+      required this.updatedDate,
+      required this.createdDate,
+      this.paymentMethod,
+      required this.routine,
+      this.userRoutineId});
 
   factory OrderRoutineModel.fromJson(Map<String, dynamic> json) {
     return OrderRoutineModel(
@@ -56,8 +57,9 @@ class OrderRoutineModel {
         status: json['status'],
         statusPayment: json['statusPayment'],
         note: json['note'],
-        // orderDetails: (json['orderDetails'] as List).map((e) => OrderDetailModel.fromJson(e)).toList(),
-        // appointments: (json['appointments'] as List).map((e) => AppointmentModel.fromJson(e)).toList(),
+        userRoutineId: json['userRoutineId'] ?? 0,
+        orderDetails: (json['orderDetails'] as List).map((e) => OrderDetailModel.fromJson(e)).toList(),
+        appointments: (json['appointments'] as List).map((e) => AppointmentModel.fromJson(e)).toList(),
         updatedDate: json['updatedDate'],
         paymentMethod: json['paymentMethod'] ?? 'PayOs',
         routine: RoutineModel.fromJson(json['routine']),

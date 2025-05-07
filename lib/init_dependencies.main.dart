@@ -92,7 +92,10 @@ Future<void> _initMenu() async {
 
     //data src
     ..registerFactory<NotificationRemoteDataSource>(() => NotificationRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    ..registerFactory<StatisticRemoteDataSource>(() => StatisticRemoteDataSourceImpl(serviceLocator<NetworkApiService>()))
+    //repo
     ..registerFactory<NotificationRepository>(() => NotificationRepositoryImpl(serviceLocator<NotificationRemoteDataSource>()))
+    ..registerFactory<StatisticRepository>(() => StatisticRepositoryImpl(serviceLocator<StatisticRemoteDataSource>()))
 
     //usecase
     ..registerLazySingleton(() => PayDeposit(serviceLocator()))
@@ -100,12 +103,19 @@ Future<void> _initMenu() async {
     ..registerLazySingleton(() => MarkAsReadAll(serviceLocator()))
     ..registerLazySingleton(() => MarkAsRead(serviceLocator()))
     ..registerLazySingleton(() => PayFull(serviceLocator()))
+    ..registerLazySingleton(() => GetListSkinHealth(serviceLocator()))
+    ..registerLazySingleton(() => GetRecommend(serviceLocator()))
+    ..registerLazySingleton(() => GetProductByProductId(serviceLocator()))
+    ..registerLazySingleton(() => GetBranchHasProduct(serviceLocator()))
     //bloc
     ..registerLazySingleton(() => NavigationBloc())
+    ..registerLazySingleton(() => ListProductBranchBloc(getBranchHasProduct: serviceLocator()))
+    ..registerLazySingleton(() => RecommendBloc(getRcm: serviceLocator()))
     ..registerLazySingleton(() => HomeStateBloc(getAllNotification: serviceLocator()))
     ..registerLazySingleton(() => NotificationBloc(markAsRead: serviceLocator(), markAsReadAll: serviceLocator()))
     ..registerLazySingleton(() => ListNotificationBloc(getAllNotification: serviceLocator()))
     ..registerLazySingleton(() => ImageBloc())
+    ..registerLazySingleton(() => ListSkinhealthBloc(getListSkinHealth: serviceLocator()))
     ..registerLazySingleton(() => PaymentBloc(payFull: serviceLocator(), payDeposit: serviceLocator()))
     ..registerLazySingleton(() => PayosBloc())
     ..registerLazySingleton(() => ServiceCartBloc())
@@ -149,7 +159,7 @@ Future<void> _initProduct() async {
     ..registerLazySingleton(() => GetListProductFeedback(serviceLocator()))
 
     //bloc
-    ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator()))
+    ..registerLazySingleton(() => ProductBloc(getProductDetail: serviceLocator(), getProductByProductId: serviceLocator()))
     ..registerLazySingleton(() => FeedbackProductBloc(feedbackProduct: serviceLocator()))
     ..registerLazySingleton(() => ListProductFeedbackBloc(getListProductFeedback: serviceLocator()))
     ..registerLazySingleton(() => ListOrderBloc(getHistoryProduct: serviceLocator()))

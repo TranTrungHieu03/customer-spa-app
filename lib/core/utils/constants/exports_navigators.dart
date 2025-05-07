@@ -14,6 +14,7 @@ import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/routine_model.dart';
 import 'package:spa_mobile/features/analysis_skin/data/model/skin_health_model.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_product_branch/list_product_branch_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_routine/list_routine_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/add_to_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/analysing_image_screen.dart';
@@ -26,10 +27,12 @@ import 'package:spa_mobile/features/analysis_skin/presentation/screens/customize
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/form_collect_data_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/order_product_service_detail_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/order_routine_detail.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/product_detail_with_branch.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_detail_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routine_history_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/routines_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/select_time_screen.dart';
+import 'package:spa_mobile/features/analysis_skin/presentation/screens/service_detail_with_branch.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/tracking_routine_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/update_appointments_screen.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/screens/update_appointments_time_screen.dart';
@@ -80,8 +83,11 @@ import 'package:spa_mobile/features/product/presentation/screens/cart_screen.dar
 import 'package:spa_mobile/features/service/presentation/screens/table_appointments_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/update_specialist_screen.dart';
 import 'package:spa_mobile/features/service/presentation/screens/update_time_screen.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/list_skinhealth/list_skinhealth_bloc.dart';
+import 'package:spa_mobile/features/user/presentation/bloc/list_skinhealth/list_skinhealth_bloc.dart';
 import 'package:spa_mobile/features/user/presentation/screens/profile_screen.dart';
 import 'package:spa_mobile/features/user/presentation/screens/setting_screen.dart';
+import 'package:spa_mobile/features/user/presentation/screens/statistic_screen.dart';
 import 'package:spa_mobile/init_dependencies.dart';
 
 part 'navigators.dart';

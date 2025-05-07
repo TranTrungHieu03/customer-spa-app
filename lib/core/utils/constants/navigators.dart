@@ -33,6 +33,20 @@ goProductDetail(int id, PurchasingDataController controller) async {
       navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => ProductDetailScreen(productId: id, controller: controller)));
 }
 
+goProductDetailWithBranch(int id) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => ListProductBranchBloc(getBranchHasProduct: serviceLocator()),
+                  ),
+                ],
+                child: ProductDetailWithBranchScreen(productId: id),
+              )));
+}
+
 goSetPassword(String email) async {
   Navigator.push(
       navigatorKey.currentContext!,
@@ -143,6 +157,13 @@ goBookingDetail(int id, {bool isBack = false}) async {
   );
 }
 
+goServiceDetailWithBranch(int id) {
+  Navigator.push(
+    navigatorKey.currentContext!,
+    MaterialPageRoute(builder: (context) => ServiceDetailWithBranchScreen(serviceId: id)),
+  );
+}
+
 goSuccess(String title, String subTitle, VoidCallback onPressed, String image) async {
   Navigator.push(
       navigatorKey.currentContext!,
@@ -239,9 +260,11 @@ goShowRoutineDetail(String id) async {
       ));
 }
 
-goTrackingRoutineDetail(int id, int userId, int orderId) async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => WrapperTrackingRoutineScreen(id: id, userId: userId, orderId: orderId)));
+goTrackingRoutineDetail(int id, int userId, int orderId, int userRoutineId) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => WrapperTrackingRoutineScreen(id: id, userId: userId, orderId: orderId, userRoutineId: userRoutineId)));
 }
 
 goSelectTime(List<int> staffIds, AppointmentDataController controller, int indexTime) async {
@@ -462,4 +485,12 @@ goNotification(int userId) async {
               child: NotificationScreen(
                 userId: userId,
               ))));
+}
+
+goStatistic(int userId) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => BlocProvider<ListSkinhealthBloc>(
+              create: (context) => ListSkinhealthBloc(getListSkinHealth: serviceLocator()), child: StatisticScreen(userId: userId))));
 }

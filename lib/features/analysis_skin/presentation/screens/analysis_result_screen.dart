@@ -16,6 +16,7 @@ import 'package:spa_mobile/core/utils/constants/skin_analysis.dart';
 import 'package:spa_mobile/core/utils/formatters/formatters.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/skin_analysis/skin_analysis_bloc.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/widget/skin_data.dart';
+import 'package:spa_mobile/features/user/presentation/widgets/custom_skin_health_chart.dart';
 
 class AnalysisResultScreen extends StatefulWidget {
   const AnalysisResultScreen({
@@ -54,9 +55,8 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
             return const Center(child: TLoader());
           } else if (state is SkinAnalysisLoaded) {
             final routines = state.routines;
-            AppLogger.debug(routines);
             final skinHealth = state.skinHealth;
-            AppLogger.debug(skinHealth);
+
             return Padding(
               padding: const EdgeInsets.all(TSizes.sm),
               child: ListView(
@@ -112,7 +112,8 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                                 iconData: Iconsax.bubble,
                                 iconColor: Colors.white,
                                 backgroundIconColor: Colors.grey.shade500,
-                                value: "${skinHealth.acne.rectangle.length} ${AppLocalizations.of(context)!.zone}",
+                                value:
+                                    "${skinHealth.acne.rectangle.length + skinHealth.closedComedones.rectangle.length + skinHealth.blackhead.value} ${AppLocalizations.of(context)!.zone}",
                               ),
                               const SizedBox(
                                 height: TSizes.sm,
@@ -132,6 +133,32 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
                   ),
                   const SizedBox(
                     height: TSizes.md,
+                  ),
+                  SkinHealthRadialChart(
+                    title: AppLocalizations.of(context)!.skin_face_overview,
+                    description: AppLocalizations.of(context)!.based_on_latest_scan,
+                    dataPoints: [
+                      SkinHealthDataPoint(
+                          label: AppLocalizations.of(context)!.acne,
+                          value: normalizeAcne(
+                              skinHealth.acne.rectangle.length, skinHealth.closedComedones.rectangle.length, skinHealth.blackhead.value)),
+                      SkinHealthDataPoint(
+                          label: AppLocalizations.of(context)!.wrinkles,
+                          value: normalizeWinkle(skinHealth.foreheadWrinkle.value, skinHealth.crowsFeet.value,
+                              skinHealth.glabellaWrinkle.value, skinHealth.nasolabialFold.value)),
+                      SkinHealthDataPoint(
+                          label: AppLocalizations.of(context)!.spots, value: normalizeSpot(skinHealth.skinSpot.rectangle.length)),
+                      SkinHealthDataPoint(
+                          label: AppLocalizations.of(context)!.pores,
+                          value: normalizePore(skinHealth.poresLeftCheek.value, skinHealth.poresRightCheek.value, skinHealth.poresJaw.value,
+                              skinHealth.poresForehead.value)),
+                    ],
+                    colorScheme: const [
+                      Color(0xFF6200EA), // Deep Purple
+                      Color(0xFF00BFA5), // Teal
+                      Color(0xFFFFAB00), // Amber
+                      Color(0xFFE53935), // Red
+                    ],
                   ),
                   Text(
                     AppLocalizations.of(context)!.please_visit_store,

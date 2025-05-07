@@ -51,12 +51,12 @@ class NotificationService {
       importance: Importance.high,
       priority: Priority.high,
     );
-
+    int notificationId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics, iOS: DarwinNotificationDetails());
 
     await flutterLocalNotificationsPlugin.show(
-      0,
+      notificationId,
       title,
       body,
       platformChannelSpecifics,

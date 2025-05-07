@@ -10,3 +10,9 @@ class GetProductDetailEvent extends ProductEvent {
 
   const GetProductDetailEvent(this.productId);
 }
+
+class GetProductDetailByProductIdEvent extends ProductEvent {
+  final int productId;
+
+  const GetProductDetailByProductIdEvent(this.productId);
+}

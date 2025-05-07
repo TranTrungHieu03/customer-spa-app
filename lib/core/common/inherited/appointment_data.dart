@@ -29,6 +29,7 @@ class AppointmentDataController extends ChangeNotifier {
   AppointmentModel _model = AppointmentModel.empty();
   int _orderId = 0;
   int routineId = 0;
+  int userRoutineId = 0;
   int userId = 0;
   String _method = 'PayOs';
 
@@ -87,6 +88,11 @@ class AppointmentDataController extends ChangeNotifier {
 
   void updateStep(int value) {
     _step = value;
+    notifyListeners();
+  }
+
+  void updateUserRoutineId(int value) {
+    userRoutineId = value;
     notifyListeners();
   }
 

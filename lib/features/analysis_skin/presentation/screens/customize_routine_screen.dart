@@ -169,7 +169,7 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                     RadioListTile<bool>(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
-                        'Chọn nhân viên sau',
+                        AppLocalizations.of(context)!.select_staff_note,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       value: true,
@@ -186,7 +186,7 @@ class _CustomizeRoutineScreenState extends State<CustomizeRoutineScreen> {
                     RadioListTile<bool>(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
-                        'Chọn nhân viên cho từng dịch vụ',
+                        AppLocalizations.of(context)!.select_staff_for_service,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       value: false,

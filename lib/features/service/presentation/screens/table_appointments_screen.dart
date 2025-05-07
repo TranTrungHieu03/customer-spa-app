@@ -205,13 +205,15 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                               return GestureDetector(
                                 onTap: () => goAppointmentDetail(appt.appointmentId.toString(), false),
                                 child: TRoundedContainer(
-                                  backgroundColor: (appt.status.toLowerCase()) == 'completed'
-                                      ? TColors.success.withOpacity(0.5)
-                                      : appt.status.toLowerCase() == 'cancelled'
-                                          ? Colors.red.shade50
-                                          : appt.status.toLowerCase() == 'arrived'
-                                              ? Colors.tealAccent.withOpacity(0.5)
-                                              : TColors.primaryBackground,
+                                  backgroundColor: (!isStaffReal)
+                                      ? TColors.warning.withOpacity(0.8)
+                                      : (appt.status.toLowerCase()) == 'completed'
+                                          ? TColors.success.withOpacity(0.5)
+                                          : appt.status.toLowerCase() == 'cancelled'
+                                              ? Colors.red.shade50
+                                              : appt.status.toLowerCase() == 'arrived'
+                                                  ? Colors.tealAccent.withOpacity(0.5)
+                                                  : TColors.primaryBackground,
                                   padding: EdgeInsets.all(TSizes.sm),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,19 +223,20 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                                         style: Theme.of(context).textTheme.titleLarge,
                                       ),
                                       const SizedBox(height: TSizes.sm),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Iconsax.clock,
-                                            size: 20,
-                                          ),
-                                          const SizedBox(width: TSizes.sm),
-                                          Text(
-                                            "${DateFormat('HH:mm', _lgCode).format(appt.appointmentsTime)} - "
-                                            "${DateFormat('HH:mm', _lgCode).format(appt.appointmentEndTime)}",
-                                          ),
-                                        ],
-                                      ),
+                                      if (isStaffReal)
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Iconsax.clock,
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: TSizes.sm),
+                                            Text(
+                                              "${DateFormat('HH:mm', _lgCode).format(appt.appointmentsTime)} - "
+                                              "${DateFormat('HH:mm', _lgCode).format(appt.appointmentEndTime)}",
+                                            ),
+                                          ],
+                                        ),
                                       const SizedBox(height: TSizes.sm),
                                       isStaffReal
                                           ? Row(
@@ -249,10 +252,12 @@ class _TableAppointmentsScreenState extends State<TableAppointmentsScreen> {
                                           : (appt.step != 0)
                                               ? Align(
                                                   alignment: Alignment.centerRight,
-                                                  child: TextButton(
-                                                      onPressed: () {},
-                                                      child: Text(AppLocalizations.of(context)!.update_staff_from_package,
-                                                          style: Theme.of(context).textTheme.labelLarge)),
+                                                  child: appt.status.toLowerCase() == 'cancelled'
+                                                      ? null
+                                                      : TextButton(
+                                                          onPressed: () {},
+                                                          child: Text(AppLocalizations.of(context)!.update_staff_from_package,
+                                                              style: Theme.of(context).textTheme.labelLarge)),
                                                 )
                                               : Align(
                                                   alignment: Alignment.centerRight,

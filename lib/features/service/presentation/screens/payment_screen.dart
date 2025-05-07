@@ -84,7 +84,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             listener: (context, state) {
               if (state is AppointmentLoaded) {
                 setState(() {
-                  isPaid = state.appointment.statusPayment == "Paid";
+                  isPaid = state.appointment.statusPayment == "Paid" || state.appointment.paymentMethod.toLowerCase() == "cash";
                 });
               }
             },
@@ -314,7 +314,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           onOptionChanged: handlePaymentOptionChange,
                           selectedOption: _selectedPaymentOption,
                         ),
-                      if (order.paymentMethod.toLowerCase() == "cash") Text('Thanh toan tai cua hang'),
+                      if (order.paymentMethod.toLowerCase() == "cash") Text(AppLocalizations.of(context)!.pay_at_store),
                       Divider(
                         color: dark ? TColors.darkGrey : TColors.grey,
                         thickness: 0.5,

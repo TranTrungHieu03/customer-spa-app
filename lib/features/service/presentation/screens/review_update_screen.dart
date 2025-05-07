@@ -389,7 +389,7 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
                               branchId: controller.branchId,
                               appointmentsTime: controller.time[0],
                               notes: _messageController.text,
-                              customerId: controller.user?.userId ?? 0,
+                              customerId: controller.user?.userId ?? controller.userId ?? 0,
                               appointmentId: controller.appointmentId,
                             )));
                         if (!isSameDay(controller.minDate, controller.timeStart[0]) && controller.step != 0) {
@@ -412,7 +412,7 @@ class _ReviewUpdateScreenState extends State<ReviewUpdateScreen> {
                       goAppointmentDetail(state.id.toString(), false);
                     }
                     if (state is AppointmentCreateSuccess && controller.step != 0) {
-                      goTrackingRoutineDetail(controller.routineId, controller.userId, controller.orderId);
+                      goTrackingRoutineDetail(controller.routineId, controller.userId, controller.orderId, controller.userRoutineId);
                     }
                   },
                 ),

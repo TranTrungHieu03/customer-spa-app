@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
@@ -15,7 +14,6 @@ import 'package:spa_mobile/features/analysis_skin/data/model/order_routine_model
 import 'package:spa_mobile/features/analysis_skin/domain/usecases/get_history_order_routine.dart';
 import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_order_routine/list_order_routine_bloc.dart';
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
-import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/service/presentation/widgets/order_horizontal_shimmer_card.dart';
 
 class TStatusBarOrderRoutine extends StatefulWidget {
@@ -135,10 +133,10 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
                                     ],
                                   ),
                                   onTap: () {
-                                    goTrackingRoutineDetail(routine.skincareRoutineId, user?.userId ?? 0, order.orderId);
+                                    goTrackingRoutineDetail(
+                                        order.routine.skincareRoutineId, user?.userId ?? 0, order.orderId, order.userRoutineId ?? 0);
                                   },
                                 ),
-
                               ],
                             ),
                           ),

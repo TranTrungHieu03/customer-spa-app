@@ -194,7 +194,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               width: TSizes.spacebtwItems / 2,
                                             ),
                                             Text(
-                                              orderDetail.product.branch?.branchName ?? "",
+                                              orderDetail.branch?.branchName ?? "",
                                               style: Theme.of(context).textTheme.titleLarge,
                                             )
                                           ],
@@ -314,7 +314,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
                           ),
-                        if (order.paymentMethod.toLowerCase() == "cash") Text('Thanh toan tai cua hang'),
+                        if (order.paymentMethod.toLowerCase() == "cash") Text(AppLocalizations.of(context)!.pay_at_store),
                         Divider(
                           color: TColors.darkGrey,
                           thickness: 0.5,

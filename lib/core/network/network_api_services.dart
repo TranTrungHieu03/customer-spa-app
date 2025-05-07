@@ -234,6 +234,7 @@ class NetworkApiService implements BaseApiServices {
       case 401:
       // throw UnauthorisedException(response.data.toString());
       case 500:
+        throw BadRequestException("");
       case 404:
         // throw BadRequestException(response.data['message']);
         return response.data;

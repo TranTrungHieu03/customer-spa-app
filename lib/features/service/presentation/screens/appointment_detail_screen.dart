@@ -37,7 +37,6 @@ class AppointmentDetailScreen extends StatefulWidget {
   final String appointmentId;
   final bool isEnableUpdateAll;
 
-
   @override
   State<AppointmentDetailScreen> createState() => _AppointmentDetailScreenState();
 }
@@ -162,7 +161,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                               )
                             ],
                           ),
-                          if (appointment.status.toLowerCase() == 'pending')
+                          if (appointment.status.toLowerCase() == 'pending' && appointment.staff?.staffId != 3)
                             Align(
                               alignment: Alignment.centerRight,
                               child: TRoundedIcon(
@@ -438,7 +437,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
               return _buildNetworkImage(context, imageUrl);
             } else {
               return Text(
-                'Chua co hinh anh' ?? "",
+                AppLocalizations.of(context)!.no_image ?? "",
                 style: Theme.of(context).textTheme.bodyMedium,
               );
             }

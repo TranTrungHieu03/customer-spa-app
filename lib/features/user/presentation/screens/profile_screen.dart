@@ -8,6 +8,7 @@ import 'package:spa_mobile/core/common/widgets/circular_image.dart';
 import 'package:spa_mobile/core/common/widgets/loader.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
+import 'package:spa_mobile/core/logger/logger.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/images.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
@@ -35,6 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController cityController;
   late TextEditingController userNameController;
   late TextEditingController addressController;
+  late TextEditingController birthDateController;
   late AddressModel addressModel;
   late String districtId;
   late String wardCode;
@@ -59,6 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     cityController = TextEditingController();
     userNameController = TextEditingController();
     addressController = TextEditingController();
+    birthDateController = TextEditingController();
     addressModel = AddressModel.empty();
   }
 
@@ -69,6 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     cityController.text = user.city ?? "";
     userNameController.text = user.userName;
     addressController.text = user.address ?? "";
+    birthDateController.text = user.birthDate.toString().substring(0, 10) ?? "";
     districtId = user.district.toString();
     wardCode = user.wardCode.toString();
   }
@@ -76,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void showModalEditAddress(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(TSizes.md)),
@@ -86,6 +91,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).then((_) {});
   }
 
+  void _selectBirthDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.tryParse(birthDateController.text) ?? DateTime(2000),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      AppLogger.wtf(picked);
+
+      birthDateController.text = picked.toIso8601String().split("T")[0];
+    }
+  }
+
   @override
   void dispose() {
     fullNameController.dispose();
@@ -94,6 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     cityController.dispose();
     userNameController.dispose();
     addressController.dispose();
+    birthDateController.dispose();
     super.dispose();
   }
 
@@ -159,12 +179,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Iconsax.call,
                         controller: phoneController,
                       ),
-                      // const SizedBox(height: TSizes.sm),
-                      // TProfileItem(
-                      //   label: AppLocalizations.of(context)!.city,
-                      //   icon: Iconsax.building,
-                      //   controller: cityController,
-                      // ),
+                      const SizedBox(height: TSizes.sm),
+                      GestureDetector(
+                        onTap: () => _selectBirthDate(context),
+                        child: AbsorbPointer(
+                          child: TProfileItem(
+                            label: AppLocalizations.of(context)!.date_of_birth,
+                            icon: Iconsax.calendar,
+                            controller: birthDateController,
+                            isEdit: false,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: TSizes.sm),
                       GestureDetector(
                         onTap: () => showModalEditAddress(context),
@@ -195,13 +221,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ElevatedButton(
                             onPressed: () {
                               if (districtId.isEmpty || wardCode.isEmpty) {
-                                TSnackBar.errorSnackBar(context, message: "Please select your address");
+                                TSnackBar.errorSnackBar(context, message: "Please select your full address");
                                 return;
                               }
                               if (fullNameController.text.isEmpty ||
                                   phoneController.text.isEmpty ||
                                   emailController.text.isEmpty ||
                                   userNameController.text.isEmpty ||
+                                  birthDateController.text.isEmpty ||
                                   addressController.text.isEmpty) {
                                 TSnackBar.errorSnackBar(context, message: "Please fill all fields");
                                 return;
@@ -214,6 +241,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     city: cityController.text.trim(),
                                     userName: userNameController.text.trim(),
                                     address: addressController.text.trim(),
+                                    birthDate: DateTime.parse(birthDateController.text.trim()),
                                     district: int.parse(districtId),
                                     wardCode: int.parse(wardCode));
                                 if (context.read<ImageBloc>().state is ImagePicked) {
