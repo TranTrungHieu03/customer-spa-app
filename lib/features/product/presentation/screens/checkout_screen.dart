@@ -32,6 +32,8 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final TextEditingController _messageController = TextEditingController();
 
+  bool isDeleted = false;
+
   @override
   Widget build(BuildContext context) {
     final products = widget.controller.products;
@@ -51,11 +53,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ],
           child: BlocListener<OrderBloc, OrderState>(
               listenWhen: (previous, current) {
-                // Only trigger the listener when transitioning from a non-success state to success state
-                return previous is! OrderSuccess;
+                return current is OrderSuccess && !isDeleted;
               },
               listener: (context, state) {
-                if (state is OrderSuccess) {
+                if (state is OrderSuccess && !isDeleted) {
+                  setState(() {
+                    isDeleted = true;
+                  });
                   if (widget.controller.isFromCart) {
                     context
                         .read<CartBloc>()

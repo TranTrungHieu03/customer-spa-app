@@ -273,7 +273,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                                   TextButton(
                                       onPressed: () {
-                                        goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                        goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId, 0);
                                       },
                                       child: Text(
                                         AppLocalizations.of(context)!.review,
@@ -313,6 +313,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                           onOptionChanged: handlePaymentOptionChange,
                           selectedOption: _selectedPaymentOption,
+                          isDeposit: true,
                         ),
                       if (order.paymentMethod.toLowerCase() == "cash") Text(AppLocalizations.of(context)!.pay_at_store),
                       Divider(

@@ -28,8 +28,6 @@ import 'package:spa_mobile/features/analysis_skin/presentation/blocs/list_produc
 import 'package:spa_mobile/features/auth/data/models/user_model.dart';
 import 'package:spa_mobile/features/home/presentation/blocs/nearest_branch/nearest_branch_bloc.dart';
 import 'package:spa_mobile/features/product/data/model/product_branch_model.dart';
-import 'package:spa_mobile/features/product/domain/usecases/add_product_cart.dart';
-import 'package:spa_mobile/features/product/domain/usecases/create_order.dart';
 import 'package:spa_mobile/features/product/domain/usecases/get_branch_has_product.dart';
 import 'package:spa_mobile/features/product/domain/usecases/list_feedback_product.dart';
 import 'package:spa_mobile/features/product/presentation/bloc/cart/cart_bloc.dart';
@@ -114,11 +112,11 @@ class _ProductDetailWithBranchScreenState extends State<ProductDetailWithBranchS
                   appBar: TAppbar(
                     showBackArrow: true,
                     actions: [
-                      TRoundedIcon(
-                        icon: Iconsax.shopping_cart,
-                        size: 30,
-                        onPressed: () => goCart(controller),
-                      )
+                      // TRoundedIcon(
+                      //   icon: Iconsax.shopping_cart,
+                      //   size: 30,
+                      //   onPressed: () => goCart(controller),
+                      // )
                     ],
                   ),
                   body: SingleChildScrollView(
@@ -374,71 +372,71 @@ class _ProductDetailWithBranchScreenState extends State<ProductDetailWithBranchS
                       ],
                     ),
                   ),
-                  bottomNavigationBar: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                          flex: 2,
-                          child: GestureDetector(
-                            onTap: context.read<CartBloc>().state is CartLoading
-                                ? null
-                                : () {
-                                    context.read<CartBloc>().add(AddProductToCartEvent(
-                                        params: AddProductCartParams(
-                                            productId: product.productBranchId, quantity: 1, operation: 0, userId: 0)));
-                                  },
-                            child: Container(
-                              height: 55,
-                              padding: const EdgeInsets.all(TSizes.sm / 2),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Iconsax.shopping_cart4,
-                                    color: TColors.primary,
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)!.addToCart,
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                  )
-                                ],
-                              ),
-                            ),
-                          )),
-                      Expanded(
-                        flex: 3,
-                        child: GestureDetector(
-                          onTap: () {
-                            AppLogger.info(product.branch?.district);
-                            controller.updateBranch(product.branch ?? BranchModel.empty());
-                            controller
-                                .updateProducts([ProductQuantity(quantity: 1, productBranchId: product.productBranchId, product: product)]);
-                            controller.updateTotalPrice(product.price);
-
-                            if (user.wardCode == 0) {
-                              goProfile();
-                              return;
-                            }
-                            controller.updateUser(user);
-                            goCheckout(controller);
-                          },
-                          child: Container(
-                            height: 55,
-                            decoration: const BoxDecoration(
-                              color: TColors.primary,
-                            ),
-                            padding: const EdgeInsets.all(TSizes.sm / 2),
-                            alignment: Alignment.center,
-                            child: Text(
-                              AppLocalizations.of(context)!.buyNow,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // bottomNavigationBar: Row(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   children: [
+                  //     Expanded(
+                  //         flex: 2,
+                  //         child: GestureDetector(
+                  //           onTap: context.read<CartBloc>().state is CartLoading
+                  //               ? null
+                  //               : () {
+                  //                   context.read<CartBloc>().add(AddProductToCartEvent(
+                  //                       params: AddProductCartParams(
+                  //                           productId: product.productBranchId, quantity: 1, operation: 0, userId: 0)));
+                  //                 },
+                  //           child: Container(
+                  //             height: 55,
+                  //             padding: const EdgeInsets.all(TSizes.sm / 2),
+                  //             child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.end,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: [
+                  //                 const Icon(
+                  //                   Iconsax.shopping_cart4,
+                  //                   color: TColors.primary,
+                  //                 ),
+                  //                 Text(
+                  //                   AppLocalizations.of(context)!.addToCart,
+                  //                   style: Theme.of(context).textTheme.labelMedium,
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         )),
+                  //     Expanded(
+                  //       flex: 3,
+                  //       child: GestureDetector(
+                  //         onTap: () {
+                  //           AppLogger.info(product.branch?.district);
+                  //           controller.updateBranch(product.branch ?? BranchModel.empty());
+                  //           controller
+                  //               .updateProducts([ProductQuantity(quantity: 1, productBranchId: product.productBranchId, product: product)]);
+                  //           controller.updateTotalPrice(product.price);
+                  //
+                  //           if (user.wardCode == 0) {
+                  //             goProfile();
+                  //             return;
+                  //           }
+                  //           controller.updateUser(user);
+                  //           goCheckout(controller);
+                  //         },
+                  //         child: Container(
+                  //           height: 55,
+                  //           decoration: const BoxDecoration(
+                  //             color: TColors.primary,
+                  //           ),
+                  //           padding: const EdgeInsets.all(TSizes.sm / 2),
+                  //           alignment: Alignment.center,
+                  //           child: Text(
+                  //             AppLocalizations.of(context)!.buyNow,
+                  //             style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ),
               );
             } else if (state is ProductLoading) {

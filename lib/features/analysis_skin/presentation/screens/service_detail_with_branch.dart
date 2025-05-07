@@ -5,7 +5,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
-import 'package:spa_mobile/core/common/inherited/appointment_data.dart';
 import 'package:spa_mobile/core/common/screens/error_screen.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
@@ -15,7 +14,6 @@ import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/helpers/helper_functions.dart';
 import 'package:spa_mobile/core/utils/constants/banners.dart';
 import 'package:spa_mobile/core/utils/constants/colors.dart';
-import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
 import 'package:spa_mobile/core/utils/constants/sizes.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_price.dart';
 import 'package:spa_mobile/features/product/presentation/widgets/product_title.dart';
@@ -26,7 +24,7 @@ import 'package:spa_mobile/features/service/presentation/widgets/service_detail_
 import 'package:spa_mobile/init_dependencies.dart';
 
 class ServiceDetailWithBranchScreen extends StatefulWidget {
-  const ServiceDetailWithBranchScreen({super.key, required this.serviceId });
+  const ServiceDetailWithBranchScreen({super.key, required this.serviceId});
 
   final int serviceId;
 
@@ -369,31 +367,31 @@ class _ServiceDetailWithBranchScreenState extends State<ServiceDetailWithBranchS
                     //         ),
                     //       ),
                     //     )),
-                    Expanded(
-                      flex: 3,
-                      child: GestureDetector(
-                        onTap: () {
-                          // widget.controller.updateServiceIds([widget.serviceId]);
-                          // widget.controller
-                          //     .updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
-                          // widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
-                          // widget.controller.updateTotalPrice((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.price);
-                          // goSelectSpecialist(widget.branchId, widget.controller, 0);
-                        },
-                        child: Container(
-                          height: 55,
-                          decoration: const BoxDecoration(
-                            color: TColors.primary,
-                          ),
-                          padding: const EdgeInsets.all(TSizes.sm / 2),
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.book_now,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Expanded(
+                    //   flex: 3,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       // widget.controller.updateServiceIds([widget.serviceId]);
+                    //       // widget.controller
+                    //       //     .updateTime(int.parse((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.duration));
+                    //       // widget.controller.updateServices([(context.read<ServiceBloc>().state as ServiceDetailSuccess).service]);
+                    //       // widget.controller.updateTotalPrice((context.read<ServiceBloc>().state as ServiceDetailSuccess).service.price);
+                    //       // goSelectSpecialist(widget.branchId, widget.controller, 0);
+                    //     },
+                    //     child: Container(
+                    //       height: 55,
+                    //       decoration: const BoxDecoration(
+                    //         color: TColors.primary,
+                    //       ),
+                    //       padding: const EdgeInsets.all(TSizes.sm / 2),
+                    //       alignment: Alignment.center,
+                    //       child: Text(
+                    //         AppLocalizations.of(context)!.book_now,
+                    //         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

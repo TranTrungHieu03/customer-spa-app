@@ -98,7 +98,7 @@ goCheckout(PurchasingDataController controller) async {
 }
 
 goShipmentInfo(PurchasingDataController controller) async {
-  Navigator.push(
+  Navigator.pushReplacement(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => ShipmentInformationScreen(
@@ -194,9 +194,11 @@ goChat() async {
   Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => const ChatAiScreen()));
 }
 
-goFeedback(int customerId, int serviceId, int orderId) async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => ServiceFeedbackScreen(customerId: customerId, serviceId: serviceId, orderId: orderId)));
+goFeedback(int customerId, int serviceId, int orderId, int type) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => ServiceFeedbackScreen(customerId: customerId, serviceId: serviceId, orderId: orderId, type: type)));
 }
 
 goStatusService(String title, String content, Widget value, String image, Color color) async {
@@ -405,11 +407,12 @@ goRoutineStep(int id) async {
 }
 
 goCheckoutRoutine(RoutineDataController controller) async {
-  Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutRoutineScreen(controller: controller)));
+  Navigator.pushReplacement(
+      navigatorKey.currentContext!, MaterialPageRoute(builder: (context) => CheckoutRoutineScreen(controller: controller)));
 }
 
 goSelectRoutineTime(RoutineDataController routine) async {
-  Navigator.push(
+  Navigator.pushReplacement(
       navigatorKey.currentContext!,
       MaterialPageRoute(
           builder: (context) => BlocProvider(
@@ -439,9 +442,11 @@ goOrderProductDetail(int orderId) async {
 //               )));
 // }
 
-goFeedbackProduct(int customerId, int productId, int orderId) async {
-  Navigator.push(navigatorKey.currentContext!,
-      MaterialPageRoute(builder: (context) => ProductFeedbackScreen(customerId: customerId, productId: productId, orderId: orderId)));
+goFeedbackProduct(int customerId, int productId, int orderId, int type) async {
+  Navigator.push(
+      navigatorKey.currentContext!,
+      MaterialPageRoute(
+          builder: (context) => ProductFeedbackScreen(customerId: customerId, productId: productId, orderId: orderId, type: type)));
 }
 
 goHistoryOrderRoutine() async {

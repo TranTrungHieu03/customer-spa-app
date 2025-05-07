@@ -441,9 +441,9 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
                           builder: (context, state) {
                             if (state is ListTimeLoaded) {
                               if (availableTimeSlots.isEmpty) {
-                                return const Center(
+                                return Center(
                                   child: Text(
-                                    'No available time slots for selected date',
+                                    AppLocalizations.of(context)!.no_available_slots,
                                     style: TextStyle(fontSize: 16),
                                   ),
                                 );
@@ -543,9 +543,9 @@ class _UpdateTimeScreenState extends State<UpdateTimeScreen> {
                                 },
                               );
                             } else if (state is ListTimeEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text(
-                                  'No available time slots for selected date',
+                                  AppLocalizations.of(context)!.no_available_slots,
                                   style: TextStyle(fontSize: 16),
                                 ),
                               );

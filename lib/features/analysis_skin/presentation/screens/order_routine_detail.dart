@@ -241,7 +241,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                                                 TextButton(
                                                     onPressed: () {
                                                       goFeedbackProduct(
-                                                          order.customer?.userId ?? 0, orderDetail.product.productId, order.orderId);
+                                                          order.customer?.userId ?? 0, orderDetail.product.productId, order.orderId, 2);
                                                     },
                                                     child: Text(
                                                       AppLocalizations.of(context)!.review,
@@ -323,7 +323,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                                       TextButton(
                                           onPressed: () {
-                                            goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                            goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId, 2);
                                           },
                                           child: Text(
                                             AppLocalizations.of(context)!.review,
@@ -404,6 +404,7 @@ class _OrderRoutineDetailState extends State<OrderRoutineDetail> {
                             total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
+                            isDeposit: false,
                           ),
                         if (order.paymentMethod?.toLowerCase() == "cash") Text('Thanh toán tại cửa hàng'),
                         Divider(

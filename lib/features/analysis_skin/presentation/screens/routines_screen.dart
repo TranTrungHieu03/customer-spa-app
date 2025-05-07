@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:spa_mobile/core/common/widgets/appbar.dart';
 import 'package:spa_mobile/core/common/widgets/rounded_container.dart';
+import 'package:spa_mobile/core/common/widgets/rounded_icon.dart';
 import 'package:spa_mobile/core/common/widgets/show_snackbar.dart';
 import 'package:spa_mobile/core/local_storage/local_storage.dart';
 import 'package:spa_mobile/core/utils/constants/exports_navigators.dart';
@@ -45,9 +47,15 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const TAppbar(
+      appBar: TAppbar(
         showBackArrow: true,
-        title: Text("Gói liệu trình"),
+        title: Text(AppLocalizations.of(context)!.routine),
+        actions: [
+          TRoundedIcon(
+            icon: Iconsax.home_2,
+            onPressed: () => goHome(),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(TSizes.sm),

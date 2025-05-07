@@ -340,7 +340,7 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                                           widget.indexOfAppointment == -1
                                               ? widget.controller.staff[0]?.staffInfo?.userName ?? ""
                                               : widget.controller.staff[widget.indexOfAppointment]?.staffInfo?.userName ?? "",
-                                            ),
+                                        ),
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(color: TColors.primary),
                                       ),
                                     ),
@@ -495,9 +495,9 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                           builder: (context, state) {
                             if (state is ListTimeLoaded) {
                               if (availableTimeSlots.isEmpty) {
-                                return const Center(
+                                return Center(
                                   child: Text(
-                                    'No available time slots for selected date',
+                                    AppLocalizations.of(context)!.no_available_slots,
                                     style: TextStyle(fontSize: 16),
                                   ),
                                 );
@@ -582,9 +582,9 @@ class _UpdateAppointmentsTimeScreenState extends State<UpdateAppointmentsTimeScr
                                 },
                               );
                             } else if (state is ListTimeEmpty) {
-                              return const Center(
+                              return Center(
                                 child: Text(
-                                  'No available time slots for selected date',
+                                  AppLocalizations.of(context)!.no_available_slots,
                                   style: TextStyle(fontSize: 16),
                                 ),
                               );

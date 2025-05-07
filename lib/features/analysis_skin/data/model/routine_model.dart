@@ -14,6 +14,7 @@ class RoutineModel extends Routine {
       required super.totalSteps,
       required super.totalPrice,
       required super.targetSkinTypes,
+      required super.status,
       required this.productRoutines,
       required this.serviceRoutines});
 
@@ -25,6 +26,7 @@ class RoutineModel extends Routine {
       description: json['description'],
       totalSteps: json['totalSteps'],
       totalPrice: json['totalPrice'],
+      status: json['status'],
       targetSkinTypes: json['targetSkinTypes'],
       productRoutines: List<ProductModel>.from(json['productRoutines'].map((x) => ProductModel.fromJson(x['products']))),
       serviceRoutines: List<ServiceModel>.from(json['serviceRoutines'].map((x) => ServiceModel.fromJson(x['service']))),

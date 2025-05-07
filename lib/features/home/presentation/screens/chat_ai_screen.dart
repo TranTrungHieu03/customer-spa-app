@@ -163,7 +163,7 @@ class _ChatAiScreenState extends State<ChatAiScreen> with WidgetsBindingObserver
                       controller: _messageController,
                       maxLines: null,
                       decoration: InputDecoration(
-                        hintText: "Enter your message ...",
+                        hintText: AppLocalizations.of(context)!.enter_your_message,
                         contentPadding: const EdgeInsets.symmetric(horizontal: TSizes.sm),
                         hintStyle: Theme.of(context).textTheme.bodySmall,
                         border: OutlineInputBorder(

@@ -10,11 +10,12 @@ import 'package:spa_mobile/features/product/presentation/bloc/feedback_product/f
 import 'package:spa_mobile/init_dependencies.dart';
 
 class ProductFeedbackScreen extends StatefulWidget {
-  const ProductFeedbackScreen({super.key, required this.customerId, required this.productId, required this.orderId});
+  const ProductFeedbackScreen({super.key, required this.customerId, required this.productId, required this.orderId, required this.type});
 
   final int customerId;
   final int productId;
   final int orderId;
+  final int type;
 
   @override
   State<ProductFeedbackScreen> createState() => _ProductFeedbackScreenState();
@@ -134,7 +135,13 @@ class _ProductFeedbackScreenState extends State<ProductFeedbackScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                goOrderProductDetail(widget.orderId);
+                if (widget.type == 0) {
+                  goOrderProductDetail(widget.orderId);
+                } else if (widget.type == 1) {
+                  goOrderMixDetail(widget.orderId);
+                } else {
+                  goOrderRoutineDetail(widget.orderId);
+                }
               },
               child: Text(AppLocalizations.of(context)!.close),
             ),

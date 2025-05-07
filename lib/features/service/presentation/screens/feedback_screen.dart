@@ -10,11 +10,12 @@ import 'package:spa_mobile/features/service/presentation/bloc/feedback_service/f
 import 'package:spa_mobile/init_dependencies.dart';
 
 class ServiceFeedbackScreen extends StatefulWidget {
-  const ServiceFeedbackScreen({super.key, required this.customerId, required this.serviceId, required this.orderId});
+  const ServiceFeedbackScreen({super.key, required this.customerId, required this.serviceId, required this.orderId, required this.type});
 
   final int customerId;
   final int serviceId;
   final int orderId;
+  final int type;
 
   @override
   State<ServiceFeedbackScreen> createState() => _ServiceFeedbackScreenState();
@@ -134,7 +135,13 @@ class _ServiceFeedbackScreenState extends State<ServiceFeedbackScreen> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                goBookingDetail(widget.orderId);
+                if (widget.type == 0) {
+                  goBookingDetail(widget.orderId);
+                } else if (widget.type == 1) {
+                  goOrderMixDetail(widget.orderId);
+                } else {
+                  goOrderRoutineDetail(widget.orderId);
+                }
               },
               child: Text(AppLocalizations.of(context)!.close),
             ),

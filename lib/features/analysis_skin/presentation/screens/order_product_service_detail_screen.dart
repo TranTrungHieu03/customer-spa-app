@@ -196,7 +196,7 @@ class _OrderProductServiceDetailScreenState extends State<OrderProductServiceDet
                                                 TextButton(
                                                     onPressed: () {
                                                       goFeedbackProduct(
-                                                          order.customer?.userId ?? 0, orderDetail.product.productId, order.orderId);
+                                                          order.customer?.userId ?? 0, orderDetail.product.productId, order.orderId, 1);
                                                     },
                                                     child: Text(
                                                       AppLocalizations.of(context)!.review,
@@ -278,7 +278,7 @@ class _OrderProductServiceDetailScreenState extends State<OrderProductServiceDet
                                     Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                                       TextButton(
                                           onPressed: () {
-                                            goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId);
+                                            goFeedback(order.customer?.userId ?? 0, serviceState.serviceId, order.orderId, 1);
                                           },
                                           child: Text(
                                             AppLocalizations.of(context)!.review,
@@ -309,6 +309,7 @@ class _OrderProductServiceDetailScreenState extends State<OrderProductServiceDet
                             total: (order.totalAmount - (order.voucher?.discountAmount ?? 0)),
                             onOptionChanged: handlePaymentOptionChange,
                             selectedOption: _selectedPaymentOption,
+                            isDeposit: false,
                           ),
                         Divider(
                           color: TColors.darkGrey,

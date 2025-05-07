@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spa_mobile/core/common/model/pagination_model.dart';
 import 'package:spa_mobile/core/common/widgets/grid_layout.dart';
@@ -88,7 +89,7 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
               }
 
               if (orders.isEmpty) {
-                return const Center(child: Text('Do not have any order here!'));
+                return Center(child: Text(AppLocalizations.of(context)!.no_order));
               }
 
               return NotificationListener<ScrollNotification>(
@@ -152,7 +153,7 @@ class _TStatusBarOrderRoutineState extends State<TStatusBarOrderRoutine> with Au
                     return const TOrderHorizontalShimmer();
                   });
             }
-            return const Center(child: Text('Do not have any order here!'));
+            return Center(child: Text(AppLocalizations.of(context)!.no_order));
           }),
         ),
       ),
