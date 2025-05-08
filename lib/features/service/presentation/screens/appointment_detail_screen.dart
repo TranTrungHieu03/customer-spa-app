@@ -161,7 +161,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                               )
                             ],
                           ),
-                          if (appointment.status.toLowerCase() == 'pending' && appointment.staff?.staffId != 3)
+                          if (appointment.status.toLowerCase() == 'pending' && appointment.staff?.roleId != 3)
                             Align(
                               alignment: Alignment.centerRight,
                               child: TRoundedIcon(
